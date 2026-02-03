@@ -544,14 +544,10 @@ footer p {
   object-fit: cover;
 }
     header {
-    padding: 10px;
+    padding: 5px;
   }
 
-  nav {
-     position: sticky;
-      top: 0;
-  }
-
+  
   nav ul {
     flex-direction: column;
     gap: 5px;
@@ -577,10 +573,7 @@ footer p {
     height: auto;
   }
 
-  img {
-  max-width: 100%;
-  height: auto;
-}
+ 
    .intro {
   width: 100%      /* begränsa radlängden för läsbarhet */
   margin: 10px auto;      /* centrerar sektionen och ger luft ovanför/under */
@@ -602,6 +595,7 @@ footer p {
  
   
 }
+
 
 
 
