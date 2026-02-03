@@ -245,12 +245,12 @@ footer p {
   border-radius: 14px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 
-  width: 300px;
+  width: 250px;
   height: 360px;
 
   display: flex;
   flex-direction: column;
-  padding: 14px;
+  padding: 20px;
   
 }
 
@@ -698,6 +698,7 @@ footer p {
     grid-row: span 2;
 }
 }
+
 
 
 
