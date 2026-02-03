@@ -560,6 +560,7 @@ footer p {
     flex-direction: column;
     text-align: center;
     align-items: center;
+    list-style-type: none;
   }
   .galleryGrid {
   display: flex;
@@ -568,8 +569,8 @@ footer p {
   margin-top: 20px;
   }
   .aboutImg {
+    width: 100%;
     margin-top: 20px;
-    width: 200px;
     height: auto;
   }
 
@@ -595,6 +596,7 @@ footer p {
  
   
 }
+
 
 
 
