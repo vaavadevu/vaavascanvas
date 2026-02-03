@@ -259,17 +259,6 @@ header {
 
 @media (max-width: 768px) {
 
-  body {
-  font-family: 'Quicksand', sans-serif;
-  color: #000000;
-  line-height: 1.0;
-  background-color: #ACBFA4; /* varm bakgrundsfärg */
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  }
-
   header {
     padding: 10px;
   }
@@ -277,6 +266,8 @@ header {
   nav ul {
     flex-direction: column;
     gap: 5px;
+    text-align: center;
+    align-items: center;
   }
   
   .aboutMe {
@@ -660,6 +651,7 @@ footer p {
     grid-row: span 2;
 }
 }
+
 
 
 
