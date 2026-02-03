@@ -346,14 +346,34 @@ footer p {
   }
 
   .aboutImg {
-    margin-top: 20px;
+    margin-top: 10px;
     width: 200px;
-    height: auto;
+    height: 100%;
   }
 
   img {
   max-width: 100%;
   height: auto;
+}
+  .gallery {
+    display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  gap: 10px;
+  padding: 10px;
+  }
+  
+  .galleryGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 20px;
+}
+  .galleryGrid img {
+  max-width: 300px;
+  height: auto;
+  border-radius: 10px;
+  object-fit: cover;
 }
 }
 
@@ -699,6 +719,7 @@ footer p {
     grid-row: span 2;
 }
 }
+
 
 
 
