@@ -286,7 +286,7 @@ footer p {
 @media (max-width: 768px) {
 
   body {
-    font-family: 'Quicksand', sans-serif;
+  font-family: 'Quicksand', sans-serif;
   color: #000000;
   line-height: 1.0;
   background-color: #ACBFA4; /* varm bakgrundsfärg */
@@ -323,21 +323,21 @@ footer p {
   height: auto;
 }
   .gallery {
-    display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   justify-items: center;
   gap: 10px;
   padding: 10px;
   }
   
   .galleryGrid {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 10px;
   margin-top: 20px;
 }
   .galleryGrid img {
-  max-width: 300px;
+  width: 100%;
   height: auto;
   border-radius: 10px;
   object-fit: cover;
@@ -686,6 +686,7 @@ footer p {
     grid-row: span 2;
 }
 }
+
 
 
 
