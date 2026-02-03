@@ -544,6 +544,8 @@ footer p {
   object-fit: cover;
 }
     header {
+      position: sticky;
+      top: 0;
     padding: 10px;
   }
 
@@ -597,6 +599,7 @@ footer p {
  
   
 }
+
 
 
 
