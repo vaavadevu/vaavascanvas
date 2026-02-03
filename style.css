@@ -503,7 +503,9 @@ footer p {
   text-decoration: underline;
   color: #40513B;
 }
-
+.aboutMe ul {
+    list-style-type: none;
+}
 @media (max-width: 768px) {
 
   main {
@@ -555,12 +557,13 @@ footer p {
     align-items: center;
   }
   
+    
   .aboutMe {
     display: flex;
     flex-direction: column;
     text-align: center;
     align-items: center;
-    list-style-type: none;
+    
   }
   .galleryGrid {
   display: flex;
@@ -596,6 +599,7 @@ footer p {
  
   
 }
+
 
 
 
