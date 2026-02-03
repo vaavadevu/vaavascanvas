@@ -17,6 +17,46 @@ main {
   max-width: 1200px;
   margin: 0 auto;
 }
+nav {
+  grid-area: nav;
+  display: flex;
+  list-style-type: none;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  margin: 10px;
+  background-color: #D3D3D3; 
+}
+
+nav a::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: currentColor;
+  transition: width 0.3s ease;
+}
+
+nav a:hover::after {
+  width: 100%;
+}
+
+nav ul {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+nav li {
+  cursor: pointer;
+  font-weight: bold;
+}
+
 
 h1, h2, h3 {
   font-family: 'Playfair Display', serif; /* finare rubrikstil */
@@ -78,45 +118,6 @@ header {
   
 }
 
-nav {
-  grid-area: nav;
-  display: flex;
-  list-style-type: none;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
-  margin: 10px;
-  background-color: #D3D3D3; 
-}
-
-nav a::after {
-  content: "";
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 0;
-  height: 1px;
-  background: currentColor;
-  transition: width 0.3s ease;
-}
-
-nav a:hover::after {
-  width: 100%;
-}
-
-nav ul {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-nav li {
-  cursor: pointer;
-  font-weight: bold;
-}
 
 .gallery {
   display: grid;
@@ -659,6 +660,7 @@ footer p {
     grid-row: span 2;
 }
 }
+
 
 
 
