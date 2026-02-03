@@ -164,10 +164,10 @@ nav li {
 
 .gallery {
   display: grid;
-  grid-template-columns: repeat(4, minmax(250px, 2fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px, 2fr));
   justify-items: center;
-  gap: 10px;
-  padding: 10px;
+  gap: 24px;
+  padding: 24px;
 }
 
 footer {
@@ -699,6 +699,7 @@ footer p {
     grid-row: span 2;
 }
 }
+
 
 
 
