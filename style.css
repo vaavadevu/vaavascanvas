@@ -259,6 +259,10 @@ header {
 
 @media (max-width: 768px) {
 
+  main {
+  max-width: 768px;
+  margin: 0 auto;
+}
   header {
     padding: 10px;
   }
@@ -306,6 +310,12 @@ header {
   height: auto;
   border-radius: 10px;
   object-fit: cover;
+}
+  .homeGallery {
+  max-width: 500px;
+  margin: 15px auto;
+  padding: 0 10px;
+  text-align: center;
 }
 }
 
@@ -651,6 +661,7 @@ footer p {
     grid-row: span 2;
 }
 }
+
 
 
 
