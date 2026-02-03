@@ -104,10 +104,6 @@ footer p {
   font-size: 0.85rem;
   color: #000000;
 }
-
-@media (min-width:1025px) {
-
-
 header {
   grid-area: header;
   height: fit-content;
@@ -117,6 +113,9 @@ header {
   
   
 }
+
+@media (min-width:1025px) {
+
 
 
 .gallery {
@@ -661,6 +660,7 @@ footer p {
     grid-row: span 2;
 }
 }
+
 
 
 
