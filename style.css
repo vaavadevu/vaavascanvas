@@ -43,34 +43,33 @@ p {
   line-height: 1.7;
 }
 
+footer {
 
-
-
-
-header {
-    grid-area: header;
-  height: fit-content;
-  text-align: center;
-  padding: 2px 10px;
-  background-color: #D3D3D3;
+  grid-area: footer;
   
-  
-}
+  padding: 20px;
+  background-color:#D3D3D3;
 
-nav {
-  grid-area: nav;
   display: flex;
-  list-style-type: none;
   justify-content: center;
   align-items: center;
-  padding: 10px;
-  margin: 10px;
-  background-color: #D3D3D3; 
+
+  text-align: center;
+  
 }
 
 
+footer p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #000000;
+}
+
+@media (min-width:1025px) {
+
+
 header {
-    grid-area: header;
+  grid-area: header;
   height: fit-content;
   text-align: center;
   padding: 2px 10px;
@@ -126,27 +125,43 @@ nav li {
   gap: 24px;
   padding: 24px;
 }
-
-footer {
-
-  grid-area: footer;
   
-  padding: 20px;
-  background-color:#D3D3D3;
-
+.aboutMe {
   display: flex;
-  justify-content: center;
-  align-items: center;
-
-  text-align: center;
-  
+  justify-content: space-between; /* Plats mellan text och bild */
+  align-items: center;             /* Vertikalt centrerad */
+  gap: 40px;                       /* Liten lucka mellan kolumner */
+  max-width: 1000px;               /* Begränsar storlek på hela sektionen */
+  margin: 0 auto;                  /* Centrerar sektionen på sidan */
+  padding: 40px 20px;
 }
 
+.aboutText {
+  flex: 1; /* Text tar tillgängligt utrymme på vänster sida */
+}
 
-footer p {
-  margin: 0;
-  font-size: 0.85rem;
-  color: #000000;
+.aboutImg {
+  flex: 1; /* Bild tar resten av utrymmet */
+  display: flex;
+  justify-content: center; /* Centrerar bilden i sin kolumn */
+}
+
+.aboutImg img {
+  width: 100%;       /* Tar hela kolumnen */
+  max-width: 400px;  /* Största storlek på bilden */
+  height: auto;
+  border-radius: 5px;
+  object-fit: cover;
+}
+
+.gallery img {
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.gallery img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
 }
 
 .lightbox {
@@ -214,42 +229,6 @@ footer p {
 
 
 
-.aboutMe {
-  display: flex;
-  justify-content: space-between; /* Plats mellan text och bild */
-  align-items: center;             /* Vertikalt centrerad */
-  gap: 40px;                       /* Liten lucka mellan kolumner */
-  max-width: 1000px;               /* Begränsar storlek på hela sektionen */
-  margin: 0 auto;                  /* Centrerar sektionen på sidan */
-  padding: 40px 20px;
-}
-
-.aboutText {
-  flex: 1; /* Text tar tillgängligt utrymme på vänster sida */
-}
-
-.aboutImg {
-  flex: 1; /* Bild tar resten av utrymmet */
-  display: flex;
-  justify-content: center; /* Centrerar bilden i sin kolumn */
-}
-
-.aboutImg img {
-  width: 100%;       /* Tar hela kolumnen */
-  max-width: 400px;  /* Största storlek på bilden */
-  height: auto;
-  border-radius: 5px;
-  object-fit: cover;
-}
-
-.gallery img {
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
-}
-
-.gallery img:hover {
-  transform: scale(1.05);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-}
 
 .minadress {
   text-align: left;
@@ -263,15 +242,9 @@ footer p {
   color: #000000;
   line-height: 1.6;
   font-weight: bold;
+   font-size: 0.95rem;
 }
 
-.minadress {
-  font-style: italic; /* inte kursiv */
-  color: #000000;
-  margin-top: 20px;
-  font-size: 0.95rem;
-  line-height: 1.4;
-}
 
 .minadress a {
   color: #000000;
@@ -686,6 +659,7 @@ footer p {
     grid-row: span 2;
 }
 }
+
 
 
 
