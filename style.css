@@ -2,7 +2,7 @@ body {
   font-family: 'Quicksand', sans-serif;
   color: #000000;
   line-height: 1.6;
-  background-color: #5DD3B6; /* varm bakgrundsfärg */
+  background-color: #8A8635; /* varm bakgrundsfärg */
   margin: 0;
   padding: 0;
   display: grid;
@@ -12,6 +12,8 @@ body {
     "nav"
     "main"
     "footer";
+  
+  font-style: italic;
 }
 main {
   max-width: 1200px;
@@ -25,8 +27,14 @@ nav {
   align-items: center;
   padding: 10px;
   margin: 10px;
-  background-color: #CDB885; 
+  background-color: #F3CF7A; /* ljus bakgrund för nav */
 }
+
+nav a {
+  position: relative;
+  color: #022a33;
+}
+
 
 nav a::after {
   content: "";
@@ -46,14 +54,14 @@ nav a:hover::after {
 nav ul {
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 50px;
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 20px;
 }
 
 nav li {
-  cursor: pointer;
+  cursor: hand;
   font-weight: bold;
 }
 
@@ -64,10 +72,11 @@ h1, h2, h3 {
 }
 
 h1 {
-  font-size: 2.5rem;
+  font-size: 3.0rem;
   text-align: center;
-  margin-top: 40px;
-  letter-spacing: 0.05em
+  margin: 5px 0;
+  letter-spacing: 0.05em;
+  font-style: italic;
 }
 
 h2 {
@@ -88,7 +97,7 @@ footer {
   grid-area: footer;
   
   padding: 20px;
-  background-color: #6E5034;
+  background-color: #F3CF7A;
 
   display: flex;
   justify-content: center;
@@ -108,9 +117,8 @@ header {
   grid-area: header;
   height: fit-content;
   text-align: center;
-  padding: 2px 10px;
-  background-color: #6E5034;
-  
+  padding: 2px 5px;
+  background-color: #F3CF7A; /* ljus bakgrund för header */
   
 }
 .seeMore {
@@ -125,50 +133,6 @@ header {
 
 
 
-.intro::after {
-  content: "";
-  display: block;
-  width: 100%;
-  height: 3px;
-  background-color: #CDB885; /* accentfärg */
-  margin: 15px auto 0 auto;
-  border-radius: 2px;
-}
-
-nav a {
-  position: relative;
-}
-
-nav a::after {
-  content: "";
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 0;
-  height: 1px;
-  background: currentColor;
-  transition: width 0.3s ease;
-}
-
-nav a:hover::after {
-  width: 100%;
-}
-
-nav ul {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-nav li {
-  cursor: pointer;
-  font-weight: bold;
-}
-
-
 .card img:hover {
   transform: scale(1.03);
 }
@@ -178,7 +142,7 @@ footer {
   grid-area: footer;
   
   padding: 20px;
-  background-color: #6E5034;
+  background-color: #F3CF7A;
 
   display: flex;
   justify-content: center;
@@ -241,7 +205,7 @@ footer p {
 }
 
 .card {
-  background: #CDB885;
+  background: #8A8635;
   border-radius: 14px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 
@@ -255,34 +219,6 @@ footer p {
 }
 
 
-
-.aboutMe {
-  display: flex;
-  justify-content: space-between; /* Plats mellan text och bild */
-  align-items: center;             /* Vertikalt centrerad */
-  gap: 40px;                       /* Liten lucka mellan kolumner */
-  max-width: 1000px;               /* Begränsar storlek på hela sektionen */
-  margin: 0 auto;                  /* Centrerar sektionen på sidan */
-  padding: 40px 20px;
-}
-
-.aboutText {
-  flex: 1; /* Text tar tillgängligt utrymme på vänster sida */
-}
-
-.aboutImg {
-  flex: 1; /* Bild tar resten av utrymmet */
-  display: flex;
-  justify-content: center; /* Centrerar bilden i sin kolumn */
-}
-
-.aboutImg img {
-  width: 100%;       /* Tar hela kolumnen */
-  max-width: 400px;  /* Största storlek på bilden */
-  height: auto;
-  border-radius: 5px;
-  object-fit: cover;
-}
 
 .gallery img {
   transition: transform 0.4s ease, box-shadow 0.4s ease;
@@ -298,7 +234,7 @@ footer p {
   margin: 40px 0 20px 0;
   padding: 20px;
   max-width: 400px;
-  background-color: #CDB885; /* ljus bakgrund för att lyfta den */
+  background-color: #F3CF7A; /* ljus bakgrund för att lyfta den */
   border-radius: 15px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   font-family: 'Quicksand', sans-serif;
@@ -315,10 +251,18 @@ footer p {
 
 .minadress a:hover {
   text-decoration: underline;
-  color: #6E5034;
+  color: #F3CF7A;
 }
 
-
+.intro {
+  width: 100%;      /* begränsa radlängden för läsbarhet */
+  margin: 10px auto;      /* centrerar sektionen och ger luft ovanför/under */
+  padding: 0 10px;        /* lite luft på sidorna */
+  text-align: center;     /* centrerad text */
+  font-size: 3.0rem;      /*  större än vanlig text */
+  line-height: 1.4;       /* bra radavstånd */
+  color: #000000;                 
+}
 
 
 @media (min-width:1025px) {
@@ -330,15 +274,40 @@ footer p {
   gap: 24px;
   padding: 24px;
 }
-  
+  header {
+    padding: 10px;
+    display: grid;
+    grid-template-areas: 
+      "h1 nav";
+    grid-template-columns: 1fr 1fr;
+  }
+
+  nav {
+    grid-area: nav;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 10px;
+    margin: 5px 0;
+  }
+
+  h1 {
+    grid-area: h1;
+    text-align: left;
+  }
+.box {
+  padding: 20px 40px;
+  box-sizing: border-box;
+}
+
 .aboutMe {
   display: flex;
   justify-content: space-between; /* Plats mellan text och bild */
   align-items: center;             /* Vertikalt centrerad */
   gap: 40px;                       /* Liten lucka mellan kolumner */
   max-width: 1000px;               /* Begränsar storlek på hela sektionen */
-  margin: 0 auto;                  /* Centrerar sektionen på sidan */
-  padding: 40px 20px;
+  margin: 10px auto;                  /* Centrerar sektionen på sidan */
+  padding: 80px 20px;
 }
 
 .aboutText {
@@ -351,13 +320,15 @@ footer p {
   justify-content: center; /* Centrerar bilden i sin kolumn */
 }
 
-.aboutImg img {
-  width: 100%;       /* Tar hela kolumnen */
-  max-width: 400px;  /* Största storlek på bilden */
+.aboutImg img {     
+  width: 400px;  /* Största storlek på bilden */
   height: auto;
+  max-height: 100%;
   border-radius: 5px;
   object-fit: cover;
+  
 }
+
 
 .gallery img {
   transition: transform 0.4s ease, box-shadow 0.4s ease;
@@ -398,7 +369,7 @@ footer p {
   margin: 30px auto;      /* centrerar sektionen och ger luft ovanför/under */
   padding: 0 20px;        /* lite luft på sidorna */
   text-align: center;     /* centrerad text */
-  font-size: 1.1rem;      /* lite större än vanlig text */
+  font-size: 2.0rem;      /* lite större än vanlig text */
   line-height: 1.6;       /* bra radavstånd */
   color: #000000;            /* lite ljusare än rubrik, diskret */
 }
@@ -440,7 +411,7 @@ footer p {
   flex-grow: 1;
   font-size: 0.9rem;
   line-height: 1.5;
-  color:#000000;
+  color: #000000;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   line-clamp: 3;
@@ -461,7 +432,7 @@ footer p {
   transform: scale(1.03);
 }
 .card {
-  background: #CDB885;
+  background: #F3CF7A;
   border-radius: 14px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 
@@ -483,7 +454,7 @@ footer p {
   margin: 40px 0 20px 0;
   padding: 20px;
   max-width: 400px;
-  background-color: #CDB885; /* ljus bakgrund för att lyfta den */
+  background-color: #F3CF7A; /* ljus bakgrund för att lyfta den */
   border-radius: 15px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   font-family: 'Quicksand', sans-serif;
@@ -495,13 +466,13 @@ footer p {
 
 
 .minadress a {
-  color: #000000;
+  color:  #000000;
   text-decoration: none;
 }
 
 .minadress a:hover {
   text-decoration: underline;
-  color: #6E5034;
+  color: #F3CF7A;
 }
 .aboutMe ul {
     list-style-type: none;
@@ -578,15 +549,7 @@ footer p {
   }
 
  
-   .intro {
-  width: 100%;      /* begränsa radlängden för läsbarhet */
-  margin: 10px auto;      /* centrerar sektionen och ger luft ovanför/under */
-  padding: 0 10px;        /* lite luft på sidorna */
-  text-align: center;     /* centrerad text */
-  font-size: 1.1rem;      /* lite större än vanlig text */
-  line-height: 1.4;       /* bra radavstånd */
-  color: #000000;            /* lite ljusare än rubrik, diskret */
-}
+   
   .seeMore {
   margin-top: 10px;
 }
@@ -599,7 +562,6 @@ footer p {
  
   
 }
-
 
 
 
