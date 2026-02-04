@@ -8,22 +8,22 @@ const paintings = [
   {
     image: "images/Image2.jpg",
     title: "Woman of the Sea",
-    description: "En självpoträtt 'inspirerad av hopp."
+    description: "En självpoträtt inspirerad av hopp."
   },
   {
     image: "images/Image3.jpg",
     title: "Sovven och Bonnie",
-    description: "Illustration somv var en present till bebisen i bildenpå hennes ett års födelsedag"
+    description: "Illustration som var en present till bebisen i bilden på hennes ett års födelsedag"
   },
   {
     image: "images/Image4.jpg",
     title: "Sommarstuga",
-    description: "En somrig dag i Småland"
+    description: "En somrig dag i Småland."
   },
    {
     image: "images/Image5.jpg",
     title: "Beach day",
-    description: "Semester på strand"
+    description: "Semester på strand."
   },
 
    {
@@ -33,19 +33,19 @@ const paintings = [
   },
    {
     image: "images/Image7.jpg",
-    title: "The Union",
+    title: "Bröllop",
     description: "Brollopsdag present till Herr och Fru Elfqvist."
   },
    {
     image: "images/Image8.jpg",
     title: "Det är fortfarande tänt",
-    description: "Mystisk jultomten"
+    description: "Mystisk jultomten."
   },
 
    {
     image: "images/Image9.jpg",
     title: "Ska vi plocka blommor",
-    description: "Still sjö med blommor"
+    description: "Stilla sjö med blommor"
   },
    {
     image: "images/Image10.jpg",
@@ -58,34 +58,34 @@ const paintings = [
     description: "Savanna temad berättelse"
   },
    {
-    image: "images/Image12.jpg",
+    image: "images/Image12.JPG",
     title: "Blåmes",
-    description: "Körsbärsblommoroch en liten fågel som vilar"
+    description: "Körsbärsblommor och en trött blåmes som vilar"
   },
    {
     image: "images/Image13.jpg",
     title: "Himmeln som dansar",
-    description: "Norrsken bakom bergerna"
+    description: "Norrsken bakom bergerna."
     },
      {
-    image: "images/Image14.jpg",
+    image: "images/Image14.JPG",
     title: "Herr och Fru Andersson",
-    description: "Gräsandar i sjön"
+    description: "Gräsänder i sjön"
   },
    {
     image: "images/Image15.jpg",
     title: "Två sidor av samma mynt",
-    description: "Målning visar balans och styrka"
+    description: "Målning som visar balans och styrka"
   },
    {
-    image: "images/Image16.jpg",
+    image: "images/Image16.JPG",
     title: "Havet",
     description: "Solnedgång i havet"
   },
    {
     image: "images/Image17.jpg",
-    title: "Bete",
-    description: "Rådjur som betar i savanna"
+    title: "Savannan",
+    description: "Antiloper som betar i savanna"
   },
 ];
 const gallery = document.getElementById("gallery");
@@ -124,4 +124,5 @@ paintings.forEach(painting => {
 lightbox.addEventListener("click", () => {
   lightbox.style.display = "none";
   lightboxImg.src = "";
+
 });
