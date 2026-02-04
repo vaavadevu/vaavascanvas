@@ -2,7 +2,7 @@ body {
   font-family: 'Quicksand', sans-serif;
   color: #000000;
   line-height: 1.6;
-  background-color: #ACBFA4; /* varm bakgrundsfärg */
+  background-color: #5DD3B6; /* varm bakgrundsfärg */
   margin: 0;
   padding: 0;
   display: grid;
@@ -599,6 +599,7 @@ footer p {
  
   
 }
+
 
 
 
