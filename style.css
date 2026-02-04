@@ -579,7 +579,7 @@ footer p {
 
  
    .intro {
-  width: 100%      /* begränsa radlängden för läsbarhet */
+  width: 100%;      /* begränsa radlängden för läsbarhet */
   margin: 10px auto;      /* centrerar sektionen och ger luft ovanför/under */
   padding: 0 10px;        /* lite luft på sidorna */
   text-align: center;     /* centrerad text */
@@ -599,6 +599,7 @@ footer p {
  
   
 }
+
 
 
 
