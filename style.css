@@ -25,7 +25,7 @@ nav {
   align-items: center;
   padding: 10px;
   margin: 10px;
-  background-color: #D3D3D3; 
+  background-color: #CDB885; 
 }
 
 nav a::after {
@@ -88,7 +88,7 @@ footer {
   grid-area: footer;
   
   padding: 20px;
-  background-color:#D3D3D3;
+  background-color: #6E5034;
 
   display: flex;
   justify-content: center;
@@ -109,7 +109,7 @@ header {
   height: fit-content;
   text-align: center;
   padding: 2px 10px;
-  background-color: #D3D3D3;
+  background-color: #6E5034;
   
   
 }
@@ -130,7 +130,7 @@ header {
   display: block;
   width: 100%;
   height: 3px;
-  background-color: #D3D3D3; /* accentfärg */
+  background-color: #CDB885; /* accentfärg */
   margin: 15px auto 0 auto;
   border-radius: 2px;
 }
@@ -178,7 +178,7 @@ footer {
   grid-area: footer;
   
   padding: 20px;
-  background-color:#D3D3D3;
+  background-color: #6E5034;
 
   display: flex;
   justify-content: center;
@@ -241,7 +241,7 @@ footer p {
 }
 
 .card {
-  background: white;
+  background: #CDB885;
   border-radius: 14px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 
@@ -298,7 +298,7 @@ footer p {
   margin: 40px 0 20px 0;
   padding: 20px;
   max-width: 400px;
-  background-color: #D3D3D3; /* ljus bakgrund för att lyfta den */
+  background-color: #CDB885; /* ljus bakgrund för att lyfta den */
   border-radius: 15px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   font-family: 'Quicksand', sans-serif;
@@ -315,7 +315,7 @@ footer p {
 
 .minadress a:hover {
   text-decoration: underline;
-  color: #40513B;
+  color: #6E5034;
 }
 
 
@@ -461,7 +461,7 @@ footer p {
   transform: scale(1.03);
 }
 .card {
-  background: white;
+  background: #CDB885;
   border-radius: 14px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 
@@ -483,7 +483,7 @@ footer p {
   margin: 40px 0 20px 0;
   padding: 20px;
   max-width: 400px;
-  background-color: #D3D3D3; /* ljus bakgrund för att lyfta den */
+  background-color: #CDB885; /* ljus bakgrund för att lyfta den */
   border-radius: 15px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   font-family: 'Quicksand', sans-serif;
@@ -501,7 +501,7 @@ footer p {
 
 .minadress a:hover {
   text-decoration: underline;
-  color: #40513B;
+  color: #6E5034;
 }
 .aboutMe ul {
     list-style-type: none;
@@ -599,6 +599,7 @@ footer p {
  
   
 }
+
 
 
 
