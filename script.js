@@ -4,6 +4,7 @@ const paintings = [
     image: "images/vattenfall.jpg",
     title: "Vattenfall",
     description: "Där vattnet möter klippan och tiden står stilla."
+    size: "41 x 33 cm",
   },
   {
     image: "images/womanInTheSea.jpg",
@@ -94,41 +95,52 @@ const paintings = [
     description: "Rävarna som myser innuti en trädöppning"
   },
 ];
+// 2️⃣ Element
 const gallery = document.getElementById("gallery");
-const lightbox = document.getElementById("lightbox");
-const lightboxImg = document.getElementById("lightbox-img");
+const modal = document.getElementById("artModal");
+const modalImg = document.getElementById("modalImg");
+const modalTitle = document.getElementById("modalTitle");
+const modalDesc = document.getElementById("modalDesc");
+const modalBuy = document.getElementById("modalBuy");
+const modalClose = document.getElementById("modalClose");
 
+// 3️⃣ Skapa galleribilder
 paintings.forEach(painting => {
-  const card = document.createElement("div");
-  card.classList.add("card");
-
   const img = document.createElement("img");
   img.src = painting.image;
   img.alt = painting.title;
+  img.style.cursor = "pointer";
+  img.style.height = "300px";
+  img.style.objectFit = "cover";
+  img.style.margin = "5px";
 
-  // 👉 KLICK = öppna lightbox
   img.addEventListener("click", () => {
-    lightbox.style.display = "flex";
-    lightboxImg.src = painting.image;
-    lightboxImg.alt = painting.title;
+    // Öppna modal
+    modal.style.display = "flex";
+    modalImg.src = painting.image;
+    modalTitle.textContent = painting.title;
+    modalDesc.textContent = painting.description;
+
+    // Storlek
+    let sizeHTML = painting.size ? `<p>Storlek: ${painting.size}</p>` : "";
+
+    // Köp-knappar
+    let buyHTML = "";
+    if(painting.originalPrice) buyHTML += `<button>Köp original – ${painting.originalPrice} kr</button>`;
+    if(painting.printPrice) buyHTML += `<button>Köp print – ${painting.printPrice} kr</button>`;
+
+    modalBuy.innerHTML = sizeHTML + buyHTML;
   });
 
-  const title = document.createElement("h3");
-  title.textContent = painting.title;
-
-  const desc = document.createElement("p");
-  desc.textContent = painting.description;
-
-  card.appendChild(img);
-  card.appendChild(title);
-  card.appendChild(desc);
-
-  gallery.appendChild(card);
+  gallery.appendChild(img);
 });
 
-// 4️⃣ Klick på bakgrunden = stäng lightbox
-lightbox.addEventListener("click", () => {
-  lightbox.style.display = "none";
-  lightboxImg.src = "";
+// 4️⃣ Stäng modal
+modalClose.addEventListener("click", () => {
+  modal.style.display = "none";
+  modalImg.src = "";
+});
 
+modal.addEventListener("click", (e) => {
+  if(e.target === modal) modal.style.display = "none";
 });
