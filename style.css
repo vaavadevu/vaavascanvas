@@ -220,15 +220,22 @@ footer p {
 
 
 
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
 .gallery img {
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  width: 100%;
+  height: auto;
+  cursor: pointer;
+  transition: transform 0.3s ease;
 }
 
 .gallery img:hover {
-  transform: scale(1.05);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  transform: scale(1.03);
 }
-
 .minadress {
   text-align: left;
   margin: 40px 0 20px 0;
@@ -329,15 +336,15 @@ footer p {
   
 }
 
-
 .gallery img {
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  width: 100%;
+  height: auto;
+  cursor: pointer;
+  transition: transform 0.3s ease;
 }
 
 .gallery img:hover {
-  transform: scale(1.05);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-}
+  transform: scale(1.03);
   
   .homeGallery {
   max-width: 1000px;
@@ -562,16 +569,6 @@ footer p {
  
   
 }
-
-
-
-
-
-
-
-
-
-
 
 
 

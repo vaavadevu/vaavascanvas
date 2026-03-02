@@ -6,7 +6,7 @@ const paintings = [
     description: "Där vattnet möter klippan och tiden står stilla."
   },
   {
-    image: "images/womanOfTheSea.jpg",
+    image: "images/womanInTheSea.jpg",
     title: "Woman of the Sea",
     description: "En självpoträtt inspirerad av hopp."
   },
@@ -21,7 +21,7 @@ const paintings = [
     description: "En somrig dag i Småland."
   },
    {
-    image: "images/semesterPåStrand.jpg",
+    image: "images/sommarPåStranden.jpg",
     title: "Beach day",
     description: "Semester på strand."
   },
