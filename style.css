@@ -61,7 +61,7 @@ nav ul {
 }
 
 nav li {
-  cursor: hand;
+  cursor: pointer;
   font-weight: bold;
 }
 
@@ -345,8 +345,9 @@ footer p {
 
 .gallery img:hover {
   transform: scale(1.03);
-  
-  .homeGallery {
+}
+
+.homeGallery {
   max-width: 1000px;
   margin: 40px auto;
   padding: 0 20px;
@@ -567,24 +568,4 @@ footer p {
   text-align: center;
 }
  
-  
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
