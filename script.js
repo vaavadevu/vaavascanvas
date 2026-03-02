@@ -21,18 +21,18 @@ const paintings = [
     description: "En somrig dag i Småland."
   },
    {
-    image: "images/sommarPåStranden.jpg",
+    image: "images/sommarP%C3%A5Stranden.jpg",
     title: "Beach day",
     description: "Semester på strand."
   },
 
    {
-    image: "images/självporträtt.jpg",
+    image: "images/sj%C3%A4lvportr%C3%A4tt.jpg",
     title: "Embrace",
     description: "Självpoträtt som visar förändring och ett nytt liv."
   },
    {
-    image: "images/bröllopspresent.jpg",
+    image: "images/br%C3%B6llopspresent.jpg",
     title: "Bröllop",
     description: "Brollopsdag present till Herr och Fru Elfqvist."
   },
@@ -43,7 +43,7 @@ const paintings = [
   },
 
    {
-    image: "images/näckrosor.jpg",
+    image: "images/n%C3%A4ckrosor.jpg",
     title: "Ska vi plocka blommor",
     description: "Stilla sjö med blommor"
   },
@@ -58,7 +58,7 @@ const paintings = [
     description: "Savanna temad berättelse"
   },
    {
-    image: "images/vårkänsla.JPG",
+    image: "images/v%C3%A5rk%C3%A4nsla.JPG",
     title: "Vårkänsla",
     description: "Körsbärsblommor och en trött blåmes som vilar"
   },
@@ -78,12 +78,12 @@ const paintings = [
     description: "Målning som visar balans och styrka"
   },
    {
-    image: "images/solnedgång.JPG",
+    image: "images/solnedg%C3%A5ng.JPG",
     title: "Havet",
     description: "Solnedgång i havet"
   },
    {
-    image: "images/rådjur.jpg",
+    image: "images/r%C3%A5djur.jpg",
     title: "Savannan",
     description: "Antiloper som betar i savanna"
   },
