@@ -1,8 +1,27 @@
+:root {
+  /* Bakgrunder */
+  --bg-warm: #F1E6D8;       /* mjuk varm beige */
+  --bg-light: #FFFFFF;       /* ljus bakgrund för galleri / sektioner */
+  
+  /* Accent & knappar */
+  --accent-light: #FFCDA3;  /* ljus aprikos / highlight */
+  --accent-green: #6BA292;  /* mjuk grön för köp-knappar eller hover */
+  
+  /* Text */
+  --text-dark: #1E1E1E;     /* nästan svart, men mjukare */
+  --text-light: #FFFFFF;     /* för text på mörk bakgrund */
+  --text-link: #386FA4;      /* elegant blå för länkar */
+  
+  /* Skuggor */
+  --shadow-light: rgba(0, 0, 0, 0.08);
+  --shadow-dark: rgba(0, 0, 0, 0.5);
+}
+
 body {
   font-family: 'Quicksand', sans-serif;
-  color: #000000;
+  color: var(--text-dark);
   line-height: 1.6;
-  background-color: #8A8635; /* varm bakgrundsfärg */
+  background-color: var(--bg-warm); /* varm bakgrundsfärg */
   margin: 0;
   padding: 0;
   display: grid;
@@ -27,12 +46,12 @@ nav {
   align-items: center;
   padding: 10px;
   margin: 10px;
-  background-color: #F3CF7A; /* ljus bakgrund för nav */
+  background-color: var(--accent-light); /* ljus bakgrund för nav */
 }
 
 nav a {
   position: relative;
-  color: #022a33;
+  color: var(--text-link);
 }
 
 
@@ -68,7 +87,7 @@ nav li {
 
 h1, h2, h3 {
   font-family: 'Playfair Display', serif; /* finare rubrikstil */
-  color: #000000; /* mörkare grön för rubriker */
+  color: var(--text-dark); /* mörkare grön för rubriker */
 }
 
 h1 {
@@ -97,7 +116,7 @@ footer {
   grid-area: footer;
   
   padding: 20px;
-  background-color: #F3CF7A;
+  background-color: var(--accent-light);
 
   display: flex;
   justify-content: center;
@@ -111,14 +130,14 @@ footer {
 footer p {
   margin: 0;
   font-size: 0.85rem;
-  color: #000000;
+  color: var(--text-dark);
 }
 header {
   grid-area: header;
   height: fit-content;
   text-align: center;
   padding: 2px 5px;
-  background-color: #F3CF7A; /* ljus bakgrund för header */
+  background-color: var(--accent-light); /* ljus bakgrund för header */
   
 }
 .seeMore {
@@ -127,7 +146,7 @@ header {
 
 .seeMore a {
   text-decoration: none;
-  color: #000000;
+  color: var(--text-dark);
   font-weight: 600;
 }
 
@@ -138,7 +157,7 @@ footer {
   grid-area: footer;
   
   padding: 20px;
-  background-color: #F3CF7A;
+  background-color: var(--accent-light);
 
   display: flex;
   justify-content: center;
@@ -152,27 +171,108 @@ footer {
 footer p {
   margin: 0;
   font-size: 0.85rem;
-  color: #000000;
+  color: var(--text-dark);
 }
-
-
-
-.gallery {
+/* Galleri */
+#gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  padding: 20px;
+  justify-items: center;
 }
 
-.gallery img {
+/* Galleri-bild */
+.gallery-item img {
   width: 100%;
-  height: 350px;
+  height: 250px; /* kan justeras för större eller mindre rutor */
+  object-fit: contain; /* hela målningen syns */
+  background: var(--bg-light); /* subtil bakgrund */
   cursor: pointer;
-  transition: transform 0.3s ease;
-  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+.gallery-item img:hover {
+  transform: scale(1.03);
 }
 
-.gallery img:hover {
-  transform: scale(1.03);
+/* Modal */
+/* Modal flexbox justering */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--shadow-dark);
+  justify-content: flex-start; /* vi vill ha kolumn från toppen */
+  align-items: center; /* centrerar innehållet horisontellt */
+  padding: 40px 20px;
+  overflow: auto;
+  z-index: 1000;
+  flex-direction: column; /* stackar bild + info */
+}
+
+/* Modal info centrerad */
+.modal-info {
+  text-align: center; /* centerar texten */
+  color: var(--text-light);
+  margin-top: 15px;
+  max-width: 90%; /* begränsa bredd på texten */
+}
+
+.modal img {
+  max-width: 90%;
+  max-height: 70vh;
+  display: block;
+  margin: 0 auto;
+}
+
+
+.modal-info h3 {
+  margin: 5px 0;
+  font-size: 24px;
+}
+.modal-info p {
+  margin: 3px 0;
+  font-size: 16px;
+}
+
+/* Köp-knappar i modal */
+.modal-info button {
+  margin: 5px 5px 0 5px;
+  padding: 6px 15px;
+  border: 1px solid var(--accent-green);
+  background: transparent;
+  color: var(--accent-green);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+}
+.modal-info button:hover {
+  background: var(--accent-green);
+  color: var(--text-light);
+}
+
+/* Close och arrows */
+.close, .arrow {
+  position: absolute;
+  color: var(--text-light);
+  font-size: 32px;
+  cursor: pointer;
+  user-select: none;
+}
+.close {
+  top: 10px;
+  right: 20px;
+}
+.arrow.left {
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%);
+}
+.arrow.right {
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
 }
 
 .minadress {
@@ -180,24 +280,24 @@ footer p {
   margin: 40px 0 20px 0;
   padding: 20px;
   max-width: 400px;
-  background-color: #F3CF7A; /* ljus bakgrund för att lyfta den */
+  background-color: var(--accent-light); /* ljus bakgrund för att lyfta den */
   border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px var(--shadow-light);
   font-family: 'Quicksand', sans-serif;
-  color: #000000;
+  color: var(--text-dark);
   line-height: 1.6;
   font-weight: bold;
 }
 
 
 .minadress a {
-  color: #000000;
+  color: var(--text-dark);
   text-decoration: none;
 }
 
 .minadress a:hover {
   text-decoration: underline;
-  color: #F3CF7A;
+  color: var(--accent-light);
 }
 
 .intro {
@@ -207,19 +307,14 @@ footer p {
   text-align: center;     /* centrerad text */
   font-size: 3.0rem;      /*  större än vanlig text */
   line-height: 1.4;       /* bra radavstånd */
-  color: #000000;                 
+  color: var(--text-dark);                 
 }
 
 
 @media (min-width:1025px) {
 
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 2fr));
-  justify-items: center;
-  gap: 24px;
-  padding: 24px;
-}
+
+
   header {
     padding: 10px;
     display: grid;
@@ -319,16 +414,8 @@ footer p {
   text-align: center;     /* centrerad text */
   font-size: 2.0rem;      /* lite större än vanlig text */
   line-height: 1.6;       /* bra radavstånd */
-  color: #000000;            /* lite ljusare än rubrik, diskret */
+  color: var(--text-dark);            /* lite ljusare än rubrik, diskret */
 }
-  .gallery {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(250px, 1fr));
-  justify-items: center;
-  gap: 10px;
-  padding: 10px;
-}
-
 }
 
 
@@ -337,11 +424,11 @@ footer p {
   margin: 40px 0 20px 0;
   padding: 20px;
   max-width: 400px;
-  background-color: #F3CF7A; /* ljus bakgrund för att lyfta den */
+  background-color: var(--accent-light); /* ljus bakgrund för att lyfta den */
   border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px var(--shadow-light);
   font-family: 'Quicksand', sans-serif;
-  color: #000000;
+  color: var(--text-dark);
   line-height: 1.6;
   font-weight: bold;
    font-size: 0.95rem;
@@ -349,13 +436,13 @@ footer p {
 
 
 .minadress a {
-  color:  #000000;
+  color: var(--text-dark);
   text-decoration: none;
 }
 
 .minadress a:hover {
   text-decoration: underline;
-  color: #F3CF7A;
+  color: var(--accent-light);
 }
 .aboutMe ul {
     list-style-type: none;
@@ -367,6 +454,7 @@ footer p {
   max-width: 600px;
   margin: 0 auto;
 }
+  
   
   .aboutMe {
     display: flex;
@@ -385,15 +473,26 @@ footer p {
   max-width: 100%;
   height: auto;
 }
-  .gallery {
-  display: flex;
-  flex-direction: column;
-  justify-items: center;
-  gap: 10px;
-  padding: 10px;
+#gallery {
+    gap: 8px;
+    padding: 10px;
   }
-  
- 
+  .gallery-item img {
+    height: 180px; /* mindre rutstorlek */
+  }
+  .modal img {
+    max-height: 50vh; /* lite mindre så info får plats under */
+  }
+  .modal-info h3 {
+    font-size: 20px;
+  }
+  .modal-info p {
+    font-size: 14px;
+  }
+  .modal-info button {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
   .galleryGrid img {
   width: 100%;
   height: 350px;
