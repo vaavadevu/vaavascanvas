@@ -133,10 +133,6 @@ header {
 
 
 
-.card img:hover {
-  transform: scale(1.03);
-}
-
 footer {
 
   grid-area: footer;
@@ -159,21 +155,7 @@ footer p {
   color: #000000;
 }
 
-.lightbox {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.8);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
 
-.lightbox img {
-  max-width: 90%;
-  max-height: 90%;
-  border-radius: 12px;
-}
 
 .gallery {
   display: grid;
@@ -183,9 +165,10 @@ footer p {
 
 .gallery img {
   width: 100%;
-  height: auto;
+  height: 350px;
   cursor: pointer;
   transition: transform 0.3s ease;
+  object-fit: cover;
 }
 
 .gallery img:hover {
@@ -294,9 +277,10 @@ footer p {
 
 .gallery img {
   width: 100%;
-  height: auto;
+  height: 350px;
   cursor: pointer;
   transition: transform 0.3s ease;
+  object-fit: cover;
 }
 
 .gallery img:hover {
@@ -412,7 +396,7 @@ footer p {
  
   .galleryGrid img {
   width: 100%;
-  height: auto;
+  height: 350px;
   border-radius: 10px;
   object-fit: cover;
 }
