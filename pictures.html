@@ -8,9 +8,7 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-<div class="lightbox" id="lightbox">
-  <img id="lightbox-img">
-</div>
+
 
 <body>
 
@@ -32,6 +30,23 @@
   <main class="gallery" id="gallery">
     <!-- Bilder läggs in via JavaScript -->
   </main>
+  <main class="gallery" id="gallery">
+  <!-- JS fyller på bilder -->
+</main>
+
+<div class="modal" id="modal">
+  <span class="close" id="modal-close">&times;</span>
+  <img id="modal-img">
+  <div class="modal-info">
+    <h3 id="modal-title"></h3>
+    <p id="modal-size"></p>
+    <p id="modal-desc"></p>
+    <div id="modal-buttons"></div>
+  </div>
+  <span class="arrow left" id="modal-prev">&#10094;</span>
+  <span class="arrow right" id="modal-next">&#10095;</span>
+</div>
+
 
   <script src="script.js"></script>
 </body>

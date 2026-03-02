@@ -3,7 +3,7 @@ const paintings = [
   {
     image: "images/vattenfall.jpg",
     title: "Vattenfall",
-    description: "Där vattnet möter klippan och tiden står stilla."
+    description: "Där vattnet möter klippan och tiden står stilla.",
     size: "41 x 33 cm",
   },
   {
@@ -95,52 +95,86 @@ const paintings = [
     description: "Rävarna som myser innuti en trädöppning"
   },
 ];
-// 2️⃣ Element
-const gallery = document.getElementById("gallery");
-const modal = document.getElementById("artModal");
-const modalImg = document.getElementById("modalImg");
-const modalTitle = document.getElementById("modalTitle");
-const modalDesc = document.getElementById("modalDesc");
-const modalBuy = document.getElementById("modalBuy");
-const modalClose = document.getElementById("modalClose");
 
-// 3️⃣ Skapa galleribilder
-paintings.forEach(painting => {
+const gallery = document.getElementById("gallery");
+const modal = document.getElementById("modal");
+const modalImg = document.getElementById("modal-img");
+const modalTitle = document.getElementById("modal-title");
+const modalSize = document.getElementById("modal-size");
+const modalDesc = document.getElementById("modal-desc");
+const modalButtons = document.getElementById("modal-buttons");
+const modalClose = document.getElementById("modal-close");
+const modalNext = document.getElementById("modal-next");
+const modalPrev = document.getElementById("modal-prev");
+
+let currentIndex = 0;
+
+// Skapa gallery
+paintings.forEach((painting, index) => {
+  const item = document.createElement("div");
+  item.classList.add("gallery-item");
+
   const img = document.createElement("img");
   img.src = painting.image;
   img.alt = painting.title;
-  img.style.cursor = "pointer";
-  img.style.height = "300px";
-  img.style.objectFit = "cover";
-  img.style.margin = "5px";
 
-  img.addEventListener("click", () => {
-    // Öppna modal
-    modal.style.display = "flex";
-    modalImg.src = painting.image;
-    modalTitle.textContent = painting.title;
-    modalDesc.textContent = painting.description;
+  img.addEventListener("click", () => openModal(index));
 
-    // Storlek
-    let sizeHTML = painting.size ? `<p>Storlek: ${painting.size}</p>` : "";
-
-    // Köp-knappar
-    let buyHTML = "";
-    if(painting.originalPrice) buyHTML += `<button>Köp original – ${painting.originalPrice} kr</button>`;
-    if(painting.printPrice) buyHTML += `<button>Köp print – ${painting.printPrice} kr</button>`;
-
-    modalBuy.innerHTML = sizeHTML + buyHTML;
-  });
-
-  gallery.appendChild(img);
+  item.appendChild(img);
+  gallery.appendChild(item);
 });
 
-// 4️⃣ Stäng modal
-modalClose.addEventListener("click", () => {
+// Öppna modal
+function openModal(index) {
+  currentIndex = index;
+  const painting = paintings[index];
+  modalImg.src = painting.image;
+  modalTitle.textContent = painting.title;
+  modalSize.textContent = painting.size;
+  modalDesc.textContent = painting.description;
+
+  // Rensa gamla knappar
+  modalButtons.innerHTML = "";
+  if (painting.originalPrice) {
+    const btnOriginal = document.createElement("button");
+    btnOriginal.textContent = `Original – ${painting.originalPrice} kr`;
+    modalButtons.appendChild(btnOriginal);
+  }
+  if (painting.printPrice) {
+    const btnPrint = document.createElement("button");
+    btnPrint.textContent = `Print – ${painting.printPrice} kr`;
+    modalButtons.appendChild(btnPrint);
+  }
+
+  modal.style.display = "flex";
+}
+
+// Stäng modal
+function closeModal() {
   modal.style.display = "none";
-  modalImg.src = "";
+}
+modalClose.addEventListener("click", closeModal);
+
+// Next / Prev
+function nextPainting() {
+  currentIndex = (currentIndex + 1) % paintings.length;
+  openModal(currentIndex);
+}
+function prevPainting() {
+  currentIndex = (currentIndex - 1 + paintings.length) % paintings.length;
+  openModal(currentIndex);
+}
+modalNext.addEventListener("click", nextPainting);
+modalPrev.addEventListener("click", prevPainting);
+
+// ESC key
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeModal();
+  if (e.key === "ArrowRight") nextPainting();
+  if (e.key === "ArrowLeft") prevPainting();
 });
 
+// Klicka utanför bilden stänger modal
 modal.addEventListener("click", (e) => {
-  if(e.target === modal) modal.style.display = "none";
+  if (e.target === modal) closeModal();
 });
