@@ -68,7 +68,7 @@ const paintings = [
     description: "Norrsken bakom bergerna."
     },
      {
-    image: "images/herrOchFruAndersson.jpg",
+    image: "images/herrOchFruAndersson.JPG",
     title: "Herr och Fru Andersson",
     description: "Gräsänder i sjön"
   },
