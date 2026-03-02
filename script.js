@@ -1,91 +1,97 @@
 
 const paintings = [
   {
-    image: "images/Image1.jpg",
+    image: "images/vattenfall.jpg",
     title: "Vattenfall",
     description: "Där vattnet möter klippan och tiden står stilla."
   },
   {
-    image: "images/Image2.jpg",
+    image: "images/womanOfTheSea.jpg",
     title: "Woman of the Sea",
     description: "En självpoträtt inspirerad av hopp."
   },
   {
-    image: "images/Image3.jpg",
+    image: "images/bonnie.jpg",
     title: "Sovven och Bonnie",
     description: "Illustration som var en present till bebisen i bilden på hennes ett års födelsedag"
   },
   {
-    image: "images/Image4.jpg",
+    image: "images/sommarstuga.jpg",
     title: "Sommarstuga",
     description: "En somrig dag i Småland."
   },
    {
-    image: "images/Image5.jpg",
+    image: "images/semesterPåStrand.jpg",
     title: "Beach day",
     description: "Semester på strand."
   },
 
    {
-    image: "images/Image6.jpg",
+    image: "images/självporträtt.jpg",
     title: "Embrace",
     description: "Självpoträtt som visar förändring och ett nytt liv."
   },
    {
-    image: "images/Image7.jpg",
+    image: "images/bröllopspresent.jpg",
     title: "Bröllop",
     description: "Brollopsdag present till Herr och Fru Elfqvist."
   },
    {
-    image: "images/Image8.jpg",
+    image: "images/mystiskJul.jpg",
     title: "Det är fortfarande tänt",
     description: "Mystisk jultomten."
   },
 
    {
-    image: "images/Image9.jpg",
+    image: "images/näckrosor.jpg",
     title: "Ska vi plocka blommor",
     description: "Stilla sjö med blommor"
   },
    {
-    image: "images/Image10.jpg",
+    image: "images/shiroOchOtis.jpg",
     title: "Vinterlek",
     description: "Hundarna Shiro och Otis som leker med varandra i snön"
   },
    {
-    image: "images/Image11.jpg",
+    image: "images/savannan.jpg",
     title: "Dags att gå hem",
     description: "Savanna temad berättelse"
   },
    {
-    image: "images/Image12.JPG",
-    title: "Blåmes",
+    image: "images/vårkänsla.JPG",
+    title: "Vårkänsla",
     description: "Körsbärsblommor och en trött blåmes som vilar"
   },
    {
-    image: "images/Image13.jpg",
-    title: "Himmeln som dansar",
+    image: "images/norrsken.jpg",
+    title: "Norrsken",
     description: "Norrsken bakom bergerna."
     },
      {
-    image: "images/Image14.JPG",
+    image: "images/herrOchFruAndersson.jpg",
     title: "Herr och Fru Andersson",
     description: "Gräsänder i sjön"
   },
    {
-    image: "images/Image15.jpg",
+    image: "images/vargen.jpg",
     title: "Två sidor av samma mynt",
     description: "Målning som visar balans och styrka"
   },
    {
-    image: "images/Image16.JPG",
+    image: "images/solnedgång.JPG",
     title: "Havet",
     description: "Solnedgång i havet"
   },
    {
-    image: "images/Image17.jpg",
+    image: "images/rådjur.jpg",
     title: "Savannan",
     description: "Antiloper som betar i savanna"
+  },
+
+  {
+    image: "images/skogsvila.jpg",
+    title: "Skogsvila",
+    description: "Rävarna som myser innuti en trädöppning"
   },
 ];
 const gallery = document.getElementById("gallery");
