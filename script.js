@@ -1,131 +1,206 @@
 
 const paintings = [
+   {
+    image: "images/herrOchFruAndersson.JPG",
+    title: "Herr och Fru Andersson",
+    description: "Gräsänder i sjön",
+    size: "60 x 90 cm",
+    originalPrice: 3000,
+    status: "SÅLD",
+  },
+  {
+    image: "images/womanInTheSea.jpg",
+    title: "Woman of the Sea",
+    description: "En självpoträtt inspirerad av hopp.",
+    size: "60 x 90 cm",
+    originalPrice: 2000,
+    status: "TILL SALU",
+  },
   {
     image: "images/vattenfall.jpg",
     title: "Vattenfall",
     description: "Där vattnet möter klippan och tiden står stilla.",
     size: "41 x 33 cm",
+    originalPrice: 1000,
+    status: "SÅLD",
   },
-  {
-    image: "images/womanInTheSea.jpg",
-    title: "Woman of the Sea",
-    description: "En självpoträtt inspirerad av hopp."
+  
+ {
+    image: "images/solnedg%C3%A5ng.JPG",
+    title: "Havet",
+    description: "Solnedgång i havet",
+    size: "41 x 33 cm",
+    originalPrice: 1000,
+    status: "TILL SALU",
   },
-  {
-    image: "images/bonnie.jpg",
-    title: "Sovven och Bonnie",
-    description: "Illustration som var en present till bebisen i bilden på hennes ett års födelsedag"
-  },
+
   {
     image: "images/sommarstuga.jpg",
     title: "Sommarstuga",
-    description: "En somrig dag i Småland."
+    description: "En somrig dag i Småland.",
+    size: "42 x 59 cm",
+    originalPrice: 1500,
+    status: "TILL SALU",
   },
+
    {
     image: "images/sommarP%C3%A5Stranden.jpg",
     title: "Beach day",
-    description: "Semester på strand."
+    description: "Semester på strand.",
+    size: "42 x 59 cm",
+    originalPrice: 1800,
+    status: "TILL SALU",
   },
 
    {
     image: "images/sj%C3%A4lvportr%C3%A4tt.jpg",
     title: "Embrace",
-    description: "Självpoträtt som visar förändring och ett nytt liv."
+    description: "Självpoträtt som visar förändring och ett nytt liv.",
+    size: "42 x 59 cm",
+    originalPrice: 1500,
+    status: "TILL SALU",
   },
-   {
-    image: "images/br%C3%B6llopspresent.jpg",
-    title: "Bröllop",
-    description: "Brollopsdag present till Herr och Fru Elfqvist."
-  },
+  
+
    {
     image: "images/mystiskJul.jpg",
     title: "Det är fortfarande tänt",
-    description: "Mystisk jultomten."
+    description: "Mystisk jultomten.",
+    size: "42 x 59 cm",
+    originalPrice: 1500,
+    status: "TILL SALU",
   },
 
    {
     image: "images/n%C3%A4ckrosor.jpg",
     title: "Ska vi plocka blommor",
-    description: "Stilla sjö med blommor"
+    description: "Stilla sjö med blommor",
+    size: "42 x 59 cm",
+    originalPrice: 1500,
+    status: "SÅLD",
   },
-   {
-    image: "images/shiroOchOtis.jpg",
-    title: "Vinterlek",
-    description: "Hundarna Shiro och Otis som leker med varandra i snön"
-  },
+   
    {
     image: "images/savannan.jpg",
     title: "Dags att gå hem",
-    description: "Savanna temad berättelse"
+    description: "Savanna temad berättelse",
+    size: "42 x 59 cm",
+    originalPrice: 1500,
+    status: "TILL SALU",
   },
    {
     image: "images/v%C3%A5rk%C3%A4nsla.JPG",
     title: "Vårkänsla",
-    description: "Körsbärsblommor och en trött blåmes som vilar"
+    description: "Körsbärsblommor och en trött blåmes som vilar",
+    size: "42 x 59 cm",
+    originalPrice: 1500,
+    status: "SÅLD",
   },
    {
     image: "images/norrsken.jpg",
     title: "Norrsken",
-    description: "Norrsken bakom bergerna."
-    },
-     {
-    image: "images/herrOchFruAndersson.JPG",
-    title: "Herr och Fru Andersson",
-    description: "Gräsänder i sjön"
+    description: "Norrsken bakom bergerna.",
+    size: "41 x 33 cm",
+    originalPrice: 1000,
+    status: "TILL SALU",
   },
+     
    {
     image: "images/vargen.jpg",
     title: "Två sidor av samma mynt",
-    description: "Målning som visar balans och styrka"
+    description: "Målning som visar balans och styrka",
+    size: "42 x 59 cm",
+    originalPrice: 1500,
+    status: "TILL SALU",
   },
-   {
-    image: "images/solnedg%C3%A5ng.JPG",
-    title: "Havet",
-    description: "Solnedgång i havet"
-  },
+   
    {
     image: "images/r%C3%A5djur.jpg",
     title: "Savannan",
-    description: "Antiloper som betar i savanna"
+    description: "Antiloper som betar i savanna",
+    size: "42 x 59 cm",
+    originalPrice: 1500,
+    status: "TILL SALU",
   },
 
   {
     image: "images/skogsvila.jpg",
     title: "Skogsvila",
-    description: "Rävarna som myser innuti en trädöppning"
+    description: "Rävarna som myser innuti en trädöppning",
+    size: "90 cm",
+    originalPrice: 3000,
+    status: "TILL SALU",
+  },
+
+   {
+    image: "images/br%C3%B6llopspresent.jpg",
+    title: "Bröllop",
+    description: "Brollopsdag present till Herr och Fru Elfqvist.",
+    size: "42 x 59 cm",
+    status: "Personlig present",
+  },
+  
+  {
+    image: "images/bonnie.jpg",
+    title: "Sovven och Bonnie",
+    description: "Illustration som var en present till bebisen i bilden på hennes ett års födelsedag",
+    size: "42 x 59 cm", 
+    status: "Personlig present",
+  },
+
+  {
+    image: "images/shiroOchOtis.jpg",
+    title: "Vinterlek",
+    description: "Hundarna Shiro och Otis som leker med varandra i snön",
+    size: "42 x 59 cm",
+    status: "Personlig present",
   },
 ];
 
 const gallery = document.getElementById("gallery");
 const modal = document.getElementById("modal");
-const modalImg = document.getElementById("modal-img");
-const modalTitle = document.getElementById("modal-title");
-const modalSize = document.getElementById("modal-size");
-const modalDesc = document.getElementById("modal-desc");
-const modalButtons = document.getElementById("modal-buttons");
-const modalClose = document.getElementById("modal-close");
-const modalNext = document.getElementById("modal-next");
-const modalPrev = document.getElementById("modal-prev");
+let modalImg, modalTitle, modalSize, modalDesc, modalButtons, modalClose, modalNext, modalPrev;
+if (modal) {
+  modalImg = document.getElementById("modal-img");
+  modalTitle = document.getElementById("modal-title");
+  modalSize = document.getElementById("modal-size");
+  modalDesc = document.getElementById("modal-desc");
+  modalButtons = document.getElementById("modal-buttons");
+  modalClose = document.getElementById("modal-close");
+  modalNext = document.getElementById("modal-next");
+  modalPrev = document.getElementById("modal-prev");
+}
 
 let currentIndex = 0;
 
 // Skapa gallery
-paintings.forEach((painting, index) => {
-  const item = document.createElement("div");
-  item.classList.add("gallery-item");
+if (gallery) {
+  paintings.forEach((painting, index) => {
+    const item = document.createElement("div");
+    item.classList.add("gallery-item");
 
-  const img = document.createElement("img");
-  img.src = painting.image;
-  img.alt = painting.title;
+    const img = document.createElement("img");
+    img.src = painting.image;
+    img.alt = painting.title;
 
-  img.addEventListener("click", () => openModal(index));
+    img.addEventListener("click", () => openModal(index));
 
-  item.appendChild(img);
-  gallery.appendChild(item);
-});
+    item.appendChild(img);
+
+    if (painting.status === "SÅLD") {
+      const badge = document.createElement("div");
+      badge.textContent = "Såld";
+      badge.classList.add("sold-badge");
+      item.appendChild(badge);
+    }
+
+    gallery.appendChild(item);
+  });
+}
 
 // Öppna modal
 function openModal(index) {
+  if (!modal) return;
   currentIndex = index;
   const painting = paintings[index];
   modalImg.src = painting.image;
@@ -133,27 +208,43 @@ function openModal(index) {
   modalSize.textContent = painting.size;
   modalDesc.textContent = painting.description;
 
-  // Rensa gamla knappar
   modalButtons.innerHTML = "";
-  if (painting.originalPrice) {
-    const btnOriginal = document.createElement("button");
-    btnOriginal.textContent = `Original – ${painting.originalPrice} kr`;
-    modalButtons.appendChild(btnOriginal);
-  }
-  if (painting.printPrice) {
-    const btnPrint = document.createElement("button");
-    btnPrint.textContent = `Print – ${painting.printPrice} kr`;
-    modalButtons.appendChild(btnPrint);
+
+  if (painting.status === "SÅLD") {
+    const soldText = document.createElement("p");
+    soldText.textContent = "Såld";
+    soldText.style.color = "red";
+    modalButtons.appendChild(soldText);
   }
 
+  else if (painting.status === "Personlig present") {
+    const personalText = document.createElement("p");
+    personalText.textContent = "Personlig målning – ej till salu";
+    personalText.style.opacity = "0.8";
+    modalButtons.appendChild(personalText);
+  }
+
+  else {
+    if (painting.originalPrice) {
+      const btnOriginal = document.createElement("button");
+      btnOriginal.textContent = `Original – ${painting.originalPrice} kr`;
+      modalButtons.appendChild(btnOriginal);
+    }
+
+    if (painting.printPrice) {
+      const btnPrint = document.createElement("button");
+      btnPrint.textContent = `Print – ${painting.printPrice} kr`;
+      modalButtons.appendChild(btnPrint);
+    }
+  }
   modal.style.display = "flex";
 }
 
 // Stäng modal
 function closeModal() {
+  if (!modal) return;
   modal.style.display = "none";
 }
-modalClose.addEventListener("click", closeModal);
 
 // Next / Prev
 function nextPainting() {
@@ -175,6 +266,12 @@ document.addEventListener("keydown", (e) => {
 });
 
 // Klicka utanför bilden stänger modal
-modal.addEventListener("click", (e) => {
-  if (e.target === modal) closeModal();
-});
+if (modal) {
+  if (modalClose) modalClose.addEventListener("click", closeModal);
+  if (modalNext) modalNext.addEventListener("click", nextPainting);
+  if (modalPrev) modalPrev.addEventListener("click", prevPainting);
+  // Klicka utanför bilden stänger modal
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeModal();
+  });
+}
