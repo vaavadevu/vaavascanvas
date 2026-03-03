@@ -170,9 +170,9 @@ header {
 
 .gallery-item img {
   width: 100%;
-  height: 250px;
-  object-fit: contain;
-  background: var(--bg-light);
+  height: auto;
+  aspect-ratio: 3 / 4;  /* rektangel, högre än bred */
+  object-fit: cover;
   cursor: pointer;
   transition: transform 0.2s ease;
 }
@@ -468,17 +468,20 @@ header {
     padding: 10px;
   }
 
+  
   #homeGalleryGrid {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
     padding: 10px;
+    width: 100%;
   }
 
-  .gallery-item img {
+  #homeGalleryGrid .gallery-item img {
     height: auto;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 3 / 4;
     object-fit: cover;
   }
+
 
   /* Modal */
   .modal {
@@ -547,7 +550,7 @@ header {
     text-align: center;
   }
 
-  .galleryGrid, .homeGallery {
+  .galleryGrid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
