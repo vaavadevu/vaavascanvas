@@ -146,6 +146,18 @@ footer p {
   color: var(--text-dark);
 }
 
+.arrowLink {
+  display: inline-block;
+  font-size: 2.5rem;
+  color: var(--accent-green);
+  text-decoration: none;
+  transition: transform 0.2s;
+}
+
+.arrowLink:hover {
+  transform: translateX(5px);
+}
+
 /* ─── Intro ─── */
 .intro {
   width: 100%;
@@ -168,9 +180,17 @@ footer p {
 }
 
 /* ─── Galleri ─── */
-#gallery, #homeGalleryGrid {
+#gallery {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  padding: 20px;
+  justify-items: center;
+  width: 100%;
+}
+
+#homeGalleryGrid {
+  display: grid;
   gap: 15px;
   padding: 20px;
   justify-items: center;
@@ -521,7 +541,7 @@ footer p {
     text-align: center;
   }
 
-  .galleryGrid, .homeGalleryGrid {
+  .galleryGrid {
     display: grid;
     grid-template-columns: repeat(4, minmax(220px, 1fr));
     gap: 20px;
@@ -534,6 +554,10 @@ footer p {
     border-radius: 10px;
     object-fit: cover;
     transition: transform 0.3s ease;
+  }
+
+   #homeGalleryGrid {
+    grid-template-columns: repeat(3, minmax(220px, 1fr));
   }
 
   .galleryGrid img:hover {
@@ -647,6 +671,10 @@ footer p {
     padding: 10px;
   }
 
+  .arrowLink {
+    font-size: 3rem;
+    padding: 10px; /* större tryckyta */
+  }
   .close {
     font-size: 36px;
     top: 8px;
