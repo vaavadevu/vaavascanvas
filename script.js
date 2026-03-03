@@ -26,7 +26,7 @@ const paintings = [
   },
   
  {
-    image: "images/solnedgång.JPG",
+    image: "images/solnedgang.JPG",
     title: "Havet",
     description: "Solnedgång i havet",
     size: "41 x 33 cm",
@@ -44,7 +44,7 @@ const paintings = [
   },
 
    {
-    image: "images/sommarPåStranden.jpg",
+    image: "images/sommarPaStranden.jpg",
     title: "Beach day",
     description: "Semester på strand.",
     size: "42 x 59 cm",
@@ -53,7 +53,7 @@ const paintings = [
   },
 
    {
-    image: "images/självporträtt.jpg",
+    image: "images/sjalvportratt.jpg",
     title: "Embrace",
     description: "Självpoträtt som visar förändring och ett nytt liv.",
     size: "42 x 59 cm",
@@ -72,7 +72,7 @@ const paintings = [
   },
 
    {
-    image: "images/näckrosor.jpg",
+    image: "images/nackrosor.jpg",
     title: "Ska vi plocka blommor",
     description: "Stilla sjö med blommor",
     size: "42 x 59 cm",
@@ -89,7 +89,7 @@ const paintings = [
     status: "TILL SALU",
   },
    {
-    image: "images/vårkänsla.JPG",
+    image: "images/varkansla.JPG",
     title: "Vårkänsla",
     description: "Körsbärsblommor och en trött blåmes som vilar",
     size: "42 x 59 cm",
@@ -115,7 +115,7 @@ const paintings = [
   },
    
    {
-    image: "images/rådjur.jpg",
+    image: "images/radjur.jpg",
     title: "Savannan",
     description: "Antiloper som betar i savanna",
     size: "42 x 59 cm",
@@ -133,7 +133,7 @@ const paintings = [
   },
 
    {
-    image: "images/bröllopspresent.jpg",
+    image: "images/brollopspresent.jpg",
     title: "Bröllop",
     description: "Brollopsdag present till Herr och Fru Elfqvist.",
     size: "42 x 59 cm",
@@ -173,7 +173,7 @@ if (modal) {
 
 let currentIndex = 0;
 
-// Skapa gallery
+// Skapa gallery (används på pictures.html)
 if (gallery) {
   paintings.forEach((painting, index) => {
     const item = document.createElement("div");
@@ -195,6 +195,32 @@ if (gallery) {
     }
 
     gallery.appendChild(item);
+  });
+}
+
+// Skapa mini-galleri på startsidan (första fyra målningarna)
+const homeGrid = document.getElementById("homeGalleryGrid");
+if (homeGrid) {
+  paintings.slice(0, 4).forEach((painting, index) => {
+    const item = document.createElement("div");
+    item.classList.add("gallery-item");
+
+    const img = document.createElement("img");
+    img.src = painting.image;
+    img.alt = painting.title;
+
+    img.addEventListener("click", () => openModal(index));
+
+    item.appendChild(img);
+
+    if (painting.status === "SÅLD") {
+      const badge = document.createElement("div");
+      badge.textContent = "Såld";
+      badge.classList.add("sold-badge");
+      item.appendChild(badge);
+    }
+
+    homeGrid.appendChild(item);
   });
 }
 
