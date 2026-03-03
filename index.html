@@ -2,75 +2,54 @@
 <html lang="sv">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content=
-        "width=device-width, initial-scale=1" />
-  <title>Mina målningar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vaavascanvas</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-<div class="lightbox" id="lightbox">
-  <img id="lightbox-img">
-</div>
-
 <body>
 
   <header class="box">
     <h1>Vaavascanvas</h1>
-         <section>
-             <nav>
-                 <ul class="link-list">
-                    <li><a>Startsida</a></li>
-                    
-                    <li><a href="pictures.html">Mina verk</a></li>
-                    <li><a href="social.html">Om mig</a></li>
-                 </ul>
-             </nav>
-            </section>
-  
+    <nav>
+      <ul class="link-list">
+        <li><a>Startsida</a></li>
+        <li><a href="pictures.html">Mina verk</a></li>
+        <li><a href="social.html">Om mig</a></li>
+      </ul>
+    </nav>
   </header>
-  <script src="script.js"></script>
+
   <main>
+    <section class="intro">
+      <p>Välkommen till min portfolio! Här kan du se mina målningar, illustrationer och följa mitt konstnärliga arbete.</p>
+    </section>
 
-  <section class="intro">
-    <p>Välkommen till min portfolio! Här kan du se mina målningar, illustrationer och följa mitt konstnärliga arbete.</p>
-  </section>
-
-  <!-- Litet galleri -->
-  <section class="homeGallery">
-    <div class="galleryGrid" id="homeGalleryGrid">
-      <!-- JS fyller på med de första målningarna -->
-    </div>
-    <p class="seeMore"><a href="pictures.html">Se alla målningar →</a></p>
-  </section>
-
-  <!-- Call to Action / Länkar -->
+    <section class="homeGallery">
+      <div class="galleryGrid" id="homeGalleryGrid">
+        <!-- JS fyller på med de första målningarna -->
+      </div>
+      <p class="seeMore"><a href="pictures.html">Se alla målningar →</a></p>
+    </section>
   </main>
 
- 
+  <div class="modal" id="modal">
+    <span class="close" id="modal-close">&times;</span>
+    <img id="modal-img">
+    <div class="modal-info">
+      <h3 id="modal-title"></h3>
+      <p id="modal-size"></p>
+      <p id="modal-desc"></p>
+      <div id="modal-buttons"></div>
+    </div>
+    <span class="arrow left" id="modal-prev">&#10094;</span>
+    <span class="arrow right" id="modal-next">&#10095;</span>
+  </div>
+
+  <footer>
+    <p>© 2026 Devika – All rights reserved</p>
+  </footer>
 
   <script src="script.js"></script>
-
-<div class="modal" id="modal">
-  <span class="close" id="modal-close">&times;</span>
-  <img id="modal-img">
-  <div class="modal-info">
-    <h3 id="modal-title"></h3>
-    <p id="modal-size"></p>
-    <p id="modal-desc"></p>
-    <div id="modal-buttons"></div>
-  </div>
-  <span class="arrow left" id="modal-prev">&#10094;</span>
-  <span class="arrow right" id="modal-next">&#10095;</span>
-</div>
 </body>
-
-
-
-
-            <footer>
-                <p>© 2026 Devika – All rights reserved</p>
-                
-            </footer>
-
 </html>
-
