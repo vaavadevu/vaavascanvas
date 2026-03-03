@@ -535,7 +535,9 @@ nav a {
 #gallery {
     gap: 8px;
     padding: 10px;
+    grid-template-columns: 1fr;
   }
+  
   .gallery-item img {
   height: auto;
   aspect-ratio: 4 / 5;
@@ -622,5 +624,10 @@ nav a {
 }
  button {
   min-height: 44px;
+}
+  .sold-badge {
+    padding: 6px 40px;
+    right: -35px;
+    font-size: 0.65rem;
 }
 }
