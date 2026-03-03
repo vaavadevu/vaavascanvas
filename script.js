@@ -277,19 +277,6 @@ function openModal(index) {
   });
   modalButtons.appendChild(btnOriginal);
 }
-
-if (painting.printPrice) {
-  const btnPrint = document.createElement("button");
-  btnPrint.textContent = `Print – ${painting.printPrice} kr`;
-  btnPrint.addEventListener("click", () => {
-    const amne = encodeURIComponent(`Intresserad av: ${painting.title} (Print)`);
-    const meddelande = encodeURIComponent(
-      `Hej!\n\nJag är intresserad av att köpa en print av "${painting.title}".\nStorlek: ${painting.size}\nPris: ${painting.printPrice} kr\n\nMed vänliga hälsningar,`
-    );
-    window.location.href = `mailto:vaavascanvas@gmail.com?subject=${amne}&body=${meddelande}`;
-  });
-  modalButtons.appendChild(btnPrint);
-}
   }
   modal.style.display = "flex";
 }
