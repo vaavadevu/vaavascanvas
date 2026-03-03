@@ -26,7 +26,7 @@ const paintings = [
   },
   
  {
-    image: "images/solnedg%C3%A5ng.JPG",
+    image: "images/solnedgång.JPG",
     title: "Havet",
     description: "Solnedgång i havet",
     size: "41 x 33 cm",
@@ -44,7 +44,7 @@ const paintings = [
   },
 
    {
-    image: "images/sommarP%C3%A5Stranden.jpg",
+    image: "images/sommarPåStranden.jpg",
     title: "Beach day",
     description: "Semester på strand.",
     size: "42 x 59 cm",
@@ -53,7 +53,7 @@ const paintings = [
   },
 
    {
-    image: "images/sj%C3%A4lvportr%C3%A4tt.jpg",
+    image: "images/självporträtt.jpg",
     title: "Embrace",
     description: "Självpoträtt som visar förändring och ett nytt liv.",
     size: "42 x 59 cm",
@@ -72,7 +72,7 @@ const paintings = [
   },
 
    {
-    image: "images/n%C3%A4ckrosor.jpg",
+    image: "images/näckrosor.jpg",
     title: "Ska vi plocka blommor",
     description: "Stilla sjö med blommor",
     size: "42 x 59 cm",
@@ -89,7 +89,7 @@ const paintings = [
     status: "TILL SALU",
   },
    {
-    image: "images/v%C3%A5rk%C3%A4nsla.JPG",
+    image: "images/vårkänsla.JPG",
     title: "Vårkänsla",
     description: "Körsbärsblommor och en trött blåmes som vilar",
     size: "42 x 59 cm",
@@ -115,7 +115,7 @@ const paintings = [
   },
    
    {
-    image: "images/r%C3%A5djur.jpg",
+    image: "images/rådjur.jpg",
     title: "Savannan",
     description: "Antiloper som betar i savanna",
     size: "42 x 59 cm",
@@ -133,7 +133,7 @@ const paintings = [
   },
 
    {
-    image: "images/br%C3%B6llopspresent.jpg",
+    image: "images/bröllopspresent.jpg",
     title: "Bröllop",
     description: "Brollopsdag present till Herr och Fru Elfqvist.",
     size: "42 x 59 cm",
