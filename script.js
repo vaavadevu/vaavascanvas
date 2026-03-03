@@ -182,6 +182,13 @@ if (gallery) {
     const img = document.createElement("img");
     img.src = painting.image;
     img.alt = painting.title;
+    img.addEventListener("error", () => {
+      console.error("Image failed to load:", painting.image);
+      img.src = "images/devika.jpg"; // fallback
+    });
+    img.addEventListener("load", () => {
+      console.log("Loaded image:", painting.image);
+    });
 
     img.addEventListener("click", () => openModal(index));
 
@@ -208,6 +215,13 @@ if (homeGrid) {
     const img = document.createElement("img");
     img.src = painting.image;
     img.alt = painting.title;
+    img.addEventListener("error", () => {
+      console.error("Home image failed to load:", painting.image);
+      img.src = "images/devika.jpg"; // fallback
+    });
+    img.addEventListener("load", () => {
+      console.log("Loaded home image:", painting.image);
+    });
 
     img.addEventListener("click", () => openModal(index));
 
