@@ -208,7 +208,7 @@ if (gallery) {
 // Skapa mini-galleri på startsidan (första fyra målningarna)
 const homeGrid = document.getElementById("homeGalleryGrid");
 if (homeGrid) {
-  paintings.slice(0, 4).forEach((painting, index) => {
+  paintings.slice(0, 3).forEach((painting, index) => {
     const item = document.createElement("div");
     item.classList.add("gallery-item");
 
@@ -239,46 +239,92 @@ if (homeGrid) {
 }
 
 // Öppna modal
+let currentImageIndex = 0;
+
 function openModal(index) {
   if (!modal) return;
   currentIndex = index;
+  currentImageIndex = 0;
   const painting = paintings[index];
-  modalImg.src = painting.image;
+
+  const imgs = painting.images || [painting.image];
+
+  // Visa huvudbild
+  modalImg.src = imgs[0];
+  modalImg.alt = painting.title;
   modalTitle.textContent = painting.title;
   modalSize.textContent = painting.size;
   modalDesc.textContent = painting.description;
 
-  modalButtons.innerHTML = "";
+  // Bygg thumbnails
+  const thumbsContainer = document.getElementById("modal-thumbs");
+  thumbsContainer.innerHTML = "";
+  if (imgs.length > 1) {
+    imgs.forEach((src, i) => {
+      const thumb = document.createElement("img");
+      thumb.src = src;
+      thumb.alt = `Bild ${i + 1}`;
+      thumb.classList.add("modalThumb");
+      if (i === 0) thumb.classList.add("active");
+      thumb.addEventListener("click", () => switchModalImage(imgs, i));
+      thumbsContainer.appendChild(thumb);
+    });
+  }
 
+  // Bild-pilar
+  const imgPrev = document.getElementById("modal-img-prev");
+  const imgNext = document.getElementById("modal-img-next");
+  if (imgs.length > 1) {
+    imgPrev.style.display = "flex";
+    imgNext.style.display = "flex";
+    imgPrev.onclick = () => switchModalImage(imgs, (currentImageIndex - 1 + imgs.length) % imgs.length);
+    imgNext.onclick = () => switchModalImage(imgs, (currentImageIndex + 1) % imgs.length);
+  } else {
+    imgPrev.style.display = "none";
+    imgNext.style.display = "none";
+  }
+
+  // Knappar
+  modalButtons.innerHTML = "";
   if (painting.status === "SÅLD") {
     const soldText = document.createElement("p");
     soldText.textContent = "Såld";
     soldText.style.color = "red";
     modalButtons.appendChild(soldText);
-  }
-
-  else if (painting.status === "Personlig present") {
+  } else if (painting.status === "Personlig present") {
     const personalText = document.createElement("p");
     personalText.textContent = "Personlig målning – ej till salu";
     personalText.style.opacity = "0.8";
     modalButtons.appendChild(personalText);
+  } else if (painting.originalPrice) {
+    const pris = document.createElement("p");
+    pris.textContent = `${painting.originalPrice} kr`;
+    pris.style.fontSize = "22px";
+    pris.style.fontWeight = "bold";
+    pris.style.margin = "10px 0";
+    modalButtons.appendChild(pris);
+
+    const btnKop = document.createElement("button");
+    btnKop.textContent = "✉ Skicka köpförfrågan";
+    btnKop.addEventListener("click", () => {
+      const amne = encodeURIComponent(`Köpförfrågan: ${painting.title}`);
+      const meddelande = encodeURIComponent(
+        `Hej!\n\nJag är intresserad av att köpa "${painting.title}".\nStorlek: ${painting.size}\nPris: ${painting.originalPrice} kr\n\nMed vänliga hälsningar,`
+      );
+      window.location.href = `mailto:vaavascanvas@gmail.com?subject=${amne}&body=${meddelande}`;
+    });
+    modalButtons.appendChild(btnKop);
   }
 
-  else {
-    if (painting.originalPrice) {
-  const btnOriginal = document.createElement("button");
-  btnOriginal.textContent = `Original – ${painting.originalPrice} kr`;
-  btnOriginal.addEventListener("click", () => {
-    const amne = encodeURIComponent(`Intresserad av: ${painting.title} (Original)`);
-    const meddelande = encodeURIComponent(
-      `Hej!\n\nJag är intresserad av att köpa originalmålningen "${painting.title}".\nStorlek: ${painting.size}\nPris: ${painting.originalPrice} kr\n\nMed vänliga hälsningar,`
-    );
-    window.location.href = `mailto:vaavascanvas@gmail.com?subject=${amne}&body=${meddelande}`;
-  });
-  modalButtons.appendChild(btnOriginal);
-}
-  }
   modal.style.display = "flex";
+}
+
+function switchModalImage(imgs, i) {
+  currentImageIndex = i;
+  modalImg.src = imgs[i];
+  document.querySelectorAll(".modalThumb").forEach((t, idx) => {
+    t.classList.toggle("active", idx === i);
+  });
 }
 
 // Stäng modal
