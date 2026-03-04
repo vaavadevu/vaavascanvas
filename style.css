@@ -76,11 +76,13 @@ nav {
 nav a {
   position: relative;
   color: var(--text-link);
+  text-decoration: none;
 }
 
 nav a.active {
   color: var(--text-dark);
   font-weight: bold;
+  text-decoration: none;
 }
 
 
