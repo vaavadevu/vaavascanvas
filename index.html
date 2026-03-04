@@ -18,7 +18,6 @@
       <ul class="link-list">
         <li><a>Startsida</a></li>
         <li><a href="pictures.html">Mina verk</a></li>
-        <li><a href="social.html">Om mig</a></li>
       </ul>
     </nav>
   </header>
@@ -28,31 +27,139 @@
       <p>Välkommen till min portfolio! Här kan du se mina målningar, illustrationer och följa mitt konstnärliga arbete.</p>
     </section>
 
-    <section class="homeGallery">
-      <div class="galleryGrid" id="homeGalleryGrid">
-        <!-- JS fyller på med de första målningarna -->
-      </div>
-      <p class="seeMore"><a href="pictures.html" class="arrowLink">&#10095;</a></p>
+    <div class="homeGalleryWrapper">
+  <div id="homeGalleryGrid"></div>
+  <a href="pictures.html" class="arrowLink">&#10095;</a>
+</div>
     </section>
   </main>
 
   <div class="modal" id="modal">
-    <span class="close" id="modal-close">&times;</span>
-    <img id="modal-img">
-    <div class="modal-info">
+  <span class="close" id="modal-close">&times;</span>
+
+  <div class="modalInner">
+
+    <!-- Vänster: bild + thumbnails -->
+    <div class="modalLeft">
+      <div class="modalImageWrapper">
+        <span class="modalArrow modalArrowLeft" id="modal-img-prev">&#10094;</span>
+        <img id="modal-img" src="" alt="" />
+        <span class="modalArrow modalArrowRight" id="modal-img-next">&#10095;</span>
+      </div>
+      <div class="modalThumbs" id="modal-thumbs"></div>
+    </div>
+
+    <!-- Höger: info + köp -->
+    <div class="modalRight">
       <h3 id="modal-title"></h3>
       <p id="modal-size"></p>
       <p id="modal-desc"></p>
       <div id="modal-buttons"></div>
     </div>
-    <span class="arrow left" id="modal-prev">&#10094;</span>
-    <span class="arrow right" id="modal-next">&#10095;</span>
+
   </div>
 
-  <footer>
-    <p>© 2026 Devika – All rights reserved</p>
-  </footer>
+  <!-- Pilar för nästa/föregående MÅLNING -->
+  <span class="arrow left" id="modal-prev">&#10094;</span>
+  <span class="arrow right" id="modal-next">&#10095;</span>
+</div>
+<footer>
+  <div class="footerContent">
 
+    <!-- Om mig -->
+    <div class="footerAbout">
+      <img src="images/devika.jpg" alt="Devika" class="footerImg" />
+      <p>Hej! Jag heter Devika och jag är konstnär och illustratör baserad i Sverige. Jag inspireras av naturen, relationer, djur och de tysta stunderna där känslor får ta plats utan filter.</p>
+      <p>Genom min konst vill jag skapa närvaro och igenkänning – något som känns mänskligt, mjukt och äkta. Varje målning är en del av min resa mot läkning, nyfikenhet och kreativ frihet.</p>
+      <div class="footerLinks">
+        <a href="https://www.instagram.com/vaavascanvas/" target="_blank">
+          <i class="fa fa-instagram"></i> @vaavascanvas
+        </a>
+        <a href="mailto:vaavascanvas@gmail.com">
+          <i class="fa fa-envelope"></i> vaavascanvas@gmail.com
+        </a>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="footerDivider"></div>
+
+    <!-- Formulär -->
+    <div class="footerFormSection">
+      <h3>Skicka en förfrågan</h3>
+      <p>Print, commision eller fråga? Hör av dig!</p>
+
+      <div class="formGroup">
+        <label for="f-namn">Namn</label>
+        <input type="text" id="f-namn" placeholder="Ditt namn" />
+      </div>
+
+      <div class="formGroup">
+        <label for="f-email">E-post</label>
+        <input type="email" id="f-email" placeholder="din@email.com" />
+      </div>
+
+      <div class="formGroup">
+        <label for="f-typ">Typ av förfrågan</label>
+        <select id="f-typ" onchange="visaFooterPrintFalt()">
+          <option value="">– Välj –</option>
+          <option value="print">Print av befintlig målning</option>
+          <option value="commision">Commision (beställd målning)</option>
+          <option value="annat">Allmän fråga</option>
+        </select>
+      </div>
+
+      <div class="formGroup" id="f-printFalt" style="display:none;">
+        <label for="f-verk">Vilket verk?</label>
+        <input type="text" id="f-verk" placeholder="T.ex. Woman of the Sea" />
+      </div>
+
+      <div class="formGroup">
+        <label for="f-meddelande">Meddelande</label>
+        <textarea id="f-meddelande" rows="3" placeholder="Berätta mer..."></textarea>
+      </div>
+
+      <button class="submitBtn" onclick="skickaFooterFormular()">✉ Skicka</button>
+    </div>
+
+  </div>
+
+  <p class="footerCopy">© 2026 Devika – All rights reserved</p>
+</footer>
+
+<script>
+  function visaFooterPrintFalt() {
+    const typ = document.getElementById("f-typ").value;
+    document.getElementById("f-printFalt").style.display = typ === "print" ? "block" : "none";
+  }
+
+  function skickaFooterFormular() {
+    const namn = document.getElementById("f-namn").value.trim();
+    const email = document.getElementById("f-email").value.trim();
+    const typ = document.getElementById("f-typ").value;
+    const verk = document.getElementById("f-verk").value.trim();
+    const meddelande = document.getElementById("f-meddelande").value.trim();
+
+    if (!namn || !email || !typ) {
+      alert("Fyll i namn, e-post och typ av förfrågan.");
+      return;
+    }
+
+    const typText = {
+      print: "Print av befintlig målning",
+      commision: "Commision (beställd målning)",
+      annat: "Allmän fråga"
+    }[typ];
+
+    let kropp = `Hej Devika!\n\nNamn: ${namn}\nE-post: ${email}\nFörfrågan: ${typText}`;
+    if (typ === "print" && verk) kropp += `\nVerk: ${verk}`;
+    if (meddelande) kropp += `\n\nMeddelande:\n${meddelande}`;
+    kropp += "\n\nMed vänliga hälsningar,\n" + namn;
+
+    const amne = encodeURIComponent(`${typText} – ${namn}`);
+    window.location.href = `mailto:vaavascanvas@gmail.com?subject=${amne}&body=${encodeURIComponent(kropp)}`;
+  }
+</script>
   <script src="script.js"></script>
 </body>
 </html>

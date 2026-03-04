@@ -16,9 +16,8 @@
     <h1>Vaavascanvas</h1>
     <nav>
       <ul class="link-list">
-        <li><a href="index.html">Startsida</a></li>
+        <li><a class="active" href="index.html">Startsida</a></li>
         <li><a>Mina verk</a></li>
-        <li><a href="social.html">Om mig</a></li>
       </ul>
     </nav>
   </header>
@@ -28,22 +27,135 @@
   </main>
 
   <div class="modal" id="modal">
-    <span class="close" id="modal-close">&times;</span>
-    <img id="modal-img">
-    <div class="modal-info">
+  <span class="close" id="modal-close">&times;</span>
+
+  <div class="modalInner">
+
+    <!-- Vänster: bild + thumbnails -->
+    <div class="modalLeft">
+      <div class="modalImageWrapper">
+        <span class="modalArrow modalArrowLeft" id="modal-img-prev">&#10094;</span>
+        <img id="modal-img" src="" alt="" />
+        <span class="modalArrow modalArrowRight" id="modal-img-next">&#10095;</span>
+      </div>
+      <div class="modalThumbs" id="modal-thumbs"></div>
+    </div>
+
+    <!-- Höger: info + köp -->
+    <div class="modalRight">
       <h3 id="modal-title"></h3>
       <p id="modal-size"></p>
       <p id="modal-desc"></p>
       <div id="modal-buttons"></div>
     </div>
-    <span class="arrow left" id="modal-prev">&#10094;</span>
-    <span class="arrow right" id="modal-next">&#10095;</span>
+
   </div>
 
-  <footer>
-    <p>© 2026 Devika – All rights reserved</p>
-  </footer>
+  <!-- Pilar för nästa/föregående MÅLNING -->
+  <span class="arrow left" id="modal-prev">&#10094;</span>
+  <span class="arrow right" id="modal-next">&#10095;</span>
+</div>
+<footer>
+  <div class="footerContent">
 
+    <!-- Om mig -->
+    <div class="footerAbout">
+      <img src="images/devika.jpg" alt="Devika" class="footerImg" />
+      <p>Hej! Jag heter Devika och jag är konstnär och illustratör baserad i Sverige. Jag inspireras av naturen, relationer, djur och de tysta stunderna där känslor får ta plats utan filter.</p>
+      <p>Genom min konst vill jag skapa närvaro och igenkänning – något som känns mänskligt, mjukt och äkta. Varje målning är en del av min resa mot läkning, nyfikenhet och kreativ frihet.</p>
+      <div class="footerLinks">
+        <a href="https://www.instagram.com/vaavascanvas/" target="_blank">
+          <i class="fa fa-instagram"></i> @vaavascanvas
+        </a>
+        <a href="mailto:vaavascanvas@gmail.com">
+          <i class="fa fa-envelope"></i> vaavascanvas@gmail.com
+        </a>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="footerDivider"></div>
+
+    <!-- Formulär -->
+    <div class="footerFormSection">
+      <h3>Skicka en förfrågan</h3>
+      <p>Print, commision eller fråga? Hör av dig!</p>
+
+      <form action="https://formspree.io/f/xgolgnoj" method="POST" id="footerForm">
+
+        <div class="formGroup">
+          <label for="f-namn">Namn</label>
+          <input type="text" id="f-namn" name="namn" placeholder="Ditt namn" required />
+        </div>
+
+        <div class="formGroup">
+          <label for="f-email">E-post</label>
+          <input type="email" id="f-email" name="email" placeholder="din@email.com" required />
+        </div>
+
+        <div class="formGroup">
+          <label for="f-typ">Typ av förfrågan</label>
+          <select id="f-typ" name="typ" onchange="visaFooterPrintFalt()" required>
+            <option value="">– Välj –</option>
+            <option value="Print av befintlig målning">Print av befintlig målning</option>
+            <option value="Commision">Commision (beställd målning)</option>
+            <option value="Allmän fråga">Allmän fråga</option>
+          </select>
+        </div>
+
+        <div class="formGroup" id="f-printFalt" style="display:none;">
+          <label for="f-verk">Vilket verk?</label>
+          <input type="text" id="f-verk" name="verk" placeholder="T.ex. Woman of the Sea" />
+        </div>
+
+        <div class="formGroup">
+          <label for="f-meddelande">Meddelande</label>
+          <textarea id="f-meddelande" name="meddelande" rows="3" placeholder="Berätta mer..."></textarea>
+        </div>
+
+        <button type="submit" class="submitBtn">✉ Skicka</button>
+
+        <!-- Visas efter att formuläret skickats -->
+        <p id="formSuccess" style="display:none; color: var(--accent-green); font-weight:600; margin-top:10px;">
+          Tack! Jag återkommer så snart som möjligt. 🎨
+        </p>
+
+      </form>
+    </div>
+
+  </div>
+
+  <p class="footerCopy">© 2026 Devika – All rights reserved</p>
+</footer>
+
+<script>
+  function visaFooterPrintFalt() {
+    const typ = document.getElementById("f-typ").value;
+    document.getElementById("f-printFalt").style.display =
+      typ === "Print av befintlig målning" ? "block" : "none";
+  }
+
+  // Skicka via Formspree utan att lämna sidan
+  document.getElementById("footerForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const data = new FormData(form);
+
+    const res = await fetch(form.action, {
+      method: "POST",
+      body: data,
+      headers: { "Accept": "application/json" }
+    });
+
+    if (res.ok) {
+      form.reset();
+      document.getElementById("f-printFalt").style.display = "none";
+      document.getElementById("formSuccess").style.display = "block";
+    } else {
+      alert("Något gick fel, försök igen eller mejla direkt till vaavascanvas@gmail.com");
+    }
+  });
+</script>
   <script src="script.js"></script>
 </body>
 </html>
