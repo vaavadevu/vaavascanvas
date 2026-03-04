@@ -10,18 +10,19 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-<body>
-
+<body id="main">
+ <div class="stickyHeader">
   <header class="box">
     <h1>Vaavascanvas</h1>
     <nav>
       <ul class="link-list">
-        <li><a class="active" href="index.html">Startsida</a></li>
-        <li><a>Mina verk</a></li>
+        <li><a href="index.html#top">Startsida</a></li>
+        <li><a href="pictures.html#main" class="active">Mina verk</a></li>
+        <li><a href="#footer">Kontakta mig</a></li>
       </ul>
     </nav>
   </header>
-
+</div>
   <main class="gallery" id="gallery">
     <!-- Bilder läggs in via JavaScript -->
   </main>
@@ -55,7 +56,7 @@
   <span class="arrow left" id="modal-prev">&#10094;</span>
   <span class="arrow right" id="modal-next">&#10095;</span>
 </div>
-<footer>
+<footer id="footer">
   <div class="footerContent">
 
     <!-- Om mig -->
@@ -97,6 +98,7 @@
           <label for="f-typ">Typ av förfrågan</label>
           <select id="f-typ" name="typ" onchange="visaFooterPrintFalt()" required>
             <option value="">– Välj –</option>
+            <option value="Köpa original">Köpa original</option>
             <option value="Print av befintlig målning">Print av befintlig målning</option>
             <option value="Commision">Commision (beställd målning)</option>
             <option value="Allmän fråga">Allmän fråga</option>

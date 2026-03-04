@@ -305,15 +305,20 @@ function openModal(index) {
     modalButtons.appendChild(pris);
 
     const btnKop = document.createElement("button");
-    btnKop.textContent = "✉ Skicka köpförfrågan";
-    btnKop.addEventListener("click", () => {
-      const amne = encodeURIComponent(`Köpförfrågan: ${painting.title}`);
-      const meddelande = encodeURIComponent(
-        `Hej!\n\nJag är intresserad av att köpa "${painting.title}".\nStorlek: ${painting.size}\nPris: ${painting.originalPrice} kr\n\nMed vänliga hälsningar,`
-      );
-      window.location.href = `mailto:vaavascanvas@gmail.com?subject=${amne}&body=${meddelande}`;
-    });
-    modalButtons.appendChild(btnKop);
+btnKop.textContent = "✉ Skicka köpförfrågan";
+btnKop.addEventListener("click", () => {
+  // Fyll i formuläret
+  document.getElementById("f-typ").value = "Köpa original";
+  visaFooterPrintFalt();
+  document.getElementById("f-verk").value = painting.title;
+  document.getElementById("f-meddelande").value =
+    `Hej! Jag är intresserad av originalmålningen "${painting.title}" (${painting.size}) för ${painting.originalPrice} kr.`;
+
+  // Stäng modal och scrolla till footer
+  closeModal();
+  document.getElementById("footer").scrollIntoView({ behavior: "smooth" });
+});
+modalButtons.appendChild(btnKop);
   }
 
   modal.style.display = "flex";
@@ -361,4 +366,27 @@ if (modal) {
   modal.addEventListener("click", (e) => {
     if (e.target === modal) closeModal();
   });
+
+ window.addEventListener('scroll', () => {
+  const footer = document.getElementById('footer');
+  const footerTop = footer.getBoundingClientRect().top;
+  const footerInView = footerTop <= window.innerHeight;
+  var currentQuery = "#footer";
+
+  if (!footerInView) {
+    const currentUrl = window.location.href;
+    if (currentUrl.includes('pictures.html')) {
+      currentQuery = "pictures.html#main";
+    } else {
+      currentQuery = "index.html#top";
+    }
+  }
+    activateQuery(currentQuery); 
+});
+}
+
+function activateQuery(queryName) {
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  const query = document.querySelector(`a[href="${queryName}"]`);
+  query.classList.add('active');
 }
