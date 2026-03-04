@@ -906,5 +906,25 @@ footer {
     list-style-type: none;
     padding: 0;
   }
+.heroBtn {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--shadow-light); 
+  color: var(--text-dark);
+  padding: 5px 60px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  transition: background 0.2s, transform 0.2s;
+}
 
+.heroBtn:hover {
+  background: rgba(241, 230, 216, 1);
+  transform: translateX(-50%) translateY(-3px);
+}
 }
