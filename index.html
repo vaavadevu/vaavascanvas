@@ -10,29 +10,26 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-<body>
-
+<body id="top">
+<div class="stickyHeader">
   <header class="box">
     <h1>Vaavascanvas</h1>
     <nav>
       <ul class="link-list">
-        <li><a>Startsida</a></li>
+        <li><a class="active" href="index.html#top">Startsida</a></li>
         <li><a href="pictures.html">Mina verk</a></li>
+        <li><a href="#footer">Kontakta mig</a></li>
       </ul>
     </nav>
   </header>
+  </div>
 
   <main>
-    <section class="intro">
-      <p>Välkommen till min portfolio! Här kan du se mina målningar, illustrationer och följa mitt konstnärliga arbete.</p>
-    </section>
-
-    <div class="homeGalleryWrapper">
-  <div id="homeGalleryGrid"></div>
-  <a href="pictures.html" class="arrowLink">&#10095;</a>
-</div>
-    </section>
-  </main>
+  <div class="heroImage">
+    <img src="images/herrOchFruAndersson.JPG" alt="Herr och fru Andersson" />
+    <a href="pictures.html" class="heroBtn">Se mina målningar</a>
+  </div>
+</main>
 
   <div class="modal" id="modal">
   <span class="close" id="modal-close">&times;</span>
@@ -63,7 +60,7 @@
   <span class="arrow left" id="modal-prev">&#10094;</span>
   <span class="arrow right" id="modal-next">&#10095;</span>
 </div>
-<footer>
+<footer id="footer">
   <div class="footerContent">
 
     <!-- Om mig -->
@@ -89,37 +86,47 @@
       <h3>Skicka en förfrågan</h3>
       <p>Print, commision eller fråga? Hör av dig!</p>
 
-      <div class="formGroup">
-        <label for="f-namn">Namn</label>
-        <input type="text" id="f-namn" placeholder="Ditt namn" />
-      </div>
+      <form action="https://formspree.io/f/xgolgnoj" method="POST" id="footerForm">
 
-      <div class="formGroup">
-        <label for="f-email">E-post</label>
-        <input type="email" id="f-email" placeholder="din@email.com" />
-      </div>
+        <div class="formGroup">
+          <label for="f-namn">Namn</label>
+          <input type="text" id="f-namn" name="namn" placeholder="Ditt namn" required />
+        </div>
 
-      <div class="formGroup">
-        <label for="f-typ">Typ av förfrågan</label>
-        <select id="f-typ" onchange="visaFooterPrintFalt()">
-          <option value="">– Välj –</option>
-          <option value="print">Print av befintlig målning</option>
-          <option value="commision">Commision (beställd målning)</option>
-          <option value="annat">Allmän fråga</option>
-        </select>
-      </div>
+        <div class="formGroup">
+          <label for="f-email">E-post</label>
+          <input type="email" id="f-email" name="email" placeholder="din@email.com" required />
+        </div>
 
-      <div class="formGroup" id="f-printFalt" style="display:none;">
-        <label for="f-verk">Vilket verk?</label>
-        <input type="text" id="f-verk" placeholder="T.ex. Woman of the Sea" />
-      </div>
+        <div class="formGroup">
+          <label for="f-typ">Typ av förfrågan</label>
+          <select id="f-typ" name="typ" onchange="visaFooterPrintFalt()" required>
+            <option value="">– Välj –</option>
+            <option value="Köpa original">Köpa original</option>
+            <option value="Print av befintlig målning">Print av befintlig målning</option>
+            <option value="Commision">Commision (beställd målning)</option>
+            <option value="Allmän fråga">Allmän fråga</option>
+          </select>
+        </div>
 
-      <div class="formGroup">
-        <label for="f-meddelande">Meddelande</label>
-        <textarea id="f-meddelande" rows="3" placeholder="Berätta mer..."></textarea>
-      </div>
+        <div class="formGroup" id="f-printFalt" style="display:none;">
+          <label for="f-verk">Vilket verk?</label>
+          <input type="text" id="f-verk" name="verk" placeholder="T.ex. Woman of the Sea" />
+        </div>
 
-      <button class="submitBtn" onclick="skickaFooterFormular()">✉ Skicka</button>
+        <div class="formGroup">
+          <label for="f-meddelande">Meddelande</label>
+          <textarea id="f-meddelande" name="meddelande" rows="3" placeholder="Berätta mer..."></textarea>
+        </div>
+
+        <button type="submit" class="submitBtn">✉ Skicka</button>
+
+        <!-- Visas efter att formuläret skickats -->
+        <p id="formSuccess" style="display:none; color: var(--accent-green); font-weight:600; margin-top:10px;">
+          Tack! Jag återkommer så snart som möjligt. 🎨
+        </p>
+
+      </form>
     </div>
 
   </div>
@@ -130,35 +137,30 @@
 <script>
   function visaFooterPrintFalt() {
     const typ = document.getElementById("f-typ").value;
-    document.getElementById("f-printFalt").style.display = typ === "print" ? "block" : "none";
+    document.getElementById("f-printFalt").style.display =
+      typ === "Print av befintlig målning" ? "block" : "none";
   }
 
-  function skickaFooterFormular() {
-    const namn = document.getElementById("f-namn").value.trim();
-    const email = document.getElementById("f-email").value.trim();
-    const typ = document.getElementById("f-typ").value;
-    const verk = document.getElementById("f-verk").value.trim();
-    const meddelande = document.getElementById("f-meddelande").value.trim();
+  // Skicka via Formspree utan att lämna sidan
+  document.getElementById("footerForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const data = new FormData(form);
 
-    if (!namn || !email || !typ) {
-      alert("Fyll i namn, e-post och typ av förfrågan.");
-      return;
+    const res = await fetch(form.action, {
+      method: "POST",
+      body: data,
+      headers: { "Accept": "application/json" }
+    });
+
+    if (res.ok) {
+      form.reset();
+      document.getElementById("f-printFalt").style.display = "none";
+      document.getElementById("formSuccess").style.display = "block";
+    } else {
+      alert("Något gick fel, försök igen eller mejla direkt till vaavascanvas@gmail.com");
     }
-
-    const typText = {
-      print: "Print av befintlig målning",
-      commision: "Commision (beställd målning)",
-      annat: "Allmän fråga"
-    }[typ];
-
-    let kropp = `Hej Devika!\n\nNamn: ${namn}\nE-post: ${email}\nFörfrågan: ${typText}`;
-    if (typ === "print" && verk) kropp += `\nVerk: ${verk}`;
-    if (meddelande) kropp += `\n\nMeddelande:\n${meddelande}`;
-    kropp += "\n\nMed vänliga hälsningar,\n" + namn;
-
-    const amne = encodeURIComponent(`${typText} – ${namn}`);
-    window.location.href = `mailto:vaavascanvas@gmail.com?subject=${amne}&body=${encodeURIComponent(kropp)}`;
-  }
+  });
 </script>
   <script src="script.js"></script>
 </body>

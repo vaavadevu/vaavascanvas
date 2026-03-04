@@ -17,7 +17,7 @@
 
 html, body {
   max-width: 100%;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 html {
@@ -32,13 +32,20 @@ body {
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-rows: auto auto 1fr auto;
+  grid-template-rows: auto 1fr auto;
   grid-template-areas:
     "header"
-    "nav"
     "main"
     "footer";
   font-style: italic;
+}
+
+/* ─── Sticky header wrapper ─── */
+.stickyHeader {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  grid-area: header;
 }
 
 main {
@@ -49,7 +56,6 @@ main {
 
 /* ─── Header ─── */
 header {
-  grid-area: header;
   height: fit-content;
   text-align: center;
   padding: 2px 5px;
@@ -58,13 +64,12 @@ header {
 
 /* ─── Nav ─── */
 nav {
-  grid-area: nav;
   display: flex;
   list-style-type: none;
   justify-content: center;
   align-items: center;
   padding: 10px;
-  margin: 10px;
+  margin: 0;
   background-color: var(--accent-light);
 }
 
@@ -72,25 +77,12 @@ nav a {
   position: relative;
   color: var(--text-link);
 }
+
 nav a.active {
-  font-weight: 800;
-  border-bottom: 2px solid var(--accent-green);
+  color: var(--text-dark);
+  font-weight: bold;
 }
 
-nav a::after {
-  content: "";
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 0;
-  height: 1px;
-  background: currentColor;
-  transition: width 0.3s ease;
-}
-
-nav a:hover::after {
-  width: 100%;
-}
 
 nav ul {
   display: flex;
@@ -137,7 +129,7 @@ p {
 footer {
   grid-area: footer;
   background-color: var(--accent-light);
-  padding: 50px 40px 20px;
+  padding: 90px 40px 20px;
 }
 
 .footerContent {
@@ -227,7 +219,43 @@ footer {
   border-top: 1px solid rgba(0,0,0,0.08);
   width: 100%;
 }
+.heroImage {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  margin-top: 40px;
+  position: relative;
+}
 
+.heroImage img {
+  width: 100%;
+  height: calc(100vh - 80px);
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.heroBtn {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--shadow-light); 
+  color: var(--text-dark);
+  padding: 5px 30px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.heroBtn:hover {
+  background: rgba(241, 230, 216, 1);
+  transform: translateX(-50%) translateY(-3px);
+}
 /* ─── Intro ─── */
 .intro {
   width: 100%;
@@ -264,23 +292,6 @@ footer {
   width: 100%;
 }
 
-/* Startsida galleri wrapper */
-.homeGalleryWrapper {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 15px;
-  padding: 0 20px;
-}
-
-#homeGalleryGrid {
-  flex: 1;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-  justify-items: center;
-  width: 100%;
-}
 
 .gallery-item {
   position: relative;
@@ -495,7 +506,7 @@ footer {
 .arrow.left { left: 15px; }
 .arrow.right { right: 15px; }
 
-/* ─── Om mig – tre kolumner ─── */
+/* ─── Om mig ─── */
 .aboutRow {
   display: grid;
   grid-template-columns: 1fr 1fr auto;
@@ -696,12 +707,11 @@ footer {
   }
 
   nav {
-    grid-area: nav;
     display: flex;
     justify-content: flex-end;
     align-items: center;
     padding: 10px;
-    margin: 5px 0;
+    margin: 0;
   }
 
   h1 {
@@ -714,12 +724,7 @@ footer {
     box-sizing: border-box;
   }
 
-  .homeGallery {
-    max-width: 1000px;
-    margin: 40px auto;
-    padding: 0 20px;
-    text-align: center;
-  }
+
 
   #gallery {
     grid-template-columns: repeat(4, minmax(220px, 1fr));
@@ -762,6 +767,12 @@ footer {
 
   .footerLinks a {
     justify-content: center;
+  }
+
+  .footerImg {
+    width: 100%;
+    max-width: 240px;
+    height: auto;
   }
 
   h1 { font-size: 2rem; }
@@ -807,28 +818,13 @@ footer {
     padding: 10px;
   }
 
-  /* Startsida – pilen under bilderna på mobil */
-  .homeGalleryWrapper {
-    flex-direction: column;
-    align-items: flex-end;
-    padding: 0 10px;
-  }
+ 
 
-  #homeGalleryGrid {
-    grid-template-columns: 1fr;
-    gap: 15px;
-    padding: 10px 0;
-    max-width: 500px;
-    margin: 0 auto;
-    width: 100%;
-  }
-
-  #homeGalleryGrid .gallery-item img {
+  .gallery-item img {
     aspect-ratio: 3 / 4;
     object-fit: cover;
   }
 
-  /* Modal mobil */
   .modal {
     padding: 15px;
     align-items: flex-start;
@@ -860,7 +856,6 @@ footer {
     right: 15px;
   }
 
-  /* Om mig */
   .aboutRow {
     grid-template-columns: 1fr;
     gap: 30px;
@@ -911,4 +906,5 @@ footer {
     list-style-type: none;
     padding: 0;
   }
+
 }
