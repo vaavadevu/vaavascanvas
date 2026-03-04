@@ -370,7 +370,7 @@ if (modal) {
  window.addEventListener('scroll', () => {
   const footer = document.getElementById('footer');
   const footerTop = footer.getBoundingClientRect().top;
-  const footerInView = footerTop <= window.innerHeight;
+  const footerInView = footerTop <= window.innerHeight/2;
   var currentQuery = "#footer";
 
   if (!footerInView) {
