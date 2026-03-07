@@ -344,7 +344,7 @@ footer {
   background: var(--shadow-dark);
   justify-content: center;
   align-items: center;
-  padding: 40px 60px;
+  padding: 20px;        /* ← smaller padding so modal gets more room */
   z-index: 1000;
   overflow: auto;
 }
@@ -356,13 +356,12 @@ footer {
   background: var(--bg-warm);
   border-radius: 16px;
   padding: 30px;
-  max-width: 900px;
-  width: 100%;
-  max-height: 90vh;
+  width: 75vw;          /* ← 75% of screen width */
+  height: 75vh;         /* ← 75% of screen height = rektangulär känsla */
+  max-height: 75vh;
   overflow-y: auto;
   position: relative;
 }
-
 .modalLeft {
   display: flex;
   flex-direction: column;
@@ -383,6 +382,17 @@ footer {
   border-radius: 8px;
   display: block;
   margin: 0;
+}
+.modalImageWrapper img {
+  transition: transform 0.3s ease;
+  cursor: zoom-in;
+}
+.modalImageWrapper img:hover {
+  transform: scale(1.5);
+}
+/* Klippa så bilden inte flödar utanför */
+.modalImageWrapper {
+  overflow: hidden;
 }
 
 .modalArrow {
@@ -508,6 +518,32 @@ footer {
 .arrow.left { left: 15px; }
 .arrow.right { right: 15px; }
 
+.gallery-filters {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 8px 20px;
+  border: 1.5px solid var(--accent-green);
+  background: transparent;
+  color: var(--accent-green);
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: 0.2s;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+  background: var(--accent-green);
+  color: var(--text-light);
+}
 /* ─── Om mig ─── */
 .aboutRow {
   display: grid;
