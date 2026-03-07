@@ -159,6 +159,7 @@ const paintings = [
     title: "Sommarvila",
     description: "Isbjörnsmamma och hennes ungar som vilar i Hudson Bay",
     size: "42 x 59 cm",
+    originalPrice: 2000,
     status: STATUS.FOR_SALE,
   },
 ];
