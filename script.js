@@ -1,4 +1,3 @@
-
 // DOM references ---------------------------------------------
 const galleryElement = document.getElementById("gallery");
 const modalElement = document.getElementById("modal");
@@ -21,9 +20,21 @@ if (modalElement) {
 let currentPaintingIndex = 0;
 let currentModalImageIndex = 0;
 
+function getPaintingImagePaths(painting) {
+  const folderId = painting.id;
+  const count = painting.imageCount || 1;
+  const base = `images/paintings/${folderId}/`;
+
+  return Array.from({ length: count }, (_, i) => {
+    const idx = String(i + 1).padStart(2, "0");
+    return `${base}${idx}.jpg`;
+  });
+}
+
 /* Gallery construction */
 function buildGallery() {
   if (!galleryElement) return;
+  galleryElement.innerHTML = ""; // Clear existing
   paintings.forEach((painting, idx) => {
     const item = createGalleryItem(painting, idx);
     galleryElement.appendChild(item);
@@ -35,24 +46,15 @@ function createGalleryItem(painting, index) {
   item.classList.add("gallery-item");
 
   const img = document.createElement("img");
-  img.src = painting.image;
+  const paths = getPaintingImagePaths(painting);
+  img.src = paths[0]; 
   img.alt = painting.title;
 
-  img.addEventListener("error", () => {
-    console.error("Image failed to load:", painting.image);
-    img.src = "images/devika.jpg";
-  });
-
-  img.addEventListener("load", () => {
-    console.log("Loaded image:", painting.image);
-  });
-
+  img.addEventListener("error", () => { img.src = "images/devika.jpg"; });
   img.addEventListener("click", () => openModal(index));
+  
   item.appendChild(img);
-
-  if (painting.status === STATUS.SOLD) {
-    addSoldBadge(item);
-  }
+  if (painting.status === STATUS.SOLD) addSoldBadge(item);
 
   return item;
 }
@@ -64,13 +66,13 @@ function addSoldBadge(container) {
   container.appendChild(badge);
 }
 
-/* Modal control */
 function openModal(index) {
+  const painting = paintings[index];
+  console.log("Opening painting:", painting.id, "Images found:", painting.imageCount);
   if (!modalElement) return;
   currentPaintingIndex = index;
   currentModalImageIndex = 0;
 
-  const painting = paintings[index];
   populateModal(painting);
   renderModalButtons(painting);
 
@@ -78,7 +80,7 @@ function openModal(index) {
 }
 
 function populateModal(painting) {
-  const imgs = painting.images || [painting.image];
+  const imgs = getPaintingImagePaths(painting);
 
   modalImg.src = imgs[0];
   modalImg.alt = painting.title;
@@ -99,7 +101,6 @@ function buildModalThumbnails(imgs) {
   imgs.forEach((src, idx) => {
     const thumb = document.createElement("img");
     thumb.src = src;
-    thumb.alt = `Bild ${idx + 1}`;
     thumb.classList.add("modalThumb");
     if (idx === 0) thumb.classList.add("active");
     thumb.addEventListener("click", () => switchModalImage(imgs, idx));
@@ -114,10 +115,8 @@ function configureModalArrows(imgs) {
   if (imgs.length > 1) {
     imgPrev.style.display = "flex";
     imgNext.style.display = "flex";
-    imgPrev.onclick = () =>
-      switchModalImage(imgs, (currentModalImageIndex - 1 + imgs.length) % imgs.length);
-    imgNext.onclick = () =>
-      switchModalImage(imgs, (currentModalImageIndex + 1) % imgs.length);
+    imgPrev.onclick = () => switchModalImage(imgs, (currentModalImageIndex - 1 + imgs.length) % imgs.length);
+    imgNext.onclick = () => switchModalImage(imgs, (currentModalImageIndex + 1) % imgs.length);
   } else {
     imgPrev.style.display = "none";
     imgNext.style.display = "none";
@@ -126,7 +125,6 @@ function configureModalArrows(imgs) {
 
 function renderModalButtons(painting) {
   modalButtons.innerHTML = "";
-
   if (painting.status === STATUS.SOLD) {
     const soldText = document.createElement("p");
     soldText.textContent = STATUS_TEXT[STATUS.SOLD];
@@ -134,21 +132,16 @@ function renderModalButtons(painting) {
     modalButtons.appendChild(soldText);
     return;
   }
-
   if (painting.status === STATUS.PERSONAL) {
     const personalText = document.createElement("p");
     personalText.textContent = STATUS_TEXT[STATUS.PERSONAL];
-    personalText.style.opacity = "0.8";
     modalButtons.appendChild(personalText);
     return;
   }
-
   if (painting.originalPrice) {
     const priceEl = document.createElement("p");
     priceEl.textContent = `${painting.originalPrice} kr`;
-    priceEl.style.fontSize = "22px";
-    priceEl.style.fontWeight = "bold";
-    priceEl.style.margin = "10px 0";
+    priceEl.classList.add("modal-price"); // Use CSS for styling
     modalButtons.appendChild(priceEl);
 
     const buyBtn = document.createElement("button");
@@ -160,11 +153,9 @@ function renderModalButtons(painting) {
 
 function handleBuyClick(painting) {
   document.getElementById("f-typ").value = "Köpa original";
-  visaFooterPrintFalt();
+  if (typeof visaFooterPrintFalt === "function") visaFooterPrintFalt();
   document.getElementById("f-verk").value = painting.title;
-  document.getElementById("f-meddelande").value =
-    `Hej! Jag är intresserad av originalmålningen "${painting.title}" (${painting.size}) för ${painting.originalPrice} kr.`;
-
+  document.getElementById("f-meddelande").value = `Hej! Jag är intresserad av originalmålningen "${painting.title}" (${painting.size}) för ${painting.originalPrice} kr.`;
   closeModal();
   document.getElementById("footer").scrollIntoView({ behavior: "smooth" });
 }
@@ -178,8 +169,7 @@ function switchModalImage(imgs, index) {
 }
 
 function closeModal() {
-  if (!modalElement) return;
-  modalElement.style.display = "none";
+  if (modalElement) modalElement.style.display = "none";
 }
 
 function showNextPainting() {
@@ -194,38 +184,24 @@ function showPrevPainting() {
 
 function attachModalListeners() {
   if (!modalElement) return;
+  if (modalCloseBtn) modalCloseBtn.onclick = closeModal;
+  if (modalNextBtn) modalNextBtn.onclick = showNextPainting;
+  if (modalPrevBtn) modalPrevBtn.onclick = showPrevPainting;
 
-  if (modalCloseBtn) modalCloseBtn.addEventListener("click", closeModal);
-  if (modalNextBtn) modalNextBtn.addEventListener("click", showNextPainting);
-  if (modalPrevBtn) modalPrevBtn.addEventListener("click", showPrevPainting);
-
-  modalElement.addEventListener("click", (e) => {
-    if (e.target === modalElement) closeModal();
-  });
-
-  document.addEventListener("keydown", (e) => {
+  modalElement.onclick = (e) => { if (e.target === modalElement) closeModal(); };
+  document.onkeydown = (e) => {
     if (e.key === "Escape") closeModal();
     if (e.key === "ArrowRight") showNextPainting();
     if (e.key === "ArrowLeft") showPrevPainting();
-  });
+  };
 }
 
 function setupScrollWatcher() {
   window.addEventListener("scroll", () => {
     const footer = document.getElementById("footer");
-    const footerTop = footer.getBoundingClientRect().top;
-    const footerInView = footerTop <= window.innerHeight / 2;
-    let currentQuery = "#footer";
-
-    const currentUrl = window.location.href;
-    if (!footerInView) {
-      if (currentUrl.includes("pictures.html")) {
-        currentQuery = "pictures.html#main";
-      } else {
-        currentQuery = "index.html#top";
-      }
-    }
-
+    if (!footer) return;
+    const footerInView = footer.getBoundingClientRect().top <= window.innerHeight / 2;
+    let currentQuery = footerInView ? "#footer" : (window.location.href.includes("pictures.html") ? "pictures.html#main" : "index.html#top");
     activateNavQuery(currentQuery);
   });
 }
@@ -236,7 +212,24 @@ function activateNavQuery(queryName) {
   if (link) link.classList.add("active");
 }
 
-// initialization
-buildGallery();
-attachModalListeners();
-setupScrollWatcher();
+async function init() {
+  try {
+    const response = await fetch('images/paintings/counts.json'); 
+    
+    if (!response.ok) throw new Error("File not found");
+    
+    const counts = await response.json();
+
+    paintings.forEach(p => {
+      p.imageCount = counts[p.id] || 1;
+    });
+  } catch (err) {
+    console.warn("Could not load counts.json, defaulting to 1 image per painting.", err);
+  }
+
+  buildGallery();
+  attachModalListeners();
+  setupScrollWatcher();
+}
+
+init();
