@@ -205,39 +205,6 @@ if (gallery) {
   });
 }
 
-// Skapa mini-galleri på startsidan (första fyra målningarna)
-const homeGrid = document.getElementById("homeGalleryGrid");
-if (homeGrid) {
-  paintings.slice(0, 3).forEach((painting, index) => {
-    const item = document.createElement("div");
-    item.classList.add("gallery-item");
-
-    const img = document.createElement("img");
-    img.src = painting.image;
-    img.alt = painting.title;
-    img.addEventListener("error", () => {
-      console.error("Home image failed to load:", painting.image);
-      img.src = "images/devika.jpg"; // fallback
-    });
-    img.addEventListener("load", () => {
-      console.log("Loaded home image:", painting.image);
-    });
-
-    img.addEventListener("click", () => openModal(index));
-
-    item.appendChild(img);
-
-    if (painting.status === "SÅLD") {
-      const badge = document.createElement("div");
-      badge.textContent = "Såld";
-      badge.classList.add("sold-badge");
-      item.appendChild(badge);
-    }
-
-    homeGrid.appendChild(item);
-  });
-}
-
 // Öppna modal
 let currentImageIndex = 0;
 
