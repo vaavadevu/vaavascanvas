@@ -54,4 +54,3 @@ for /d %%D in (*) do (
 
 echo } >> %OUTPUT%
 echo Done! 01.jpg preserved, others renamed, and %OUTPUT% updated.
-pause

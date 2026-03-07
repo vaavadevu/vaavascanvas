@@ -154,4 +154,11 @@ const paintings = [
     size: "42 x 59 cm",
     status: STATUS.PERSONAL,
   },
+  {
+    id: "sommarvila",
+    title: "Sommarvila",
+    description: "Isbjörnsmamma och hennes ungar som vilar i Hudson Bay",
+    size: "42 x 59 cm",
+    status: STATUS.FOR_SALE,
+  },
 ];
