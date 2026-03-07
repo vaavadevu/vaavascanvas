@@ -108,6 +108,40 @@ function buildModalThumbnails(imgs) {
   });
 }
 
+function attachFilterListeners() {
+  document.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      filterGallery(btn.dataset.filter);
+    });
+  });
+}
+
+function filterGallery(filter) {
+  document.querySelectorAll(".gallery-item").forEach((item, idx) => {
+    const status = paintings[idx].status;
+    const show = filter === "all" || status === filter;
+    item.style.display = show ? "" : "none";
+  });
+}
+
+function sortPaintings() {
+  const statusOrder = { 
+    [STATUS.FOR_SALE]: 0, 
+    [STATUS.PERSONAL]: 1, 
+    [STATUS.SOLD]: 2 
+  };
+
+  paintings.sort((a, b) => {
+    // Först sortera på status
+    const statusDiff = statusOrder[a.status] - statusOrder[b.status];
+    if (statusDiff !== 0) return statusDiff;
+
+    // Sen inom samma status, högt pris först
+    return (b.originalPrice || 0) - (a.originalPrice || 0);
+  });
+}
 function configureModalArrows(imgs) {
   const imgPrev = document.getElementById("modal-img-prev");
   const imgNext = document.getElementById("modal-img-next");
@@ -227,9 +261,11 @@ async function init() {
     console.warn("Could not load counts.json, defaulting to 1 image per painting.", err);
   }
 
-  buildGallery();
-  attachModalListeners();
-  setupScrollWatcher();
+sortPaintings();  // ← först
+buildGallery();   // ← sen
+attachModalListeners();
+attachFilterListeners();
+setupScrollWatcher();
 }
 
 init();
