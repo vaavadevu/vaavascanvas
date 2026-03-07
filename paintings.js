@@ -1,0 +1,157 @@
+// Status constants
+const STATUS = {
+  SOLD: "sold",
+  FOR_SALE: "for_sale",
+  PERSONAL: "personal"
+};
+
+// Status display text
+const STATUS_TEXT = {
+  [STATUS.SOLD]: "Såld",
+  [STATUS.FOR_SALE]: "TILL SALU",
+  [STATUS.PERSONAL]: "Personlig målning – ej till salu"
+};
+
+const paintings = [
+  {
+    image: "images/herrOchFruAndersson.JPG",
+    title: "Herr och Fru Andersson",
+    description: "Gräsänder i sjön",
+    size: "60 x 90 cm",
+    originalPrice: 3000,
+    status: STATUS.SOLD,
+  },
+  {
+    image: "images/womanInTheSea.jpg",
+    title: "Woman of the Sea",
+    description: "En självpoträtt inspirerad av hopp.",
+    size: "60 x 90 cm",
+    originalPrice: 2000,
+    status: STATUS.FOR_SALE,
+  },
+  {
+    image: "images/vattenfall.jpg",
+    title: "Vattenfall",
+    description: "Där vattnet möter klippan och tiden står stilla.",
+    size: "41 x 33 cm",
+    originalPrice: 1000,
+    status: STATUS.SOLD,
+  },
+  {
+    image: "images/solnedgang.JPG",
+    title: "Havet",
+    description: "Solnedgång i havet",
+    size: "41 x 33 cm",
+    originalPrice: 1000,
+    status: STATUS.FOR_SALE,
+  },
+  {
+    image: "images/sommarstuga.jpg",
+    title: "Sommarstuga",
+    description: "En somrig dag i Småland.",
+    size: "42 x 59 cm",
+    originalPrice: 1500,
+    status: STATUS.FOR_SALE,
+  },
+  {
+    image: "images/sommarPaStranden.jpg",
+    title: "Beach day",
+    description: "Semester på strand.",
+    size: "42 x 59 cm",
+    originalPrice: 1800,
+    status: STATUS.FOR_SALE,
+  },
+  {
+    image: "images/sjalvportratt.jpg",
+    title: "Embrace",
+    description: "Självpoträtt som visar förändring och ett nytt liv.",
+    size: "42 x 59 cm",
+    originalPrice: 1500,
+    status: STATUS.FOR_SALE,
+  },
+  {
+    image: "images/mystiskJul.jpg",
+    title: "Det är fortfarande tänt",
+    description: "Mystisk jultomten.",
+    size: "42 x 59 cm",
+    originalPrice: 1500,
+    status: STATUS.FOR_SALE,
+  },
+  {
+    image: "images/nackrosor.jpg",
+    title: "Ska vi plocka blommor",
+    description: "Stilla sjö med blommor",
+    size: "42 x 59 cm",
+    originalPrice: 1500,
+    status: STATUS.SOLD,
+  },
+  {
+    image: "images/savannan.jpg",
+    title: "Dags att gå hem",
+    description: "Savanna temad berättelse",
+    size: "42 x 59 cm",
+    originalPrice: 1500,
+    status: STATUS.FOR_SALE,
+  },
+  {
+    image: "images/varkansla.JPG",
+    title: "Vårkänsla",
+    description: "Körsbärsblommor och en trött blåmes som vilar",
+    size: "42 x 59 cm",
+    originalPrice: 1500,
+    status: STATUS.SOLD,
+  },
+  {
+    image: "images/norrsken.jpg",
+    title: "Norrsken",
+    description: "Norrsken bakom bergerna.",
+    size: "41 x 33 cm",
+    originalPrice: 1000,
+    status: STATUS.FOR_SALE,
+  },
+  {
+    image: "images/vargen.jpg",
+    title: "Två sidor av samma mynt",
+    description: "Målning som visar balans och styrka",
+    size: "42 x 59 cm",
+    originalPrice: 1500,
+    status: STATUS.FOR_SALE,
+  },
+  {
+    image: "images/radjur.jpg",
+    title: "Savannan",
+    description: "Antiloper som betar i savanna",
+    size: "42 x 59 cm",
+    originalPrice: 1500,
+    status: STATUS.FOR_SALE,
+  },
+  {
+    image: "images/skogsvila.jpg",
+    title: "Skogsvila",
+    description: "Rävarna som myser innuti en trädöppning",
+    size: "90 cm",
+    originalPrice: 3000,
+    status: STATUS.FOR_SALE,
+  },
+  {
+    image: "images/brollopspresent.jpg",
+    title: "Bröllop",
+    description: "Brollopsdag present till Herr och Fru Elfqvist.",
+    size: "42 x 59 cm",
+    status: STATUS.PERSONAL,
+  },
+  {
+    image: "images/bonnie.jpg",
+    title: "Sovven och Bonnie",
+    description: "Illustration som var en present till bebisen i bilden på hennes ett års födelsedag",
+    size: "42 x 59 cm",
+    status: STATUS.PERSONAL,
+  },
+  {
+    image: "images/shiroOchOtis.jpg",
+    title: "Vinterlek",
+    description: "Hundarna Shiro och Otis som leker med varandra i snön",
+    size: "42 x 59 cm",
+    status: STATUS.PERSONAL,
+  },
+];
