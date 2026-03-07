@@ -70,15 +70,7 @@ const paintings = [
     status: STATUS.FOR_SALE,
   },
   {
-    id: "mystiskJul",
-    title: "Det är fortfarande tänt",
-    description: "Mystisk jultomten.",
-    size: "42 x 59 cm",
-    originalPrice: 1500,
-    status: STATUS.FOR_SALE,
-  },
-  {
-    id: "nackrosor",
+    id: "skaViPlockaBlommor",
     title: "Ska vi plocka blommor",
     description: "Stilla sjö med blommor",
     size: "42 x 59 cm",
@@ -104,7 +96,7 @@ const paintings = [
   {
     id: "norrsken",
     title: "Norrsken",
-    description: "Norrsken bakom bergerna.",
+    description: "Norrsken bakom bergen.",
     size: "41 x 33 cm",
     originalPrice: 1000,
     status: STATUS.FOR_SALE,
@@ -128,7 +120,7 @@ const paintings = [
   {
     id: "skogsvila",
     title: "Skogsvila",
-    description: "Rävarna som myser innuti en trädöppning",
+    description: "Rävar som myser innuti en trädöppning",
     size: "90 cm",
     originalPrice: 3000,
     status: STATUS.FOR_SALE,
@@ -136,7 +128,7 @@ const paintings = [
   {
     id: "brollopspresent",
     title: "Bröllop",
-    description: "Brollopsdag present till Herr och Fru Elfqvist.",
+    description: "Bröllopsdag present till Herr och Fru Elfqvist.",
     size: "42 x 59 cm",
     status: STATUS.PERSONAL,
   },
@@ -148,7 +140,7 @@ const paintings = [
     status: STATUS.PERSONAL,
   },
   {
-    id: "shiroOchOtis",
+    id: "vinterlek",
     title: "Vinterlek",
     description: "Hundarna Shiro och Otis som leker med varandra i snön",
     size: "42 x 59 cm",
