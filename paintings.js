@@ -14,7 +14,7 @@ const STATUS_TEXT = {
 
 const paintings = [
   {
-    image: "images/herrOchFruAndersson.JPG",
+    id: "herrOchFruAndersson",
     title: "Herr och Fru Andersson",
     description: "Gräsänder i sjön",
     size: "60 x 90 cm",
@@ -22,7 +22,7 @@ const paintings = [
     status: STATUS.SOLD,
   },
   {
-    image: "images/womanInTheSea.jpg",
+    id: "womanInTheSea",
     title: "Woman of the Sea",
     description: "En självpoträtt inspirerad av hopp.",
     size: "60 x 90 cm",
@@ -30,7 +30,7 @@ const paintings = [
     status: STATUS.FOR_SALE,
   },
   {
-    image: "images/vattenfall.jpg",
+    id: "vattenfall",
     title: "Vattenfall",
     description: "Där vattnet möter klippan och tiden står stilla.",
     size: "41 x 33 cm",
@@ -38,7 +38,7 @@ const paintings = [
     status: STATUS.SOLD,
   },
   {
-    image: "images/solnedgang.JPG",
+    id: "solnedgang",
     title: "Havet",
     description: "Solnedgång i havet",
     size: "41 x 33 cm",
@@ -46,7 +46,7 @@ const paintings = [
     status: STATUS.FOR_SALE,
   },
   {
-    image: "images/sommarstuga.jpg",
+    id: "sommarstuga",
     title: "Sommarstuga",
     description: "En somrig dag i Småland.",
     size: "42 x 59 cm",
@@ -54,7 +54,7 @@ const paintings = [
     status: STATUS.FOR_SALE,
   },
   {
-    image: "images/sommarPaStranden.jpg",
+    id: "sommarPaStranden",
     title: "Beach day",
     description: "Semester på strand.",
     size: "42 x 59 cm",
@@ -62,7 +62,7 @@ const paintings = [
     status: STATUS.FOR_SALE,
   },
   {
-    image: "images/sjalvportratt.jpg",
+    id: "sjalvportratt",
     title: "Embrace",
     description: "Självpoträtt som visar förändring och ett nytt liv.",
     size: "42 x 59 cm",
@@ -70,7 +70,7 @@ const paintings = [
     status: STATUS.FOR_SALE,
   },
   {
-    image: "images/mystiskJul.jpg",
+    id: "mystiskJul",
     title: "Det är fortfarande tänt",
     description: "Mystisk jultomten.",
     size: "42 x 59 cm",
@@ -78,7 +78,7 @@ const paintings = [
     status: STATUS.FOR_SALE,
   },
   {
-    image: "images/nackrosor.jpg",
+    id: "nackrosor",
     title: "Ska vi plocka blommor",
     description: "Stilla sjö med blommor",
     size: "42 x 59 cm",
@@ -86,7 +86,7 @@ const paintings = [
     status: STATUS.SOLD,
   },
   {
-    image: "images/savannan.jpg",
+    id: "savannan",
     title: "Dags att gå hem",
     description: "Savanna temad berättelse",
     size: "42 x 59 cm",
@@ -94,7 +94,7 @@ const paintings = [
     status: STATUS.FOR_SALE,
   },
   {
-    image: "images/varkansla.JPG",
+    id: "varkansla",
     title: "Vårkänsla",
     description: "Körsbärsblommor och en trött blåmes som vilar",
     size: "42 x 59 cm",
@@ -102,7 +102,7 @@ const paintings = [
     status: STATUS.SOLD,
   },
   {
-    image: "images/norrsken.jpg",
+    id: "norrsken",
     title: "Norrsken",
     description: "Norrsken bakom bergerna.",
     size: "41 x 33 cm",
@@ -110,7 +110,7 @@ const paintings = [
     status: STATUS.FOR_SALE,
   },
   {
-    image: "images/vargen.jpg",
+    id: "vargen",
     title: "Två sidor av samma mynt",
     description: "Målning som visar balans och styrka",
     size: "42 x 59 cm",
@@ -118,7 +118,7 @@ const paintings = [
     status: STATUS.FOR_SALE,
   },
   {
-    image: "images/radjur.jpg",
+    id: "radjur",
     title: "Savannan",
     description: "Antiloper som betar i savanna",
     size: "42 x 59 cm",
@@ -126,7 +126,7 @@ const paintings = [
     status: STATUS.FOR_SALE,
   },
   {
-    image: "images/skogsvila.jpg",
+    id: "skogsvila",
     title: "Skogsvila",
     description: "Rävarna som myser innuti en trädöppning",
     size: "90 cm",
@@ -134,21 +134,21 @@ const paintings = [
     status: STATUS.FOR_SALE,
   },
   {
-    image: "images/brollopspresent.jpg",
+    id: "brollopspresent",
     title: "Bröllop",
     description: "Brollopsdag present till Herr och Fru Elfqvist.",
     size: "42 x 59 cm",
     status: STATUS.PERSONAL,
   },
   {
-    image: "images/bonnie.jpg",
+    id: "bonnie",
     title: "Sovven och Bonnie",
-    description: "Illustration som var en present till bebisen i bilden på hennes ett års födelsedag",
+    description: "Illustration som var en present till bebisen på hennes ett års födelsedag",
     size: "42 x 59 cm",
     status: STATUS.PERSONAL,
   },
   {
-    image: "images/shiroOchOtis.jpg",
+    id: "shiroOchOtis",
     title: "Vinterlek",
     description: "Hundarna Shiro och Otis som leker med varandra i snön",
     size: "42 x 59 cm",
