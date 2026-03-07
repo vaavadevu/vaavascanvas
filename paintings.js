@@ -62,14 +62,6 @@ const paintings = [
     status: STATUS.FOR_SALE,
   },
   {
-    id: "sjalvportratt",
-    title: "Embrace",
-    description: "Självpoträtt som visar förändring och ett nytt liv.",
-    size: "42 x 59 cm",
-    originalPrice: 1500,
-    status: STATUS.FOR_SALE,
-  },
-  {
     id: "skaViPlockaBlommor",
     title: "Ska vi plocka blommor",
     description: "Stilla sjö med blommor",
