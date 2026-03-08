@@ -17,6 +17,7 @@
 
 /* ─── Mobil ─── */
 @media (max-width: 768px) {
+
   footer { padding: 30px 15px 15px; }
 
   .footerContent { grid-template-columns: 1fr; gap: 30px; }
@@ -37,7 +38,6 @@
     max-width: 240px;
     height: auto;
   }
-
   .gallery-filters { gap: 8px; margin: 30px 0 20px 0; }
   .filter-btn { padding: 6px 14px; font-size: 0.8rem; }
 
@@ -107,4 +107,76 @@
   .featured-grid { grid-template-columns: 1fr 1fr; }
   .featured-grid .featured-card:first-child { grid-column: 1 / -1; }
   .featured-card-label { opacity: 1; transform: none; }
+
+  /* --- HERO --- */
+  .hero {
+    height: 90vh; /* Något kortare på mobil */
+  }
+
+  .hero-text {
+    left: 20px;
+    right: 20px;
+    bottom: 100px;
+  }
+
+  .hero-text h2 {
+    font-size: 2.5rem; /* Tvinga ner storleken lite extra */
+  }
+
+  .hero-scroll {
+    display: none; /* Dölj scroll-indikatorn på små skärmar för att spara plats */
+  }
+
+  /* --- OM MIG (Intro) --- */
+  .intro-section {
+    display: flex;
+    flex-direction: column; /* Stapla bild och text på varandra */
+    height: auto; /* Ta bort fast höjd */
+    padding: 20px 0;
+  }
+
+  .intro-image-side {
+    height: 400px; /* Ge bilden en fast höjd när den staplas */
+  }
+
+  .intro-text-side {
+    padding: 40px 25px;
+    text-align: center;
+    align-items: center;
+  }
+
+  /* --- UTVALDA VERK --- */
+  .featured-inner {
+    padding: 0 20px;
+    max-width: 100%;
+  }
+
+  .featured-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 25px;
+  }
+
+  .featured-grid {
+    grid-template-columns: 1fr; /* Alla kort blir fullbredd */
+    gap: 20px;
+  }
+
+  .featured-card img {
+    aspect-ratio: 1 / 1; /* Kvadratiska bilder ser ofta bättre ut i mobillistor */
+  }
 }
+
+@media (max-width: 1024px) {
+  /* Justera Hero för surfplattor */
+  .hero-text {
+    left: 40px;
+    bottom: 60px;
+  }
+  
+  .intro-text-side {
+    padding: 60px 40px;
+  }
+}
+
