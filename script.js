@@ -322,7 +322,7 @@ function setupContactForm() {
       successMsg.style.display = "block";
       setTimeout(() => { successMsg.style.display = "none"; }, 5000);
     } else {
-      alert("Något gick fel. Maila direkt till vaavascanvas@gmail.com");
+      alert("Något gick fel. Maila direkt till info@vaavascanvas.se");
     }
   });
 }
