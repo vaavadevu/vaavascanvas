@@ -12,12 +12,19 @@ header {
   background-color: var(--accent-light);
 }
 
-header.box {
-  padding: 15px 40px;
+.box {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding: 10px 40px;
 }
+
+.menu-toggle {
+  display: none; /* Dold på dator */
+}
+
+
 
 .headerLeft {
   display: flex;
