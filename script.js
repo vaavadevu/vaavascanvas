@@ -212,6 +212,21 @@ function handleBuyClick(painting) {
 function switchModalImage(imgs, index) {
   currentModalImageIndex = index;
   modalImg.src = imgs[index];
+  
+  // 1. Nollställ zoom-nivån till 0 (utzoomad)
+  zoomLevel = 0; 
+  
+  // 2. Återställ bildens storlek och centrera zoomen
+  modalImg.style.transform = "scale(1)";
+  modalImg.style.transformOrigin = "center center";
+
+  // 3. Ta bort alla zoom-klasser från wrappern så muspekaren blir rätt
+  const wrapper = document.querySelector('.modalImageWrapper');
+  if (wrapper) {
+    wrapper.classList.remove('is-zoomed-1', 'is-zoomed-2');
+  }
+
+  // 4. Uppdatera tumnaglarna så rätt bild ser vald ut
   document.querySelectorAll(".modalThumb").forEach((thumb, idx) => {
     thumb.classList.toggle("active", idx === index);
   });
@@ -303,28 +318,55 @@ function setupContactForm() {
     }
   });
 }
+let isZoomed = false; // Håller koll på om vi har zoomat in
+
+let zoomLevel = 0; // 0 = normal, 1 = nära, 2 = supernära
 
 function setupZoomEffect() {
   const wrapper = document.querySelector('.modalImageWrapper');
   if (!wrapper || !modalImg) return;
 
+  wrapper.addEventListener('click', (e) => {
+    if (window.innerWidth <= 768) return;
+
+    zoomLevel = (zoomLevel + 1) % 3;
+
+    if (zoomLevel === 0) {
+      modalImg.style.transform = "scale(1)";
+      modalImg.style.transformOrigin = "center center";
+      wrapper.classList.remove('is-zoomed-1', 'is-zoomed-2');
+    } else if (zoomLevel === 1) {
+      modalImg.style.transform = "scale(2)";
+      wrapper.classList.add('is-zoomed-1');
+      wrapper.classList.remove('is-zoomed-2');
+    } else {
+      modalImg.style.transform = "scale(4)";
+      wrapper.classList.add('is-zoomed-2');
+      wrapper.classList.remove('is-zoomed-1');
+    }
+    updateZoomPosition(e, wrapper);
+  });
+
   wrapper.addEventListener('mousemove', (e) => {
-    const rect = wrapper.getBoundingClientRect();
-    
-    // Calculate mouse position relative to the wrapper in percentage
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    
-    // Move the "anchor point" to the mouse position and scale up
-    modalImg.style.transformOrigin = `${x}% ${y}%`;
-    modalImg.style.transform = "scale(2.5)"; // Adjust 2.5 to your preferred zoom level
+    if (window.innerWidth <= 768 || zoomLevel === 0) return;
+    updateZoomPosition(e, wrapper);
   });
 
   wrapper.addEventListener('mouseleave', () => {
-    // Reset to normal when mouse leaves
+    if (window.innerWidth <= 768) return;
+    zoomLevel = 0;
     modalImg.style.transform = "scale(1)";
     modalImg.style.transformOrigin = "center center";
+    wrapper.classList.remove('is-zoomed-1', 'is-zoomed-2');
   });
+}
+
+// Hjälpfunktion för att räkna ut positionen
+function updateZoomPosition(e, wrapper) {
+  const rect = wrapper.getBoundingClientRect();
+  const x = ((e.clientX - rect.left) / rect.width) * 100;
+  const y = ((e.clientY - rect.top) / rect.height) * 100;
+  modalImg.style.transformOrigin = `${x}% ${y}%`;
 }
 async function init() {
   if (!galleryElement) return; // ← lägg till denna rad
