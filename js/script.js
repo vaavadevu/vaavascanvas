@@ -350,7 +350,9 @@ function setupContactForm() {
   const subjectInput = document.getElementById("f-subject");
   const printField = document.getElementById("f-printField");
   const commissionInfo = document.getElementById("f-commissionInfo");
-  const successMsg = document.getElementById("formSuccess");
+  const originalField = document.getElementById("f-originalField");
+  const originalInfo = document.getElementById("f-originalInfo");
+  const printInfo = document.getElementById("f-printInfo");
 
   if (!form) return;
 
@@ -380,6 +382,14 @@ function setupContactForm() {
     });
 
     if (response.ok) {
+      const subscribeCheckbox = document.getElementById("f-subscribe");
+      const nameInput = document.getElementById("f-name");
+      const emailInput = document.getElementById("f-email");
+
+      if (subscribeCheckbox?.checked && emailInput?.value && nameInput?.value) {
+        subscribeToMailchimp(emailInput.value);
+      }
+
       form.reset();
       if (originalField) originalField.style.display = "none";
       if (originalInfo) originalInfo.style.display = "none";
@@ -387,11 +397,22 @@ function setupContactForm() {
       subjectInput.value = "New Inquiry";
       printField.style.display = "none";
       commissionInfo.style.display = "none";
-      successMsg.style.display = "block";
-      setTimeout(() => { successMsg.style.display = "none"; }, 5000);
+      showSuccessPopup();
     } else {
       alert("Något gick fel. Maila direkt till info@vaavascanvas.se");
     }
+  });
+}
+
+function showSuccessPopup() {
+  const popup = document.getElementById("successPopup");
+  if (!popup) return;
+  popup.style.display = "flex";
+  document.getElementById("successPopupClose").addEventListener("click", () => {
+    popup.style.display = "none";
+  });
+  popup.addEventListener("click", (e) => {
+    if (e.target === popup) popup.style.display = "none";
   });
 }
 
@@ -417,6 +438,20 @@ function setupSubscribeModal() {
   modal.addEventListener("click", (e) => {
     if (e.target === modal) modal.style.display = "none";
   });
+}
+
+function subscribeToMailchimp(email) {
+  const iframe = document.querySelector(".subscribe-iframe");
+  if (!iframe) return;
+
+  const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+  const mcEmail = iframeDoc.getElementById("mce-EMAIL");
+  const mcForm = iframeDoc.getElementById("mc-embedded-subscribe-form");
+
+  if (mcEmail && mcForm) {
+    mcEmail.value = email;
+    mcForm.submit();
+  }
 }
 
 function populateArtworkDropdowns() {

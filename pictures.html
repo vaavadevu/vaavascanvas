@@ -82,50 +82,49 @@
     <span class="arrow right" id="modal-next">&#10095;</span>
   </div>
   <footer id="footer">
-  <div class="footerContent">
+    <div class="footerContent">
 
-    <!-- Om mig -->
-    <div class="footerAbout">
-      <img src="images/devika.jpg" alt="Devika" class="footerImg" />
-      <h2>Hej, Devika här!</h2>
-      <p>Jag är konstnär och illustratör baserad i Sverige...</p>
-      <p>Genom min konst vill jag skapa närvaro...</p>
-      <div class="footerLinks">
-        <a href="https://www.instagram.com/vaavascanvas/" target="_blank">
-          <i class="fa fa-instagram"></i> @vaavascanvas
-        </a>
-        <a href="mailto:info@vaavascanvas.se">
-          <i class="fa fa-envelope"></i> info@vaavascanvas.se
-        </a>
+      <!-- Om mig -->
+      <div class="footerAbout">
+        <img src="images/devika.jpg" alt="Devika" class="footerImg" />
+        <h2>Hej, Devika här!</h2>
+        <p>Jag är konstnär och illustratör baserad i Sverige...</p>
+        <p>Genom min konst vill jag skapa närvaro...</p>
+        <div class="footerLinks">
+          <a href="https://www.instagram.com/vaavascanvas/" target="_blank">
+            <i class="fa fa-instagram"></i> @vaavascanvas
+          </a>
+          <a href="mailto:info@vaavascanvas.se">
+            <i class="fa fa-envelope"></i> info@vaavascanvas.se
+          </a>
+        </div>
+        <!-- Subscribe hamnar under om-mig-texten -->
+        <button class="subscribe-btn" id="subscribeBtn">
+          🔔 Prenumerera på nyheter
+        </button>
       </div>
-      <!-- Subscribe hamnar under om-mig-texten -->
-      <button class="subscribe-btn" id="subscribeBtn">
-  🔔 Prenumerera på nyheter
-</button>
+
+      <!-- Divider -->
+      <div class="footerDivider"></div>
+
+      <div class="footerFormSection" id="formContainer"></div>
+
     </div>
 
-    <!-- Divider -->
-    <div class="footerDivider"></div>
-
-    <div class="footerFormSection" id="formContainer"></div>
-
-  </div>
-
-  <p class="footerCopy">© 2026 Devika – All rights reserved</p>
-</footer>
+    <p class="footerCopy">© 2026 Devika – All rights reserved</p>
+  </footer>
 
   </script>
   <script src="js/paintings.js"></script>
   <script src="js/script.js"></script>
-  <div class="subscribe-modal" id="subscribeModal">
-  <div class="subscribe-modal-inner">
-    <span class="subscribe-close" id="subscribeClose">&times;</span>
-    <h3>Håll dig uppdaterad</h3>
-    <p>Få ett mail när nya målningar läggs upp.</p>
-    <iframe src="subscribe.html" class="subscribe-iframe" frameborder="0"></iframe>
+  <div class="subscribe-modal" id="successPopup">
+    <div class="subscribe-modal-inner" style="text-align: center;">
+      <span class="subscribe-close" id="successPopupClose">&times;</span>
+      <h3>Tack för din förfrågan! 🎨</h3>
+      <p>Jag återkommer så snart som möjligt.</p>
+    </div>
   </div>
-</div>
-</div>
+  </div>
 </body>
 
 </html>
