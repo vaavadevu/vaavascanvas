@@ -99,53 +99,7 @@
     <!-- Divider -->
     <div class="footerDivider"></div>
 
-    <div class="footerFormSection">
-  <h3>Skicka en förfrågan</h3>
-  <p>Print, commission eller fråga? Hör av dig!</p>
-
-  <form action="https://formspree.io/f/xgolgnoj" method="POST" id="footerForm">
-    <input type="hidden" name="_subject" id="f-subject" value="New Inquiry">
-
-    <div class="formGroup">
-      <label for="f-name">Namn</label>
-      <input type="text" id="f-name" name="name" placeholder="Ditt namn" required />
-    </div>
-
-    <div class="formGroup">
-      <label for="f-email">E-post</label>
-      <input type="email" id="f-email" name="email" placeholder="din@email.com" required />
-    </div>
-
-    <div class="formGroup">
-      <label for="f-type">Typ av förfrågan</label>
-      <select id="f-type" name="type" required>
-        <option value="">– Välj –</option>
-        <option value="Originals">Köpa original</option>
-        <option value="Prints">Print av befintlig målning</option>
-        <option value="Commissions">Commission (beställd målning)</option>
-        <option value="General">Allmän fråga</option>
-      </select>
-    </div>
-
-    <div class="formGroup" id="f-printField" style="display:none;">
-      <label for="f-artwork">Vilket verk?</label>
-      <input type="text" id="f-artwork" name="artwork" placeholder="T.ex. Woman of the Sea" />
-    </div>
-
-    <div class="formGroup">
-      <label for="f-message">Meddelande</label>
-      <textarea id="f-message" name="message" rows="3" placeholder="Berätta mer..."></textarea>
-    </div>
-
-    <button type="submit" class="submitBtn">✉ Skicka</button>
-
-    <p id="formSuccess" style="display:none; color: var(--accent-green); font-weight:600; margin-top:10px;">
-      Tack! Jag återkommer så snart som möjligt. 🎨
-    </p>
-  </form>
-</div>
-
-  </div>
+    <div class="footerFormSection" id="formContainer"></div>
 
   <p class="footerCopy">© 2026 Devika – All rights reserved</p>
 </footer>

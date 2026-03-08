@@ -327,28 +327,47 @@ function activateNavQuery(queryName) {
   if (link) link.classList.add("active");
 }
 
+async function buildContactForm() {
+  const container = document.getElementById("formContainer");
+  if (!container) return;
+
+  const response = await fetch("form.html");
+  const html = await response.text();
+  container.innerHTML = html;
+
+  setupContactForm();
+  populateArtworkDropdowns();
+}
+
 function setupContactForm() {
   const form = document.getElementById("footerForm");
   const typeSelect = document.getElementById("f-type");
   const subjectInput = document.getElementById("f-subject");
   const printField = document.getElementById("f-printField");
+  const commissionInfo = document.getElementById("f-commissionInfo");
   const successMsg = document.getElementById("formSuccess");
 
   if (!form) return;
 
-  // Uppdatera ämne och visa/dölj fält vid ändring
-  typeSelect.addEventListener("change", () => {
-    const val = typeSelect.value;
-    printField.style.display = val === "Prints" ? "block" : "none";
-    
-    // Sätter ämnet till t.ex. "New Inquiry - Commissions"
-    subjectInput.value = val ? `New Inquiry - ${val}` : "New Inquiry";
-  });
+ typeSelect.addEventListener("change", () => {
+  const val = typeSelect.value;
+  printField.style.display = val === "Prints" ? "block" : "none";
+  commissionInfo.style.display = val === "Commissions" ? "block" : "none";
+
+  const originalField = document.getElementById("f-originalField");
+  const originalInfo = document.getElementById("f-originalInfo");
+  const printInfo = document.getElementById("f-printInfo");
+
+  if (originalField) originalField.style.display = val === "Originals" ? "block" : "none";
+  if (originalInfo) originalInfo.style.display = val === "Originals" ? "block" : "none";
+  if (printInfo) printInfo.style.display = val === "Prints" ? "block" : "none";
+
+  subjectInput.value = val ? `New Inquiry - ${val}` : "New Inquiry";
+});
 
   form.addEventListener("submit", async function(e) {
     e.preventDefault();
     const formData = new FormData(form);
-
     const response = await fetch(form.action, {
       method: "POST",
       body: formData,
@@ -357,14 +376,68 @@ function setupContactForm() {
 
     if (response.ok) {
       form.reset();
+      if (originalField) originalField.style.display = "none";
+if (originalInfo) originalInfo.style.display = "none";
+if (printInfo) printInfo.style.display = "none";
       subjectInput.value = "New Inquiry";
       printField.style.display = "none";
+      commissionInfo.style.display = "none";
       successMsg.style.display = "block";
       setTimeout(() => { successMsg.style.display = "none"; }, 5000);
     } else {
       alert("Något gick fel. Maila direkt till info@vaavascanvas.se");
     }
   });
+}
+
+function populateArtworkDropdowns() {
+  const printSelect = document.getElementById("f-artwork");
+  const originalSelect = document.getElementById("f-artwork-original");
+
+  if (!printSelect || !originalSelect) return;
+
+  paintings.forEach(p => {
+    const option = document.createElement("option");
+    option.value = p.id;
+    option.textContent = p.title;
+    option.dataset.title = p.title;
+    printSelect.appendChild(option);
+  });
+
+  paintings
+    .filter(p => p.status === STATUS.FOR_SALE)
+    .forEach(p => {
+      const option = document.createElement("option");
+      option.value = p.id;
+      option.textContent = `${p.title} – ${p.originalPrice} kr`;
+      option.dataset.title = p.title;
+      originalSelect.appendChild(option);
+    });
+
+  // Preview för print
+  printSelect.addEventListener("change", () => {
+    updateArtworkPreview(printSelect, "f-artwork-preview");
+  });
+
+  // Preview för original
+  originalSelect.addEventListener("change", () => {
+    updateArtworkPreview(originalSelect, "f-artwork-original-preview");
+  });
+}
+
+function updateArtworkPreview(select, previewId) {
+  const preview = document.getElementById(previewId);
+  if (!preview) return;
+
+  const paintingId = select.value;
+  if (!paintingId) {
+    preview.style.display = "none";
+    return;
+  }
+
+  preview.src = `images/paintings/${paintingId}/01.jpg`;
+  preview.alt = select.options[select.selectedIndex].dataset.title;
+  preview.style.display = "block";
 }
 
 const menuBtn = document.getElementById('mobile-menu');
@@ -383,13 +456,6 @@ document.querySelectorAll('.link-list a').forEach(link => {
     navMenu.classList.remove('active');
   });
 });
-
-
-function visaFooterPrintFalt() {
-  const typ = document.getElementById("f-typ").value;
-  document.getElementById("f-printFalt").style.display =
-    typ === "Print av befintlig målning" ? "block" : "none";
-}
 
 let isZoomed = false; // Håller koll på om vi har zoomat in
 
@@ -459,9 +525,9 @@ sortPaintings();  // ← först
 buildGallery();   // ← sen
 attachModalListeners();
 attachFilterListeners();
-setupScrollWatcher();
-setupContactForm();
 }
 
 
+setupScrollWatcher();
+buildContactForm();
 init();

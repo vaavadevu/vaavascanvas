@@ -77,3 +77,38 @@
 
 .submitBtn:hover { background: #4a7d6e; }
 .submitBtn:active { transform: scale(0.98); }
+
+.artwork-preview {
+  margin-top: 10px;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--accent-light);
+}
+
+.commission-steps {
+  border-left: 3px solid var(--accent-green);
+  border-radius: 6px;
+  padding: 14px 18px;
+  font-size: 0.9rem;
+}
+
+.commission-steps p {
+  margin: 0 0 8px;
+  max-width: 100%;
+  font-size: 0.9rem;
+}
+
+.commission-steps ol {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.commission-steps li {
+  line-height: 1.5;
+  opacity: 0.85;
+}
