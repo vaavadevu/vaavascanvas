@@ -327,6 +327,24 @@ function setupContactForm() {
   });
 }
 
+const menuBtn = document.getElementById('mobile-menu');
+const navMenu = document.getElementById('nav-menu');
+
+menuBtn.addEventListener('click', () => {
+  navMenu.classList.toggle('active');
+  
+  // Bonus: Animera hamburgaren till ett X
+  menuBtn.classList.toggle('open');
+});
+
+// Stäng menyn när man klickar på en länk
+document.querySelectorAll('.link-list a').forEach(link => {
+  link.addEventListener('click', () => {
+    navMenu.classList.remove('active');
+  });
+});
+
+
 function visaFooterPrintFalt() {
   const typ = document.getElementById("f-typ").value;
   document.getElementById("f-printFalt").style.display =
