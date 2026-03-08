@@ -6,12 +6,13 @@
   <title>Vaavascanvas</title>
   <link rel="icon" type="image/png" href="images/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body id="top">
+
 <div class="stickyHeader">
   <header class="box">
     <div class="headerLeft">
@@ -28,19 +29,66 @@
   </header>
 </div>
 
-  <main>
-  <div class="heroImage">
-    <img src="images/paintings/herrOchFruAndersson/02.jpg" alt="Herr och fru Andersson" />
-    <a href="pictures.html" class="heroBtn">Se mina målningar</a>
-  </div>
+<main class="index-main">
+
+  <!-- HERO -->
+  <section class="hero">
+    <img class="hero-img" src="images/paintings/herrOchFruAndersson/02.jpg" alt="Herr och fru Andersson" />
+    <div class="hero-text">
+      <h2>Konst skapad<br>med hjärtat</h2>
+      <p>Akrylmålningar inspirerade av naturen, djur och de tysta stunderna som berör.</p>
+      <a href="pictures.html" class="hero-cta">Se mina målningar</a>
+    </div>
+    <div class="hero-scroll">
+      <div class="hero-scroll-line"></div>
+      <span>Scrolla</span>
+    </div>
+  </section>
+
+  <!-- OM MIG -->
+  <section class="intro-section">
+    <div class="intro-image-side">
+      <img src="images/devika.jpg" alt="Devika" />
+    </div>
+    <div class="intro-text-side">
+      <p class="intro-label">Om konstnären</p>
+      <h2>Hej, jag är Devika</h2>
+      <p>Jag är konstnär och illustratör baserad i Sverige. Jag inspireras av naturen, relationer, djur och de tysta stunderna där känslor får ta plats utan filter.</p>
+      <p>Genom min konst vill jag skapa närvaro och igenkänning – något som känns mänskligt, mjukt och äkta.</p>
+      <a href="pictures.html" class="intro-link">Utforska galleriet</a>
+    </div>
+  </section>
+
+  <!-- UTVALDA VERK -->
+  <section class="featured-section">
+    <div class="featured-inner">
+      <div class="featured-header">
+        <h2>Utvalda verk</h2>
+        <a href="pictures.html">Se alla →</a>
+      </div>
+      <div class="featured-grid">
+        <div class="featured-card">
+          <img src="images/paintings/sommarvila/01.jpg" alt="Sommarvila" />
+          <div class="featured-card-label">Sommarvila</div>
+        </div>
+        <div class="featured-card">
+          <img src="images/paintings/skogsvila/01.jpg" alt="Skogsvila" />
+          <div class="featured-card-label">Skogsvila</div>
+        </div>
+        <div class="featured-card">
+          <img src="images/paintings/varkansla/01.jpg" alt="Vårkänsla" />
+          <div class="featured-card-label">Vårkänsla</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </main>
 
-  <div class="modal" id="modal">
+<!-- MODAL -->
+<div class="modal" id="modal">
   <span class="close" id="modal-close">&times;</span>
-
   <div class="modalInner">
-
-    <!-- Vänster: bild + thumbnails -->
     <div class="modalLeft">
       <div class="modalImageWrapper">
         <span class="modalArrow modalArrowLeft" id="modal-img-prev">&#10094;</span>
@@ -49,59 +97,41 @@
       </div>
       <div class="modalThumbs" id="modal-thumbs"></div>
     </div>
-
-    <!-- Höger: info + köp -->
     <div class="modalRight">
       <h3 id="modal-title"></h3>
       <p id="modal-size"></p>
       <p id="modal-desc"></p>
       <div id="modal-buttons"></div>
     </div>
-
   </div>
-
-  <!-- Pilar för nästa/föregående MÅLNING -->
   <span class="arrow left" id="modal-prev">&#10094;</span>
   <span class="arrow right" id="modal-next">&#10095;</span>
 </div>
+
+<!-- FOOTER -->
 <footer id="footer">
-  <div class="footerContent">
-
-    <!-- Om mig -->
-    <div class="footerAbout">
-      <img src="images/devika.jpg" alt="Devika" class="footerImg" />
-      <p>Hej! Jag heter Devika och jag är konstnär och illustratör baserad i Sverige. Jag inspireras av naturen, relationer, djur och de tysta stunderna där känslor får ta plats utan filter.</p>
-      <p>Genom min konst vill jag skapa närvaro och igenkänning – något som känns mänskligt, mjukt och äkta. Varje målning är en del av min resa mot läkning, nyfikenhet och kreativ frihet.</p>
-      <div class="footerLinks">
-        <a href="https://www.instagram.com/vaavascanvas/" target="_blank">
-          <i class="fa fa-instagram"></i> @vaavascanvas
-        </a>
-        <a href="mailto:info@vaavascanvas.se">
-          <i class="fa fa-envelope"></i> info@vaavascanvas.se
-        </a>
-      </div>
+  <div class="footer-index-inner">
+    <div class="footer-social">
+      <a href="https://www.instagram.com/vaavascanvas/" target="_blank">
+        <i class="fa fa-instagram"></i> @vaavascanvas
+      </a>
+      <a href="mailto:vaavascanvas@gmail.com">
+        <i class="fa fa-envelope"></i> vaavascanvas@gmail.com
+      </a>
     </div>
-
-    <!-- Divider -->
     <div class="footerDivider"></div>
-
-    <!-- Formulär -->
     <div class="footerFormSection">
       <h3>Skicka en förfrågan</h3>
       <p>Print, commision eller fråga? Hör av dig!</p>
-
       <form action="https://formspree.io/f/xgolgnoj" method="POST" id="footerForm">
-
         <div class="formGroup">
           <label for="f-namn">Namn</label>
           <input type="text" id="f-namn" name="namn" placeholder="Ditt namn" required />
         </div>
-
         <div class="formGroup">
           <label for="f-email">E-post</label>
           <input type="email" id="f-email" name="email" placeholder="din@email.com" required />
         </div>
-
         <div class="formGroup">
           <label for="f-typ">Typ av förfrågan</label>
           <select id="f-typ" name="typ" onchange="visaFooterPrintFalt()" required>
@@ -112,29 +142,21 @@
             <option value="Allmän fråga">Allmän fråga</option>
           </select>
         </div>
-
         <div class="formGroup" id="f-printFalt" style="display:none;">
           <label for="f-verk">Vilket verk?</label>
           <input type="text" id="f-verk" name="verk" placeholder="T.ex. Woman of the Sea" />
         </div>
-
         <div class="formGroup">
           <label for="f-meddelande">Meddelande</label>
           <textarea id="f-meddelande" name="meddelande" rows="3" placeholder="Berätta mer..."></textarea>
         </div>
-
         <button type="submit" class="submitBtn">✉ Skicka</button>
-
-        <!-- Visas efter att formuläret skickats -->
         <p id="formSuccess" style="display:none; color: var(--accent-green); font-weight:600; margin-top:10px;">
           Tack! Jag återkommer så snart som möjligt. 🎨
         </p>
-
       </form>
     </div>
-
   </div>
-
   <p class="footerCopy">© 2026 Devika – All rights reserved</p>
 </footer>
 
@@ -144,19 +166,14 @@
     document.getElementById("f-printFalt").style.display =
       typ === "Print av befintlig målning" ? "block" : "none";
   }
-
-  // Skicka via Formspree utan att lämna sidan
   document.getElementById("footerForm").addEventListener("submit", async function(e) {
     e.preventDefault();
     const form = e.target;
     const data = new FormData(form);
-
     const res = await fetch(form.action, {
-      method: "POST",
-      body: data,
+      method: "POST", body: data,
       headers: { "Accept": "application/json" }
     });
-
     if (res.ok) {
       form.reset();
       document.getElementById("f-printFalt").style.display = "none";
@@ -166,7 +183,7 @@
     }
   });
 </script>
-  <script src="paintings.js"></script>
-  <script src="script.js"></script>
+<script src="paintings.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
