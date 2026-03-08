@@ -50,14 +50,54 @@ function createGalleryItem(painting, index) {
 
   const img = document.createElement("img");
   const paths = getPaintingImagePaths(painting);
-  img.src = paths[0]; 
+  img.src = paths[0];
   img.alt = painting.title;
 
   img.addEventListener("error", () => { img.src = "images/devika.jpg"; });
   img.addEventListener("click", () => openModal(index));
-  
+
   item.appendChild(img);
   if (painting.status === STATUS.SOLD) addSoldBadge(item);
+
+  // Prickar och hover-preview om fler än 1 bild
+  if (paths.length > 1) {
+    const dots = document.createElement("div");
+    dots.classList.add("gallery-dots");
+
+    paths.forEach((_, i) => {
+      const dot = document.createElement("span");
+      dot.classList.add("gallery-dot");
+      if (i === 0) dot.classList.add("active");
+      dots.appendChild(dot);
+    });
+
+    item.appendChild(dots);
+
+    // Hovra vänster = första bilden, höger = sista bilden
+    item.addEventListener("mousemove", (e) => {
+  const rect = item.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / rect.width;
+  
+  const newIndex = Math.min(
+    Math.floor(x * paths.length),
+    paths.length - 1
+  );
+
+  if (!img.src.endsWith(paths[newIndex].split("/").pop())) {
+    img.src = paths[newIndex];
+    dots.querySelectorAll(".gallery-dot").forEach((dot, i) => {
+      dot.classList.toggle("active", i === newIndex);
+    });
+  }
+});
+
+    item.addEventListener("mouseleave", () => {
+      img.src = paths[0];
+      dots.querySelectorAll(".gallery-dot").forEach((dot, i) => {
+        dot.classList.toggle("active", i === 0);
+      });
+    });
+  }
 
   return item;
 }
