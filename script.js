@@ -152,8 +152,16 @@ function configureModalArrows(imgs) {
   if (imgs.length > 1) {
     imgPrev.style.display = "flex";
     imgNext.style.display = "flex";
-    imgPrev.onclick = () => switchModalImage(imgs, (currentModalImageIndex - 1 + imgs.length) % imgs.length);
-    imgNext.onclick = () => switchModalImage(imgs, (currentModalImageIndex + 1) % imgs.length);
+
+    imgPrev.onclick = (e) => {
+      e.stopPropagation(); // <--- STOPPAR ZOOMEN
+      switchModalImage(imgs, (currentModalImageIndex - 1 + imgs.length) % imgs.length);
+    };
+
+    imgNext.onclick = (e) => {
+      e.stopPropagation(); // <--- STOPPAR ZOOMEN
+      switchModalImage(imgs, (currentModalImageIndex + 1) % imgs.length);
+    };
   } else {
     imgPrev.style.display = "none";
     imgNext.style.display = "none";
