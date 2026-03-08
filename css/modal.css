@@ -31,14 +31,14 @@
   gap: 12px;
 }
 
-/* Standard för alla skärmar (mobil) */
 .modalImageWrapper {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  cursor: default; /* Vanlig pekare på mobil */
+  cursor: default;
+  user-select: none;
 }
 
 /* Bara för desktop (över 768px) */
