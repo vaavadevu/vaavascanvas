@@ -18,6 +18,88 @@
 /* ─── Mobil ─── */
 @media (max-width: 768px) {
 
+  /* --- Desktop (Standard) --- */
+.box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding: 10px 40px;
+}
+
+.menu-toggle {
+  display: none; /* Dold på dator */
+}
+
+/* --- Mobilanpassning (max-width: 768px) --- */
+@media (max-width: 768px) {
+  .box {
+    justify-content: flex-end; /* Trycker hamburgaren till höger */
+    height: 70px; /* Eller den höjd din header har */
+  }
+
+  .headerLeft {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
+  }
+
+  .headerLogo {
+    height: 40px; /* Justera logons storlek på mobil */
+    width: auto;
+  }
+
+  /* Hamburgarknappen */
+  .menu-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 1100;
+  }
+
+  .menu-toggle span {
+    width: 25px;
+    height: 2px;
+    background: #333; /* Ändra till vitt om du har mörk bakgrund */
+    transition: 0.3s;
+  }
+
+  /* Själva navigeringen som dyker upp */
+  nav {
+    position: fixed;
+    top: 0;
+    left: -100%; /* Gömd till vänster */
+    width: 100%;
+    height: 100vh;
+    background: #fff;
+    transition: 0.4s ease-in-out;
+    z-index: 1050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  nav.active {
+    left: 0; /* Glider in */
+  }
+
+  .link-list {
+    flex-direction: column;
+    text-align: center;
+    list-style: none;
+    padding: 0;
+  }
+
+  .link-list li {
+    margin: 20px 0;
+  }
+}
+
   footer { padding: 30px 15px 15px; }
 
   .footerContent { grid-template-columns: 1fr; gap: 30px; }
