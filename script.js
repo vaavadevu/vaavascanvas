@@ -189,10 +189,22 @@ function renderModalButtons(painting) {
 }
 
 function handleBuyClick(painting) {
-  document.getElementById("f-typ").value = "Köpa original";
-  if (typeof visaFooterPrintFalt === "function") visaFooterPrintFalt();
-  document.getElementById("f-verk").value = painting.title;
-  document.getElementById("f-meddelande").value = `Hej! Jag är intresserad av originalmålningen "${painting.title}" (${painting.size}) för ${painting.originalPrice} kr.`;
+  const typeSelect = document.getElementById("f-type");
+  const artworkInput = document.getElementById("f-artwork");
+  const messageInput = document.getElementById("f-message");
+  const subjectInput = document.getElementById("f-subject");
+
+  if (typeSelect) typeSelect.value = "Originals";
+  if (subjectInput) subjectInput.value = "New Inquiry - Originals";
+  
+  const printField = document.getElementById("f-printField");
+  if (printField) printField.style.display = "none";
+
+  if (artworkInput) artworkInput.value = painting.title;
+  if (messageInput) {
+    messageInput.value = `Hej! Jag är intresserad av originalmålningen "${painting.title}" (${painting.size}) för ${painting.originalPrice} kr.`;
+  }
+
   closeModal();
   document.getElementById("footer").scrollIntoView({ behavior: "smooth" });
 }
@@ -249,14 +261,53 @@ function activateNavQuery(queryName) {
   if (link) link.classList.add("active");
 }
 
+function setupContactForm() {
+  const form = document.getElementById("footerForm");
+  const typeSelect = document.getElementById("f-type");
+  const subjectInput = document.getElementById("f-subject");
+  const printField = document.getElementById("f-printField");
+  const successMsg = document.getElementById("formSuccess");
+
+  if (!form) return;
+
+  // Uppdatera ämne och visa/dölj fält vid ändring
+  typeSelect.addEventListener("change", () => {
+    const val = typeSelect.value;
+    printField.style.display = val === "Prints" ? "block" : "none";
+    
+    // Sätter ämnet till t.ex. "New Inquiry - Commissions"
+    subjectInput.value = val ? `New Inquiry - ${val}` : "New Inquiry";
+  });
+
+  form.addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const formData = new FormData(form);
+
+    const response = await fetch(form.action, {
+      method: "POST",
+      body: formData,
+      headers: { "Accept": "application/json" }
+    });
+
+    if (response.ok) {
+      form.reset();
+      subjectInput.value = "New Inquiry";
+      printField.style.display = "none";
+      successMsg.style.display = "block";
+      setTimeout(() => { successMsg.style.display = "none"; }, 5000);
+    } else {
+      alert("Något gick fel. Maila direkt till vaavascanvas@gmail.com");
+    }
+  });
+}
+
 async function init() {
+  if (!galleryElement) return; // ← lägg till denna rad
+
   try {
     const response = await fetch('images/paintings/counts.json'); 
-    
     if (!response.ok) throw new Error("File not found");
-    
     const counts = await response.json();
-
     paintings.forEach(p => {
       p.imageCount = counts[p.id] || 1;
     });
@@ -269,6 +320,8 @@ buildGallery();   // ← sen
 attachModalListeners();
 attachFilterListeners();
 setupScrollWatcher();
+setupContactForm();
 }
+
 
 init();
