@@ -415,8 +415,7 @@ footer {
   }
   
   .modalImageWrapper.is-zoomed-2 {
-    cursor: zoom-out;
-  }
+  cursor: zoom-out;
 }
 
 .modalImageWrapper img {
@@ -437,9 +436,9 @@ footer {
   z-index: 1;
 }
 
-/* Remove the old hover scale since JS will handle the transform now */
 .modalImageWrapper img:hover { transform: none; }
 
+/* PILAR: Vi lägger till cursor: pointer !important så att förstoringsglaset försvinner här */
 .modalArrow {
   position: absolute;
   top: 50%;
@@ -452,14 +451,18 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+  cursor: pointer !important; /* Ändrad här */
   font-size: 16px;
   user-select: none;
-  transition: background 0.2s;
-  z-index: 2;
+  transition: background 0.2s, transform 0.2s;
+  z-index: 10; /* Höjt z-index så de alltid ligger över bilden */
 }
 
-.modalArrow:hover { background: rgba(0,0,0,0.7); }
+.modalArrow:hover { 
+  background: rgba(0,0,0,0.7);
+  transform: translateY(-50%) scale(1.1); 
+}
+
 .modalArrowLeft { left: 8px; }
 .modalArrowRight { right: 8px; }
 
@@ -470,12 +473,13 @@ footer {
   justify-content: center;
 }
 
+/* TUMNAGLAR: Också pointer !important */
 .modalThumb {
   width: 60px;
   height: 60px;
   object-fit: cover;
   border-radius: 6px;
-  cursor: pointer;
+  cursor: pointer !important; /* Ändrad här */
   border: 2px solid transparent;
   transition: border-color 0.2s, opacity 0.2s;
   opacity: 0.6;
@@ -514,13 +518,14 @@ footer {
   gap: 10px;
 }
 
+/* KNAPPAR: Också pointer !important */
 .modalRight button {
   padding: 10px 20px;
   border: 1.5px solid var(--accent-green);
   background: transparent;
   color: var(--accent-green);
   border-radius: 8px;
-  cursor: pointer;
+  cursor: pointer !important; /* Ändrad här */
   font-size: 0.95rem;
   font-family: 'Quicksand', sans-serif;
   font-weight: 600;
@@ -539,7 +544,7 @@ footer {
   right: 25px;
   color: var(--text-light);
   font-size: 36px;
-  cursor: pointer;
+  cursor: pointer !important; /* Ändrad här */
   user-select: none;
   z-index: 1001;
 }
