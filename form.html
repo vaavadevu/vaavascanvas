@@ -1,0 +1,93 @@
+<h3>Skicka en förfrågan</h3>
+<p>Print, commission eller fråga? Hör av dig!</p>
+
+<form action="https://formspree.io/f/xgolgnoj" method="POST" id="footerForm">
+  <input type="hidden" name="_subject" id="f-subject" value="New Inquiry">
+
+  <div class="formGroup">
+    <label for="f-name">Namn</label>
+    <input type="text" id="f-name" name="name" placeholder="Ditt namn" required />
+  </div>
+
+  <div class="formGroup">
+    <label for="f-email">E-post</label>
+    <input type="email" id="f-email" name="email" placeholder="din@email.com" required />
+  </div>
+
+  <div class="formGroup">
+    <label for="f-type">Typ av förfrågan</label>
+    <select id="f-type" name="type" required>
+      <option value="">– Välj –</option>
+      <option value="Originals">Köpa original</option>
+      <option value="Prints">Print av befintlig målning</option>
+      <option value="Commissions">Commission (beställd målning)</option>
+      <option value="General">Allmän fråga</option>
+    </select>
+  </div>
+
+  <div class="formGroup" id="f-printField" style="display:none;">
+  <label for="f-artwork">Vilket verk?</label>
+  <select id="f-artwork" name="artwork">
+    <option value="">– Välj målning –</option>
+  </select>
+  <img id="f-artwork-preview" src="" alt="" class="artwork-preview" style="display:none;" />
+</div>
+
+<div class="formGroup" id="f-printInfo" style="display:none;">
+  <div class="commission-steps">
+    <p><strong>Så här går det till:</strong></p>
+    <ol>
+      <li>Du skickar din förfrågan och väljer önskat format</li>
+      <li>Jag återkommer med pris och tillgängliga storlekar</li>
+      <li>Betalning sker via Swish eller faktura</li>
+      <li>Printen levereras i skyddsrör med spårbar försändelse</li>
+      <li>Leveranstid ca 5–7 arbetsdagar inom Sverige</li>
+    </ol>
+  </div>
+</div>
+
+<div class="formGroup" id="f-originalField" style="display:none;">
+  <label for="f-artwork-original">Vilket verk?</label>
+  <select id="f-artwork-original" name="artwork">
+    <option value="">– Välj målning –</option>
+  </select>
+  <img id="f-artwork-original-preview" src="" alt="" class="artwork-preview" style="display:none;" />
+</div>
+
+<div class="formGroup" id="f-originalInfo" style="display:none;">
+  <div class="commission-steps">
+    <p><strong>Så här går det till:</strong></p>
+    <ol>
+      <li>Du skickar din förfrågan och jag återkommer inom 1–2 dagar</li>
+      <li>Vi bekräftar pris och fraktdetaljer via mail</li>
+      <li>Betalning sker via Swish eller faktura</li>
+      <li>Målningen packas noggrant och skickas med spårbar försändelse</li>
+      <li>Leveranstid ca 3–5 arbetsdagar inom Sverige</li>
+    </ol>
+  </div>
+</div>
+
+  <div class="formGroup" id="f-commissionInfo" style="display:none;">
+    <div class="commission-steps">
+      <p><strong>Så här går det till:</strong></p>
+      <ol>
+        <li>Du skickar din förfrågan med en beskrivning av vad du vill ha</li>
+        <li>Vi hörs av via mail eller telefon för att diskutera detaljer</li>
+        <li>Jag skickar en skiss för godkännande</li>
+        <li>Efter godkännande påbörjas målningen</li>
+        <li>Leveranstid ca 2–4 veckor beroende på storlek</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="formGroup">
+    <label for="f-message">Meddelande</label>
+    <textarea id="f-message" name="message" rows="3" placeholder="Berätta mer..."></textarea>
+  </div>
+
+  <button type="submit" class="submitBtn">✉ Skicka</button>
+
+  <p id="formSuccess" style="display:none; color: var(--accent-green); font-weight:600; margin-top:10px;">
+    Tack! Jag återkommer så snart som möjligt. 🎨
+  </p>
+</form>

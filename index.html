@@ -133,43 +133,7 @@
       </a>
     </div>
     <div class="footerDivider"></div>
-    <div class="footerFormSection">
-      <h3>Skicka en förfrågan</h3>
-      <p>Print, commision eller fråga? Hör av dig!</p>
-      <form action="https://formspree.io/f/xgolgnoj" method="POST" id="footerForm">
-        <div class="formGroup">
-          <label for="f-namn">Namn</label>
-          <input type="text" id="f-namn" name="namn" placeholder="Ditt namn" required />
-        </div>
-        <div class="formGroup">
-          <label for="f-email">E-post</label>
-          <input type="email" id="f-email" name="email" placeholder="din@email.com" required />
-        </div>
-        <div class="formGroup">
-          <label for="f-typ">Typ av förfrågan</label>
-          <select id="f-typ" name="typ" onchange="visaFooterPrintFalt()" required>
-            <option value="">– Välj –</option>
-            <option value="Köpa original">Köpa original</option>
-            <option value="Print av befintlig målning">Print av befintlig målning</option>
-            <option value="Commision">Commision (beställd målning)</option>
-            <option value="Allmän fråga">Allmän fråga</option>
-          </select>
-        </div>
-        <div class="formGroup" id="f-printFalt" style="display:none;">
-          <label for="f-verk">Vilket verk?</label>
-          <input type="text" id="f-verk" name="verk" placeholder="T.ex. Woman of the Sea" />
-        </div>
-        <div class="formGroup">
-          <label for="f-meddelande">Meddelande</label>
-          <textarea id="f-meddelande" name="meddelande" rows="3" placeholder="Berätta mer..."></textarea>
-        </div>
-        <button type="submit" class="submitBtn">✉ Skicka</button>
-        <p id="formSuccess" style="display:none; color: var(--accent-green); font-weight:600; margin-top:10px;">
-          Tack! Jag återkommer så snart som möjligt. 🎨
-        </p>
-      </form>
-    </div>
-  </div>
+    <div class="footerFormSection" id="formContainer"></div>
   <p class="footerCopy">© 2026 Devika – All rights reserved</p>
 </footer>
 <script src="paintings.js"></script>
