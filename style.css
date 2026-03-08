@@ -52,6 +52,10 @@ main {
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
+  grid-area: main; /* ← lägg till denna */
+  display: flex;
+  flex-direction: column;
+  grid-area: main;
 }
 
 /* ─── Header ─── */
@@ -301,6 +305,18 @@ footer {
   width: 100%;
 }
 
+.gallery-item::after {
+  content: "© vaavascanvas";
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  color: var(--bg-warm);
+  font-size: 0.8rem;
+  font-family: 'Quicksand', sans-serif;
+  pointer-events: none;
+  text-shadow: 0 1px 3px var(--shadow-dark);
+}
+
 .gallery-item img {
   width: 100%;
   height: auto;
@@ -518,11 +534,12 @@ footer {
 .arrow.left { left: 15px; }
 .arrow.right { right: 15px; }
 
+
 .gallery-filters {
   display: flex;
   gap: 10px;
   justify-content: center;
-  margin-bottom: 30px;
+  margin: 40px 0 30px 0;
   flex-wrap: wrap;
 }
 
@@ -813,6 +830,15 @@ footer {
     height: auto;
   }
 
+   .gallery-filters {
+    gap: 8px;
+    margin: 30px 0 20px 0;
+  }
+
+  .filter-btn {
+    padding: 6px 14px;
+    font-size: 0.8rem;
+  }
   h1 { font-size: 2rem; }
   h2 { font-size: 1.4rem; }
 

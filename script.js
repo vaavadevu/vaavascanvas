@@ -1,3 +1,6 @@
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+
 // DOM references ---------------------------------------------
 const galleryElement = document.getElementById("gallery");
 const modalElement = document.getElementById("modal");
