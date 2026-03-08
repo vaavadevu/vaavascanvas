@@ -400,6 +400,7 @@ footer {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  cursor: zoom-in; /* Keep the cursor here */
 }
 
 .modalImageWrapper img {
@@ -409,11 +410,13 @@ footer {
   border-radius: 8px;
   display: block;
   margin: 0;
-  transition: transform 0.3s ease;
-  cursor: zoom-in;
+  /* Remove the transition for a snappier, more accurate "follow" feel */
+  /* Or keep a very fast one: transition: transform 0.1s ease-out; */
+  pointer-events: none; /* This allows the mouse events to hit the Wrapper instead */
 }
 
-.modalImageWrapper img:hover { transform: scale(1.5); }
+/* Remove the old hover scale since JS will handle the transform now */
+.modalImageWrapper img:hover { transform: none; }
 
 .modalArrow {
   position: absolute;

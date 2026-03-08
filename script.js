@@ -233,6 +233,9 @@ function showPrevPainting() {
 
 function attachModalListeners() {
   if (!modalElement) return;
+
+  setupZoomEffect();
+
   if (modalCloseBtn) modalCloseBtn.onclick = closeModal;
   if (modalNextBtn) modalNextBtn.onclick = showNextPainting;
   if (modalPrevBtn) modalPrevBtn.onclick = showPrevPainting;
@@ -301,6 +304,28 @@ function setupContactForm() {
   });
 }
 
+function setupZoomEffect() {
+  const wrapper = document.querySelector('.modalImageWrapper');
+  if (!wrapper || !modalImg) return;
+
+  wrapper.addEventListener('mousemove', (e) => {
+    const rect = wrapper.getBoundingClientRect();
+    
+    // Calculate mouse position relative to the wrapper in percentage
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    
+    // Move the "anchor point" to the mouse position and scale up
+    modalImg.style.transformOrigin = `${x}% ${y}%`;
+    modalImg.style.transform = "scale(2.5)"; // Adjust 2.5 to your preferred zoom level
+  });
+
+  wrapper.addEventListener('mouseleave', () => {
+    // Reset to normal when mouse leaves
+    modalImg.style.transform = "scale(1)";
+    modalImg.style.transformOrigin = "center center";
+  });
+}
 async function init() {
   if (!galleryElement) return; // ← lägg till denna rad
 
