@@ -165,30 +165,6 @@
   </div>
   <p class="footerCopy">© 2026 Devika – All rights reserved</p>
 </footer>
-
-<script>
-  function visaFooterPrintFalt() {
-    const typ = document.getElementById("f-typ").value;
-    document.getElementById("f-printFalt").style.display =
-      typ === "Print av befintlig målning" ? "block" : "none";
-  }
-  document.getElementById("footerForm").addEventListener("submit", async function(e) {
-    e.preventDefault();
-    const form = e.target;
-    const data = new FormData(form);
-    const res = await fetch(form.action, {
-      method: "POST", body: data,
-      headers: { "Accept": "application/json" }
-    });
-    if (res.ok) {
-      form.reset();
-      document.getElementById("f-printFalt").style.display = "none";
-      document.getElementById("formSuccess").style.display = "block";
-    } else {
-      alert("Något gick fel, försök igen eller mejla direkt till vaavascanvas@gmail.com");
-    }
-  });
-</script>
 <script src="paintings.js"></script>
 <script src="script.js"></script>
 </body>

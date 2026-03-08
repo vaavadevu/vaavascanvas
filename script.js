@@ -326,6 +326,13 @@ function setupContactForm() {
     }
   });
 }
+
+function visaFooterPrintFalt() {
+  const typ = document.getElementById("f-typ").value;
+  document.getElementById("f-printFalt").style.display =
+    typ === "Print av befintlig målning" ? "block" : "none";
+}
+
 let isZoomed = false; // Håller koll på om vi har zoomat in
 
 let zoomLevel = 0; // 0 = normal, 1 = nära, 2 = supernära
