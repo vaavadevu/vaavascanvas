@@ -282,6 +282,10 @@ function switchModalImage(imgs, index) {
 
 function closeModal() {
   if (modalElement) modalElement.style.display = "none";
+
+  const url = new URL(window.location);
+  url.searchParams.delete("painting");
+  window.history.replaceState({}, "", url);
 }
 
 function showNextPainting() {
@@ -337,6 +341,7 @@ async function buildContactForm() {
 
   setupContactForm();
   populateArtworkDropdowns();
+  setupSubscribeModal();
 }
 
 function setupContactForm() {
@@ -387,6 +392,26 @@ function setupContactForm() {
     } else {
       alert("Något gick fel. Maila direkt till info@vaavascanvas.se");
     }
+  });
+}
+
+function setupSubscribeModal() {
+  const btn = document.getElementById("subscribeBtn");
+  const modal = document.getElementById("subscribeModal");
+  const closeBtn = document.getElementById("subscribeClose");
+
+  if (!btn || !modal) return;
+
+  btn.addEventListener("click", () => {
+    modal.style.display = "flex";
+  });
+
+  closeBtn.addEventListener("click", () => {
+    modal.style.display = "none";
+  });
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) modal.style.display = "none";
   });
 }
 
@@ -457,9 +482,9 @@ document.querySelectorAll('.link-list a').forEach(link => {
   });
 });
 
-let isZoomed = false; 
+let isZoomed = false;
 
-let zoomLevel = 0; 
+let zoomLevel = 0;
 
 function setupZoomEffect() {
   const wrapper = document.querySelector('.modalImageWrapper');
@@ -506,8 +531,26 @@ function updateZoomPosition(e, wrapper) {
   const y = ((e.clientY - rect.top) / rect.height) * 100;
   modalImg.style.transformOrigin = `${x}% ${y}%`;
 }
+
+function openModal(index) {
+  const painting = paintings[index];
+  if (!modalElement) return;
+  currentPaintingIndex = index;
+  currentModalImageIndex = 0;
+
+  populateModal(painting);
+  renderModalButtons(painting);
+
+  modalElement.style.display = "flex";
+
+  // Uppdatera URL utan att ladda om sidan
+  const url = new URL(window.location);
+  url.searchParams.set("painting", painting.id);
+  window.history.replaceState({}, "", url);
+}
+
 async function init() {
-  if (!galleryElement) return; 
+  if (!galleryElement) return;
 
   try {
     const response = await fetch('images/paintings/counts.json');
@@ -520,10 +563,17 @@ async function init() {
     console.warn("Could not load counts.json, defaulting to 1 image per painting.", err);
   }
 
-  sortPaintings();  
-  buildGallery();   
+  sortPaintings();
+  buildGallery();
   attachModalListeners();
   attachFilterListeners();
+  // Öppna modal om URL har ?painting=id
+  const params = new URLSearchParams(window.location.search);
+  const paintingId = params.get("painting");
+  if (paintingId) {
+    const index = paintings.findIndex(p => p.id === paintingId);
+    if (index !== -1) openModal(index);
+  }
 }
 
 
