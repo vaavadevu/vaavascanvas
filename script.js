@@ -75,21 +75,21 @@ function createGalleryItem(painting, index) {
 
     // Hovra vänster = första bilden, höger = sista bilden
     item.addEventListener("mousemove", (e) => {
-  const rect = item.getBoundingClientRect();
-  const x = (e.clientX - rect.left) / rect.width;
-  
-  const newIndex = Math.min(
-    Math.floor(x * paths.length),
-    paths.length - 1
-  );
+      const rect = item.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width;
 
-  if (!img.src.endsWith(paths[newIndex].split("/").pop())) {
-    img.src = paths[newIndex];
-    dots.querySelectorAll(".gallery-dot").forEach((dot, i) => {
-      dot.classList.toggle("active", i === newIndex);
+      const newIndex = Math.min(
+        Math.floor(x * paths.length),
+        paths.length - 1
+      );
+
+      if (!img.src.endsWith(paths[newIndex].split("/").pop())) {
+        img.src = paths[newIndex];
+        dots.querySelectorAll(".gallery-dot").forEach((dot, i) => {
+          dot.classList.toggle("active", i === newIndex);
+        });
+      }
     });
-  }
-});
 
     item.addEventListener("mouseleave", () => {
       img.src = paths[0];
@@ -170,10 +170,10 @@ function filterGallery(filter) {
 }
 
 function sortPaintings() {
-  const statusOrder = { 
-    [STATUS.FOR_SALE]: 0, 
-    [STATUS.PERSONAL]: 1, 
-    [STATUS.SOLD]: 2 
+  const statusOrder = {
+    [STATUS.FOR_SALE]: 0,
+    [STATUS.PERSONAL]: 1,
+    [STATUS.SOLD]: 2
   };
 
   paintings.sort((a, b) => {
@@ -244,7 +244,7 @@ function handleBuyClick(painting) {
 
   if (typeSelect) typeSelect.value = "Originals";
   if (subjectInput) subjectInput.value = "New Inquiry - Originals";
-  
+
   const printField = document.getElementById("f-printField");
   if (printField) printField.style.display = "none";
 
@@ -260,10 +260,10 @@ function handleBuyClick(painting) {
 function switchModalImage(imgs, index) {
   currentModalImageIndex = index;
   modalImg.src = imgs[index];
-  
+
   // 1. Nollställ zoom-nivån till 0 (utzoomad)
-  zoomLevel = 0; 
-  
+  zoomLevel = 0;
+
   // 2. Återställ bildens storlek och centrera zoomen
   modalImg.style.transform = "scale(1)";
   modalImg.style.transformOrigin = "center center";
@@ -349,23 +349,23 @@ function setupContactForm() {
 
   if (!form) return;
 
- typeSelect.addEventListener("change", () => {
-  const val = typeSelect.value;
-  printField.style.display = val === "Prints" ? "block" : "none";
-  commissionInfo.style.display = val === "Commissions" ? "block" : "none";
+  typeSelect.addEventListener("change", () => {
+    const val = typeSelect.value;
+    printField.style.display = val === "Prints" ? "block" : "none";
+    commissionInfo.style.display = val === "Commissions" ? "block" : "none";
 
-  const originalField = document.getElementById("f-originalField");
-  const originalInfo = document.getElementById("f-originalInfo");
-  const printInfo = document.getElementById("f-printInfo");
+    const originalField = document.getElementById("f-originalField");
+    const originalInfo = document.getElementById("f-originalInfo");
+    const printInfo = document.getElementById("f-printInfo");
 
-  if (originalField) originalField.style.display = val === "Originals" ? "block" : "none";
-  if (originalInfo) originalInfo.style.display = val === "Originals" ? "block" : "none";
-  if (printInfo) printInfo.style.display = val === "Prints" ? "block" : "none";
+    if (originalField) originalField.style.display = val === "Originals" ? "block" : "none";
+    if (originalInfo) originalInfo.style.display = val === "Originals" ? "block" : "none";
+    if (printInfo) printInfo.style.display = val === "Prints" ? "block" : "none";
 
-  subjectInput.value = val ? `New Inquiry - ${val}` : "New Inquiry";
-});
+    subjectInput.value = val ? `New Inquiry - ${val}` : "New Inquiry";
+  });
 
-  form.addEventListener("submit", async function(e) {
+  form.addEventListener("submit", async function (e) {
     e.preventDefault();
     const formData = new FormData(form);
     const response = await fetch(form.action, {
@@ -377,8 +377,8 @@ function setupContactForm() {
     if (response.ok) {
       form.reset();
       if (originalField) originalField.style.display = "none";
-if (originalInfo) originalInfo.style.display = "none";
-if (printInfo) printInfo.style.display = "none";
+      if (originalInfo) originalInfo.style.display = "none";
+      if (printInfo) printInfo.style.display = "none";
       subjectInput.value = "New Inquiry";
       printField.style.display = "none";
       commissionInfo.style.display = "none";
@@ -445,7 +445,7 @@ const navMenu = document.getElementById('nav-menu');
 
 menuBtn.addEventListener('click', () => {
   navMenu.classList.toggle('active');
-  
+
   // Bonus: Animera hamburgaren till ett X
   menuBtn.classList.toggle('open');
 });
@@ -457,9 +457,9 @@ document.querySelectorAll('.link-list a').forEach(link => {
   });
 });
 
-let isZoomed = false; // Håller koll på om vi har zoomat in
+let isZoomed = false; 
 
-let zoomLevel = 0; // 0 = normal, 1 = nära, 2 = supernära
+let zoomLevel = 0; 
 
 function setupZoomEffect() {
   const wrapper = document.querySelector('.modalImageWrapper');
@@ -500,7 +500,6 @@ function setupZoomEffect() {
   });
 }
 
-// Hjälpfunktion för att räkna ut positionen
 function updateZoomPosition(e, wrapper) {
   const rect = wrapper.getBoundingClientRect();
   const x = ((e.clientX - rect.left) / rect.width) * 100;
@@ -508,10 +507,10 @@ function updateZoomPosition(e, wrapper) {
   modalImg.style.transformOrigin = `${x}% ${y}%`;
 }
 async function init() {
-  if (!galleryElement) return; // ← lägg till denna rad
+  if (!galleryElement) return; 
 
   try {
-    const response = await fetch('images/paintings/counts.json'); 
+    const response = await fetch('images/paintings/counts.json');
     if (!response.ok) throw new Error("File not found");
     const counts = await response.json();
     paintings.forEach(p => {
@@ -521,10 +520,10 @@ async function init() {
     console.warn("Could not load counts.json, defaulting to 1 image per painting.", err);
   }
 
-sortPaintings();  // ← först
-buildGallery();   // ← sen
-attachModalListeners();
-attachFilterListeners();
+  sortPaintings();  
+  buildGallery();   
+  attachModalListeners();
+  attachFilterListeners();
 }
 
 

@@ -73,7 +73,9 @@
     z-index: 1;
   }
 
-  .modalImageWrapper img:hover { transform: none; }
+  .modalImageWrapper img:hover {
+    transform: none;
+  }
 }
 
 /* PILAR: cursor: pointer !important så att förstoringsglaset försvinner här */
@@ -81,7 +83,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(0,0,0,0.4);
+  background: rgba(0, 0, 0, 0.4);
   color: white;
   border-radius: 50%;
   width: 36px;
@@ -97,12 +99,17 @@
 }
 
 .modalArrow:hover {
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.7);
   transform: translateY(-50%) scale(1.1);
 }
 
-.modalArrowLeft { left: 8px; }
-.modalArrowRight { right: 8px; }
+.modalArrowLeft {
+  left: 8px;
+}
+
+.modalArrowRight {
+  right: 8px;
+}
 
 .modalThumbs {
   display: flex;
@@ -203,5 +210,10 @@
   z-index: 1001;
 }
 
-.arrow.left { left: 15px; }
-.arrow.right { right: 15px; }
+.arrow.left {
+  left: 15px;
+}
+
+.arrow.right {
+  right: 15px;
+}

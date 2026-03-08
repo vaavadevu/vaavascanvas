@@ -11,8 +11,10 @@ header {
   height: fit-content;
   background-color: var(--accent-light);
 }
+
 .menu-toggle {
-  display: none; /* Dold på dator */
+  display: none;
+  /* Dold på dator */
 }
 
 header.box {
