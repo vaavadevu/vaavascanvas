@@ -15,9 +15,9 @@
   }
 }
 
-/* ─── Mobil ─── */
-
-@media (max-width: 768px) {
+/* --- Mobilanpassning (max-width: 768px) --- */
+@media (max-width: 768px)
+ {
   .box {
     justify-content: flex-end; /* Trycker hamburgaren till höger */
     height: 70px; /* Eller den höjd din header har */
@@ -83,7 +83,7 @@
   .link-list li {
     margin: 20px 0;
   }
-}
+
 
   footer { padding: 30px 15px 15px; }
 

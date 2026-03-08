@@ -11,20 +11,16 @@ header {
   height: fit-content;
   background-color: var(--accent-light);
 }
-
-.box {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-  padding: 10px 40px;
-}
-
 .menu-toggle {
   display: none; /* Dold på dator */
 }
 
-
+header.box {
+  padding: 15px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
 .headerLeft {
   display: flex;
