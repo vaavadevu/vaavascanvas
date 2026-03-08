@@ -1,18 +1,47 @@
 :root {
-  --bg-warm: #F1E6D8;
-  --bg-light: #FFFFFF;
-  --accent-light: #FFCDA3;
-  --accent-green: #6BA292;
-  --text-dark: #1E1E1E;
-  --text-light: #FFFFFF;
-  --text-link: #386FA4;
-  --shadow-light: rgba(0, 0, 0, 0.08);
-  --shadow-dark: rgba(0, 0, 0, 0.5);
+  --bg-warm: #F2E8DC;
+  --bg-light: #FAF6F1;
+  --accent-light: #E8C9A0;
+  --accent-green: #5C9485;
+  --text-dark: #2A1F1A;
+  --text-light: #FAF6F1;
+  --text-link: #5C9485;
+  --shadow-light: rgba(42, 31, 26, 0.07);
+  --shadow-dark: rgba(42, 31, 26, 0.45);
 }
 
 /* ─── RESET ─── */
 *, *::before, *::after {
   box-sizing: border-box;
+}
+/* Åsidosätt style.css main för startsidan */
+main {
+  max-width: 100% !important;
+  width: 100%;
+}
+
+.featured-section {
+  padding: 80px 60px;
+  background: var(--bg-light);
+}
+
+.featured-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+  max-width: 1100px;  /* ← begränsning här istället */
+  margin: 0 auto;     /* ← centrerat */
+}
+
+.featured-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 50px;
+  max-width: 1100px;  /* ← matchar grid */
+  margin-left: auto;
+  margin-right: auto;
 }
 
 html, body {
@@ -40,17 +69,6 @@ body {
   font-style: italic;
 }
 
-.headerLeft {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.headerLogo {
-  height: 55px;
-  width: auto;
-  object-fit: contain;
-}
 /* ─── Sticky header wrapper ─── */
 .stickyHeader {
   position: sticky;
@@ -63,10 +81,9 @@ main {
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
-  grid-area: main; /* ← lägg till denna */
+  grid-area: main;
   display: flex;
   flex-direction: column;
-  grid-area: main;
 }
 
 /* ─── Header ─── */
@@ -75,6 +92,25 @@ header {
   text-align: center;
   padding: 2px 5px;
   background-color: var(--accent-light);
+}
+
+header.box {
+  padding: 15px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.headerLogo {
+  height: 70px;
+  width: auto;
+  object-fit: contain;
 }
 
 /* ─── Nav ─── */
@@ -100,7 +136,6 @@ nav a.active {
   text-decoration: none;
 }
 
-
 nav ul {
   display: flex;
   justify-content: center;
@@ -119,6 +154,11 @@ nav li {
 h1, h2, h3 {
   font-family: 'Playfair Display', serif;
   color: var(--text-dark);
+}
+
+header h1 {
+  font-size: 2.2rem;
+  margin: 0;
 }
 
 h1 {
@@ -236,6 +276,8 @@ footer {
   border-top: 1px solid rgba(0,0,0,0.08);
   width: 100%;
 }
+
+/* ─── Hero (gamla) ─── */
 .heroImage {
   width: 100%;
   height: 100vh;
@@ -257,7 +299,7 @@ footer {
   bottom: 40px;
   left: 50%;
   transform: translateX(-50%);
-  background: var(--shadow-light); 
+  background: var(--shadow-light);
   color: var(--text-dark);
   padding: 5px 30px;
   border-radius: 30px;
@@ -270,9 +312,10 @@ footer {
 }
 
 .heroBtn:hover {
-  background: rgba(241, 230, 216, 1);
+  background: rgba(242, 232, 220, 1);
   transform: translateX(-50%) translateY(-3px);
 }
+
 /* ─── Intro ─── */
 .intro {
   width: 100%;
@@ -308,7 +351,6 @@ footer {
   justify-items: center;
   width: 100%;
 }
-
 
 .gallery-item {
   position: relative;
@@ -371,7 +413,7 @@ footer {
   background: var(--shadow-dark);
   justify-content: center;
   align-items: center;
-  padding: 20px;        /* ← smaller padding so modal gets more room */
+  padding: 20px;
   z-index: 1000;
   overflow: auto;
 }
@@ -383,12 +425,13 @@ footer {
   background: var(--bg-warm);
   border-radius: 16px;
   padding: 30px;
-  width: 75vw;          /* ← 75% of screen width */
-  height: 75vh;         /* ← 75% of screen height = rektangulär känsla */
+  width: 75vw;
+  height: 75vh;
   max-height: 75vh;
   overflow-y: auto;
   position: relative;
 }
+
 .modalLeft {
   display: flex;
   flex-direction: column;
@@ -400,6 +443,7 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .modalImageWrapper img {
@@ -409,17 +453,12 @@ footer {
   border-radius: 8px;
   display: block;
   margin: 0;
-}
-.modalImageWrapper img {
   transition: transform 0.3s ease;
   cursor: zoom-in;
 }
+
 .modalImageWrapper img:hover {
   transform: scale(1.5);
-}
-/* Klippa så bilden inte flödar utanför */
-.modalImageWrapper {
-  overflow: hidden;
 }
 
 .modalArrow {
@@ -545,13 +584,14 @@ footer {
 .arrow.left { left: 15px; }
 .arrow.right { right: 15px; }
 
-
+/* ─── Filter knappar ─── */
 .gallery-filters {
   display: flex;
   gap: 10px;
   justify-content: center;
   margin: 40px 0 30px 0;
   flex-wrap: wrap;
+  padding: 0 20px;
 }
 
 .filter-btn {
@@ -572,6 +612,7 @@ footer {
   background: var(--accent-green);
   color: var(--text-light);
 }
+
 /* ─── Om mig ─── */
 .aboutRow {
   display: grid;
@@ -714,7 +755,7 @@ footer {
 .formGroup select:focus,
 .formGroup textarea:focus {
   border-color: var(--accent-green);
-  box-shadow: 0 0 0 3px rgba(107, 162, 146, 0.15);
+  box-shadow: 0 0 0 3px rgba(92, 148, 133, 0.15);
 }
 
 .formGroup input::placeholder,
@@ -725,7 +766,7 @@ footer {
 
 .formGroup select {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236BA292' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%235C9485' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 14px center;
   background-color: var(--bg-warm);
@@ -756,7 +797,7 @@ footer {
 }
 
 .submitBtn:hover {
-  background: #5a8f7e;
+  background: #4a7d6e;
 }
 
 .submitBtn:active {
@@ -789,8 +830,6 @@ footer {
     padding: 20px 40px;
     box-sizing: border-box;
   }
-
-
 
   #gallery {
     grid-template-columns: repeat(4, minmax(220px, 1fr));
@@ -841,7 +880,7 @@ footer {
     height: auto;
   }
 
-   .gallery-filters {
+  .gallery-filters {
     gap: 8px;
     margin: 30px 0 20px 0;
   }
@@ -850,6 +889,7 @@ footer {
     padding: 6px 14px;
     font-size: 0.8rem;
   }
+
   h1 { font-size: 2rem; }
   h2 { font-size: 1.4rem; }
 
@@ -892,8 +932,6 @@ footer {
     gap: 8px;
     padding: 10px;
   }
-
- 
 
   .gallery-item img {
     aspect-ratio: 3 / 4;
@@ -981,25 +1019,26 @@ footer {
     list-style-type: none;
     padding: 0;
   }
-.heroBtn {
-  position: absolute;
-  bottom: 5px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--shadow-light); 
-  color: var(--text-dark);
-  padding: 5px 60px;
-  border-radius: 30px;
-  text-decoration: none;
-  font-family: 'Quicksand', sans-serif;
-  font-weight: 700;
-  font-size: 1rem;
-  letter-spacing: 0.05em;
-  transition: background 0.2s, transform 0.2s;
-}
 
-.heroBtn:hover {
-  background: rgba(241, 230, 216, 1);
-  transform: translateX(-50%) translateY(-3px);
-}
+  .heroBtn {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--shadow-light);
+    color: var(--text-dark);
+    padding: 5px 60px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+    transition: background 0.2s, transform 0.2s;
+  }
+
+  .heroBtn:hover {
+    background: rgba(242, 232, 220, 1);
+    transform: translateX(-50%) translateY(-3px);
+  }
 }

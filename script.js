@@ -250,13 +250,12 @@ function activateNavQuery(queryName) {
 }
 
 async function init() {
+  if (!galleryElement) return; // ← lägg till denna rad
+
   try {
     const response = await fetch('images/paintings/counts.json'); 
-    
     if (!response.ok) throw new Error("File not found");
-    
     const counts = await response.json();
-
     paintings.forEach(p => {
       p.imageCount = counts[p.id] || 1;
     });
@@ -264,11 +263,11 @@ async function init() {
     console.warn("Could not load counts.json, defaulting to 1 image per painting.", err);
   }
 
-sortPaintings();  // ← först
-buildGallery();   // ← sen
-attachModalListeners();
-attachFilterListeners();
-setupScrollWatcher();
+  sortPaintings();
+  buildGallery();
+  attachModalListeners();
+  attachFilterListeners();
+  setupScrollWatcher();
 }
 
 init();
