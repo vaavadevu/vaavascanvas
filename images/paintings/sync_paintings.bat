@@ -10,23 +10,25 @@ for /d %%D in (*) do (
     set "folderName=%%~nxD"
     pushd "%%D"
     
-    :: 1. Standardize extensions to lowercase .jpg first
+    :: 1. Omvandla alla format (.png, .jpeg, .JPG) till små bokstäver .jpg
     if exist *.JPG rename *.JPG *.jpg 2>nul
     if exist *.jpeg rename *.jpeg *.jpg 2>nul
     if exist *.JPEG rename *.JPEG *.jpg 2>nul
+    if exist *.png rename *.png *.jpg 2>nul
+    if exist *.PNG rename *.PNG *.jpg 2>nul
     
-    :: 2. Logic to rename everything EXCEPT 01.jpg
-    :: We use a temporary counter starting at 2
+    :: 2. Logik för att döpa om allt UTOM 01.jpg
+    :: Vi använder en räknare som börjar på 2 för resten av bilderna
     set "imgIdx=2"
     
     for %%F in (*.jpg) do (
-        :: Skip 01.jpg and skip any that are already correctly named 02, 03, etc.
+        :: Hoppa över 01.jpg
         if /i not "%%~nxF"=="01.jpg" (
-            :: Generate the next target name (e.g., 02, 03)
+            :: Skapa nytt namn (t.ex. 02.jpg, 03.jpg)
             set "newName=0!imgIdx!"
             set "newName=!newName:~-2!.jpg"
             
-            :: Only rename if the file isn't already named correctly
+            :: Döpa om endast om filen inte redan heter rätt
             if /i not "%%~nxF"=="!newName!" (
                 if not exist "!newName!" (
                     rename "%%~nxF" "!newName!"
@@ -36,7 +38,7 @@ for /d %%D in (*) do (
         )
     )
     
-    :: 3. Count the final results
+    :: 3. Räkna det slutgiltiga antalet .jpg-filer
     set "count=0"
     for %%F in (*.jpg) do (
         set /a count+=1
@@ -44,13 +46,13 @@ for /d %%D in (*) do (
     
     popd
 
-    :: 4. Write to JSON
+    :: 4. Skriv till JSON-filen
     if !count! GTR 0 (
         if "!firstDir!"=="0" echo , >> %OUTPUT%
-        echo   "!folderName!": !count! >> %OUTPUT%
+        echo    "!folderName!": !count! >> %OUTPUT%
         set "firstDir=0"
     )
 )
 
 echo } >> %OUTPUT%
-echo Done! 01.jpg preserved, others renamed, and %OUTPUT% updated.
+echo Klart! Alla bilder är nu .jpg, 01.jpg
