@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="sv">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,9 +7,7 @@
   <link rel="icon" type="image/png" href="images/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@400;600;700&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/header.css" />
   <link rel="stylesheet" href="css/footer.css" />
@@ -20,28 +17,10 @@
   <link rel="stylesheet" href="css/responsive.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-
 <body id="main">
-  <div class="stickyHeader">
-    <header class="box">
-      <div class="headerLeft">
-        <img src="images/logo.png" alt="Vaavascanvas logo" class="headerLogo" />
-      </div>
-      <button class="menu-toggle" id="mobile-menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
 
-      <nav id="nav-menu">
-        <ul class="link-list">
-          <li><a href="index.html#top">Startsida</a></li>
-          <li><a href="pictures.html#main" class="active">Mina verk</a></li>
-          <li><a href="#footer">Kontakta mig</a></li>
-        </ul>
-      </nav>
-    </header>
-  </div>
+  <div id="header-container"></div>
+
   <main>
     <div class="gallery-filters">
       <button class="filter-btn active" data-filter="all">Alla</button>
@@ -54,10 +33,7 @@
 
   <div class="modal" id="modal">
     <span class="close" id="modal-close">&times;</span>
-
     <div class="modalInner">
-
-      <!-- Vänster: bild + thumbnails -->
       <div class="modalLeft">
         <div class="modalImageWrapper">
           <span class="modalArrow modalArrowLeft" id="modal-img-prev">&#10094;</span>
@@ -66,25 +42,19 @@
         </div>
         <div class="modalThumbs" id="modal-thumbs"></div>
       </div>
-
-      <!-- Höger: info + köp -->
       <div class="modalRight">
         <h3 id="modal-title"></h3>
         <p id="modal-size"></p>
         <p id="modal-desc"></p>
         <div id="modal-buttons"></div>
       </div>
-
     </div>
-
-    <!-- Pilar för nästa/föregående MÅLNING -->
     <span class="arrow left" id="modal-prev">&#10094;</span>
     <span class="arrow right" id="modal-next">&#10095;</span>
   </div>
+
   <footer id="footer">
     <div class="footerContent">
-
-      <!-- Om mig -->
       <div class="footerAbout">
         <img src="images/devika.jpg" alt="Devika" class="footerImg" />
         <h2>Hej, Devika här!</h2>
@@ -98,33 +68,19 @@
             <i class="fa fa-envelope"></i> info@vaavascanvas.se
           </a>
         </div>
-        <!-- Subscribe hamnar under om-mig-texten -->
         <button class="subscribe-btn" id="subscribeBtn">
           🔔 Prenumerera på nyheter
         </button>
       </div>
-
-      <!-- Divider -->
       <div class="footerDivider"></div>
-
       <div class="footerFormSection" id="formContainer"></div>
-
     </div>
-
     <p class="footerCopy">© 2026 Devika – All rights reserved</p>
   </footer>
 
-  </script>
+  <div id="modals-container"></div>
+
   <script src="js/paintings.js"></script>
   <script src="js/script.js"></script>
-  <div class="subscribe-modal" id="successPopup">
-    <div class="subscribe-modal-inner" style="text-align: center;">
-      <span class="subscribe-close" id="successPopupClose">&times;</span>
-      <h3>Tack för din förfrågan! 🎨</h3>
-      <p>Jag återkommer så snart som möjligt.</p>
-    </div>
-  </div>
-  </div>
 </body>
-
 </html>
