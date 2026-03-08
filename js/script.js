@@ -416,26 +416,19 @@ function showSuccessPopup() {
 }
 
 function setupSubscribeModal() {
-  const modal = document.getElementById("subscribeModal");
-  const closeBtn = document.getElementById("subscribeClose");
-
-  if (!modal) return;
-
-  // Event delegation — fungerar oavsett när knappen laddas
+  // Använd event delegation för allt
   document.addEventListener("click", (e) => {
     if (e.target.closest("#subscribeBtn")) {
-      modal.style.display = "flex";
+      const modal = document.getElementById("subscribeModal");
+      if (modal) modal.style.display = "flex";
     }
-  });
-
-  if (closeBtn) {
-    closeBtn.addEventListener("click", () => {
-      modal.style.display = "none";
-    });
-  }
-
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) modal.style.display = "none";
+    if (e.target.closest("#subscribeClose")) {
+      const modal = document.getElementById("subscribeModal");
+      if (modal) modal.style.display = "none";
+    }
+    if (e.target.id === "subscribeModal") {
+      e.target.style.display = "none";
+    }
   });
 }
 
