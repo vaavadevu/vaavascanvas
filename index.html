@@ -126,24 +126,37 @@
     <span class="arrow left" id="modal-prev">&#10094;</span>
     <span class="arrow right" id="modal-next">&#10095;</span>
   </div>
+<footer id="footer">
+  <div class="footer-index-inner">
+    <div class="footer-social">
+      <a href="https://www.instagram.com/vaavascanvas/" target="_blank">
+        <i class="fa fa-instagram"></i> @vaavascanvas
+      </a>
+      <a href="mailto:info@vaavascanvas.se">
+        <i class="fa fa-envelope"></i> info@vaavascanvas.se
+      </a>
+      <button class="subscribe-btn" id="subscribeBtn">
+        🔔 Prenumerera på nyheter
+      </button>
+    </div>
+    <div class="footerDivider"></div>
+    <div class="footerFormSection" id="formContainer"></div>
+  </div>
+  <p class="footerCopy">© 2026 Devika – All rights reserved</p>
+</footer>
 
-  <!-- FOOTER -->
-  <footer id="footer">
-    <div class="footer-index-inner">
-      <div class="footer-social">
-        <a href="https://www.instagram.com/vaavascanvas/" target="_blank">
-          <i class="fa fa-instagram"></i> @vaavascanvas
-        </a>
-        <a href="mailto:info@vaavascanvas.se">
-          <i class="fa fa-envelope"></i> info@vaavascanvas.se
-        </a>
-      </div>
-      <div class="footerDivider"></div>
-      <div class="footerFormSection" id="formContainer"></div>
-      <p class="footerCopy">© 2026 Devika – All rights reserved</p>
-  </footer>
-  <script src="js/paintings.js"></script>
-  <script src="js/script.js"></script>
+<!-- Modal måste vara INUTI body men UTANFÖR footer -->
+<div class="subscribe-modal" id="subscribeModal">
+  <div class="subscribe-modal-inner">
+    <span class="subscribe-close" id="subscribeClose">&times;</span>
+    <h3>Håll dig uppdaterad</h3>
+    <p>Få ett mail när nya målningar läggs upp.</p>
+    <iframe src="subscribe.html" class="subscribe-iframe" frameborder="0"></iframe>
+  </div>
+</div>
+
+<script src="js/paintings.js"></script>
+<script src="js/script.js"></script>
 </body>
 
 </html>

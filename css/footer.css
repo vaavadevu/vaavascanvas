@@ -130,3 +130,74 @@ footer {
   border-top: 1px solid rgba(0, 0, 0, 0.08);
   width: 100%;
 }
+.subscribe-btn {
+  margin-top: 16px;
+  padding: 10px 20px;
+  background: transparent;
+  border: 1.5px solid var(--accent-green);
+  color: var(--accent-green);
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: 0.2s;
+}
+
+.subscribe-btn:hover {
+  background: var(--accent-green);
+  color: var(--text-light);
+}
+
+.subscribe-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--shadow-dark);
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.subscribe-modal-inner {
+  background: var(--bg-warm);
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 480px;
+  width: 100%;
+  position: relative;
+}
+
+.subscribe-modal-inner h3 {
+  margin: 0 0 8px;
+  font-size: 1.5rem;
+  font-style: italic;
+}
+
+.subscribe-modal-inner p {
+  margin: 0 0 24px;
+  font-size: 0.95rem;
+  opacity: 0.8;
+  max-width: 100%;
+}
+
+.subscribe-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 28px;
+  cursor: pointer;
+  color: var(--text-dark);
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.subscribe-close:hover { opacity: 1; }
+.subscribe-iframe {
+  width: 100%;
+  height: 160px;
+  border: none;
+  background: transparent;
+  overflow: hidden;
+}
