@@ -40,6 +40,17 @@ body {
   font-style: italic;
 }
 
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.headerLogo {
+  height: 55px;
+  width: auto;
+  object-fit: contain;
+}
 /* ─── Sticky header wrapper ─── */
 .stickyHeader {
   position: sticky;
