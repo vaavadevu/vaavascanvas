@@ -16,22 +16,7 @@
 }
 
 /* ─── Mobil ─── */
-@media (max-width: 768px) {
 
-  /* --- Desktop (Standard) --- */
-.box {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-  padding: 10px 40px;
-}
-
-.menu-toggle {
-  display: none; /* Dold på dator */
-}
-
-/* --- Mobilanpassning (max-width: 768px) --- */
 @media (max-width: 768px) {
   .box {
     justify-content: flex-end; /* Trycker hamburgaren till höger */
