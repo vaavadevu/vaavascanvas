@@ -341,7 +341,6 @@ async function buildContactForm() {
 
   setupContactForm();
   populateArtworkDropdowns();
-  setupSubscribeModal();
 }
 
 function setupContactForm() {
@@ -643,8 +642,8 @@ async function init() {
 
 
 setupScrollWatcher();
-setupScrollWatcher();
 buildComponents().then(() => {
   buildContactForm();
+  setupSubscribeModal();
 });
 init();
