@@ -17,6 +17,12 @@
 
 /* --- Mobilanpassning (max-width: 768px) --- */
 @media (max-width: 768px) {
+  .stickyHeader {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  grid-area: header;
+}
   .box {
     justify-content: flex-end;
     /* Trycker hamburgaren till höger */
