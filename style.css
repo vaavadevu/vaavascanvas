@@ -660,7 +660,7 @@ footer {
 .hero {
   position: relative;
   width: 100%;
-  height: 100vh;
+  height: 90vh;
   overflow: hidden;
 }
 
@@ -760,9 +760,10 @@ footer {
 /* ─── INDEX: Om mig ─── */
 .intro-section {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: 70vh;
+  grid-template-columns: 0.8fr 1fr;
+  height: 100vh;
   width: 100%;
+  padding: 30px 0;
 }
 
 .intro-image-side {
@@ -773,31 +774,20 @@ footer {
 .intro-image-side img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: top;
+  object-fit: contain;
+  object-position: center;
   display: block;
-  transition: transform 0.6s ease;
+  transition: transform 0.9s ease;
 }
 
 .intro-image-side:hover img { transform: scale(1.04); }
-
-.intro-image-side::after {
-  content: "";
-  position: absolute;
-  top: 10%;
-  right: 0;
-  width: 4px;
-  height: 80%;
-  background: var(--accent-green);
-  border-radius: 2px;
-}
 
 .intro-text-side {
   background: var(--bg-warm);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 80px 70px;
+  padding: 80px 70px 80px 80px
 }
 
 .intro-label {
@@ -808,11 +798,12 @@ footer {
   color: var(--accent-green);
   font-weight: 700;
   margin-bottom: 20px;
+  padding-top: 4px;
 }
 
 .intro-text-side h2 {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  font-size: clamp(1.6rem, 2.5vw, 2.4rem);
   font-style: italic;
   color: var(--text-dark);
   margin: 0 0 24px;
@@ -847,12 +838,13 @@ footer {
 /* ─── INDEX: Utvalda verk ─── */
 .featured-section {
   width: 100%;
-  padding: 80px 0;
+  height: fit-content;
+  padding: 30px 0;
   background: var(--bg-light);
 }
 
 .featured-inner {
-  max-width: 1100px;
+  max-width: 90%;
   margin: 0 auto;
   padding: 0 60px;
 }
@@ -887,23 +879,19 @@ footer {
 .featured-grid {
   display: grid;
   grid-template-columns: 1.4fr 1fr 1fr;
-  gap: 20px;
+  gap: 30px;
   align-items: start;
 }
 
 .featured-card {
   position: relative;
   overflow: hidden;
-  border-radius: 12px;
-  cursor: pointer;
+  border-radius: 2px;
   box-shadow: 0 4px 20px var(--shadow-light);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.featured-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
-}
+
 
 .featured-card img {
   width: 100%;
@@ -913,7 +901,7 @@ footer {
   transition: transform 0.5s ease;
 }
 
-.featured-card:hover img { transform: scale(1.05); }
+
 
 .featured-card-label {
   position: absolute;
@@ -926,15 +914,11 @@ footer {
   font-family: 'Playfair Display', serif;
   font-style: italic;
   font-size: 1.05rem;
-  opacity: 0;
+  opacity: 1;
   transform: translateY(8px);
   transition: opacity 0.3s, transform 0.3s;
 }
 
-.featured-card:hover .featured-card-label {
-  opacity: 1;
-  transform: translateY(0);
-}
 
 /* ─── Desktop ─── */
 @media (min-width: 1025px) {
