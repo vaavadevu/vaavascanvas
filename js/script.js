@@ -504,22 +504,48 @@ function updateArtworkPreview(select, previewId) {
   preview.style.display = "block";
 }
 
-const menuBtn = document.getElementById('mobile-menu');
-const navMenu = document.getElementById('nav-menu');
+async function buildComponents() {
+  // Header
+  const headerContainer = document.getElementById("header-container");
+  if (headerContainer) {
+    const res = await fetch("components/header.html");
+    headerContainer.innerHTML = await res.text();
+    
+    // Sätt active-klass baserat på vilken sida vi är på
+    const isIndex = window.location.pathname.includes("index") || window.location.pathname === "/";
+    const isPictures = window.location.pathname.includes("pictures");
+    if (isIndex) document.querySelector('a[href="index.html#top"]')?.classList.add("active");
+    if (isPictures) document.querySelector('a[href="pictures.html"]')?.classList.add("active");
 
-menuBtn.addEventListener('click', () => {
-  navMenu.classList.toggle('active');
+    // Mobil-meny listeners
+    setupMobileMenu();
+  }
 
-  // Bonus: Animera hamburgaren till ett X
-  menuBtn.classList.toggle('open');
-});
+  // Modals
+  const modalsContainer = document.getElementById("modals-container");
+  if (modalsContainer) {
+    const [subscribeRes, successRes] = await Promise.all([
+      fetch("components/subscribe-modal.html"),
+      fetch("components/success-popup.html")
+    ]);
+    modalsContainer.innerHTML = await subscribeRes.text() + await successRes.text();
+  }
+}
 
-// Stäng menyn när man klickar på en länk
-document.querySelectorAll('.link-list a').forEach(link => {
-  link.addEventListener('click', () => {
-    navMenu.classList.remove('active');
+function setupMobileMenu() {
+  const menuBtn = document.getElementById('mobile-menu');
+  const navMenu = document.getElementById('nav-menu');
+  if (!menuBtn || !navMenu) return;
+
+  menuBtn.addEventListener('click', () => {
+    navMenu.classList.toggle('active');
+    menuBtn.classList.toggle('open');
   });
-});
+
+  document.querySelectorAll('.link-list a').forEach(link => {
+    link.addEventListener('click', () => navMenu.classList.remove('active'));
+  });
+}
 
 let isZoomed = false;
 
@@ -617,5 +643,8 @@ async function init() {
 
 
 setupScrollWatcher();
-buildContactForm();
+setupScrollWatcher();
+buildComponents().then(() => {
+  buildContactForm();
+});
 init();

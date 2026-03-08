@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="sv">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,9 +7,7 @@
   <link rel="icon" type="image/png" href="images/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@400;600;700&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/header.css" />
   <link rel="stylesheet" href="css/footer.css" />
@@ -21,34 +18,12 @@
   <link rel="stylesheet" href="css/responsive.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-
 <body id="top">
 
-  <div class="stickyHeader">
-    <header class="box">
-      <div class="headerLeft">
-        <img src="images/logo.png" alt="Vaavascanvas logo" class="headerLogo" />
-      </div>
-
-      <button class="menu-toggle" id="mobile-menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-
-      <nav id="nav-menu">
-        <ul class="link-list">
-          <li><a class="active" href="index.html#top">Startsida</a></li>
-          <li><a href="pictures.html">Mina verk</a></li>
-          <li><a href="#footer">Kontakta mig</a></li>
-        </ul>
-      </nav>
-    </header>
-  </div>
+  <div id="header-container"></div>
 
   <main class="index-main">
 
-    <!-- HERO -->
     <section class="hero">
       <img class="hero-img" src="images/paintings/herrOchFruAndersson/02.jpg" alt="Herr och fru Andersson" />
       <div class="hero-text">
@@ -62,7 +37,6 @@
       </div>
     </section>
 
-    <!-- OM MIG -->
     <section class="intro-section">
       <div class="intro-image-side">
         <img src="images/devika.jpg" alt="Devika" />
@@ -70,15 +44,12 @@
       <div class="intro-text-side">
         <p class="intro-label">Om konstnären</p>
         <h2>Hej, Devika här!</h2>
-        <p>Jag är konstnär och illustratör baserad i Sverige. Jag inspireras av naturen, relationer, djur och de tysta
-          stunderna där känslor får ta plats utan filter.</p>
-        <p>Genom min konst vill jag skapa närvaro och igenkänning – något som känns mänskligt, mjukt och äkta. Jag
-          hoppas att det finns en målning som talar till dig. Hör av dig om ni vill veta mer om vad jag gör!</p>
+        <p>Jag är konstnär och illustratör baserad i Sverige. Jag inspireras av naturen, relationer, djur och de tysta stunderna där känslor får ta plats utan filter.</p>
+        <p>Genom min konst vill jag skapa närvaro och igenkänning – något som känns mänskligt, mjukt och äkta. Jag hoppas att det finns en målning som talar till dig. Hör av dig om ni vill veta mer om vad jag gör!</p>
         <a href="pictures.html" class="intro-link">Utforska galleriet</a>
       </div>
     </section>
 
-    <!-- UTVALDA VERK -->
     <section class="featured-section">
       <div class="featured-inner">
         <div class="featured-header">
@@ -104,7 +75,6 @@
 
   </main>
 
-  <!-- MODAL -->
   <div class="modal" id="modal">
     <span class="close" id="modal-close">&times;</span>
     <div class="modalInner">
@@ -126,35 +96,29 @@
     <span class="arrow left" id="modal-prev">&#10094;</span>
     <span class="arrow right" id="modal-next">&#10095;</span>
   </div>
-<footer id="footer">
-  <div class="footer-index-inner">
-    <div class="footer-social">
-      <a href="https://www.instagram.com/vaavascanvas/" target="_blank">
-        <i class="fa fa-instagram"></i> @vaavascanvas
-      </a>
-      <a href="mailto:info@vaavascanvas.se">
-        <i class="fa fa-envelope"></i> info@vaavascanvas.se
-      </a>
-      <button class="subscribe-btn" id="subscribeBtn">
-        🔔 Prenumerera på nyheter
-      </button>
+
+  <footer id="footer">
+    <div class="footer-index-inner">
+      <div class="footer-social">
+        <a href="https://www.instagram.com/vaavascanvas/" target="_blank">
+          <i class="fa fa-instagram"></i> @vaavascanvas
+        </a>
+        <a href="mailto:info@vaavascanvas.se">
+          <i class="fa fa-envelope"></i> info@vaavascanvas.se
+        </a>
+        <button class="subscribe-btn" id="subscribeBtn">
+          🔔 Prenumerera på nyheter
+        </button>
+      </div>
+      <div class="footerDivider"></div>
+      <div class="footerFormSection" id="formContainer"></div>
     </div>
-    <div class="footerDivider"></div>
-    <div class="footerFormSection" id="formContainer"></div>
-  </div>
-  <p class="footerCopy">© 2026 Devika – All rights reserved</p>
-</footer>
+    <p class="footerCopy">© 2026 Devika – All rights reserved</p>
+  </footer>
 
-<div class="subscribe-modal" id="successPopup">
-  <div class="subscribe-modal-inner" style="text-align: center;">
-    <span class="subscribe-close" id="successPopupClose">&times;</span>
-    <h3>Tack för din förfrågan! 🎨</h3>
-    <p>Jag återkommer så snart som möjligt.</p>
-  </div>
-</div>
+  <div id="modals-container"></div>
 
-<script src="js/paintings.js"></script>
-<script src="js/script.js"></script>
+  <script src="js/paintings.js"></script>
+  <script src="js/script.js"></script>
 </body>
-
 </html>
