@@ -396,19 +396,23 @@ function setupContactForm() {
 }
 
 function setupSubscribeModal() {
-  const btn = document.getElementById("subscribeBtn");
   const modal = document.getElementById("subscribeModal");
   const closeBtn = document.getElementById("subscribeClose");
 
-  if (!btn || !modal) return;
+  if (!modal) return;
 
-  btn.addEventListener("click", () => {
-    modal.style.display = "flex";
+  // Event delegation — fungerar oavsett när knappen laddas
+  document.addEventListener("click", (e) => {
+    if (e.target.closest("#subscribeBtn")) {
+      modal.style.display = "flex";
+    }
   });
 
-  closeBtn.addEventListener("click", () => {
-    modal.style.display = "none";
-  });
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => {
+      modal.style.display = "none";
+    });
+  }
 
   modal.addEventListener("click", (e) => {
     if (e.target === modal) modal.style.display = "none";
