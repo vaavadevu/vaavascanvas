@@ -1,0 +1,66 @@
+/* ─── Sticky header ─── */
+.stickyHeader {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  grid-area: header;
+}
+
+/* ─── Header ─── */
+header {
+  height: fit-content;
+  background-color: var(--accent-light);
+}
+
+header.box {
+  padding: 15px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.headerLogo {
+  height: 70px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* ─── Nav ─── */
+nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  margin: 0;
+  background-color: var(--accent-light);
+}
+
+nav a {
+  color: var(--text-link);
+  text-decoration: none;
+}
+
+nav a.active {
+  color: var(--text-dark);
+  font-weight: bold;
+}
+
+nav ul {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  list-style: none;
+  padding: 0;
+  margin: 20px;
+}
+
+nav li {
+  cursor: pointer;
+  font-weight: bold;
+}
