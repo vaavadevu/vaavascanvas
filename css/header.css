@@ -1,7 +1,11 @@
-/* ─── Sticky header ─── */
-.stickyHeader {
+#header-container {
   position: sticky;
   top: 0;
+  z-index: 100;
+}
+
+.stickyHeader {
+  position: static;
   z-index: 100;
   grid-area: header;
 }
