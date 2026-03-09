@@ -217,3 +217,11 @@
 .arrow.right {
   right: 15px;
 }
+
+.shipping-link {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: var(--text-link);
+  opacity: 0.8;
+}

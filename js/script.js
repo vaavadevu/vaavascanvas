@@ -233,6 +233,17 @@ function renderModalButtons(painting) {
     buyBtn.textContent = "✉ Skicka köpförfrågan";
     buyBtn.addEventListener("click", () => handleBuyClick(painting));
     modalButtons.appendChild(buyBtn);
+
+    const shippingLink = document.createElement("a");
+    shippingLink.textContent = "ℹ️ Frakt & leveransinformation";
+    shippingLink.href = "#";
+    shippingLink.classList.add("shipping-link");
+    shippingLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      const modal = document.getElementById("shippingModal");
+      if (modal) modal.style.display = "flex";
+    });
+    modalButtons.appendChild(shippingLink);
   }
 }
 
@@ -413,28 +424,48 @@ function showSuccessPopup() {
   const popup = document.getElementById("successPopup");
   if (!popup) return;
   popup.style.display = "flex";
-  document.getElementById("successPopupClose").addEventListener("click", () => {
-    popup.style.display = "none";
-  });
-  popup.addEventListener("click", (e) => {
-    if (e.target === popup) popup.style.display = "none";
-  });
 }
 
-function setupSubscribeModal() {
-  // Använd event delegation för allt
+function setupModals() {
   document.addEventListener("click", (e) => {
+
+    // Subscribe
     if (e.target.closest("#subscribeBtn")) {
-      const modal = document.getElementById("subscribeModal");
-      if (modal) modal.style.display = "flex";
+      document.getElementById("subscribeModal").style.display = "flex";
     }
     if (e.target.closest("#subscribeClose")) {
-      const modal = document.getElementById("subscribeModal");
-      if (modal) modal.style.display = "none";
+      document.getElementById("subscribeModal").style.display = "none";
     }
     if (e.target.id === "subscribeModal") {
       e.target.style.display = "none";
     }
+
+    // Shipping
+    if (e.target.closest("#shippingBtn")) {
+      e.preventDefault();
+      document.getElementById("shippingModal").style.display = "flex";
+    }
+    if (e.target.closest("#shippingClose")) {
+      document.getElementById("shippingModal").style.display = "none";
+    }
+    if (e.target.id === "shippingModal") {
+      e.target.style.display = "none";
+    }
+
+    // Success popup
+    if (e.target.closest("#successPopupClose")) {
+      document.getElementById("successPopup").style.display = "none";
+    }
+    if (e.target.id === "successPopup") {
+      e.target.style.display = "none";
+    }
+
+    if (e.target.closest("#successShippingLink")) {
+      e.preventDefault();
+      document.getElementById("successPopup").style.display = "none";
+      document.getElementById("shippingModal").style.display = "flex";
+    }
+
   });
 }
 
@@ -467,14 +498,14 @@ function populateArtworkDropdowns() {
   });
 
   paintings
-  .filter(p => p.status === STATUS.FOR_SALE)
-  .forEach(p => {
-    const option = document.createElement("option");
-    option.value = p.id;
-    option.textContent = `${p.title} – ${p.size} – ${p.originalPrice} kr`;
-    option.dataset.title = p.title;
-    originalSelect.appendChild(option);
-  });
+    .filter(p => p.status === STATUS.FOR_SALE)
+    .forEach(p => {
+      const option = document.createElement("option");
+      option.value = p.id;
+      option.textContent = `${p.title} – ${p.size} – ${p.originalPrice} kr`;
+      option.dataset.title = p.title;
+      originalSelect.appendChild(option);
+    });
 
   // Preview för print
   printSelect.addEventListener("change", () => {
@@ -508,7 +539,7 @@ async function buildComponents() {
   if (headerContainer) {
     const res = await fetch("components/header.html");
     headerContainer.innerHTML = await res.text();
-    
+
     // Sätt active-klass baserat på vilken sida vi är på
     const isIndex = window.location.pathname.includes("index") || window.location.pathname === "/";
     const isPictures = window.location.pathname.includes("pictures");
@@ -522,11 +553,12 @@ async function buildComponents() {
   // Modals
   const modalsContainer = document.getElementById("modals-container");
   if (modalsContainer) {
-    const [subscribeRes, successRes] = await Promise.all([
+    const [subscribeRes, successRes, shippingRes] = await Promise.all([
       fetch("components/subscribe-modal.html"),
-      fetch("components/success-popup.html")
+      fetch("components/success-popup.html"),
+      fetch("components/shipping-modal.html")
     ]);
-    modalsContainer.innerHTML = await subscribeRes.text() + await successRes.text();
+    modalsContainer.innerHTML = await subscribeRes.text() + await successRes.text() + await shippingRes.text();
   }
 }
 
@@ -643,6 +675,6 @@ async function init() {
 setupScrollWatcher();
 buildComponents().then(() => {
   buildContactForm();
-  setupSubscribeModal();
+  setupModals();
 });
 init();
