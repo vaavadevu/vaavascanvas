@@ -21,6 +21,7 @@ html,
 body {
   max-width: 100%;
   overflow-x: clip;
+  padding-top: 100px;
 }
 
 html {
