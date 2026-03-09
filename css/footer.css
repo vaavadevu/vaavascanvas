@@ -167,6 +167,8 @@ footer {
   max-width: 480px;
   width: 100%;
   position: relative;
+  max-height: 85vh;
+  overflow-y: auto;
 }
 
 .subscribe-modal-inner h3 {
@@ -201,3 +203,35 @@ footer {
   background: transparent;
   overflow: hidden;
 }
+
+.shipping-modal-inner {
+  max-width: 520px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.shipping-section {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--accent-light);
+}
+
+.shipping-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.shipping-section h4 {
+  font-family: 'Playfair Display', serif;
+  margin: 0 0 6px;
+  font-size: 1rem;
+  color: var(--text-dark);
+}
+
+.shipping-section p {
+  margin: 0;
+  font-size: 0.88rem;
+  opacity: 0.85;
+  line-height: 1.6;
+}
+
