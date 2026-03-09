@@ -319,6 +319,7 @@ function attachModalListeners() {
   if (!modalElement) return;
 
   setupZoomEffect();
+  setupSwipeGestures();
 
   if (modalCloseBtn) modalCloseBtn.onclick = closeModal;
   if (modalNextBtn) modalNextBtn.onclick = showNextPainting;
@@ -481,6 +482,136 @@ function subscribeToMailchimp(email) {
     mcEmail.value = email;
     mcForm.submit();
   }
+}
+
+function setupSwipeGestures() {
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let isDragging = false;
+
+  const wrapper = document.querySelector('.modalImageWrapper');
+  const modal = document.getElementById('modal');
+  if (!modal) return;
+
+  // ── Inuti bilden: byter bild av samma tavla ──
+  if (wrapper) {
+    wrapper.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      isDragging = false;
+    }, { passive: true });
+
+    wrapper.addEventListener('touchmove', (e) => {
+      const dx = e.touches[0].clientX - touchStartX;
+      const dy = e.touches[0].clientY - touchStartY;
+      if (Math.abs(dx) < 5) return;
+      if (!isDragging && Math.abs(dy) > Math.abs(dx)) return;
+      isDragging = true;
+
+      // Flytta bilden visuellt
+      modalImg.style.transition = 'none';
+      modalImg.style.transform = `translateX(${dx * 0.4}px) scale(1)`;
+    }, { passive: true });
+
+    wrapper.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+
+      if (!isDragging || Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)) {
+        // Studsa tillbaka
+        modalImg.style.transition = 'transform 0.25s ease';
+        modalImg.style.transform = 'translateX(0) scale(1)';
+        return;
+      }
+
+      const painting = paintings[currentPaintingIndex];
+      const imgs = getPaintingImagePaths(painting);
+
+      if (imgs.length <= 1) {
+        modalImg.style.transition = 'transform 0.25s ease';
+        modalImg.style.transform = 'translateX(0) scale(1)';
+        return;
+      }
+
+      const direction = dx < 0 ? 1 : -1;
+      const newIndex = (currentModalImageIndex + direction + imgs.length) % imgs.length;
+
+      // Slide ut
+      modalImg.style.transition = 'transform 0.2s ease';
+      modalImg.style.transform = `translateX(${direction * -100}%) scale(1)`;
+
+      setTimeout(() => {
+        switchModalImage(imgs, newIndex);
+        // Slide in från motsatt håll
+        modalImg.style.transition = 'none';
+        modalImg.style.transform = `translateX(${direction * 100}%) scale(1)`;
+        requestAnimationFrame(() => {
+          modalImg.style.transition = 'transform 0.2s ease';
+          modalImg.style.transform = 'translateX(0) scale(1)';
+        });
+      }, 200);
+
+      isDragging = false;
+    }, { passive: true });
+  }
+
+  // ── Utanför bilden: byter tavla ──
+  const modalInner = document.querySelector('.modalInner');
+  if (!modalInner) return;
+
+  modalInner.addEventListener('touchstart', (e) => {
+    if (e.target.closest('.modalImageWrapper')) return;
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    isDragging = false;
+  }, { passive: true });
+
+  modalInner.addEventListener('touchmove', (e) => {
+    if (e.target.closest('.modalImageWrapper')) return;
+    const dx = e.touches[0].clientX - touchStartX;
+    const dy = e.touches[0].clientY - touchStartY;
+    if (Math.abs(dx) < 5) return;
+    if (!isDragging && Math.abs(dy) > Math.abs(dx)) return;
+    isDragging = true;
+
+    // Flytta hela modalInner visuellt
+    modalInner.style.transition = 'none';
+    modalInner.style.transform = `translateX(${dx * 0.3}px)`;
+  }, { passive: true });
+
+  modalInner.addEventListener('touchend', (e) => {
+    if (e.target.closest('.modalImageWrapper')) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+
+    if (!isDragging || Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx)) {
+      // Studsa tillbaka
+      modalInner.style.transition = 'transform 0.25s ease';
+      modalInner.style.transform = 'translateX(0)';
+      return;
+    }
+
+    const direction = dx < 0 ? 1 : -1;
+
+    // Slide ut
+    modalInner.style.transition = 'transform 0.2s ease';
+    modalInner.style.transform = `translateX(${direction * -120}%)`;
+
+    setTimeout(() => {
+      if (direction === 1) showNextPainting();
+      else showPrevPainting();
+
+      // Slide in från motsatt håll
+      modalInner.style.transition = 'none';
+      modalInner.style.transform = `translateX(${direction * 120}%)`;
+      requestAnimationFrame(() => {
+        modalInner.style.transition = 'transform 0.2s ease';
+        modalInner.style.transform = 'translateX(0)';
+      });
+    }, 200);
+
+    isDragging = false;
+  }, { passive: true });
 }
 
 function populateArtworkDropdowns() {
