@@ -1,6 +1,5 @@
 document.addEventListener("contextmenu", e => e.preventDefault());
 
-
 // DOM references ---------------------------------------------
 const galleryElement = document.getElementById("gallery");
 const modalElement = document.getElementById("modal");
@@ -22,12 +21,12 @@ if (modalElement) {
 // state ------------------------------------------------------
 let currentPaintingIndex = 0;
 let currentModalImageIndex = 0;
+let isTransitioning = false;
 
 function getPaintingImagePaths(painting) {
   const folderId = painting.id;
   const count = painting.imageCount || 1;
   const base = `images/paintings/${folderId}/`;
-
   return Array.from({ length: count }, (_, i) => {
     const idx = String(i + 1).padStart(2, "0");
     return `${base}${idx}.jpg`;
@@ -37,7 +36,7 @@ function getPaintingImagePaths(painting) {
 /* Gallery construction */
 function buildGallery() {
   if (!galleryElement) return;
-  galleryElement.innerHTML = ""; // Clear existing
+  galleryElement.innerHTML = "";
   paintings.forEach((painting, idx) => {
     const item = createGalleryItem(painting, idx);
     galleryElement.appendChild(item);
@@ -59,7 +58,6 @@ function createGalleryItem(painting, index) {
   item.appendChild(img);
   if (painting.status === STATUS.SOLD) addSoldBadge(item);
 
-  // Prickar och hover-preview om fler än 1 bild
   if (paths.length > 1) {
     const dots = document.createElement("div");
     dots.classList.add("gallery-dots");
@@ -73,16 +71,10 @@ function createGalleryItem(painting, index) {
 
     item.appendChild(dots);
 
-    // Hovra vänster = första bilden, höger = sista bilden
     item.addEventListener("mousemove", (e) => {
       const rect = item.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width;
-
-      const newIndex = Math.min(
-        Math.floor(x * paths.length),
-        paths.length - 1
-      );
-
+      const newIndex = Math.min(Math.floor(x * paths.length), paths.length - 1);
       if (!img.src.endsWith(paths[newIndex].split("/").pop())) {
         img.src = paths[newIndex];
         dots.querySelectorAll(".gallery-dot").forEach((dot, i) => {
@@ -111,7 +103,6 @@ function addSoldBadge(container) {
 
 function openModal(index) {
   const painting = paintings[index];
-  console.log("Opening painting:", painting.id, "Images found:", painting.imageCount);
   if (!modalElement) return;
   currentPaintingIndex = index;
   currentModalImageIndex = 0;
@@ -120,11 +111,20 @@ function openModal(index) {
   renderModalButtons(painting);
 
   modalElement.style.display = "flex";
+  preloadAdjacentImages();
+
+  const url = new URL(window.location);
+  url.searchParams.set("painting", painting.id);
+  window.history.replaceState({}, "", url);
 }
 
-function populateModal(painting) {
-  const imgs = getPaintingImagePaths(painting);
+function openModalSilent(index) {
+  const painting = paintings[index];
+  if (!modalElement) return;
+  currentPaintingIndex = index;
+  currentModalImageIndex = 0;
 
+  const imgs = getPaintingImagePaths(painting);
   modalImg.src = imgs[0];
   modalImg.alt = painting.title;
   modalTitle.textContent = painting.title;
@@ -133,20 +133,36 @@ function populateModal(painting) {
 
   buildModalThumbnails(imgs);
   configureModalArrows(imgs);
+  renderModalButtons(painting);
+
+  preloadAdjacentImages();
+
+  const url = new URL(window.location);
+  url.searchParams.set("painting", painting.id);
+  window.history.replaceState({}, "", url);
+}
+
+function populateModal(painting) {
+  const imgs = getPaintingImagePaths(painting);
+  modalImg.src = imgs[0];
+  modalImg.alt = painting.title;
+  modalTitle.textContent = painting.title;
+  modalSize.textContent = painting.size;
+  modalDesc.textContent = painting.description;
+  buildModalThumbnails(imgs);
+  configureModalArrows(imgs);
 }
 
 function buildModalThumbnails(imgs) {
   const thumbsContainer = document.getElementById("modal-thumbs");
   thumbsContainer.innerHTML = "";
-
   if (imgs.length <= 1) return;
-
   imgs.forEach((src, idx) => {
     const thumb = document.createElement("img");
     thumb.src = src;
     thumb.classList.add("modalThumb");
     if (idx === 0) thumb.classList.add("active");
-    thumb.addEventListener("click", () => switchModalImage(imgs, idx));
+    thumb.addEventListener("click", () => transitionToImage(imgs, idx, idx > currentModalImageIndex ? 1 : -1));
     thumbsContainer.appendChild(thumb);
   });
 }
@@ -175,16 +191,13 @@ function sortPaintings() {
     [STATUS.PERSONAL]: 1,
     [STATUS.SOLD]: 2
   };
-
   paintings.sort((a, b) => {
-    // Först sortera på status
     const statusDiff = statusOrder[a.status] - statusOrder[b.status];
     if (statusDiff !== 0) return statusDiff;
-
-    // Sen inom samma status, högt pris först
     return (b.originalPrice || 0) - (a.originalPrice || 0);
   });
 }
+
 function configureModalArrows(imgs) {
   const imgPrev = document.getElementById("modal-img-prev");
   const imgNext = document.getElementById("modal-img-next");
@@ -192,15 +205,13 @@ function configureModalArrows(imgs) {
   if (imgs.length > 1) {
     imgPrev.style.display = "flex";
     imgNext.style.display = "flex";
-
     imgPrev.onclick = (e) => {
-      e.stopPropagation(); // <--- STOPPAR ZOOMEN
-      switchModalImage(imgs, (currentModalImageIndex - 1 + imgs.length) % imgs.length);
+      e.stopPropagation();
+      if (!isTransitioning) transitionToImage(imgs, (currentModalImageIndex - 1 + imgs.length) % imgs.length, -1);
     };
-
     imgNext.onclick = (e) => {
-      e.stopPropagation(); // <--- STOPPAR ZOOMEN
-      switchModalImage(imgs, (currentModalImageIndex + 1) % imgs.length);
+      e.stopPropagation();
+      if (!isTransitioning) transitionToImage(imgs, (currentModalImageIndex + 1) % imgs.length, 1);
     };
   } else {
     imgPrev.style.display = "none";
@@ -226,7 +237,7 @@ function renderModalButtons(painting) {
   if (painting.originalPrice) {
     const priceEl = document.createElement("p");
     priceEl.textContent = `${painting.originalPrice} kr`;
-    priceEl.classList.add("modal-price"); // Use CSS for styling
+    priceEl.classList.add("modal-price");
     modalButtons.appendChild(priceEl);
 
     const buyBtn = document.createElement("button");
@@ -255,17 +266,13 @@ function handleBuyClick(painting) {
 
   if (typeSelect) {
     typeSelect.value = "Originals";
-    typeSelect.dispatchEvent(new Event("change")); // ← triggar dropdown-logiken
+    typeSelect.dispatchEvent(new Event("change"));
   }
-
   if (subjectInput) subjectInput.value = "New Inquiry - Originals";
-
-  // Välj rätt målning i original-dropdown
   if (originalSelect) {
     originalSelect.value = painting.id;
-    originalSelect.dispatchEvent(new Event("change")); // ← triggar preview
+    originalSelect.dispatchEvent(new Event("change"));
   }
-
   if (messageInput) {
     messageInput.value = `Hej! Jag är intresserad av originalmålningen "${painting.title}" (${painting.size}) för ${painting.originalPrice} kr.`;
   }
@@ -277,42 +284,188 @@ function handleBuyClick(painting) {
 function switchModalImage(imgs, index) {
   currentModalImageIndex = index;
   modalImg.src = imgs[index];
-
-  // 1. Nollställ zoom-nivån till 0 (utzoomad)
   zoomLevel = 0;
-
-  // 2. Återställ bildens storlek och centrera zoomen
   modalImg.style.transform = "scale(1)";
   modalImg.style.transformOrigin = "center center";
-
-  // 3. Ta bort alla zoom-klasser från wrappern så muspekaren blir rätt
   const wrapper = document.querySelector('.modalImageWrapper');
-  if (wrapper) {
-    wrapper.classList.remove('is-zoomed-1', 'is-zoomed-2');
-  }
-
-  // 4. Uppdatera tumnaglarna så rätt bild ser vald ut
+  if (wrapper) wrapper.classList.remove('is-zoomed-1', 'is-zoomed-2');
   document.querySelectorAll(".modalThumb").forEach((thumb, idx) => {
     thumb.classList.toggle("active", idx === index);
   });
 }
 
+// ── Transition: byter bild inuti tavlan med slide-animation ──
+function transitionToImage(imgs, newIndex, direction) {
+  if (isTransitioning) return;
+  isTransitioning = true;
+
+  const wrapper = document.querySelector('.modalImageWrapper');
+  if (!wrapper) {
+    switchModalImage(imgs, newIndex);
+    isTransitioning = false;
+    return;
+  }
+
+  // Skapa incoming bild
+  const incoming = document.createElement('img');
+  incoming.src = imgs[newIndex];
+  incoming.style.cssText = `
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  transform: translateX(${direction * 100}%);
+  transition: none;
+  z-index: 2;
+`;
+  wrapper.appendChild(incoming);
+
+  // Sätt modalImg till absolute så båda alignas lika
+  modalImg.style.position = 'absolute';
+  modalImg.style.top = '0';
+  modalImg.style.left = '0';
+  modalImg.style.width = '100%';
+  modalImg.style.height = '100%';
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      modalImg.style.transition = 'transform 0.25s ease';
+      modalImg.style.transform = `translateX(${direction * -100}%)`;
+      incoming.style.transition = 'transform 0.25s ease';
+      incoming.style.transform = 'translateX(0)';
+
+      setTimeout(() => {
+        currentModalImageIndex = newIndex;
+        modalImg.style.opacity = '0';
+        modalImg.style.transition = 'none';
+        modalImg.style.transform = '';
+        modalImg.style.position = '';
+        modalImg.style.top = '';
+        modalImg.style.left = '';
+        modalImg.style.width = '';
+        modalImg.style.height = '';
+        modalImg.src = imgs[newIndex];
+
+        if (incoming.parentNode) incoming.parentNode.removeChild(incoming);
+
+        document.querySelectorAll(".modalThumb").forEach((thumb, idx) => {
+          thumb.classList.toggle("active", idx === newIndex);
+        });
+
+        zoomLevel = 0;
+        wrapper.classList.remove('is-zoomed-1', 'is-zoomed-2');
+
+        requestAnimationFrame(() => {
+          modalImg.style.opacity = '1';
+          isTransitioning = false;
+        });
+      }, 280);
+    });
+  });
+}
+
+// ── Transition: byter tavla med slide-animation ──
+function transitionToPainting(newIndex, direction) {
+  if (isTransitioning) return;
+  isTransitioning = true;
+
+  const wrapper = document.querySelector('.modalInner');
+  if (!wrapper) {
+    currentPaintingIndex = newIndex;
+    openModalSilent(newIndex);
+    isTransitioning = false;
+    return;
+  }
+
+  const container = document.querySelector('.modal');
+  const painting = paintings[newIndex];
+  const imgs = getPaintingImagePaths(painting);
+
+  const incoming = document.createElement('div');
+  incoming.classList.add('modalInner');
+  const modalInnerEl = document.querySelector('.modalInner');
+  const innerRect = modalInnerEl ? modalInnerEl.getBoundingClientRect() : null;
+
+  incoming.style.cssText = `
+  position: absolute;
+  top: ${innerRect ? innerRect.top - container.getBoundingClientRect().top : 0}px;
+  left: ${innerRect ? innerRect.left - container.getBoundingClientRect().left : 0}px;
+  width: ${innerRect ? innerRect.width : '75vw'}px;
+  height: ${innerRect ? innerRect.height : '75vh'}px;
+  transform: translateX(${direction * (innerRect ? innerRect.width : window.innerWidth)}px);
+  transition: none;
+  z-index: 999;
+  background: var(--bg-warm);
+  border-radius: 16px;
+  padding: 30px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  box-sizing: border-box;
+  overflow: hidden;
+`;
+  const imgWrapperHeight = document.querySelector('.modalImageWrapper')?.offsetHeight || 300;
+  incoming.innerHTML = `
+    <div class="modalLeft">
+      <div class="modalImageWrapper" style="height:${imgWrapperHeight}px; overflow:hidden;">
+        <img src="${imgs[0]}" style="width:100%;height:100%;object-fit:contain;" />
+      </div>
+    </div>
+    <div class="modalRight">
+      <h3>${painting.title}</h3>
+      <p>${painting.size}</p>
+      <p>${painting.description}</p>
+    </div>
+  `;
+  container.appendChild(incoming);
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      wrapper.style.transition = 'transform 0.25s ease';
+      wrapper.style.transform = `translateX(${direction * -innerRect.width}px)`;
+      incoming.style.transition = 'transform 0.25s ease';
+      incoming.style.transform = `translateX(0)`;
+
+      setTimeout(() => {
+        if (incoming.parentNode) incoming.parentNode.removeChild(incoming);
+        wrapper.style.transition = 'none';
+        wrapper.style.transform = '';
+
+        const painting = paintings[newIndex];
+        const imgs = getPaintingImagePaths(painting);
+        currentPaintingIndex = newIndex;
+        currentModalImageIndex = 0;
+        modalImg.src = imgs[0];
+        modalTitle.textContent = painting.title;
+        modalSize.textContent = painting.size;
+        modalDesc.textContent = painting.description;
+        buildModalThumbnails(imgs);
+        configureModalArrows(imgs);
+        renderModalButtons(painting);
+
+        const url = new URL(window.location);
+        url.searchParams.set("painting", painting.id);
+        window.history.replaceState({}, "", url);
+
+        preloadAdjacentImages();
+        isTransitioning = false;
+      }, 280);
+    });
+  });
+}
+
 function closeModal() {
   if (modalElement) modalElement.style.display = "none";
-
+  isTransitioning = false;
   const url = new URL(window.location);
   url.searchParams.delete("painting");
   window.history.replaceState({}, "", url);
 }
 
 function showNextPainting() {
-  currentPaintingIndex = (currentPaintingIndex + 1) % paintings.length;
-  openModal(currentPaintingIndex);
+  if (!isTransitioning) transitionToPainting((currentPaintingIndex + 1) % paintings.length, 1);
 }
 
 function showPrevPainting() {
-  currentPaintingIndex = (currentPaintingIndex - 1 + paintings.length) % paintings.length;
-  openModal(currentPaintingIndex);
+  if (!isTransitioning) transitionToPainting((currentPaintingIndex - 1 + paintings.length) % paintings.length, -1);
 }
 
 function attachModalListeners() {
@@ -322,8 +475,8 @@ function attachModalListeners() {
   setupSwipeGestures();
 
   if (modalCloseBtn) modalCloseBtn.onclick = closeModal;
-  if (modalNextBtn) modalNextBtn.onclick = showNextPainting;
-  if (modalPrevBtn) modalPrevBtn.onclick = showPrevPainting;
+  if (modalNextBtn) modalNextBtn.onclick = () => showNextPainting();
+  if (modalPrevBtn) modalPrevBtn.onclick = () => showPrevPainting();
 
   modalElement.onclick = (e) => { if (e.target === modalElement) closeModal(); };
   document.onkeydown = (e) => {
@@ -340,25 +493,21 @@ function setupScrollWatcher() {
     const currentScrollY = window.scrollY;
     const header = document.getElementById("header-container");
 
-    // Visa header när man scrollar upp, dölj när man scrollar ner
     if (currentScrollY < lastScrollY) {
       header?.classList.add("visible");
     } else {
       header?.classList.remove("visible");
     }
-
-    // Alltid visa om man är nära toppen
     if (currentScrollY < 100) {
       header?.classList.add("visible");
     }
-
     lastScrollY = currentScrollY;
 
-    // Befintlig footer-logik
     const footer = document.getElementById("footer");
     if (!footer) return;
     const footerInView = footer.getBoundingClientRect().top <= window.innerHeight / 2;
-    let currentQuery = footerInView ? "#footer" : (window.location.href.includes("pictures.html") ? "pictures.html#main" : "index.html#top");
+    const isPictures = window.location.href.includes("pictures.html");
+    let currentQuery = footerInView ? "#footer" : isPictures ? "pictures.html" : "index.html#top";
     activateNavQuery(currentQuery);
   });
 }
@@ -397,15 +546,9 @@ function setupContactForm() {
     const val = typeSelect.value;
     printField.style.display = val === "Prints" ? "block" : "none";
     commissionInfo.style.display = val === "Commissions" ? "block" : "none";
-
-    const originalField = document.getElementById("f-originalField");
-    const originalInfo = document.getElementById("f-originalInfo");
-    const printInfo = document.getElementById("f-printInfo");
-
     if (originalField) originalField.style.display = val === "Originals" ? "block" : "none";
     if (originalInfo) originalInfo.style.display = val === "Originals" ? "block" : "none";
     if (printInfo) printInfo.style.display = val === "Prints" ? "block" : "none";
-
     subjectInput.value = val ? `New Inquiry - ${val}` : "New Inquiry";
   });
 
@@ -420,8 +563,8 @@ function setupContactForm() {
 
     if (response.ok) {
       const subscribeCheckbox = document.getElementById("f-subscribe");
-      const nameInput = document.getElementById("f-name");
       const emailInput = document.getElementById("f-email");
+      const nameInput = document.getElementById("f-name");
 
       if (subscribeCheckbox?.checked && emailInput?.value && nameInput?.value) {
         subscribeToMailchimp(emailInput.value);
@@ -449,7 +592,6 @@ function showSuccessPopup() {
 
 function setupModals() {
   document.addEventListener("click", (e) => {
-
     // Subscribe
     if (e.target.closest("#subscribeBtn")) {
       document.getElementById("subscribeModal").style.display = "flex";
@@ -481,23 +623,21 @@ function setupModals() {
       e.target.style.display = "none";
     }
 
+    // Success → Shipping
     if (e.target.closest("#successShippingLink")) {
       e.preventDefault();
       document.getElementById("successPopup").style.display = "none";
       document.getElementById("shippingModal").style.display = "flex";
     }
-
   });
 }
 
 function subscribeToMailchimp(email) {
   const iframe = document.querySelector(".subscribe-iframe");
   if (!iframe) return;
-
   const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
   const mcEmail = iframeDoc.getElementById("mce-EMAIL");
   const mcForm = iframeDoc.getElementById("mc-embedded-subscribe-form");
-
   if (mcEmail && mcForm) {
     mcEmail.value = email;
     mcForm.submit();
@@ -515,163 +655,298 @@ function setupSwipeGestures() {
 
   // ── Inuti bilden: byter bild av samma tavla ──
   if (wrapper) {
+    let nextImg = null;
+
     wrapper.addEventListener('touchstart', (e) => {
+      e.stopPropagation();
+      if (isTransitioning) return;
       touchStartX = e.touches[0].clientX;
       touchStartY = e.touches[0].clientY;
       isDragging = false;
+
+      const painting = paintings[currentPaintingIndex];
+      const imgs = getPaintingImagePaths(painting);
+      if (imgs.length <= 1) return;
+
+      const rect = modalImg.getBoundingClientRect();
+      const wrapperRect = wrapper.getBoundingClientRect();
+      const offsetTop = rect.top - wrapperRect.top;
+      const offsetLeft = rect.left - wrapperRect.left;
+
+      modalImg.style.position = 'absolute';
+      modalImg.style.top = `${offsetTop}px`;
+      modalImg.style.left = `${offsetLeft}px`;
+      modalImg.style.width = `${rect.width}px`;
+      modalImg.style.height = `${rect.height}px`;
+
+      nextImg = document.createElement('img');
+      nextImg.style.cssText = `
+        position: absolute;
+        top: ${offsetTop}px;
+        left: ${offsetLeft}px;
+        width: ${rect.width}px;
+        height: ${rect.height}px;
+        object-fit: contain;
+        object-position: center center;
+        transition: none;
+        z-index: 2;
+        pointer-events: none;
+      `;
+      wrapper.appendChild(nextImg);
     }, { passive: true });
 
     wrapper.addEventListener('touchmove', (e) => {
+      e.stopPropagation();
+      if (isTransitioning) return;
       const dx = e.touches[0].clientX - touchStartX;
       const dy = e.touches[0].clientY - touchStartY;
       if (Math.abs(dx) < 5) return;
       if (!isDragging && Math.abs(dy) > Math.abs(dx)) return;
       isDragging = true;
 
-      // Flytta bilden visuellt
+      const painting = paintings[currentPaintingIndex];
+      const imgs = getPaintingImagePaths(painting);
+      if (imgs.length <= 1) return;
+
+      const direction = dx < 0 ? 1 : -1;
+      const newIndex = (currentModalImageIndex + direction + imgs.length) % imgs.length;
+
+      if (nextImg && nextImg.dataset.index !== String(newIndex)) {
+        nextImg.src = imgs[newIndex];
+        nextImg.dataset.index = String(newIndex);
+      }
+
       modalImg.style.transition = 'none';
-      modalImg.style.transform = `translateX(${dx * 0.4}px) scale(1)`;
-    }, { passive: true });
+      modalImg.style.transform = `translateX(${dx}px)`;
+      if (nextImg) {
+        const offset = dx < 0 ? wrapper.offsetWidth + dx : -wrapper.offsetWidth + dx;
+        nextImg.style.transform = `translateX(${offset}px)`;
+      }
+    }, { passive: false });
 
     wrapper.addEventListener('touchend', (e) => {
+      e.stopPropagation();
+      if (isTransitioning) return;
       const dx = e.changedTouches[0].clientX - touchStartX;
       const dy = e.changedTouches[0].clientY - touchStartY;
-
-      if (!isDragging || Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)) {
-        // Studsa tillbaka
-        modalImg.style.transition = 'transform 0.25s ease';
-        modalImg.style.transform = 'translateX(0) scale(1)';
-        return;
-      }
 
       const painting = paintings[currentPaintingIndex];
       const imgs = getPaintingImagePaths(painting);
 
-      if (imgs.length <= 1) {
+      const cleanup = () => {
+        if (nextImg && nextImg.parentNode) nextImg.parentNode.removeChild(nextImg);
+        nextImg = null;
+        modalImg.style.transition = '';
+        modalImg.style.transform = '';
+        modalImg.style.position = '';
+        modalImg.style.top = '';
+        modalImg.style.left = '';
+        modalImg.style.width = '';
+        modalImg.style.height = '';
+      };
+
+      if (!isDragging || Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx) || imgs.length <= 1) {
         modalImg.style.transition = 'transform 0.25s ease';
-        modalImg.style.transform = 'translateX(0) scale(1)';
+        modalImg.style.transform = 'translateX(0)';
+        if (nextImg) {
+          nextImg.style.transition = 'transform 0.25s ease';
+          nextImg.style.transform = `translateX(${dx < 0 ? wrapper.offsetWidth : -wrapper.offsetWidth}px)`;
+        }
+        setTimeout(cleanup, 250);
         return;
       }
 
       const direction = dx < 0 ? 1 : -1;
       const newIndex = (currentModalImageIndex + direction + imgs.length) % imgs.length;
+      isTransitioning = true;
 
-      // Slide ut
-      modalImg.style.transition = 'transform 0.2s ease';
-      modalImg.style.transform = `translateX(${direction * -100}%) scale(1)`;
+      modalImg.style.transition = 'transform 0.25s ease';
+      modalImg.style.transform = `translateX(${direction * -wrapper.offsetWidth}px)`;
+      if (nextImg) {
+        nextImg.style.transition = 'transform 0.25s ease';
+        nextImg.style.transform = 'translateX(0)';
+      }
 
       setTimeout(() => {
-        switchModalImage(imgs, newIndex);
-        // Slide in från motsatt håll
-        modalImg.style.transition = 'none';
-        modalImg.style.transform = `translateX(${direction * 100}%) scale(1)`;
-        requestAnimationFrame(() => {
-          modalImg.style.transition = 'transform 0.2s ease';
-          modalImg.style.transform = 'translateX(0) scale(1)';
+        currentModalImageIndex = newIndex;
+        modalImg.style.opacity = '0';
+        modalImg.src = imgs[newIndex];
+        cleanup();
+
+        document.querySelectorAll(".modalThumb").forEach((thumb, idx) => {
+          thumb.classList.toggle("active", idx === newIndex);
         });
-      }, 200);
+
+        requestAnimationFrame(() => {
+          modalImg.style.opacity = '1';
+          isTransitioning = false;
+        });
+      }, 250);
 
       isDragging = false;
     }, { passive: true });
   }
 
   // ── Utanför bilden: byter tavla ──
-  const modalInner = document.querySelector('.modalInner');
-  if (!modalInner) return;
+  let nextPaintingEl = null;
 
-  modalInner.addEventListener('touchstart', (e) => {
+  modal.addEventListener('touchstart', (e) => {
     if (e.target.closest('.modalImageWrapper')) return;
+    if (isTransitioning) return;
     touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
     isDragging = false;
+    nextPaintingEl = null;
   }, { passive: true });
 
-  modalInner.addEventListener('touchmove', (e) => {
+  modal.addEventListener('touchmove', (e) => {
     if (e.target.closest('.modalImageWrapper')) return;
+    if (isTransitioning) return;
     const dx = e.touches[0].clientX - touchStartX;
     const dy = e.touches[0].clientY - touchStartY;
     if (Math.abs(dx) < 5) return;
     if (!isDragging && Math.abs(dy) > Math.abs(dx)) return;
     isDragging = true;
 
-    // Flytta hela modalInner visuellt
+    const modalInner = document.querySelector('.modalInner');
+    const container = document.querySelector('.modal');
+    if (!modalInner || !container) return;
+
+    const direction = dx < 0 ? 1 : -1;
+    const newIndex = (currentPaintingIndex + direction + paintings.length) % paintings.length;
+
+    // Skapa incoming första gången
+    if (!nextPaintingEl || nextPaintingEl.dataset.index !== String(newIndex)) {
+      if (nextPaintingEl && nextPaintingEl.parentNode) nextPaintingEl.parentNode.removeChild(nextPaintingEl);
+
+      const painting = paintings[newIndex];
+      const imgs = getPaintingImagePaths(painting);
+
+      const innerRect = modalInner.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      const imgWrapperHeight = document.querySelector('.modalImageWrapper')?.offsetHeight || 300;
+
+      nextPaintingEl = document.createElement('div');
+      nextPaintingEl.classList.add('modalInner');
+      nextPaintingEl.dataset.index = String(newIndex);
+      nextPaintingEl.style.cssText = `
+        position: absolute;
+        top: ${innerRect.top - containerRect.top}px;
+        left: ${innerRect.left - containerRect.left}px;
+        width: ${innerRect.width}px;
+        height: ${innerRect.height}px;
+        transition: none;
+        z-index: 2;
+        background: var(--bg-warm);
+        border-radius: 16px;
+        padding: 30px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        box-sizing: border-box;
+        overflow: hidden;
+        transform: translateX(${direction * innerRect.width}px);
+      `;
+      nextPaintingEl.innerHTML = `
+        <div class="modalLeft">
+          <div class="modalImageWrapper" style="height:${imgWrapperHeight}px; overflow:hidden;">
+            <img src="${imgs[0]}" style="width:100%;height:100%;object-fit:contain;" />
+          </div>
+        </div>
+        <div class="modalRight">
+          <h3>${painting.title}</h3>
+          <p>${painting.size}</p>
+          <p>${painting.description}</p>
+        </div>
+      `;
+      container.appendChild(nextPaintingEl);
+    }
+
+    // Flytta i realtid
+    const innerW = modalInner.getBoundingClientRect().width;
     modalInner.style.transition = 'none';
-    modalInner.style.transform = `translateX(${dx * 0.3}px)`;
+    modalInner.style.transform = `translateX(${dx}px)`;
+    nextPaintingEl.style.transition = 'none';
+    const offset = dx < 0 ? innerW + dx : -innerW + dx;
+    nextPaintingEl.style.transform = `translateX(${offset}px)`;
   }, { passive: true });
 
-  modalInner.addEventListener('touchend', (e) => {
+  modal.addEventListener('touchend', (e) => {
     if (e.target.closest('.modalImageWrapper')) return;
     const dx = e.changedTouches[0].clientX - touchStartX;
     const dy = e.changedTouches[0].clientY - touchStartY;
+    const modalInner = document.querySelector('.modalInner');
+    const container = document.querySelector('.modal');
 
     if (!isDragging || Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx)) {
-      // Studsa tillbaka
-      modalInner.style.transition = 'transform 0.25s ease';
-      modalInner.style.transform = 'translateX(0)';
+      if (modalInner) {
+        modalInner.style.transition = 'transform 0.25s ease';
+        modalInner.style.transform = 'translateX(0)';
+      }
+      if (nextPaintingEl && nextPaintingEl.parentNode) {
+        const direction = dx < 0 ? 1 : -1;
+        nextPaintingEl.style.transition = 'transform 0.25s ease';
+        nextPaintingEl.style.transform = `translateX(${direction * 100}%)`;
+        setTimeout(() => {
+          if (nextPaintingEl && nextPaintingEl.parentNode) nextPaintingEl.parentNode.removeChild(nextPaintingEl);
+          nextPaintingEl = null;
+        }, 250);
+      }
       return;
     }
 
     const direction = dx < 0 ? 1 : -1;
+    const newIndex = (currentPaintingIndex + direction + paintings.length) % paintings.length;
+    isTransitioning = true;
 
-    // Slide ut
-    modalInner.style.transition = 'transform 0.2s ease';
-    modalInner.style.transform = `translateX(${direction * -120}%)`;
-
-    setTimeout(() => {
-      if (direction === 1) showNextPainting();
-      else showPrevPainting();
-
-      // Slide in från motsatt håll
-      modalInner.style.transition = 'none';
-      modalInner.style.transform = `translateX(${direction * 120}%)`;
-      requestAnimationFrame(() => {
-        modalInner.style.transition = 'transform 0.2s ease';
-        modalInner.style.transform = 'translateX(0)';
-      });
-    }, 200);
-
-    isDragging = false;
-  }, { passive: true });
-}
-
-function setupStickyHeader() {
-  let lastScrollY = window.scrollY;
-
-  window.addEventListener('scroll', () => {
-    const header = document.getElementById('header-container');
-    if (!header) return;
-
-    const currentScrollY = window.scrollY;
-
-    if (currentScrollY < 50) {
-      // Alltid synlig nära toppen
-      header.classList.remove('header-hidden');
-    } else if (currentScrollY > lastScrollY) {
-      // Scrollar ner — dölj
-      header.classList.add('header-hidden');
-    } else {
-      // Scrollar upp — visa
-      header.classList.remove('header-hidden');
+    if (modalInner) {
+      modalInner.style.transition = 'transform 0.25s ease';
+      modalInner.style.transform = `translateX(${direction * -container.offsetWidth}px)`;
+    }
+    if (nextPaintingEl) {
+      nextPaintingEl.style.transition = 'transform 0.25s ease';
+      nextPaintingEl.style.transform = 'translateX(0)';
     }
 
-    lastScrollY = currentScrollY;
+    setTimeout(() => {
+      currentPaintingIndex = newIndex;
+      currentModalImageIndex = 0;
+
+      const painting = paintings[newIndex];
+      const imgs = getPaintingImagePaths(painting);
+      modalImg.src = imgs[0];
+      modalTitle.textContent = painting.title;
+      modalSize.textContent = painting.size;
+      modalDesc.textContent = painting.description;
+      buildModalThumbnails(imgs);
+      configureModalArrows(imgs);
+      renderModalButtons(painting);
+
+      if (nextPaintingEl && nextPaintingEl.parentNode) nextPaintingEl.parentNode.removeChild(nextPaintingEl);
+      nextPaintingEl = null;
+      if (modalInner) {
+        modalInner.style.transition = 'none';
+        modalInner.style.transform = '';
+      }
+
+      const url = new URL(window.location);
+      url.searchParams.set("painting", painting.id);
+      window.history.replaceState({}, "", url);
+
+      preloadAdjacentImages();
+      isTransitioning = false;
+    }, 250);
+
+    isDragging = false;
   }, { passive: true });
 }
 
 function preloadAdjacentImages() {
   const painting = paintings[currentPaintingIndex];
   const imgs = getPaintingImagePaths(painting);
-  
-  // Preloada alla bilder för nuvarande tavla
-  imgs.forEach(src => {
-    const img = new Image();
-    img.src = src;
-  });
-
-  // Preloada första bilden för nästa och föregående tavla
+  imgs.forEach(src => { new Image().src = src; });
   const nextPainting = paintings[(currentPaintingIndex + 1) % paintings.length];
   const prevPainting = paintings[(currentPaintingIndex - 1 + paintings.length) % paintings.length];
-  
   new Image().src = getPaintingImagePaths(nextPainting)[0];
   new Image().src = getPaintingImagePaths(prevPainting)[0];
 }
@@ -679,7 +954,6 @@ function preloadAdjacentImages() {
 function populateArtworkDropdowns() {
   const printSelect = document.getElementById("f-artwork");
   const originalSelect = document.getElementById("f-artwork-original");
-
   if (!printSelect || !originalSelect) return;
 
   paintings.forEach(p => {
@@ -690,88 +964,32 @@ function populateArtworkDropdowns() {
     printSelect.appendChild(option);
   });
 
-  paintings
-    .filter(p => p.status === STATUS.FOR_SALE)
-    .forEach(p => {
-      const option = document.createElement("option");
-      option.value = p.id;
-      option.textContent = `${p.title} – ${p.size} – ${p.originalPrice} kr`;
-      option.dataset.title = p.title;
-      originalSelect.appendChild(option);
-    });
-
-  // Preview för print
-  printSelect.addEventListener("change", () => {
-    updateArtworkPreview(printSelect, "f-artwork-preview");
+  paintings.filter(p => p.status === STATUS.FOR_SALE).forEach(p => {
+    const option = document.createElement("option");
+    option.value = p.id;
+    option.textContent = `${p.title} – ${p.size} – ${p.originalPrice} kr`;
+    option.dataset.title = p.title;
+    originalSelect.appendChild(option);
   });
 
-  // Preview för original
-  originalSelect.addEventListener("change", () => {
-    updateArtworkPreview(originalSelect, "f-artwork-original-preview");
-  });
+  printSelect.addEventListener("change", () => updateArtworkPreview(printSelect, "f-artwork-preview"));
+  originalSelect.addEventListener("change", () => updateArtworkPreview(originalSelect, "f-artwork-original-preview"));
 }
 
 function updateArtworkPreview(select, previewId) {
   const preview = document.getElementById(previewId);
   if (!preview) return;
-
   const paintingId = select.value;
   if (!paintingId) {
     preview.style.display = "none";
     return;
   }
-
   preview.src = `images/paintings/${paintingId}/01.jpg`;
   preview.alt = select.options[select.selectedIndex].dataset.title;
   preview.style.display = "block";
 }
 
-async function buildComponents() {
-  // Header
-  const headerContainer = document.getElementById("header-container");
-  if (headerContainer) {
-    const res = await fetch("components/header.html");
-    headerContainer.innerHTML = await res.text();
-
-    // Sätt active-klass baserat på vilken sida vi är på
-    const isIndex = window.location.pathname.includes("index") || window.location.pathname === "/";
-    const isPictures = window.location.pathname.includes("pictures");
-    if (isIndex) document.querySelector('a[href="index.html#top"]')?.classList.add("active");
-    if (isPictures) document.querySelector('a[href="pictures.html"]')?.classList.add("active");
-
-    // Mobil-meny listeners
-    setupMobileMenu();
-  }
-
-  // Modals
-  const modalsContainer = document.getElementById("modals-container");
-  if (modalsContainer) {
-    const [subscribeRes, successRes, shippingRes] = await Promise.all([
-      fetch("components/subscribe-modal.html"),
-      fetch("components/success-popup.html"),
-      fetch("components/shipping-modal.html")
-    ]);
-    modalsContainer.innerHTML = await subscribeRes.text() + await successRes.text() + await shippingRes.text();
-  }
-}
-
-function setupMobileMenu() {
-  const menuBtn = document.getElementById('mobile-menu');
-  const navMenu = document.getElementById('nav-menu');
-  if (!menuBtn || !navMenu) return;
-
-  menuBtn.addEventListener('click', () => {
-    navMenu.classList.toggle('active');
-    menuBtn.classList.toggle('open');
-  });
-
-  document.querySelectorAll('.link-list a').forEach(link => {
-    link.addEventListener('click', () => navMenu.classList.remove('active'));
-  });
-}
-
 let isZoomed = false;
-
 let zoomLevel = 0;
 
 function setupZoomEffect() {
@@ -780,9 +998,7 @@ function setupZoomEffect() {
 
   wrapper.addEventListener('click', (e) => {
     if (window.innerWidth <= 768) return;
-
     zoomLevel = (zoomLevel + 1) % 3;
-
     if (zoomLevel === 0) {
       modalImg.style.transform = "scale(1)";
       modalImg.style.transformOrigin = "center center";
@@ -820,22 +1036,50 @@ function updateZoomPosition(e, wrapper) {
   modalImg.style.transformOrigin = `${x}% ${y}%`;
 }
 
-function openModal(index) {
-  const painting = paintings[index];
-  if (!modalElement) return;
-  currentPaintingIndex = index;
-  currentModalImageIndex = 0;
+async function buildComponents() {
+  const headerContainer = document.getElementById("header-container");
+  if (headerContainer) {
+    const res = await fetch("components/header.html");
+    headerContainer.innerHTML = await res.text();
+    headerContainer.classList.add("visible");
 
-  populateModal(painting);
-  renderModalButtons(painting);
+    const isIndex = window.location.pathname.includes("index") || window.location.pathname === "/";
+    const isPictures = window.location.pathname.includes("pictures");
+    if (isIndex) document.querySelector('a[href="index.html#top"]')?.classList.add("active");
+    if (isPictures) document.querySelector('a[href="pictures.html"]')?.classList.add("active");
 
-  modalElement.style.display = "flex";
-  preloadAdjacentImages();
+    setupMobileMenu();
 
-  // Uppdatera URL utan att ladda om sidan
-  const url = new URL(window.location);
-  url.searchParams.set("painting", painting.id);
-  window.history.replaceState({}, "", url);
+    requestAnimationFrame(() => {
+      document.body.style.paddingTop = "0";
+      window.scrollTo(0, 0);
+    });
+  }
+
+  const modalsContainer = document.getElementById("modals-container");
+  if (modalsContainer) {
+    const [subscribeRes, successRes, shippingRes] = await Promise.all([
+      fetch("components/subscribe-modal.html"),
+      fetch("components/success-popup.html"),
+      fetch("components/shipping-modal.html")
+    ]);
+    modalsContainer.innerHTML = await subscribeRes.text() + await successRes.text() + await shippingRes.text();
+  }
+}
+
+function setupMobileMenu() {
+  const menuBtn = document.getElementById('mobile-menu');
+  const navMenu = document.getElementById('nav-menu');
+  if (!menuBtn || !navMenu) return;
+
+  menuBtn.addEventListener('click', () => {
+    navMenu.classList.toggle('active');
+    menuBtn.classList.toggle('open');
+  });
+
+  document.querySelectorAll('.link-list a').forEach(link => {
+    link.addEventListener('click', () => navMenu.classList.remove('active'));
+  });
 }
 
 async function init() {
@@ -845,9 +1089,7 @@ async function init() {
     const response = await fetch('images/paintings/counts.json');
     if (!response.ok) throw new Error("File not found");
     const counts = await response.json();
-    paintings.forEach(p => {
-      p.imageCount = counts[p.id] || 1;
-    });
+    paintings.forEach(p => { p.imageCount = counts[p.id] || 1; });
   } catch (err) {
     console.warn("Could not load counts.json, defaulting to 1 image per painting.", err);
   }
@@ -856,7 +1098,7 @@ async function init() {
   buildGallery();
   attachModalListeners();
   attachFilterListeners();
-  // Öppna modal om URL har ?painting=id
+
   const params = new URLSearchParams(window.location.search);
   const paintingId = params.get("painting");
   if (paintingId) {
@@ -865,9 +1107,7 @@ async function init() {
   }
 }
 
-
 setupScrollWatcher();
-setupStickyHeader();
 buildComponents().then(() => {
   buildContactForm();
   setupModals();
