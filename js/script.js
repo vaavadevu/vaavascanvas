@@ -614,6 +614,23 @@ function setupSwipeGestures() {
   }, { passive: true });
 }
 
+function preloadAdjacentImages() {
+  const painting = paintings[currentPaintingIndex];
+  const imgs = getPaintingImagePaths(painting);
+  
+  // Preloada alla bilder för nuvarande tavla
+  imgs.forEach(src => {
+    const img = new Image();
+    img.src = src;
+  });
+
+  // Preloada första bilden för nästa och föregående tavla
+  const nextPainting = paintings[(currentPaintingIndex + 1) % paintings.length];
+  const prevPainting = paintings[(currentPaintingIndex - 1 + paintings.length) % paintings.length];
+  
+  new Image().src = getPaintingImagePaths(nextPainting)[0];
+  new Image().src = getPaintingImagePaths(prevPainting)[0];
+}
 function populateArtworkDropdowns() {
   const printSelect = document.getElementById("f-artwork");
   const originalSelect = document.getElementById("f-artwork-original");
@@ -768,6 +785,7 @@ function openModal(index) {
   renderModalButtons(painting);
 
   modalElement.style.display = "flex";
+  preloadAdjacentImages();
 
   // Uppdatera URL utan att ladda om sidan
   const url = new URL(window.location);
