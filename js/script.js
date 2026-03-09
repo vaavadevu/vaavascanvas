@@ -238,17 +238,23 @@ function renderModalButtons(painting) {
 
 function handleBuyClick(painting) {
   const typeSelect = document.getElementById("f-type");
-  const artworkInput = document.getElementById("f-artwork");
-  const messageInput = document.getElementById("f-message");
   const subjectInput = document.getElementById("f-subject");
+  const messageInput = document.getElementById("f-message");
+  const originalSelect = document.getElementById("f-artwork-original");
 
-  if (typeSelect) typeSelect.value = "Originals";
+  if (typeSelect) {
+    typeSelect.value = "Originals";
+    typeSelect.dispatchEvent(new Event("change")); // ← triggar dropdown-logiken
+  }
+
   if (subjectInput) subjectInput.value = "New Inquiry - Originals";
 
-  const printField = document.getElementById("f-printField");
-  if (printField) printField.style.display = "none";
+  // Välj rätt målning i original-dropdown
+  if (originalSelect) {
+    originalSelect.value = painting.id;
+    originalSelect.dispatchEvent(new Event("change")); // ← triggar preview
+  }
 
-  if (artworkInput) artworkInput.value = painting.title;
   if (messageInput) {
     messageInput.value = `Hej! Jag är intresserad av originalmålningen "${painting.title}" (${painting.size}) för ${painting.originalPrice} kr.`;
   }
@@ -461,14 +467,14 @@ function populateArtworkDropdowns() {
   });
 
   paintings
-    .filter(p => p.status === STATUS.FOR_SALE)
-    .forEach(p => {
-      const option = document.createElement("option");
-      option.value = p.id;
-      option.textContent = `${p.title} – ${p.originalPrice} kr`;
-      option.dataset.title = p.title;
-      originalSelect.appendChild(option);
-    });
+  .filter(p => p.status === STATUS.FOR_SALE)
+  .forEach(p => {
+    const option = document.createElement("option");
+    option.value = p.id;
+    option.textContent = `${p.title} – ${p.size} – ${p.originalPrice} kr`;
+    option.dataset.title = p.title;
+    originalSelect.appendChild(option);
+  });
 
   // Preview för print
   printSelect.addEventListener("change", () => {
