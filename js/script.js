@@ -334,7 +334,27 @@ function attachModalListeners() {
 }
 
 function setupScrollWatcher() {
+  let lastScrollY = window.scrollY;
+
   window.addEventListener("scroll", () => {
+    const currentScrollY = window.scrollY;
+    const header = document.getElementById("header-container");
+
+    // Visa header när man scrollar upp, dölj när man scrollar ner
+    if (currentScrollY < lastScrollY) {
+      header?.classList.add("visible");
+    } else {
+      header?.classList.remove("visible");
+    }
+
+    // Alltid visa om man är nära toppen
+    if (currentScrollY < 100) {
+      header?.classList.add("visible");
+    }
+
+    lastScrollY = currentScrollY;
+
+    // Befintlig footer-logik
     const footer = document.getElementById("footer");
     if (!footer) return;
     const footerInView = footer.getBoundingClientRect().top <= window.innerHeight / 2;
@@ -614,6 +634,30 @@ function setupSwipeGestures() {
   }, { passive: true });
 }
 
+function setupStickyHeader() {
+  let lastScrollY = window.scrollY;
+
+  window.addEventListener('scroll', () => {
+    const header = document.getElementById('header-container');
+    if (!header) return;
+
+    const currentScrollY = window.scrollY;
+
+    if (currentScrollY < 50) {
+      // Alltid synlig nära toppen
+      header.classList.remove('header-hidden');
+    } else if (currentScrollY > lastScrollY) {
+      // Scrollar ner — dölj
+      header.classList.add('header-hidden');
+    } else {
+      // Scrollar upp — visa
+      header.classList.remove('header-hidden');
+    }
+
+    lastScrollY = currentScrollY;
+  }, { passive: true });
+}
+
 function preloadAdjacentImages() {
   const painting = paintings[currentPaintingIndex];
   const imgs = getPaintingImagePaths(painting);
@@ -631,6 +675,7 @@ function preloadAdjacentImages() {
   new Image().src = getPaintingImagePaths(nextPainting)[0];
   new Image().src = getPaintingImagePaths(prevPainting)[0];
 }
+
 function populateArtworkDropdowns() {
   const printSelect = document.getElementById("f-artwork");
   const originalSelect = document.getElementById("f-artwork-original");
@@ -822,6 +867,7 @@ async function init() {
 
 
 setupScrollWatcher();
+setupStickyHeader();
 buildComponents().then(() => {
   buildContactForm();
   setupModals();

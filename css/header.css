@@ -1,13 +1,23 @@
 #header-container {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
+  transform: translateY(-100%);
+  transition: transform 0.3s ease;
+}
+
+#header-container.visible {
+  transform: translateY(0);
+}
+
+#header-container.header-hidden {
+  transform: translateY(-100%);
 }
 
 .stickyHeader {
   position: static;
-  z-index: 100;
-  grid-area: header;
 }
 
 /* ─── Header ─── */
