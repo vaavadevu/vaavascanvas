@@ -19,7 +19,7 @@ async function init() {
   attachModalListeners();
   attachFilterListeners();
 
-  const params = new URLSearchParams(window.location.search);
+  const params     = new URLSearchParams(window.location.search);
   const paintingId = params.get("painting");
   if (paintingId) {
     const index = paintings.findIndex(p => p.id === paintingId);
@@ -27,9 +27,13 @@ async function init() {
   }
 }
 
-setupScrollWatcher();
-buildComponents().then(() => {
-  buildContactForm();
+async function setup() {
+  await buildComponents();  // header + modals in DOM
   setupModals();
-});
+  await buildContactForm(); // form in DOM
+  initLanguage();           // now everything exists, apply saved language
+}
+
+setupScrollWatcher();
+setup();
 init();

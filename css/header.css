@@ -83,3 +83,61 @@ nav li {
   cursor: pointer;
   font-weight: bold;
 }
+
+.lang-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  opacity: 0.5;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+/* Desktop: visa bara den utanför nav */
+.lang-switcher { display: none; }
+
+.lang-switcher-desktop {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+
+/* Mobile: visa bara den inuti nav, längst ner */
+@media (max-width: 768px) {
+  .lang-switcher-desktop {
+    display: none !important;
+  }
+
+  .lang-switcher {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px 0 8px;
+    margin-top: auto;  /* trycker ner till botten */
+    border-top: 1px solid rgba(0,0,0,0.08);
+  }
+
+  /* Se till att nav är en flex-kolumn så margin-top:auto funkar */
+  #nav-menu {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.lang-btn .fi {
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 3px;
+  display: block;
+}
+
+.lang-btn:hover {
+  opacity: 0.75;
+  transform: scale(1.1);
+}
+
+.lang-btn.active {
+  opacity: 1;
+  transform: scale(1.15);
+}

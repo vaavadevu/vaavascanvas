@@ -8,40 +8,37 @@ let modalCloseBtn, modalNextBtn, modalPrevBtn;
 function resolveModalRefs() {
   modalElement = document.getElementById("modal");
   if (!modalElement) return false;
-  modalImg = document.getElementById("modal-img");
-  modalTitle = document.getElementById("modal-title");
-  modalSize = document.getElementById("modal-size");
-  modalDesc = document.getElementById("modal-desc");
-  modalButtons = document.getElementById("modal-buttons");
+  modalImg      = document.getElementById("modal-img");
+  modalTitle    = document.getElementById("modal-title");
+  modalSize     = document.getElementById("modal-size");
+  modalDesc     = document.getElementById("modal-desc");
+  modalButtons  = document.getElementById("modal-buttons");
   modalCloseBtn = document.getElementById("modal-close");
-  modalNextBtn = document.getElementById("modal-next");
-  modalPrevBtn = document.getElementById("modal-prev");
+  modalNextBtn  = document.getElementById("modal-next");
+  modalPrevBtn  = document.getElementById("modal-prev");
   return true;
 }
 
 // ── Shared helpers ────────────────────────────────────────────
 
-// Slides currentEl out and nextEl in, then calls onComplete
 function slideTransition(currentEl, nextEl, direction, width, onComplete) {
   currentEl.style.transition = "transform 0.25s ease";
-  currentEl.style.transform = `translateX(${direction * -width}px)`;
-  nextEl.style.transition = "transform 0.25s ease";
-  nextEl.style.transform = "translateX(0)";
+  currentEl.style.transform  = `translateX(${direction * -width}px)`;
+  nextEl.style.transition    = "transform 0.25s ease";
+  nextEl.style.transform     = "translateX(0)";
   setTimeout(() => {
     onComplete();
     isTransitioning = false;
   }, 280);
 }
 
-// Generic swipe listener — calls handler("move"|"end", dx, dy)
-// shouldIgnore(event) => true means skip this event
 function setupSwipe(element, handler, shouldIgnore) {
   let startX = 0, startY = 0, dragging = false;
 
   element.addEventListener("touchstart", (e) => {
     if (shouldIgnore?.(e) || isTransitioning) return;
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
+    startX   = e.touches[0].clientX;
+    startY   = e.touches[0].clientY;
     dragging = false;
   }, { passive: true });
 
@@ -68,7 +65,7 @@ function setupSwipe(element, handler, shouldIgnore) {
 
 function openModal(index) {
   if (!resolveModalRefs()) return;
-  currentPaintingIndex = index;
+  currentPaintingIndex   = index;
   currentModalImageIndex = 0;
   populateModal(paintings[index]);
   renderModalButtons(paintings[index]);
@@ -79,15 +76,15 @@ function openModal(index) {
 
 function openModalSilent(index) {
   if (!resolveModalRefs()) return;
-  currentPaintingIndex = index;
+  currentPaintingIndex   = index;
   currentModalImageIndex = 0;
   const painting = paintings[index];
-  const imgs = getPaintingImagePaths(painting);
-  modalImg.src = imgs[0];
-  modalImg.alt = painting.title;
+  const imgs     = getPaintingImagePaths(painting);
+  modalImg.src           = imgs[0];
+  modalImg.alt           = painting.title;
   modalTitle.textContent = painting.title;
-  modalSize.textContent = painting.size;
-  modalDesc.textContent = painting.description;
+  modalSize.textContent  = painting.size;
+  modalDesc.textContent  = painting.description;
   buildModalThumbnails(imgs);
   configureModalArrows(imgs);
   renderModalButtons(painting);
@@ -117,11 +114,11 @@ function removeUrlParam(key) {
 
 function populateModal(painting) {
   const imgs = getPaintingImagePaths(painting);
-  modalImg.src = imgs[0];
-  modalImg.alt = painting.title;
+  modalImg.src           = imgs[0];
+  modalImg.alt           = painting.title;
   modalTitle.textContent = painting.title;
-  modalSize.textContent = painting.size;
-  modalDesc.textContent = painting.description;
+  modalSize.textContent  = painting.size;
+  modalDesc.textContent  = painting.description;
   buildModalThumbnails(imgs);
   configureModalArrows(imgs);
 }
@@ -143,8 +140,8 @@ function buildModalThumbnails(imgs) {
 }
 
 function configureModalArrows(imgs) {
-  const imgPrev = document.getElementById("modal-img-prev");
-  const imgNext = document.getElementById("modal-img-next");
+  const imgPrev     = document.getElementById("modal-img-prev");
+  const imgNext     = document.getElementById("modal-img-next");
   const hasMultiple = imgs.length > 1;
   imgPrev.style.display = hasMultiple ? "flex" : "none";
   imgNext.style.display = hasMultiple ? "flex" : "none";
@@ -166,7 +163,7 @@ function renderModalButtons(painting) {
 
   if (painting.status === STATUS.SOLD) {
     const p = document.createElement("p");
-    p.textContent = STATUS_TEXT[STATUS.SOLD];
+    p.textContent = t("status_sold");
     p.style.color = "red";
     modalButtons.appendChild(p);
     return;
@@ -174,7 +171,7 @@ function renderModalButtons(painting) {
 
   if (painting.status === STATUS.PERSONAL) {
     const p = document.createElement("p");
-    p.textContent = STATUS_TEXT[STATUS.PERSONAL];
+    p.textContent = t("status_personal");
     modalButtons.appendChild(p);
     return;
   }
@@ -186,20 +183,9 @@ function renderModalButtons(painting) {
     modalButtons.appendChild(price);
 
     const buyBtn = document.createElement("button");
-    buyBtn.textContent = "✉ Skicka köpförfrågan";
+    buyBtn.textContent = t("modal_buy_btn");
     buyBtn.addEventListener("click", () => handleBuyClick(painting));
     modalButtons.appendChild(buyBtn);
-
-    const shippingLink = document.createElement("a");
-    shippingLink.textContent = "ℹ️ Frakt & leveransinformation";
-    shippingLink.href = "#";
-    shippingLink.classList.add("shipping-link");
-    shippingLink.addEventListener("click", (e) => {
-      e.preventDefault();
-      const modal = document.getElementById("shippingModal");
-      if (modal) modal.style.display = "flex";
-    });
-    modalButtons.appendChild(shippingLink);
   }
 }
 
@@ -207,7 +193,7 @@ function renderModalButtons(painting) {
 
 function resetZoom() {
   zoomLevel = 0;
-  modalImg.style.transform = "scale(1)";
+  modalImg.style.transform       = "scale(1)";
   modalImg.style.transformOrigin = "center center";
   document.querySelector(".modalImageWrapper")?.classList.remove("is-zoomed-1", "is-zoomed-2");
 }
@@ -264,8 +250,7 @@ function transitionToImage(imgs, newIndex, direction) {
     return;
   }
 
-  // Position current image absolutely so incoming can sit beside it
-  const rect = modalImg.getBoundingClientRect();
+  const rect        = modalImg.getBoundingClientRect();
   const wrapperRect = wrapper.getBoundingClientRect();
   modalImg.style.cssText += `
     position:absolute;
@@ -285,7 +270,7 @@ function transitionToImage(imgs, newIndex, direction) {
     slideTransition(modalImg, incoming, direction, wrapper.offsetWidth, () => {
       currentModalImageIndex = newIndex;
       modalImg.style.cssText = "";
-      modalImg.src = imgs[newIndex];
+      modalImg.src           = imgs[newIndex];
       if (incoming.parentNode) incoming.parentNode.removeChild(incoming);
       resetZoom();
       updateThumbHighlight(newIndex);
@@ -297,7 +282,7 @@ function transitionToImage(imgs, newIndex, direction) {
 
 function buildPaintingPreview(painting, height) {
   const imgs = getPaintingImagePaths(painting);
-  const el = document.createElement("div");
+  const el   = document.createElement("div");
   el.classList.add("modalInner");
   el.innerHTML = `
     <div class="modalLeft">
@@ -318,7 +303,7 @@ function transitionToPainting(newIndex, direction) {
   if (isTransitioning) return;
   isTransitioning = true;
 
-  const wrapper = document.querySelector(".modalInner");
+  const wrapper   = document.querySelector(".modalInner");
   const container = document.querySelector(".modal");
   if (!wrapper || !container) {
     currentPaintingIndex = newIndex;
@@ -327,8 +312,8 @@ function transitionToPainting(newIndex, direction) {
     return;
   }
 
-  const innerRect = wrapper.getBoundingClientRect();
-  const containerRect = container.getBoundingClientRect();
+  const innerRect        = wrapper.getBoundingClientRect();
+  const containerRect    = container.getBoundingClientRect();
   const imgWrapperHeight = document.querySelector(".modalImageWrapper")?.offsetHeight || 300;
 
   const incoming = buildPaintingPreview(paintings[newIndex], imgWrapperHeight);
@@ -348,16 +333,16 @@ function transitionToPainting(newIndex, direction) {
     slideTransition(wrapper, incoming, direction, innerRect.width, () => {
       if (incoming.parentNode) incoming.parentNode.removeChild(incoming);
       wrapper.style.transition = "none";
-      wrapper.style.transform = "";
+      wrapper.style.transform  = "";
 
-      currentPaintingIndex = newIndex;
+      currentPaintingIndex   = newIndex;
       currentModalImageIndex = 0;
-      const p = paintings[newIndex];
+      const p    = paintings[newIndex];
       const imgs = getPaintingImagePaths(p);
-      modalImg.src = imgs[0];
+      modalImg.src           = imgs[0];
       modalTitle.textContent = p.title;
-      modalSize.textContent = p.size;
-      modalDesc.textContent = p.description;
+      modalSize.textContent  = p.size;
+      modalDesc.textContent  = p.description;
       buildModalThumbnails(imgs);
       configureModalArrows(imgs);
       renderModalButtons(p);
@@ -385,24 +370,23 @@ function preloadAdjacentImages() {
 
 function setupSwipeGestures() {
   const wrapper = document.querySelector(".modalImageWrapper");
-  const modal = document.getElementById("modal");
+  const modal   = document.getElementById("modal");
   if (!modal) return;
 
-  // Inside image wrapper: swipe between images of the same painting
   if (wrapper) {
     let nextImg = null;
 
     setupSwipe(wrapper, (phase, dx, dy) => {
-      const painting = paintings[currentPaintingIndex];
-      const imgs = getPaintingImagePaths(painting);
+      const painting  = paintings[currentPaintingIndex];
+      const imgs      = getPaintingImagePaths(painting);
       if (imgs.length <= 1) return;
 
       const direction = dx < 0 ? 1 : -1;
-      const newIndex = (currentModalImageIndex + direction + imgs.length) % imgs.length;
+      const newIndex  = (currentModalImageIndex + direction + imgs.length) % imgs.length;
 
       if (phase === "move") {
         if (!nextImg) {
-          const rect = modalImg.getBoundingClientRect();
+          const rect        = modalImg.getBoundingClientRect();
           const wrapperRect = wrapper.getBoundingClientRect();
           modalImg.style.cssText += `position:absolute;top:${rect.top - wrapperRect.top}px;left:${rect.left - wrapperRect.left}px;width:${rect.width}px;height:${rect.height}px;`;
           nextImg = document.createElement("img");
@@ -410,16 +394,15 @@ function setupSwipeGestures() {
           wrapper.appendChild(nextImg);
         }
         if (nextImg.dataset.index !== String(newIndex)) {
-          nextImg.src = imgs[newIndex];
+          nextImg.src           = imgs[newIndex];
           nextImg.dataset.index = String(newIndex);
         }
         modalImg.style.transition = "none";
-        modalImg.style.transform = `translateX(${dx}px)`;
-        nextImg.style.transform = `translateX(${dx < 0 ? wrapper.offsetWidth + dx : -wrapper.offsetWidth + dx}px)`;
+        modalImg.style.transform  = `translateX(${dx}px)`;
+        nextImg.style.transform   = `translateX(${dx < 0 ? wrapper.offsetWidth + dx : -wrapper.offsetWidth + dx}px)`;
         return;
       }
 
-      // phase === "end"
       const cleanup = () => {
         if (nextImg?.parentNode) nextImg.parentNode.removeChild(nextImg);
         nextImg = null;
@@ -428,10 +411,10 @@ function setupSwipeGestures() {
 
       if (Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx)) {
         modalImg.style.transition = "transform 0.25s ease";
-        modalImg.style.transform = "translateX(0)";
+        modalImg.style.transform  = "translateX(0)";
         if (nextImg) {
           nextImg.style.transition = "transform 0.25s ease";
-          nextImg.style.transform = `translateX(${dx < 0 ? wrapper.offsetWidth : -wrapper.offsetWidth}px)`;
+          nextImg.style.transform  = `translateX(${dx < 0 ? wrapper.offsetWidth : -wrapper.offsetWidth}px)`;
         }
         setTimeout(cleanup, 250);
         return;
@@ -439,10 +422,10 @@ function setupSwipeGestures() {
 
       isTransitioning = true;
       modalImg.style.transition = "transform 0.25s ease";
-      modalImg.style.transform = `translateX(${direction * -wrapper.offsetWidth}px)`;
+      modalImg.style.transform  = `translateX(${direction * -wrapper.offsetWidth}px)`;
       if (nextImg) {
         nextImg.style.transition = "transform 0.25s ease";
-        nextImg.style.transform = "translateX(0)";
+        nextImg.style.transform  = "translateX(0)";
       }
       setTimeout(() => {
         currentModalImageIndex = newIndex;
@@ -454,23 +437,22 @@ function setupSwipeGestures() {
     });
   }
 
-  // Outside image wrapper: swipe between paintings
   let nextPaintingEl = null;
 
   setupSwipe(modal, (phase, dx, dy) => {
     const modalInner = document.querySelector(".modalInner");
-    const container = document.querySelector(".modal");
+    const container  = document.querySelector(".modal");
     if (!modalInner || !container) return;
 
     const direction = dx < 0 ? 1 : -1;
-    const newIndex = (currentPaintingIndex + direction + paintings.length) % paintings.length;
+    const newIndex  = (currentPaintingIndex + direction + paintings.length) % paintings.length;
 
     if (phase === "move") {
       if (!nextPaintingEl || nextPaintingEl.dataset.index !== String(newIndex)) {
         if (nextPaintingEl?.parentNode) nextPaintingEl.parentNode.removeChild(nextPaintingEl);
 
-        const innerRect = modalInner.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
+        const innerRect        = modalInner.getBoundingClientRect();
+        const containerRect    = container.getBoundingClientRect();
         const imgWrapperHeight = document.querySelector(".modalImageWrapper")?.offsetHeight || 300;
 
         nextPaintingEl = buildPaintingPreview(paintings[newIndex], imgWrapperHeight);
@@ -489,55 +471,54 @@ function setupSwipeGestures() {
       }
 
       const innerW = modalInner.getBoundingClientRect().width;
-      modalInner.style.transition = "none";
-      modalInner.style.transform = `translateX(${dx}px)`;
+      modalInner.style.transition     = "none";
+      modalInner.style.transform      = `translateX(${dx}px)`;
       nextPaintingEl.style.transition = "none";
-      nextPaintingEl.style.transform = `translateX(${dx < 0 ? innerW + dx : -innerW + dx}px)`;
+      nextPaintingEl.style.transform  = `translateX(${dx < 0 ? innerW + dx : -innerW + dx}px)`;
       return;
     }
 
-    // phase === "end"
     if (Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx)) {
       modalInner.style.transition = "transform 0.25s ease";
-      modalInner.style.transform = "translateX(0)";
+      modalInner.style.transform  = "translateX(0)";
       if (nextPaintingEl?.parentNode) {
         nextPaintingEl.style.transition = "transform 0.25s ease";
-        nextPaintingEl.style.transform = `translateX(${direction * 100}%)`;
+        nextPaintingEl.style.transform  = `translateX(${direction * 100}%)`;
         setTimeout(() => { if (nextPaintingEl?.parentNode) nextPaintingEl.parentNode.removeChild(nextPaintingEl); nextPaintingEl = null; }, 250);
       }
       return;
     }
 
     isTransitioning = true;
-    modalInner.style.transition = "transform 0.25s ease";
-    modalInner.style.transform = `translateX(${direction * -container.offsetWidth}px)`;
+    modalInner.style.transition     = "transform 0.25s ease";
+    modalInner.style.transform      = `translateX(${direction * -container.offsetWidth}px)`;
     if (nextPaintingEl) {
       nextPaintingEl.style.transition = "transform 0.25s ease";
-      nextPaintingEl.style.transform = "translateX(0)";
+      nextPaintingEl.style.transform  = "translateX(0)";
     }
 
     setTimeout(() => {
-      currentPaintingIndex = newIndex;
+      currentPaintingIndex   = newIndex;
       currentModalImageIndex = 0;
-      const p = paintings[newIndex];
+      const p    = paintings[newIndex];
       const imgs = getPaintingImagePaths(p);
-      modalImg.src = imgs[0];
+      modalImg.src           = imgs[0];
       modalTitle.textContent = p.title;
-      modalSize.textContent = p.size;
-      modalDesc.textContent = p.description;
+      modalSize.textContent  = p.size;
+      modalDesc.textContent  = p.description;
       buildModalThumbnails(imgs);
       configureModalArrows(imgs);
       renderModalButtons(p);
       if (nextPaintingEl?.parentNode) nextPaintingEl.parentNode.removeChild(nextPaintingEl);
       nextPaintingEl = null;
       modalInner.style.transition = "none";
-      modalInner.style.transform = "";
+      modalInner.style.transform  = "";
       setUrlParam("painting", p.id);
       preloadAdjacentImages();
       isTransitioning = false;
     }, 250);
 
-  }, (e) => !!e.target.closest(".modalImageWrapper")); // ignore events inside image wrapper
+  }, (e) => !!e.target.closest(".modalImageWrapper"));
 }
 
 // ── Listeners ─────────────────────────────────────────────────
@@ -549,13 +530,13 @@ function attachModalListeners() {
   setupSwipeGestures();
 
   if (modalCloseBtn) modalCloseBtn.onclick = closeModal;
-  if (modalNextBtn) modalNextBtn.onclick = showNextPainting;
-  if (modalPrevBtn) modalPrevBtn.onclick = showPrevPainting;
+  if (modalNextBtn)  modalNextBtn.onclick  = showNextPainting;
+  if (modalPrevBtn)  modalPrevBtn.onclick  = showPrevPainting;
 
   modalElement.onclick = (e) => { if (e.target === modalElement) closeModal(); };
-  document.onkeydown = (e) => {
-    if (e.key === "Escape") closeModal();
+  document.onkeydown   = (e) => {
+    if (e.key === "Escape")     closeModal();
     if (e.key === "ArrowRight") showNextPainting();
-    if (e.key === "ArrowLeft") showPrevPainting();
+    if (e.key === "ArrowLeft")  showPrevPainting();
   };
 }

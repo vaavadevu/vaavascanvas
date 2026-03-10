@@ -10,10 +10,26 @@
     </button>
     <nav id="nav-menu">
       <ul class="link-list">
-        <li><a href="index.html#top">Startsida</a></li>
-        <li><a href="pictures.html">Mina verk</a></li>
-        <li><a href="#footer">Kontakta mig</a></li>
+        <li><a href="index.html#top" data-i18n="nav_home">Startsida</a></li>
+        <li><a href="pictures.html" data-i18n="nav_gallery">Mina verk</a></li>
+        <li><a href="#footer" data-i18n="nav_contact">Kontakta mig</a></li>
       </ul>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="sv" onclick="setLanguage('sv')" title="Svenska">
+          <span class="fi fi-se"></span>
+        </button>
+        <button class="lang-btn" data-lang="en" onclick="setLanguage('en')" title="English">
+          <span class="fi fi-gb"></span>
+        </button>
+      </div>
     </nav>
+    <div class="lang-switcher lang-switcher-desktop">
+      <button class="lang-btn" data-lang="sv" onclick="setLanguage('sv')" title="Svenska">
+        <span class="fi fi-se"></span>
+      </button>
+      <button class="lang-btn" data-lang="en" onclick="setLanguage('en')" title="English">
+        <span class="fi fi-gb"></span>
+      </button>
+    </div>
   </header>
 </div>

@@ -1,60 +1,60 @@
-<h3>Skicka en förfrågan</h3>
-<p>Print, commission eller fråga? Hör av dig!</p>
+<h3 data-i18n="form_heading">Skicka en förfrågan</h3>
+<p data-i18n="form_sub">Print, commission eller fråga? Hör av dig!</p>
 
 <form action="https://formspree.io/f/xgolgnoj" method="POST" id="footerForm">
     <input type="hidden" name="_subject" id="f-subject" value="New Inquiry">
 
     <div class="formGroup">
-        <label for="f-name">Namn</label>
-        <input type="text" id="f-name" name="name" placeholder="Ditt namn" required />
+        <label for="f-name" data-i18n="form_name_label">Namn</label>
+        <input type="text" id="f-name" name="name" data-i18n-ph="form_name_ph" placeholder="Ditt namn" required />
     </div>
 
     <div class="formGroup">
-        <label for="f-email">E-post</label>
-        <input type="email" id="f-email" name="email" placeholder="din@email.com" required />
+        <label for="f-email" data-i18n="form_email_label">E-post</label>
+        <input type="email" id="f-email" name="email" data-i18n-ph="form_email_ph" placeholder="din@email.com" required />
     </div>
 
     <div class="formGroup">
-        <label for="f-type">Typ av förfrågan</label>
+        <label for="f-type" data-i18n="form_type_label">Typ av förfrågan</label>
         <select id="f-type" name="type" required>
-            <option value="">– Välj –</option>
-            <option value="Originals">Köpa original</option>
-            <option value="Prints">Print av befintlig målning</option>
-            <option value="Commissions">Commission (beställd målning)</option>
-            <option value="General">Allmän fråga</option>
+            <option value=""            data-i18n="form_type_default">– Välj –</option>
+            <option value="Originals"   data-i18n="form_type_originals">Köpa original</option>
+            <option value="Prints"      data-i18n="form_type_prints">Print av befintlig målning</option>
+            <option value="Commissions" data-i18n="form_type_commission">Commission (beställd målning)</option>
+            <option value="General"     data-i18n="form_type_general">Allmän fråga</option>
         </select>
     </div>
 
     <div class="formGroup" id="f-printField" style="display:none;">
-        <label for="f-artwork">Vilket verk?</label>
+        <label for="f-artwork" data-i18n="form_artwork_label">Vilket verk?</label>
         <select id="f-artwork" name="artwork">
-            <option value="">– Välj målning –</option>
+            <option value="" data-i18n="form_artwork_default">– Välj målning –</option>
         </select>
         <img id="f-artwork-preview" src="" alt="" class="artwork-preview" style="display:none;" />
     </div>
 
     <div class="formGroup" id="f-originalField" style="display:none;">
-        <label for="f-artwork-original">Vilket verk?</label>
+        <label for="f-artwork-original" data-i18n="form_artwork_label">Vilket verk?</label>
         <select id="f-artwork-original" name="artwork">
-            <option value="">– Välj målning –</option>
+            <option value="" data-i18n="form_artwork_default">– Välj målning –</option>
         </select>
         <img id="f-artwork-original-preview" src="" alt="" class="artwork-preview" style="display:none;" />
     </div>
 
     <div class="formGroup">
-        <label for="f-message">Meddelande</label>
-        <textarea id="f-message" name="message" rows="3" placeholder="Berätta mer..."></textarea>
+        <label for="f-message" data-i18n="form_msg_label">Meddelande</label>
+        <textarea id="f-message" name="message" rows="3" data-i18n-ph="form_msg_ph" placeholder="Berätta mer..."></textarea>
     </div>
 
     <div class="formGroup">
         <label class="checkbox-label">
             <input type="checkbox" id="f-subscribe" name="subscribe" />
-            Ja, jag vill få mail när nya målningar läggs upp
+            <span data-i18n="form_subscribe_lbl">Ja, jag vill få mail när nya målningar läggs upp</span>
         </label>
     </div>
 
-    <button type="submit" class="submitBtn">✉ Skicka</button>
-    <a href="#" id="shippingBtn" class="shipping-link">📦 Frakt & leveransinformation</a>
+    <button type="submit" class="submitBtn" data-i18n="form_submit">✉ Skicka</button>
+    <a href="#" id="shippingBtn" class="shipping-link" data-i18n="form_shipping_link">📦 Frakt & leveransinformation</a>
     <p id="formSuccess" style="display:none; color: var(--accent-green); font-weight:600; margin-top:10px;">
         Tack! Jag återkommer så snart som möjligt. 🎨
     </p>
