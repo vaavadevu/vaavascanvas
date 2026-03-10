@@ -118,3 +118,9 @@ function setupModals() {
     }
   });
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof attachFilterListeners === 'function') {
+    attachFilterListeners();
+  }
+});

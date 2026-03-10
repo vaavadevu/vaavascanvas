@@ -62,10 +62,15 @@ function createGalleryItem(painting, index) {
     item.appendChild(dots);
 
     item.addEventListener("mousemove", (e) => {
+      if (!paths.length) return;
       const rect = item.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width;
-      const newIndex = Math.min(Math.floor(x * paths.length), paths.length - 1);
-      if (!img.src.endsWith(paths[newIndex].split("/").pop())) {
+
+      // Math.max(0, ...) ser till att indexet aldrig blir lägre än 0
+      const newIndex = Math.max(0, Math.min(Math.floor(x * paths.length), paths.length - 1));
+
+      // Kontrollera att paths[newIndex] faktiskt existerar innan split()
+      if (paths[newIndex] && !img.src.endsWith(paths[newIndex].split("/").pop())) {
         img.src = paths[newIndex];
         dots.querySelectorAll(".gallery-dot").forEach((dot, i) => {
           dot.classList.toggle("active", i === newIndex);
@@ -91,14 +96,28 @@ function addSoldBadge(container) {
   badge.classList.add("sold-badge");
   container.appendChild(badge);
 }
+
+// ── Filter ────────────────────────────────────────────────────
+
+let activeFilter = "all";
+
 function attachFilterListeners() {
-  document.querySelectorAll(".filter-btn").forEach(btn => {
+  document.querySelectorAll(".filter-btn, .fab-filter-btn").forEach(btn => {
     btn.addEventListener("click", () => {
-      document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      filterGallery(btn.dataset.filter);
+      setActiveFilter(btn.dataset.filter);
+      closeFab();
     });
   });
+
+  setupFab();
+}
+
+function setActiveFilter(filter) {
+  activeFilter = filter;
+  document.querySelectorAll(".filter-btn, .fab-filter-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.filter === filter);
+  });
+  filterGallery(filter);
 }
 
 function filterGallery(filter) {
@@ -107,4 +126,61 @@ function filterGallery(filter) {
     const show = filter === "all" || status === filter;
     item.style.display = show ? "" : "none";
   });
+}
+
+// ── FAB ───────────────────────────────────────────────────────
+
+function setupFab() {
+  const fab = document.getElementById("filter-fab");
+  const trigger = document.getElementById("fab-trigger");
+  const footer = document.querySelector("footer");
+  
+  if (!fab || !trigger) {
+    console.log("FAB hittades inte i DOM:en än!");
+    return;
+  }
+
+  // Klick-logik
+  trigger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    fab.classList.toggle("open");
+  });
+
+  // Funktion för att sätta positionen
+  const updatePosition = () => {
+    if (!footer) return;
+    const footerRect = footer.getBoundingClientRect();
+    const windowHeight = window.innerHeight;
+    const margin = 24; 
+
+    if (footerRect.top < windowHeight) {
+      const stopPosition = windowHeight - footerRect.top + margin;
+      fab.style.bottom = stopPosition + "px";
+    } else {
+      fab.style.bottom = margin + "px";
+    }
+    // Gör knappen synlig ifall CSS råkar dölja den
+    fab.style.display = "flex"; 
+  };
+
+  // KÖR DIREKT
+  updatePosition();
+
+  // KÖR IGEN efter en kort stund (ifall galleriet precis har ritats ut)
+  setTimeout(updatePosition, 100);
+  setTimeout(updatePosition, 500); // En extra säkerhet när bilderna laddas
+
+  // Lyssna på scroll
+  window.addEventListener("scroll", () => {
+    window.requestAnimationFrame(updatePosition);
+  }, { passive: true });
+
+  // Stäng vid klick utanför
+  document.addEventListener("click", (e) => {
+    if (!fab.contains(e.target)) closeFab();
+  });
+}
+
+function closeFab() {
+  document.getElementById("filter-fab")?.classList.remove("open");
 }
