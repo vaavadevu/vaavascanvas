@@ -268,7 +268,7 @@ function transitionToPainting(newIndex, direction) {
   if (isTransitioning) return;
   isTransitioning = true;
 
-      setUrlParam("painting", p.id);
+  currentPaintingIndex = newIndex;
   currentModalImageIndex = 0;
   const p = paintings[newIndex];
   const imgs = getPaintingImagePaths(p);
@@ -280,6 +280,8 @@ function transitionToPainting(newIndex, direction) {
   configureModalArrows(imgs);
   renderModalButtons(p);
   setUrlParam("painting", p.id);
+  preloadAdjacentImages();
+  isTransitioning = false;
 }
 
 function showNextPainting() {
@@ -300,10 +302,10 @@ function preloadAdjacentImages() {
 
 function setupSwipeGestures() {
   const wrapper = document.querySelector(".modalImageWrapper");
-  const modal   = document.getElementById("modal");
   const modal = document.getElementById("modal");
   if (!modal) return;
 
+  // Inside image wrapper: original behavior with incoming image
   if (wrapper) {
     let nextImg = null;
 
