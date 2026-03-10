@@ -75,12 +75,15 @@
   padding: 10px 20px;
   background: var(--bg-light);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: opacity 0.2s ease;
+  transition: transform 0.3s ease, opacity 0.2s ease;
 }
 
 @media (min-width: 769px) {
   #gallery-filter-bar {
     display: flex;
+    position: sticky;
+    top: 0;
+    z-index: 100;
   }
 }
 

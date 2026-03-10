@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   z-index: 100;
-  transform: translateY(-100%);
+  transform: translateY(calc(-100% - 2px));
   transition: transform 0.3s ease;
 }
 
@@ -13,7 +13,7 @@
 }
 
 #header-container.header-hidden {
-  transform: translateY(-100%);
+  transform: translateY(calc(-100% - 2px));
 }
 
 .stickyHeader {
@@ -64,6 +64,11 @@ nav {
 nav a {
   color: var(--text-link);
   text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+nav a:hover {
+  color: var(--text-dark);
 }
 
 nav a.active {
@@ -113,12 +118,16 @@ nav li {
   }
 
   .lang-switcher {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     justify-content: center;
     gap: 12px;
     padding: 16px 0 8px;
-    margin-top: auto;  /* trycker ner till botten */
     border-top: 1px solid rgba(0,0,0,0.08);
+    width: 80%;
   }
 
   /* Se till att nav är en flex-kolumn så margin-top:auto funkar */

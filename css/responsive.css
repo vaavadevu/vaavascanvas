@@ -189,7 +189,7 @@
   #gallery {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
-    padding: 10px;
+    padding: 90px 10px ;
   }
 
   .modal {
@@ -297,7 +297,7 @@
 
   /* --- HERO --- */
   .hero {
-    height: 90vh;
+    height: 95vh;
     /* Något kortare på mobil */
   }
 
