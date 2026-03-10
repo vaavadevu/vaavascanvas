@@ -1,7 +1,6 @@
 // i18n.js — language switching
 
 function setLanguage(lang) {
-   console.trace("setLanguage called with:", lang);
   if (!translations[lang]) return;
   const t = translations[lang];
 

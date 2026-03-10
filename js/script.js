@@ -17,7 +17,6 @@ async function init() {
   sortPaintings();
   buildGallery();
   attachModalListeners();
-  attachFilterListeners();
 
   const params     = new URLSearchParams(window.location.search);
   const paintingId = params.get("painting");
