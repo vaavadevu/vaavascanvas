@@ -16,6 +16,7 @@ async function buildComponents() {
 
     requestAnimationFrame(() => {
       document.body.style.paddingTop = "0";
+      document.documentElement.style.paddingTop = "0";
       window.scrollTo(0, 0);
     });
   }
@@ -37,13 +38,16 @@ function setupMobileMenu() {
   const navMenu = document.getElementById("nav-menu");
   if (!menuBtn || !navMenu) return;
 
-  menuBtn.addEventListener("click", () => {
-    navMenu.classList.toggle("active");
-    menuBtn.classList.toggle("open");
-  });
+  const setMenuOpen = (open) => {
+    navMenu.classList.toggle("active", open);
+    menuBtn.classList.toggle("open", open);
+    document.body.style.overflow = open ? "hidden" : "";
+  };
+
+  menuBtn.addEventListener("click", () => setMenuOpen(!navMenu.classList.contains("active")));
 
   document.querySelectorAll(".link-list a").forEach(link => {
-    link.addEventListener("click", () => navMenu.classList.remove("active"));
+    link.addEventListener("click", () => setMenuOpen(false));
   });
 }
 
@@ -54,12 +58,13 @@ function setupScrollWatcher() {
     const currentScrollY = window.scrollY;
     const header = document.getElementById("header-container");
 
-    if (currentScrollY < lastScrollY) {
+    const show = currentScrollY < lastScrollY || currentScrollY < 100;
+    if (show) {
       header?.classList.add("visible");
     } else {
       header?.classList.remove("visible");
     }
-    if (currentScrollY < 100) header?.classList.add("visible");
+    window._syncFilterBar?.(show);
     lastScrollY = currentScrollY;
 
     const footer = document.getElementById("footer");

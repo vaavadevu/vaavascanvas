@@ -55,8 +55,7 @@ function setupContactForm() {
 
       if (subjectInput) subjectInput.value = "New Inquiry";
       
-      const successMsg = document.getElementById("formSuccess");
-      if (successMsg) successMsg.style.display = "block";
+      showSuccessPopup();
     } else {
       alert("Något gick fel. Maila direkt till info@vaavascanvas.se");
     }

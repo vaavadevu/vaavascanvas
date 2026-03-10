@@ -213,41 +213,52 @@ function setupFilterBar() {
   const bar = document.getElementById("gallery-filter-bar");
   if (!bar) return;
 
-  // Flytta filterbaren in i header-container så de animeras som ett element
   const headerContainer = document.getElementById("header-container");
-  let moved = false;
-
-  const moveAndUpdate = () => {
-    if (moved || !headerContainer || headerContainer.offsetHeight === 0) return;
-    headerContainer.appendChild(bar);
-    moved = true;
-    updateMainPadding();
-  };
+  let headerH = 0;
 
   const updateMainPadding = () => {
     const mainEl = document.querySelector("main");
     if (!mainEl) return;
     mainEl.style.paddingTop = window.innerWidth >= 769
-      ? bar.offsetHeight + 16 + "px"
+      ? headerH + bar.offsetHeight + 16 + "px"
       : "";
   };
 
-  if (headerContainer) {
-    new MutationObserver(moveAndUpdate)
-      .observe(headerContainer, { childList: true, attributes: true });
-  }
-  setTimeout(moveAndUpdate, 300);
-  setTimeout(moveAndUpdate, 700);
-  window.addEventListener("resize", updateMainPadding);
+  // Baren är ett separat fixed element – translateY matchar exakt headerns rörelse
+  // → header_bottom = bar_top = headerH * ease(t) vid varje frame → noll gap
+  const setBarTransform = (show) => {
+    if (window.innerWidth < 769) return;
+    // -2px när headern är gömd: täck exakt toppen utan sub-pixel sliver
+    bar.style.transform = show ? `translateY(${headerH}px)` : "translateY(-2px)";
+  };
 
-  // Dölj filterbaren (opacity) om vi scrollat förbi galleriet
+  // Exponera för ui.js: kallas i samma JS-tick som header-klassändringen
+  window._syncFilterBar = setBarTransform;
+
+  const init = () => {
+    if (!headerContainer || headerContainer.offsetHeight === 0) return;
+    headerH = headerContainer.getBoundingClientRect().height;
+    const isVisible = headerContainer.classList.contains("visible");
+    bar.style.transition = "none";
+    setBarTransform(isVisible);
+    requestAnimationFrame(() => { bar.style.transition = ""; });
+    updateMainPadding();
+  };
+
+  if (headerContainer) {
+    new MutationObserver(init).observe(headerContainer, { childList: true });
+  }
+  setTimeout(init, 300);
+  setTimeout(init, 700);
+  window.addEventListener("resize", init);
+
+  // Dölj filterbaren om vi scrollat förbi galleriet
   const updateVisibility = () => {
     const galleryWrapper = document.getElementById("gallery-wrapper");
     const pastGallery = galleryWrapper && galleryWrapper.getBoundingClientRect().bottom <= 0;
     bar.style.opacity = pastGallery ? "0" : "";
     bar.style.pointerEvents = pastGallery ? "none" : "";
   };
-
   window.addEventListener("scroll", () => requestAnimationFrame(updateVisibility), { passive: true });
   setTimeout(updateVisibility, 300);
 }
