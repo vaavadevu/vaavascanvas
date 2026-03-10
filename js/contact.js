@@ -16,21 +16,25 @@ function setupContactForm() {
   const typeSelect     = document.getElementById("f-type");
   const subjectInput   = document.getElementById("f-subject");
   const printField     = document.getElementById("f-printField");
-  const commissionInfo = document.getElementById("f-commissionInfo");
   const originalField  = document.getElementById("f-originalField");
+  const commissionInfo = document.getElementById("f-commissionInfo");
   const originalInfo   = document.getElementById("f-originalInfo");
   const printInfo      = document.getElementById("f-printInfo");
 
-  if (!form) return;
+  if (!form || !typeSelect) return;
 
   typeSelect.addEventListener("change", () => {
     const val = typeSelect.value;
-    printField.style.display     = val === "Prints"      ? "block" : "none";
-    commissionInfo.style.display = val === "Commissions" ? "block" : "none";
-    if (originalField) originalField.style.display = val === "Originals" ? "block" : "none";
-    if (originalInfo)  originalInfo.style.display  = val === "Originals" ? "block" : "none";
-    if (printInfo)     printInfo.style.display      = val === "Prints"    ? "block" : "none";
-    subjectInput.value = val ? `New Inquiry - ${val}` : "New Inquiry";
+
+    if (printField)     printField.style.display     = val === "Prints"      ? "block" : "none";
+    if (originalField)  originalField.style.display  = val === "Originals"   ? "block" : "none";
+    if (commissionInfo) commissionInfo.style.display = val === "Commissions" ? "block" : "none";
+    if (originalInfo)   originalInfo.style.display   = val === "Originals"   ? "block" : "none";
+    if (printInfo)      printInfo.style.display      = val === "Prints"      ? "block" : "none";
+
+    if (subjectInput) {
+      subjectInput.value = val ? `New Inquiry - ${val}` : "New Inquiry";
+    }
   });
 
   form.addEventListener("submit", async function (e) {
@@ -43,20 +47,16 @@ function setupContactForm() {
     });
 
     if (response.ok) {
-      const subscribeCheckbox = document.getElementById("f-subscribe");
-      const emailInput        = document.getElementById("f-email");
-      if (subscribeCheckbox?.checked && emailInput?.value) {
-        subscribeToMailchimp(emailInput.value);
-      }
-
       form.reset();
-      if (originalField) originalField.style.display = "none";
-      if (originalInfo)  originalInfo.style.display  = "none";
-      if (printInfo)     printInfo.style.display      = "none";
-      subjectInput.value           = "New Inquiry";
-      printField.style.display     = "none";
-      commissionInfo.style.display = "none";
-      showSuccessPopup();
+      
+      [printField, originalField, commissionInfo, originalInfo, printInfo].forEach(el => {
+        if (el) el.style.display = "none";
+      });
+
+      if (subjectInput) subjectInput.value = "New Inquiry";
+      
+      const successMsg = document.getElementById("formSuccess");
+      if (successMsg) successMsg.style.display = "block";
     } else {
       alert("Något gick fel. Maila direkt till info@vaavascanvas.se");
     }
