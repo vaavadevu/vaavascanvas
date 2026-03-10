@@ -17,20 +17,14 @@ function setupContactForm() {
   const typeSelect = document.getElementById("f-type");
   const subjectInput = document.getElementById("f-subject");
   const printField = document.getElementById("f-printField");
-  const commissionInfo = document.getElementById("f-commissionInfo");
   const originalField = document.getElementById("f-originalField");
-  const originalInfo = document.getElementById("f-originalInfo");
-  const printInfo = document.getElementById("f-printInfo");
 
   if (!form) return;
 
   typeSelect.addEventListener("change", () => {
     const val = typeSelect.value;
     printField.style.display = val === "Prints" ? "block" : "none";
-    commissionInfo.style.display = val === "Commissions" ? "block" : "none";
     if (originalField) originalField.style.display = val === "Originals" ? "block" : "none";
-    if (originalInfo) originalInfo.style.display = val === "Originals" ? "block" : "none";
-    if (printInfo) printInfo.style.display = val === "Prints" ? "block" : "none";
     subjectInput.value = val ? `New Inquiry - ${val}` : "New Inquiry";
   });
 
@@ -53,11 +47,8 @@ function setupContactForm() {
 
       form.reset();
       if (originalField) originalField.style.display = "none";
-      if (originalInfo) originalInfo.style.display = "none";
-      if (printInfo) printInfo.style.display = "none";
       subjectInput.value = "New Inquiry";
       printField.style.display = "none";
-      commissionInfo.style.display = "none";
       showSuccessPopup();
     } else {
       alert("Något gick fel. Maila direkt till info@vaavascanvas.se");
