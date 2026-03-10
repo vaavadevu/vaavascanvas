@@ -42,6 +42,7 @@ header.box {
   display: flex;
   align-items: center;
   gap: 15px;
+  flex: 1; 
 }
 
 .headerLogo {
@@ -100,6 +101,8 @@ nav li {
   display: flex;
   gap: 4px;
   align-items: center;
+  flex: 1;         
+  justify-content: flex-end; 
 }
 
 
