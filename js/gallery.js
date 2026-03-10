@@ -86,11 +86,11 @@ function createGalleryItem(painting, index) {
 
 function addSoldBadge(container) {
   const badge = document.createElement("div");
-  badge.textContent = "Såld";
+  badge.textContent = t("modal_sold");
+  badge.dataset.i18n = "modal_sold";
   badge.classList.add("sold-badge");
   container.appendChild(badge);
 }
-
 function attachFilterListeners() {
   document.querySelectorAll(".filter-btn").forEach(btn => {
     btn.addEventListener("click", () => {

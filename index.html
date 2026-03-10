@@ -8,9 +8,7 @@
   <link rel="icon" type="image/png" href="images/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@400;600;700&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/header.css" />
   <link rel="stylesheet" href="css/footer.css" />
@@ -20,6 +18,7 @@
   <link rel="stylesheet" href="css/index.css" />
   <link rel="stylesheet" href="css/responsive.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css"/>
 </head>
 
 <body id="top">
@@ -31,13 +30,13 @@
     <section class="hero">
       <img class="hero-img" src="images/paintings/herrOchFruAndersson/02.jpg" alt="Herr och fru Andersson" />
       <div class="hero-text">
-        <h2>Konst skapad<br>med hjärtat</h2>
-        <p>Akrylmålningar inspirerade av naturen, djur och de tysta stunderna som berör.</p>
-        <a href="pictures.html" class="hero-cta">Se mina målningar</a>
+        <h2 data-i18n="hero_title">Konst skapad<br>med hjärtat</h2>
+        <p data-i18n="hero_sub">Akrylmålningar inspirerade av naturen, djur och de tysta stunderna som berör.</p>
+        <a href="pictures.html" class="hero-cta" data-i18n="hero_cta">Se mina målningar</a>
       </div>
       <div class="hero-scroll">
         <div class="hero-scroll-line"></div>
-        <span>Scrolla</span>
+        <span data-i18n="hero_scroll">Scrolla</span>
       </div>
     </section>
 
@@ -46,21 +45,19 @@
         <img src="images/devika.jpg" alt="Devika" />
       </div>
       <div class="intro-text-side">
-        <p class="intro-label">Om konstnären</p>
-        <h2>Hej, Devika här!</h2>
-        <p>Jag är konstnär och illustratör baserad i Sverige. Jag inspireras av naturen, relationer, djur och de tysta
-          stunderna där känslor får ta plats utan filter.</p>
-        <p>Genom min konst vill jag skapa närvaro och igenkänning – något som känns mänskligt, mjukt och äkta. Jag
-          hoppas att det finns en målning som talar till dig. Hör av dig om ni vill veta mer om vad jag gör!</p>
-        <a href="pictures.html" class="intro-link">Utforska galleriet</a>
+        <p class="intro-label" data-i18n="intro_label">Om konstnären</p>
+        <h2 data-i18n="intro_heading">Hej, Devika här!</h2>
+        <p data-i18n="intro_p1">Jag är konstnär och illustratör baserad i Sverige. Jag inspireras av naturen, relationer, djur och de tysta stunderna där känslor får ta plats utan filter.</p>
+        <p data-i18n="intro_p2">Genom min konst vill jag skapa närvaro och igenkänning – något som känns mänskligt, mjukt och äkta. Jag hoppas att det finns en målning som talar till dig. Hör av dig om ni vill veta mer om vad jag gör!</p>
+        <a href="pictures.html" class="intro-link" data-i18n="intro_link">Utforska galleriet</a>
       </div>
     </section>
 
     <section class="featured-section">
       <div class="featured-inner">
         <div class="featured-header">
-          <h2>Utvalda verk</h2>
-          <a href="pictures.html">Se alla →</a>
+          <h2 data-i18n="featured_heading">Utvalda verk</h2>
+          <a href="pictures.html" data-i18n="featured_see_all">Se alla →</a>
         </div>
         <div class="featured-grid">
           <div class="featured-card">
@@ -112,18 +109,20 @@
         <a href="mailto:info@vaavascanvas.se">
           <i class="fa fa-envelope"></i> info@vaavascanvas.se
         </a>
-        <button class="subscribe-btn" id="subscribeBtn">
+        <button class="subscribe-btn" id="subscribeBtn" data-i18n="footer_subscribe_btn">
           🔔 Prenumerera på nyheter
         </button>
       </div>
       <div class="footerDivider"></div>
       <div class="footerFormSection" id="formContainer"></div>
     </div>
-    <p class="footerCopy">© 2026 Devika – All rights reserved</p>
+    <p class="footerCopy" data-i18n="footer_copy">© 2026 Devika – All rights reserved</p>
   </footer>
 
   <div id="modals-container"></div>
 
+  <script src="js/translations.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/paintings.js"></script>
   <script src="js/state.js"></script>
   <script src="js/gallery.js"></script>
