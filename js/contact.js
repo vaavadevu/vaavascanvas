@@ -66,7 +66,6 @@ function setupContactForm() {
 function handleBuyClick(painting) {
   const typeSelect     = document.getElementById("f-type");
   const subjectInput   = document.getElementById("f-subject");
-  const messageInput   = document.getElementById("f-message");
   const originalSelect = document.getElementById("f-artwork-original");
 
   if (typeSelect) {
@@ -77,9 +76,6 @@ function handleBuyClick(painting) {
   if (originalSelect) {
     originalSelect.value = painting.id;
     originalSelect.dispatchEvent(new Event("change"));
-  }
-  if (messageInput) {
-    messageInput.value = t("buy_message", painting.title, painting.size, painting.originalPrice);
   }
 
   closeModal();

@@ -205,12 +205,6 @@ const keys = {
     en: "📦 Shipping & delivery info",
   },
 
-  // ── Buy message pre-fill ───────────────────────────────────
-  buy_message: {
-    sv: (title, size, price) => `Hej! Jag är intresserad av originalmålningen "${title}" (${size}) för ${price} kr.`,
-    en: (title, size, price) => `Hi! I'm interested in the original painting "${title}" (${size}) for ${price} kr.`,
-  },
-
   // ── Subscribe modal ────────────────────────────────────────
   subscribe_heading: {
     sv: "Håll dig uppdaterad",
