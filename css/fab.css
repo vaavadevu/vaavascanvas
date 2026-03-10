@@ -9,11 +9,11 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 10px;
-  /* VIKTIGT: Ingen transition på 'bottom' här! */
-  transition: transform 0.2s ease, opacity 0.2s ease; 
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
-/* Main button */
+
+/* ── Huvudknapp ─── */
 .fab-main-btn {
   width: 52px;
   height: 52px;
@@ -26,37 +26,45 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-  transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s, box-shadow 0.2s;
   flex-shrink: 0;
+  overflow: hidden; /* för ripple */
+  position: relative;
 }
 
 .fab-main-btn:hover {
-  transform: scale(1.08);
   box-shadow: 0 6px 20px rgba(0,0,0,0.3);
 }
 
 #filter-fab.open .fab-main-btn {
-  background: var(--text-dark, #3a3a3a);
-  transform: rotate(90deg);
+  background: #3a3a3a;
+  transform: rotate(90deg) scale(1.1);
 }
 
+/* ── Ripple ─── */
+.fab-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(0);
+  animation: fab-ripple-anim 0.5s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes fab-ripple-anim {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* ── Popup ─── */
 .fab-popup {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 8px;
-  opacity: 0;
-  visibility: hidden; /* Gör den osynlig och oklickbar */
   pointer-events: none;
-  transform: translateY(10px);
-  transition: all 0.2s ease;
-}
-
-#filter-fab.open .fab-popup {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: all;
-  transform: translateY(0);
 }
 
 .fab-filter-btn {
@@ -68,12 +76,31 @@
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  transition: transform 0.2s;
+  transition: transform 0.2s, background 0.2s;
+  /* staggerad in-animation */
+  opacity: 0;
+  transform: translateX(20px) scale(0.85);
 }
 
-.fab-filter-btn:hover {
-  transform: translateX(-5px);
-  background: #f9f9f9;
+#filter-fab.open .fab-filter-btn {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+  pointer-events: auto;
+}
+
+/* Staggerad fördröjning per knapp (nedifrån och upp) */
+#filter-fab.open .fab-filter-btn:nth-child(4) { transition: opacity 0.22s 0.00s cubic-bezier(0.34,1.56,0.64,1), transform 0.22s 0.00s cubic-bezier(0.34,1.56,0.64,1); }
+#filter-fab.open .fab-filter-btn:nth-child(3) { transition: opacity 0.22s 0.06s cubic-bezier(0.34,1.56,0.64,1), transform 0.22s 0.06s cubic-bezier(0.34,1.56,0.64,1); }
+#filter-fab.open .fab-filter-btn:nth-child(2) { transition: opacity 0.22s 0.12s cubic-bezier(0.34,1.56,0.64,1), transform 0.22s 0.12s cubic-bezier(0.34,1.56,0.64,1); }
+#filter-fab.open .fab-filter-btn:nth-child(1) { transition: opacity 0.22s 0.18s cubic-bezier(0.34,1.56,0.64,1), transform 0.22s 0.18s cubic-bezier(0.34,1.56,0.64,1); }
+
+/* Snabb ut-animation (ingen fördröjning) */
+#filter-fab:not(.open) .fab-filter-btn {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.fab-filter-btn:active {
+  transform: scale(0.95);
 }
 
 .fab-filter-btn.active {
@@ -81,8 +108,9 @@
   color: white;
 }
 
-/* Animation för huvudknappen när den är öppen */
-#filter-fab.open .fab-main-btn {
-  background: #3a3a3a; /* Mörkgrå när den är öppen */
-  transform: rotate(90deg);
+/* Dölj FAB på desktop – filterbaren används istället */
+@media (min-width: 769px) {
+  #filter-fab {
+    display: none !important;
+  }
 }

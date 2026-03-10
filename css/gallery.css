@@ -66,6 +66,24 @@
   padding: 0 20px;
 }
 
+/* ─── Sticky filter bar (desktop) ─── */
+#gallery-filter-bar {
+  display: none; /* visas bara på desktop via media query */
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  padding: 10px 20px;
+  background: var(--bg-light);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: opacity 0.2s ease;
+}
+
+@media (min-width: 769px) {
+  #gallery-filter-bar {
+    display: flex;
+  }
+}
+
 .filter-btn {
   padding: 8px 20px;
   border: 1.5px solid var(--accent-green);
