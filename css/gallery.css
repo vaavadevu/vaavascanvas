@@ -107,7 +107,7 @@
 .filter-btn:hover,
 .filter-btn.active {
   border-bottom: none;
-  color: var(--text-light);
+  color: var(--accent-green);
   font-weight: 700;
   background: transparent;
 }

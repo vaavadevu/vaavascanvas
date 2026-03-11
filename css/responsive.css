@@ -90,7 +90,7 @@
   left: -100%;
   width: 70%;
   height: calc(100vh - 70px); /* tar resten av skärmen */
-  background: white;
+  background: var(--bg-light);
   z-index: 999; /* under headern */
   display: flex;
   align-items: center;
@@ -117,7 +117,9 @@ nav.active {
     margin: 20px 0;
   }
 
-
+#nav-menu.active {
+  height: calc(100vh - 70px);
+}
   footer {
     padding: 30px 15px 15px;
   }
