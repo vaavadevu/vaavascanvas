@@ -32,6 +32,9 @@
   aspect-ratio: 3 / 4;
   object-fit: cover;
   cursor: pointer;
+  padding: 6px;
+  background: var(--bg-light); /* --bg-light, skapar passepartout-effekt */
+  border: 3px solid var(--accent-green);
   transition: transform 0.2s ease;
 }
 
@@ -76,6 +79,7 @@
   background: var(--bg-light);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease, opacity 0.2s ease;
+  border-bottom: 1px solid var(--accent-green);
 }
 
 @media (min-width: 769px) {
@@ -84,6 +88,7 @@
     position: sticky;
     top: 0;
     z-index: 100;
+    gap: 70px;
   }
 }
 
@@ -92,22 +97,21 @@
   border: none;
   border-bottom: 1.5px solid transparent;
   background: transparent;
-  color: var(--text-dark);
+  color: var(--accent-green);
   border-radius: 0;
   cursor: pointer;
   font-family: 'Playfair Display', serif;
   font-style: italic;
   font-weight: 600;
-  font-size: 0.8rem;
+  font-size: 1.0rem;
   letter-spacing: 0;
-  text-transform: uppercase;
   transition: 0.2s;
 }
 
 .filter-btn:hover,
 .filter-btn.active {
   border-bottom: none;
-  color: var(--accent-green);
+  color: var(--text-dark);
   font-weight: 700;
   background: transparent;
 }
