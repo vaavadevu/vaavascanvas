@@ -46,44 +46,69 @@
 
   /* Hamburgarknappen */
   .menu-toggle {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    z-index: 1100;
-  }
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centrerar strecken vertikalt */
+  gap: 6px; /* Avståndet mellan strecken */
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 1100;
+  width: 30px; /* Fast bredd för stabilitet */
+  height: 30px; /* Fast höjd */
+  padding: 0;
+}
 
   .menu-toggle span {
-    width: 25px;
-    height: 2px;
-    background: #333;
-    /* Ändra till vitt om du har mörk bakgrund */
-    transition: 0.3s;
-  }
+  width: 25px;
+  height: 2px;
+  background: #333;
+  transition: all 0.3s ease-in-out; /* Gör animationen mjuk */
+  transform-origin: center; /* Gör att de roterar runt sin egen mittpunkt */
+  display: block;
+}
+
+.menu-toggle.open span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+/* Mittersta strecket: Försvinner helt */
+.menu-toggle.open span:nth-child(2) {
+  opacity: 0;
+  transform: translateX(-10px); /* Valfritt: glider ut åt sidan */
+}
+
+/* Nedersta strecket: Roterar -45 grader och flyttas upp till mitten */
+.menu-toggle.open span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
 
   /* Själva navigeringen som dyker upp */
   nav {
-    position: fixed;
-    top: 0;
-    left: -100%;
-    /* Gömd till vänster */
-    width: 100%;
-    height: 100vh;
-    background: #fff;
-    transition: 0.4s ease-in-out;
-    z-index: 1050;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  position: fixed;
+  top: 0;
+  left: -100%; /* Startposition: helt utanför skärmen till vänster */
+  width: 70%;
+  height: 100vh;
+  background: #fff;
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 
-  nav.active {
-    left: 0;
-    /* Glider in */
-  }
+  /* --- NYTT: Fade-effekt --- */
+  opacity: 0;
+  visibility: hidden;
+  /* Animerar både position, transparens och synlighet */
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
+nav.active {
+  left: 0;
+  opacity: 1;
+  visibility: visible;
+}
   .link-list {
     flex-direction: column;
     text-align: center;
@@ -163,13 +188,6 @@
     width: 100%;
     padding: 0;
   }
-
-  nav {
-    margin: 0;
-    width: 100%;
-    padding: 8px 0;
-  }
-
   nav ul {
     gap: 20px;
     margin: 10px 0;
