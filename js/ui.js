@@ -42,9 +42,44 @@ function setupMobileMenu() {
     navMenu.classList.toggle("active", open);
     menuBtn.classList.toggle("open", open);
     document.body.style.overflow = open ? "hidden" : "";
+    if (!open) navMenu.style.transform = ""; 
   };
 
-  menuBtn.addEventListener("click", () => setMenuOpen(!navMenu.classList.contains("active")));
+  menuBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    setMenuOpen(!navMenu.classList.contains("active"));
+  });
+
+  // Stäng vid klick utanför
+  document.addEventListener("click", (e) => {
+    if (navMenu.classList.contains("active") && !navMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+      setMenuOpen(false);
+    }
+  });
+
+  // --- Globalt svep för att stänga ---
+  // Vi lyssnar på document.body istället för navMenu
+  setupSwipe(document.body, (phase, dx, dy) => {
+    // Kör bara om menyn är öppen
+    if (!navMenu.classList.contains("active")) return;
+
+    // Vi bryr oss bara om svep åt vänster (dx < 0)
+    if (dx < 0) {
+      if (phase === "move") {
+        navMenu.style.transition = "none";
+        navMenu.style.transform = `translateX(${dx}px)`;
+      }
+
+      if (phase === "end") {
+        navMenu.style.transition = ""; // Tillåt CSS-animation igen
+        if (dx < -60) {
+          setMenuOpen(false);
+        } else {
+          navMenu.style.transform = "translateX(0)";
+        }
+      }
+    }
+  });
 
   document.querySelectorAll(".link-list a").forEach(link => {
     link.addEventListener("click", () => setMenuOpen(false));
@@ -57,12 +92,12 @@ function setupScrollWatcher() {
   window.addEventListener("scroll", () => {
     const currentScrollY = window.scrollY;
     const header = document.getElementById("header-container");
-
     const show = currentScrollY < lastScrollY || currentScrollY < 100;
     if (show) {
       header?.classList.add("visible");
     } else {
       header?.classList.remove("visible");
+    
     }
     window._syncFilterBar?.(show);
     lastScrollY = currentScrollY;
