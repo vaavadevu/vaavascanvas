@@ -25,6 +25,7 @@
 header {
   height: fit-content;
   background-color: var(--accent-light);
+  border-bottom: 1px solid var(--accent-green);
 }
 
 .menu-toggle {
@@ -55,11 +56,12 @@ header.box {
 /* ─── Nav ─── */
 nav {
   display: flex;
+  gap: 50px;
   justify-content: center;
   align-items: center;
-  padding: 10px;
+  padding: 0;
   margin: 0;
-  background-color: var(--accent-light);
+  background: none
 }
 
 nav a {
@@ -83,7 +85,7 @@ nav ul {
   gap: 50px;
   list-style: none;
   padding: 0;
-  margin: 20px;
+  margin: 0;
 }
 
 nav li {
@@ -107,8 +109,7 @@ nav li {
   display: flex;
   gap: 4px;
   align-items: center;
-  flex: 1;         
-  justify-content: flex-end; 
+  margin-left: 30px;
 }
 
 
