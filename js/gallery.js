@@ -4,9 +4,12 @@ function getPaintingImagePaths(painting) {
   const folderId = painting.id;
   const count = painting.imageCount || 1;
   const base = `images/paintings/${folderId}/`;
+  const mobileBase = `images/paintings/${folderId}/mobile/`;
+  const isMobile = window.innerWidth <= 768;
+
   return Array.from({ length: count }, (_, i) => {
     const idx = String(i + 1).padStart(2, "0");
-    return `${base}${idx}.jpg`;
+    return isMobile ? `${mobileBase}${idx}.jpg` : `${base}${idx}.jpg`;
   });
 }
 
