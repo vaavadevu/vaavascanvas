@@ -1,22 +1,16 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Mar 11 12:13:58 2026
-
-@author: devik
-"""
-
 """
 generate_mobile_images.py
 
-Skapar lågupplösta mobilversioner av alla bilder på sajten.
-Mobilbilderna sparas i en "mobile"-undermapp bredvid originalet.
+1. Skapar backup av NYA bilder
+2. Komprimerar NYA originalbilder på plats (desktop)
+3. Skapar mobilversioner av NYA bilder i "mobile/"-undermappar
 
-Exempel:
-  images/paintings/sommarvila.jpg  →  images/paintings/mobile/sommarvila.jpg
-  images/gallery/wolf.png          →  images/gallery/mobile/wolf.png
+Håller koll på behandlade bilder i "processed.txt".
+Kör skriptet igen när du lägger till nya bilder – bara de nya bearbetas!
 
 Användning:
-  python generate_mobile_images.py
+  1. Lägg filen i samma mapp som index.html
+  2. Kör i Spyder eller terminal: python generate_mobile_images.py
 
 Kräver Pillow:
   pip install Pillow
@@ -24,97 +18,126 @@ Kräver Pillow:
 
 from PIL import Image
 from pathlib import Path
+import shutil
 
 # ── Inställningar ────────────────────────────────────────────────────────────
 
-# Rotkatalog för sajten (ändra om du kör skriptet från annan plats)
 ROOT = Path(".")
-
-# Bildformat att behandla
+LOG_FILE = ROOT / "processed.txt"
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
 
-# Max bredd på mobilbilden (höjden skalas proportionellt)
-MAX_WIDTH = 800  # px
+DESKTOP_QUALITY = 82
+DESKTOP_MAX_KB  = 600
 
-# JPEG/WebP-kvalitet (1–95). 75 ger bra balans storlek/skärpa
-QUALITY = 75
+MOBILE_MAX_WIDTH = 800
+MOBILE_QUALITY   = 75
+MOBILE_MAX_KB    = 300
 
-# Max filstorlek i kb – bilder över detta komprimeras hårdare
-MAX_KB = 300
+# ── Logg ─────────────────────────────────────────────────────────────────────
 
-# ── Hjälpfunktion ────────────────────────────────────────────────────────────
+def load_log() -> set:
+    if not LOG_FILE.exists():
+        return set()
+    return set(LOG_FILE.read_text(encoding="utf-8").splitlines())
 
-def compress_to_target(img: Image.Image, path: Path, quality: int, max_kb: int):
-    """Sparar bilden och sänker kvaliteten stegvis tills den är under max_kb."""
-    fmt = "JPEG" if path.suffix.lower() in {".jpg", ".jpeg"} else path.suffix[1:].upper()
-    if fmt == "JPG":
-        fmt = "JPEG"
+def save_to_log(path: Path, log: set):
+    log.add(str(path))
+    LOG_FILE.write_text("\n".join(sorted(log)), encoding="utf-8")
 
+# ── Hjälpfunktioner ──────────────────────────────────────────────────────────
+
+def image_format(path: Path) -> str:
+    ext = path.suffix.lower()
+    if ext in {".jpg", ".jpeg"}: return "JPEG"
+    if ext == ".png": return "PNG"
+    if ext == ".webp": return "WEBP"
+    return "JPEG"
+
+def save_compressed(img, path, quality, max_kb):
+    fmt = image_format(path)
     q = quality
     while q >= 40:
-        path.write_bytes(b"")          # töm filen
         img.save(path, fmt, quality=q, optimize=True)
-        size_kb = path.stat().st_size / 1024
-        if size_kb <= max_kb:
-            return q, size_kb
+        if path.stat().st_size / 1024 <= max_kb:
+            return q, path.stat().st_size / 1024
         q -= 5
-
-    # Sista försöket med lägsta kvalitet
     img.save(path, fmt, quality=40, optimize=True)
     return 40, path.stat().st_size / 1024
 
+def to_rgb_if_needed(img, path):
+    if image_format(path) == "JPEG" and img.mode in ("RGBA", "P"):
+        return img.convert("RGB")
+    return img
 
-# ── Huvudlogik ───────────────────────────────────────────────────────────────
+# ── Backup ───────────────────────────────────────────────────────────────────
 
-def process_images(root: Path):
-    images = [
-        p for p in root.rglob("*")
-        if p.suffix.lower() in IMAGE_EXTENSIONS
-        and "mobile" not in p.parts          # hoppa över redan skapade mobilbilder
-    ]
-
-    if not images:
-        print("Inga bilder hittades. Kontrollera att ROOT pekar rätt.")
+def create_backup(src: Path):
+    rel = src.relative_to(ROOT)
+    dst = ROOT / "backup" / rel
+    if dst.exists():
         return
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(src, dst)
 
-    print(f"Hittade {len(images)} bild(er). Börjar bearbeta...\n")
+# ── Bearbeta ─────────────────────────────────────────────────────────────────
 
-    for src in images:
+def process_image(src: Path, log: set):
+    orig_kb = src.stat().st_size / 1024
+    create_backup(src)
+
+    with Image.open(src) as img:
+        img = to_rgb_if_needed(img, src)
+        orig_w, orig_h = img.size
+
+        # Desktop – komprimera på plats
+        used_q, desk_kb = save_compressed(img, src, DESKTOP_QUALITY, DESKTOP_MAX_KB)
+        print(f"✓  {src}")
+        print(f"   Desktop: {orig_w}×{orig_h}px  {orig_kb:.0f}kb → {desk_kb:.0f}kb  (kvalitet {used_q})")
+
+        # Mobil – skala + komprimera
         mobile_dir = src.parent / "mobile"
         mobile_dir.mkdir(exist_ok=True)
         dst = mobile_dir / src.name
 
-        with Image.open(src) as img:
-            # Konvertera RGBA→RGB för JPEG
-            if img.mode in ("RGBA", "P") and src.suffix.lower() in {".jpg", ".jpeg"}:
-                img = img.convert("RGB")
+        if orig_w > MOBILE_MAX_WIDTH:
+            ratio = MOBILE_MAX_WIDTH / orig_w
+            mob_img = img.resize((MOBILE_MAX_WIDTH, int(orig_h * ratio)), Image.LANCZOS)
+        else:
+            mob_img = img
 
-            orig_w, orig_h = img.size
+        mob_q, mob_kb = save_compressed(mob_img, dst, MOBILE_QUALITY, MOBILE_MAX_KB)
+        mob_w, mob_h = mob_img.size
+        print(f"   Mobil:   {mob_w}×{mob_h}px  {mob_kb:.0f}kb  (kvalitet {mob_q})\n")
 
-            # Skala ner om bredare än MAX_WIDTH
-            if orig_w > MAX_WIDTH:
-                ratio = MAX_WIDTH / orig_w
-                new_size = (MAX_WIDTH, int(orig_h * ratio))
-                img = img.resize(new_size, Image.LANCZOS)
-            else:
-                new_size = (orig_w, orig_h)
+    save_to_log(src, log)
 
-            used_q, final_kb = compress_to_target(img, dst, QUALITY, MAX_KB)
+# ── Main ─────────────────────────────────────────────────────────────────────
 
-        orig_kb = src.stat().st_size / 1024
-        print(f"✓  {src}  →  mobile/{src.name}")
-        print(f"   {orig_w}×{orig_h}px {orig_kb:.0f}kb  →  {new_size[0]}×{new_size[1]}px {final_kb:.0f}kb  (kvalitet {used_q})\n")
+def main():
+    log = load_log()
 
-    print("Klart! 🎉")
-    print()
-    print("Tips – använd <picture> i HTML för att välja rätt bild automatiskt:")
-    print("""
-  <picture>
-    <source media="(max-width: 768px)" srcset="images/paintings/mobile/sommarvila.jpg">
-    <img src="images/paintings/sommarvila.jpg" alt="Sommarvila">
-  </picture>
-""")
+    all_images = [
+        p for p in ROOT.rglob("*")
+        if p.suffix.lower() in IMAGE_EXTENSIONS
+        and "mobile" not in p.parts
+        and "backup" not in p.parts
+    ]
 
+    new_images = [p for p in all_images if str(p) not in log]
+    skipped    = len(all_images) - len(new_images)
+
+    print(f"Hittade {len(all_images)} bild(er) totalt.")
+    if skipped:
+        print(f"⏭  Hoppar över {skipped} redan behandlade bild(er).")
+    if not new_images:
+        print("Inga nya bilder att behandla. Klart!")
+        return
+
+    print(f"🆕 Behandlar {len(new_images)} ny(a) bild(er)...\n")
+    for src in new_images:
+        process_image(src, log)
+
+    print("✅ Klart!")
 
 if __name__ == "__main__":
-    process_images(ROOT)
+    main()
