@@ -44,7 +44,7 @@ header.box {
   display: flex;
   align-items: center;
   gap: 15px;
-  flex: 1; 
+  flex: 1;
 }
 
 .headerLogo {
@@ -103,7 +103,9 @@ nav li {
 }
 
 /* Desktop: visa bara den utanför nav */
-.lang-switcher { display: none; }
+.lang-switcher {
+  display: none;
+}
 
 .lang-switcher-desktop {
   display: flex;
@@ -121,14 +123,14 @@ nav li {
 
   .lang-switcher {
     position: absolute;
-    bottom: 24px;
+    top: 1px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
     justify-content: center;
     gap: 12px;
-    padding: 16px 0 8px;
-    border-top: 1px solid rgba(0,0,0,0.08);
+    padding: 16px 0 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
     width: 80%;
   }
 
