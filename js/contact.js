@@ -78,7 +78,7 @@ function handleBuyClick(painting) {
   }
 
   closeModal();
-  document.getElementById("footer").scrollIntoView({ behavior: "smooth" });
+  document.getElementById("formContainer").scrollIntoView({ behavior: "smooth" });
 }
 
 function populateArtworkDropdowns() {
