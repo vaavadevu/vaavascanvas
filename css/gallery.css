@@ -88,24 +88,29 @@
 }
 
 .filter-btn {
-  padding: 8px 20px;
-  border: 1.5px solid var(--accent-green);
+  padding: 6px 4px;
+  border: none;
+  border-bottom: 1.5px solid transparent;
   background: transparent;
-  color: var(--accent-green);
-  border-radius: 20px;
+  color: var(--text-dark);
+  border-radius: 0;
   cursor: pointer;
-  font-family: 'Quicksand', sans-serif;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
   transition: 0.2s;
 }
 
 .filter-btn:hover,
 .filter-btn.active {
-  background: var(--accent-green);
+  border-bottom: none;
   color: var(--text-light);
+  font-weight: 700;
+  background: transparent;
 }
-
 .gallery-dots {
   position: absolute;
   bottom: 10px;

@@ -1,15 +1,14 @@
 :root {
-  --bg-warm: #F2E8DC;
-  --bg-light: #FAF6F1;
-  --accent-light: #E8C9A0;
-  --accent-green: #5C9485;
-  --text-dark: #2A1F1A;
-  --text-light: #FAF6F1;
-  --text-link: #5C9485;
-  --shadow-light: rgba(42, 31, 26, 0.07);
-  --shadow-dark: rgba(42, 31, 26, 0.45);
+  --bg-warm: #EDE5D8;      /* lite mörkare än #F2E8DC, mer djup */
+  --bg-light: #FAF7F3;     /* nästan samma, marginellt varmare */
+  --accent-light: #D4B896; /* mörkare än #E8C9A0, bättre kontrast på ljus bg */
+  --accent-green: #4A8070; /* mörkare än #5C9485, klarar WCAG AA på ljus bg */
+  --text-dark: #1E1510;    /* lite mörkare än #2A1F1A, skarpare läsbarhet */
+  --text-light: #FAF7F3;   /* matchar ny --bg-light */
+  --text-link: #4A8070;    /* samma som accent-green, konsekvent */
+  --shadow-light: rgba(30, 21, 16, 0.08);  /* något starkare, mer synlig */
+  --shadow-dark: rgba(30, 21, 16, 0.45);
 }
-
 /* ─── RESET ─── */
 *,
 *::before,
