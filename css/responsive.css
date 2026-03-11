@@ -22,6 +22,7 @@
   top: 0;
   z-index: 1100;
   grid-area: header;
+  border-bottom: 1px solid var(--accent-green);
 }
   .box {
     justify-content: flex-end;
