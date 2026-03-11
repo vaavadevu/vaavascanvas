@@ -20,7 +20,7 @@
   .stickyHeader {
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1100;
   grid-area: header;
 }
   .box {
@@ -35,7 +35,7 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    z-index: 1001;
+    z-index: 1200;
   }
 
   .headerLogo {
@@ -53,7 +53,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  z-index: 1100;
+  z-index: 1100; /* Se till att den ligger över nav */
   width: 30px; /* Fast bredd för stabilitet */
   height: 30px; /* Fast höjd */
   padding: 0;
@@ -84,23 +84,20 @@
 }
 
   /* Själva navigeringen som dyker upp */
-  nav {
+ nav {
   position: fixed;
-  top: 0;
-  left: -100%; /* Startposition: helt utanför skärmen till vänster */
+  top: 70px; /* samma höjd som din header */
+  left: -100%;
   width: 70%;
-  height: 100vh;
-  background: #fff;
-  z-index: 1050;
+  height: calc(100vh - 70px); /* tar resten av skärmen */
+  background: white;
+  z-index: 999; /* under headern */
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-
-  /* --- NYTT: Fade-effekt --- */
   opacity: 0;
   visibility: hidden;
-  /* Animerar både position, transparens och synlighet */
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
