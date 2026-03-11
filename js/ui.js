@@ -41,8 +41,17 @@ function setupMobileMenu() {
   const setMenuOpen = (open) => {
     navMenu.classList.toggle("active", open);
     menuBtn.classList.toggle("open", open);
-    document.body.style.overflow = open ? "hidden" : "";
-    if (!open) navMenu.style.transform = ""; 
+    if (open) {
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.width = "100%";
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+    }
+    document.documentElement.style.overflow = open ? "hidden" : "";
+    if (!open) navMenu.style.transform = "";
   };
 
   menuBtn.addEventListener("click", (e) => {
