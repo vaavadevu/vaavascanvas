@@ -90,6 +90,10 @@ function setupScrollWatcher() {
   let lastScrollY = window.scrollY;
 
   window.addEventListener("scroll", () => {
+    const navMenu = document.getElementById("nav-menu");
+    // Don't animate header if menu is open
+    if (navMenu?.classList.contains("active")) return;
+
     const currentScrollY = window.scrollY;
     const header = document.getElementById("header-container");
     const show = currentScrollY < lastScrollY || currentScrollY < 100;
@@ -97,7 +101,7 @@ function setupScrollWatcher() {
       header?.classList.add("visible");
     } else {
       header?.classList.remove("visible");
-    
+
     }
     window._syncFilterBar?.(show);
     lastScrollY = currentScrollY;

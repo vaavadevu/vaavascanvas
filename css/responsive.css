@@ -85,27 +85,30 @@
 
   /* Själva navigeringen som dyker upp */
   nav {
-    position: fixed;
-    top: 0;
-    left: -100%;
-    /* Gömd till vänster */
-    width: 70%;
-    height: 100vh;
-    background: #fff;
-    transition: 0.4s ease-in-out;
-    z-index: 1050;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-    padding: 8px 0;
-  }
+  position: fixed;
+  top: 0;
+  left: -100%; /* Startposition: helt utanför skärmen till vänster */
+  width: 70%;
+  height: 100vh;
+  background: #fff;
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 
-  nav.active {
-    left: 0;
-    /* Glider in */
-  }
+  /* --- NYTT: Fade-effekt --- */
+  opacity: 0;
+  visibility: hidden;
+  /* Animerar både position, transparens och synlighet */
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
+nav.active {
+  left: 0;
+  opacity: 1;
+  visibility: visible;
+}
   .link-list {
     flex-direction: column;
     text-align: center;
