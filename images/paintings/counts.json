@@ -1,35 +1,19 @@
-{ 
-   "bonnie": 2 
-, 
-   "brollopspresent": 1 
-, 
-   "herrOchFruAndersson": 6 
-, 
-   "norrsken": 1 
-, 
-   "radjur": 5 
-, 
-   "savannan": 2 
-, 
-   "skaViPlockaBlommor": 4 
-, 
-   "skogsvila": 3 
-, 
-   "solnedgang": 3 
-, 
-   "sommarPaStranden": 4 
-, 
-   "sommarstuga": 2 
-, 
-   "sommarvila": 4 
-, 
-   "vargen": 3 
-, 
-   "varkansla": 3 
-, 
-   "vattenfall": 2 
-, 
-   "vinterlek": 2 
-, 
-   "womanInTheSea": 2 
-} 
+{
+  "bonnie": 2,
+  "brollopspresent": 1,
+  "herrOchFruAndersson": 6,
+  "norrsken": 1,
+  "radjur": 5,
+  "savannan": 2,
+  "skaViPlockaBlommor": 4,
+  "skogsvila": 3,
+  "solnedgang": 3,
+  "sommarPaStranden": 4,
+  "sommarstuga": 2,
+  "sommarvila": 4,
+  "vargen": 3,
+  "varkansla": 3,
+  "vattenfall": 2,
+  "vinterlek": 2,
+  "womanInTheSea": 2
+}

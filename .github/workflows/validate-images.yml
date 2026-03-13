@@ -24,4 +24,4 @@ jobs:
           python-version: '3.11'
 
       - name: Validate image structure
-        run: python validate_images.py
+        run: python scripts/validate_images.py
