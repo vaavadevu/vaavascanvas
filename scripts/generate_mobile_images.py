@@ -13,7 +13,7 @@ Kräver Pillow:
   pip install Pillow
 """
 
-from PIL import Image
+from PIL import Image, ImageOps
 from pathlib import Path
 import shutil
 import sys
@@ -60,16 +60,6 @@ def to_rgb_if_needed(img, path):
         return img.convert("RGB")
     return img
 
-# ── Backup ───────────────────────────────────────────────────────────────────
-
-def create_backup(src: Path):
-    rel = src.relative_to(ROOT)
-    dst = ROOT / "backup" / rel
-    if dst.exists():
-        return
-    dst.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(src, dst)
-
 # ── Resekvensering ───────────────────────────────────────────────────────────
 
 def resequence_originals():
@@ -107,9 +97,9 @@ def resequence_originals():
 def process_image(src: Path, painting_folder: Path):
     """Komprimera original från original/-mapp och skapa desktop/mobile-versioner"""
     orig_kb = src.stat().st_size / 1024
-    create_backup(src)
 
     with Image.open(src) as img:
+        img = ImageOps.exif_transpose(img)
         img = to_rgb_if_needed(img, src)
         orig_w, orig_h = img.size
 
