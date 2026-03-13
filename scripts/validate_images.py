@@ -44,7 +44,7 @@ def validate_no_gaps(numbers: set, folder_name: str) -> bool:
 
     if numbers != expected:
         missing = expected - numbers
-        print(f"❌ {folder_name}: Lucka i numrering. Saknade: {sorted(missing)}")
+        print(f"❌ {folder_name}: Gap in numbering. Missing: {sorted(missing)}")
         return False
 
     return True
@@ -59,9 +59,9 @@ def validate_sync(desktop_images: list, mobile_images: list, folder_name: str) -
         only_mobile = mobile_names - desktop_names
 
         if only_desktop:
-            print(f"❌ {folder_name}: Finns i desktop men INTE i mobile: {sorted(only_desktop)}")
+            print(f"❌ {folder_name}: Found in desktop but NOT in mobile: {sorted(only_desktop)}")
         if only_mobile:
-            print(f"❌ {folder_name}: Finns i mobile men INTE i desktop: {sorted(only_mobile)}")
+            print(f"❌ {folder_name}: Found in mobile but NOT in desktop: {sorted(only_mobile)}")
 
         return False
 
@@ -71,7 +71,7 @@ def main():
     paintings_dir = ROOT / "images" / "paintings"
 
     if not paintings_dir.exists():
-        print("❌ Mappen images/paintings finns inte")
+        print("❌ Folder images/paintings not found")
         return 1
 
     all_passed = True
@@ -124,17 +124,17 @@ def main():
 
         # Check counts match
         if len(desktop_images) != len(mobile_images):
-            print(f"❌ {folder_label}: Olika antal bilder. Desktop: {len(desktop_images)}, Mobile: {len(mobile_images)}")
+            print(f"❌ {folder_label}: Different number of images. Desktop: {len(desktop_images)}, Mobile: {len(mobile_images)}")
             all_passed = False
 
         if all_passed and (desktop_images or mobile_images):
-            print(f"✓ {folder_label}: OK ({len(desktop_images)} bilder)")
+            print(f"✓ {folder_label}: OK ({len(desktop_images)} images)")
 
     if all_passed:
-        print("\n✅ Alla validerings-kontroller passerade!")
+        print("\n✅ All validation checks passed!")
         return 0
     else:
-        print("\n❌ Valideringsfel hittades!")
+        print("\n❌ Validation errors found!")
         return 1
 
 if __name__ == "__main__":
