@@ -1,0 +1,19 @@
+{
+  "name": "vaavascanvas",
+  "version": "1.0.0",
+  "description": "Devika's Art Gallery Website",
+  "scripts": {
+    "test": "node tests/validate.js && node tests/e2e.js"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "playwright": "^1.40.0"
+  },
+  "keywords": [
+    "art",
+    "gallery",
+    "portfolio"
+  ],
+  "author": "Devika",
+  "license": "MIT"
+}
