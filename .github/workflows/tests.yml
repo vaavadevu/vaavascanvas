@@ -1,0 +1,41 @@
+name: Pre-deployment Validation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    name: Run validation and E2E tests
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run data validation tests
+        run: node tests/validate.js
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium
+
+      - name: Run end-to-end tests
+        run: node tests/e2e.js
+
+      - name: All tests passed
+        if: success()
+        run: echo "✓ All validation and E2E tests passed! Site is ready to deploy."
+
+      - name: Tests failed
+        if: failure()
+        run: echo "✗ Tests failed. Please fix the issues before deploying."
