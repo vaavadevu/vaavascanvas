@@ -25,8 +25,8 @@ const keys = {
     en: "Art created\nfrom the heart",
   },
   hero_sub: {
-    sv: "Akrylmålningar inspirerade av naturen, djur och de tysta stunderna som berör.",
-    en: "Acrylic paintings inspired by nature, animals and the quiet moments that move you.",
+    sv: "Akrylmålningar inspirerade av naturen och djur.",
+    en: "Acrylic paintings inspired by nature and animals.",
   },
   hero_cta: {
     sv: "Se mina målningar",
