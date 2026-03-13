@@ -221,10 +221,10 @@ nav.active {
 
   .modalInner {
     grid-template-columns: 1fr;
-    padding: 20px 15px;
+    padding: 15px 10px;
     max-height: none;
     margin-top: 10px;
-    gap: 10px;
+    gap: 8px;
     height: 85vh;
   }
 
@@ -238,15 +238,47 @@ nav.active {
   }
 
   .modalImageWrapper img {
-    max-height: 40vh;
+    max-height: 32vh;
   }
 
   .modalRight {
     text-align: center;
+    display: flex;
+    flex-direction: column;
   }
 
   .modalRight h3 {
     margin: 0 0 1px;
+    font-size: 1.3rem;
+    order: 1;
+  }
+
+  .modalRight p {
+    font-size: 0.85rem;
+  }
+
+  #modal-size {
+    order: 3;
+  }
+
+  #modal-buttons {
+    order: 2;
+  }
+
+  #modal-desc {
+    font-size: 0.75rem;
+    line-height: 1.3;
+    margin: 2px 0;
+    order: 4;
+  }
+
+  .modalThumbs {
+    gap: 6px;
+  }
+
+  .modalThumb {
+    width: 45px;
+    height: 45px;
   }
 
   #modal-buttons {
