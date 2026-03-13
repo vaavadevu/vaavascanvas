@@ -27,7 +27,7 @@
   .box {
     justify-content: flex-end;
     /* Trycker hamburgaren till höger */
-    height: 70px;
+    height: 100px;
     /* Eller den höjd din header har */
   }
 
@@ -208,7 +208,7 @@ nav.active {
   #gallery {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
-    padding: 90px 10px ;
+    padding: 130px 10px ;
   }
 
   .modal {
