@@ -79,7 +79,7 @@ function openModalSilent(index) {
   modalImg.alt = painting.title;
   modalTitle.textContent = painting.title;
   modalSize.textContent = painting.size;
-  modalDesc.textContent = painting.description;
+  modalDesc.textContent = t(painting.descKey);
   buildModalThumbnails(imgs);
   configureModalArrows(imgs);
   renderModalButtons(painting);
@@ -113,7 +113,7 @@ function populateModal(painting) {
   modalImg.alt = painting.title;
   modalTitle.textContent = painting.title;
   modalSize.textContent = painting.size;
-  modalDesc.textContent = painting.description;
+  modalDesc.textContent = t(painting.descKey);
   buildModalThumbnails(imgs);
   configureModalArrows(imgs);
 }
@@ -258,7 +258,7 @@ function buildPaintingPreview(painting, height) {
     <div class="modalRight">
       <h3>${painting.title}</h3>
       <p>${painting.size}</p>
-      <p>${painting.description}</p>
+      <p>${t(painting.descKey)}</p>
     </div>
   `;
   return el;
@@ -275,7 +275,7 @@ function transitionToPainting(newIndex, direction) {
   modalImg.src = imgs[0];
   modalTitle.textContent = p.title;
   modalSize.textContent = p.size;
-  modalDesc.textContent = p.description;
+  modalDesc.textContent = t(p.descKey);
   buildModalThumbnails(imgs);
   configureModalArrows(imgs);
   renderModalButtons(p);
@@ -408,7 +408,7 @@ function setupSwipeGestures() {
       modalImg.src = imgs[0];
       modalTitle.textContent = p.title;
       modalSize.textContent = p.size;
-      modalDesc.textContent = p.description;
+      modalDesc.textContent = t(p.descKey);
       buildModalThumbnails(imgs);
       configureModalArrows(imgs);
       renderModalButtons(p);

@@ -274,6 +274,76 @@ const keys = {
     sv: "Du har 14 dagars returrätt. Tavlan ska returneras i originalskick och i originalförpackning. Returfrakten bekostas av köparen. Vid skada under transport — kontakta mig omgående med foton så löser vi det.",
     en: "You have 14 days right of return. The painting must be returned in its original condition and packaging. Return shipping is at the buyer's expense. In case of damage during transport — contact me immediately with photos and we'll sort it out.",
   },
+
+  // ── Painting descriptions ──────────────────────────────────────
+  desc_herrOchFruAndersson: {
+    sv: "Två gräsänder sedda uppifrån som visar ett stilla ögonblick av samhörighet på vattnet.",
+    en: "Two mallards seen from above showing a quiet moment of togetherness on the water.",
+  },
+  desc_womanInTheSea: {
+    sv: "Ett självporträtt i havet målad ur ett hopp om att hitta sig själv igen.",
+    en: "A self-portrait in the sea painted from hope of finding myself again.",
+  },
+  desc_vattenfall: {
+    sv: "Där vattnet möter klippan och tiden står stilla.",
+    en: "Where water meets rock and time stands still.",
+  },
+  desc_solnedgang: {
+    sv: "Himlen smälter samman med havet i ett stilla ögonblick av guld och ro.",
+    en: "The sky merges with the sea in a quiet moment of gold and peace.",
+  },
+  desc_sommarstuga: {
+    sv: "En varm sommardag i Småland och det doftar nästan nyklippt gräs.",
+    en: "A warm summer day in Småland and it smells almost like freshly mowed grass.",
+  },
+  desc_sommarPaStranden: {
+    sv: "Sand, sol och den där semesterkänslan som man aldrig vill ska ta slut.",
+    en: "Sand, sun and that vacation feeling you never want to end.",
+  },
+  desc_skaViPlockaBlommor: {
+    sv: "En stilla sjö omgiven av vackra näckrosor som en inbjudan att stanna upp lite längre.",
+    en: "A quiet lake surrounded by beautiful water lilies like an invitation to linger a little longer.",
+  },
+  desc_savannan: {
+    sv: "Savannens varma ljus i skymningen när dagen är slut och det är dags att vandra hem.",
+    en: "The warm light of the savanna at dusk when the day is done and it's time to head home.",
+  },
+  desc_varkansla: {
+    sv: "En trött blåmes som vilar bland körsbärsblommor våren är här, äntligen.",
+    en: "A tired blue tit resting among cherry blossoms, spring is here, finally.",
+  },
+  desc_norrsken: {
+    sv: "Ljuset dansar bakom bergen i en natt som känns som ett under.",
+    en: "The light dances behind the mountains on a night that feels like a miracle.",
+  },
+  desc_vargen: {
+    sv: "Vargen både vild och sårbar på en gång. En påminnelse om att styrka och mjukhet kan leva sida vid sida.",
+    en: "The wolf both wild and vulnerable at once. A reminder that strength and softness can live side by side.",
+  },
+  desc_radjur: {
+    sv: "Antiloper i lugnt bete som visar livet på savannen i sin enklaste, vackraste form.",
+    en: "Antelopes peacefully grazing showing life on the savanna in its simplest, most beautiful form.",
+  },
+  desc_skogsvila: {
+    sv: "Två rävar som myser tryggt inne i en gammal trädöppning, en plats där de kan vila och känna sig säkra.",
+    en: "Two foxes snuggled safely inside an old tree hollow, a place where they can rest and feel secure.",
+  },
+  desc_brollopspresent: {
+    sv: "En handmålad present till Herr och Fru Elfqvist på deras stora dag.",
+    en: "A hand-painted gift for Mr. and Mrs. Elfqvist on their big day.",
+  },
+  desc_bonnie: {
+    sv: "En illustration målad med kärlek som var ett present på ett litet livs första födelsedag.",
+    en: "An illustration painted with love as a gift on a little life's first birthday.",
+  },
+  desc_vinterlek: {
+    sv: "Hundarna Shiro och Otis som leker med varandra i snön.",
+    en: "Dogs Shiro and Otis playing together in the snow.",
+  },
+  desc_sommarvila: {
+    sv: "En isbjörnsmamma och hennes ungar vilar mjukt i blomsterhaven vid Hudson Bay som visar en stund av absolut frid.",
+    en: "A mother polar bear and her cubs resting gently in a flower garden by Hudson Bay showing a moment of absolute peace.",
+  },
 };
 
 // Build the translations object that i18n.js expects
