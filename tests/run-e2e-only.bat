@@ -7,33 +7,20 @@ color 0A
 cls
 
 echo.
-echo ══════════════════════════════════════════════════════════
+echo ==================================================
 echo VAAVASCANVAS - E2E TESTS ONLY
-echo (Slow - ~30 seconds, opens actual browser)
-echo ══════════════════════════════════════════════════════════
+echo (Slow - about 30 seconds, opens actual browser)
+echo ==================================================
 echo.
-
-REM Check if Node.js is installed
-echo Checking Node.js...
-where node >nul 2>&1
-if errorlevel 1 (
-    color 0C
-    echo ✗ ERROR: Node.js is not installed!
-    echo Please install from: https://nodejs.org/
-    echo.
-    pause
-    exit /b 1
-)
 
 cd /d "%~dp0\.."
 if errorlevel 1 (
     color 0C
-    echo ✗ ERROR: Could not change directory
+    echo ERROR: Could not change directory
     pause
     exit /b 1
 )
 
-echo ✓ Node.js found
 echo.
 
 REM Check if node_modules exists
@@ -44,29 +31,29 @@ if not exist "node_modules" (
     call npm install
     if errorlevel 1 (
         color 0C
-        echo ✗ Failed to install dependencies
+        echo Failed to install dependencies
         echo.
         pause
         exit /b 1
     )
-    echo ✓ Dependencies installed
+    echo Dependencies installed
     echo.
 )
 
 REM Check if Playwright is installed
 if not exist "node_modules\playwright" (
-    echo Installing Playwright browsers... this may take a moment
+    echo Installing Playwright browsers - this may take a moment...
     echo Please wait...
     echo.
     call npx playwright install chromium
     if errorlevel 1 (
         color 0C
-        echo ✗ Failed to install Playwright
+        echo Failed to install Playwright
         echo.
         pause
         exit /b 1
     )
-    echo ✓ Playwright installed
+    echo Playwright installed
     echo.
 )
 
@@ -78,11 +65,11 @@ call node tests/e2e.js
 if errorlevel 1 (
     color 0C
     echo.
-    echo ✗ E2E TESTS FAILED
+    echo E2E TESTS FAILED
 ) else (
     color 0B
     echo.
-    echo ✓ E2E TESTS PASSED
+    echo E2E TESTS PASSED
 )
 
 echo.
