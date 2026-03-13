@@ -1,0 +1,27 @@
+name: Validate Images
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'images/**'
+      - '.github/workflows/validate-images.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'images/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Validate image structure
+        run: python scripts/validate_images.py

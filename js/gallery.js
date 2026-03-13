@@ -3,7 +3,7 @@
 function getPaintingImagePaths(painting) {
   const folderId = painting.id;
   const count = painting.imageCount || 1;
-  const base = `images/paintings/${folderId}/`;
+  const base = `images/paintings/${folderId}/desktop/`;
   const mobileBase = `images/paintings/${folderId}/mobile/`;
   const isMobile = window.innerWidth <= 768;
 
