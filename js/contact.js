@@ -114,7 +114,7 @@ function updateArtworkPreview(select, previewId) {
     preview.style.display = "none";
     return;
   }
-  preview.src           = `images/paintings/${paintingId}/01.jpg`;
+  preview.src           = `images/paintings/${paintingId}/desktop/01.jpg`;
   preview.alt           = select.options[select.selectedIndex].dataset.title;
   preview.style.display = "block";
 }

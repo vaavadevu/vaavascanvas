@@ -1,14 +1,13 @@
-@ -0,0 +1,166 @@
 """
 generate_mobile_images.py
 
-1. Resekvensera originalbilder för att fylla luckor
-2. Komprimerar originalbilder på plats (desktop)
-3. Skapar och komprimerar mobilversioner av alla bilder i "mobile/"-undermappar
-
-Användning:
-  1. Körs från scripts/sync_paintings.bat
-  2. Eller från terminal: python scripts/generate_mobile_images.py
+Workflow:
+  1. Lägg uncompressed originalbilder i "original/" mapp
+  2. Kör scriptet: python generate_mobile_images.py
+  3. Scriptet skapar automatiskt:
+     - "desktop/" mapp med komprimerade desktop-versioner
+     - "mobile/" mapp med komprimerade mobil-versioner
+     - Renumrerar bilder 01, 02, 03... för att fylla luckor
 
 Kräver Pillow:
   pip install Pillow
@@ -17,10 +16,15 @@ Kräver Pillow:
 from PIL import Image
 from pathlib import Path
 import shutil
+import sys
+import io
+
+# Fix Unicode on Windows
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # ── Inställningar ────────────────────────────────────────────────────────────
 
-ROOT = Path(".").parent  # Går upp en nivå till projektrot
+ROOT = Path(".")
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
 
 DESKTOP_QUALITY = 82
@@ -68,20 +72,22 @@ def create_backup(src: Path):
 # ── Resekvensering ───────────────────────────────────────────────────────────
 
 def resequence_originals():
-    """Re-sekvensera originalbilder för att fylla luckor (01, 02, 03, 05 → 01, 02, 03, 04)"""
+    """Re-sekvensera originalbilder i original/-mapp för att fylla luckor"""
     paintings_dir = ROOT / "images" / "paintings"
 
     if not paintings_dir.exists():
         return
 
-    # Hitta alla subfolders i paintings-mappen
-    image_folders = set()
-    for img_path in paintings_dir.rglob("*"):
-        if img_path.suffix.lower() in IMAGE_EXTENSIONS and "mobile" not in img_path.parts:
-            image_folders.add(img_path.parent)
+    # Hitta alla "original/" mappar
+    for original_folder in paintings_dir.glob("*/original"):
+        if not original_folder.is_dir():
+            continue
 
-    for folder in image_folders:
-        original_images = sorted([p for p in folder.glob("*") if p.suffix.lower() in IMAGE_EXTENSIONS])
+        # Få alla originalbilder, sorterade
+        original_images = sorted([
+            p for p in original_folder.glob("*")
+            if p.is_file() and p.suffix.lower() in IMAGE_EXTENSIONS
+        ])
 
         if not original_images:
             continue
@@ -97,8 +103,8 @@ def resequence_originals():
 
 # ── Bearbeta bilder ──────────────────────────────────────────────────────────
 
-def process_image(src: Path):
-    """Komprimera original och skapa mobilversion"""
+def process_image(src: Path, painting_folder: Path):
+    """Komprimera original från original/-mapp och skapa desktop/mobile-versioner"""
     orig_kb = src.stat().st_size / 1024
     create_backup(src)
 
@@ -106,15 +112,19 @@ def process_image(src: Path):
         img = to_rgb_if_needed(img, src)
         orig_w, orig_h = img.size
 
-        # Desktop – komprimera på plats
-        used_q, desk_kb = save_compressed(img, src, DESKTOP_QUALITY, DESKTOP_MAX_KB)
-        print(f"✓  {src}")
+        # Desktop – spara i desktop/-mapp
+        desktop_dir = painting_folder / "desktop"
+        desktop_dir.mkdir(exist_ok=True)
+        desktop_path = desktop_dir / src.name
+
+        used_q, desk_kb = save_compressed(img, desktop_path, DESKTOP_QUALITY, DESKTOP_MAX_KB)
+        print(f"✓  {src.name}")
         print(f"   Desktop: {orig_w}×{orig_h}px  {orig_kb:.0f}kb → {desk_kb:.0f}kb  (kvalitet {used_q})")
 
-        # Mobil – skala + komprimera
-        mobile_dir = src.parent / "mobile"
+        # Mobil – skala + komprimera, spara i mobile/-mapp
+        mobile_dir = painting_folder / "mobile"
         mobile_dir.mkdir(exist_ok=True)
-        dst = mobile_dir / src.name
+        mobile_path = mobile_dir / src.name
 
         if orig_w > MOBILE_MAX_WIDTH:
             ratio = MOBILE_MAX_WIDTH / orig_w
@@ -122,46 +132,59 @@ def process_image(src: Path):
         else:
             mob_img = img
 
-        mob_q, mob_kb = save_compressed(mob_img, dst, MOBILE_QUALITY, MOBILE_MAX_KB)
+        mob_q, mob_kb = save_compressed(mob_img, mobile_path, MOBILE_QUALITY, MOBILE_MAX_KB)
         mob_w, mob_h = mob_img.size
         print(f"   Mobil:   {mob_w}×{mob_h}px  {mob_kb:.0f}kb  (kvalitet {mob_q})\n")
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
+    paintings_dir = ROOT / "images" / "paintings"
+
+    if not paintings_dir.exists():
+        print("❌ images/paintings/ mapp finns inte!")
+        return
+
     # Steg 1: Re-sekvensera originalbilder för att fylla luckor
     print("📝 Re-sekvenserar originalbilder...\n")
     resequence_originals()
 
-    # Steg 2: Ta bort alla mobile-bilder
-    print("\n🗑  Raderar alla mobile-bilder...\n")
-    paintings_dir = ROOT / "images" / "paintings"
-    if paintings_dir.exists():
-        for mobile_folder in paintings_dir.rglob("mobile"):
-            if mobile_folder.is_dir():
-                for mobile_img in mobile_folder.glob("*"):
-                    if mobile_img.is_file():
-                        mobile_img.unlink()
-                print(f"🗑  Raderade alla bilder i: {mobile_folder}")
+    # Steg 2: Ta bort desktop- och mobile-mappar för ren regenerering
+    print("\n🗑  Raderar gamla compressed bilder...\n")
+    for folder_type in ["desktop", "mobile"]:
+        for old_folder in paintings_dir.glob(f"*/{folder_type}"):
+            if old_folder.is_dir():
+                for img in old_folder.glob("*"):
+                    if img.is_file():
+                        img.unlink()
+                print(f"🗑  Raderade alla bilder i: {old_folder}")
 
-    # Steg 3: Bearbeta alla originalbilder
-    print("\n🆕 Bearbetar och komprimerar bilder...\n")
-    all_images = sorted([
-        p for p in ROOT.rglob("*")
-        if p.suffix.lower() in IMAGE_EXTENSIONS
-        and "mobile" not in p.parts
-        and "backup" not in p.parts
-    ])
+    # Steg 3: Bearbeta originalbilder och skapa desktop/mobile-versioner
+    print("\n🆕 Bearbetar originalbilder...\n")
 
-    if not all_images:
-        print("Inga bilder hittades.")
+    total_processed = 0
+    for original_folder in sorted(paintings_dir.glob("*/original")):
+        painting_folder = original_folder.parent
+
+        # Få alla originalbilder, sorterade
+        original_images = sorted([
+            p for p in original_folder.glob("*")
+            if p.is_file() and p.suffix.lower() in IMAGE_EXTENSIONS
+        ])
+
+        if not original_images:
+            continue
+
+        print(f"📁 {painting_folder.name}/ ({len(original_images)} bild(er))\n")
+        for src in original_images:
+            process_image(src, painting_folder)
+            total_processed += 1
+
+    if total_processed == 0:
+        print("Inga originalbilder hittades i original/-mappar.")
         return
 
-    print(f"Bearbetar {len(all_images)} bild(er)...\n")
-    for src in all_images:
-        process_image(src)
-
-    print("✅ Klart!")
+    print(f"✅ Bearbetade {total_processed} bild(er) totalt!")
 
 if __name__ == "__main__":
     main()

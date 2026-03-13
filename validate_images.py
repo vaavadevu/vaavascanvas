@@ -3,7 +3,8 @@ validate_images.py
 
 Validates image structure in paintings folders:
 1. No gaps in numbering (01, 02, 03... with no gaps)
-2. Originals and mobile folders have same filenames and count
+2. Desktop and mobile folders have same filenames and count
+3. Checks desktop/ and mobile/ folders (original/ is just source files)
 
 Usage:
   python validate_images.py
@@ -48,19 +49,19 @@ def validate_no_gaps(numbers: set, folder_name: str) -> bool:
 
     return True
 
-def validate_sync(original_images: list, mobile_images: list, folder_name: str) -> bool:
-    """Check if originals and mobile folders have same filenames"""
-    orig_names = {img.name for img in original_images}
+def validate_sync(desktop_images: list, mobile_images: list, folder_name: str) -> bool:
+    """Check if desktop and mobile folders have same filenames"""
+    desktop_names = {img.name for img in desktop_images}
     mobile_names = {img.name for img in mobile_images}
 
-    if orig_names != mobile_names:
-        only_orig = orig_names - mobile_names
-        only_mobile = mobile_names - orig_names
+    if desktop_names != mobile_names:
+        only_desktop = desktop_names - mobile_names
+        only_mobile = mobile_names - desktop_names
 
-        if only_orig:
-            print(f"❌ {folder_name}: Finns i original men INTE i mobile: {sorted(only_orig)}")
+        if only_desktop:
+            print(f"❌ {folder_name}: Finns i desktop men INTE i mobile: {sorted(only_desktop)}")
         if only_mobile:
-            print(f"❌ {folder_name}: Finns i mobile men INTE i original: {sorted(only_mobile)}")
+            print(f"❌ {folder_name}: Finns i mobile men INTE i desktop: {sorted(only_mobile)}")
 
         return False
 
@@ -73,20 +74,25 @@ def main():
         print("❌ Mappen images/paintings finns inte")
         return 1
 
-    # Find all painting subfolders (not mobile)
     all_passed = True
 
+    # Find all painting subfolders (those containing desktop/ or mobile/)
     for subfolder in sorted(paintings_dir.iterdir()):
-        if not subfolder.is_dir() or subfolder.name == "mobile":
+        if not subfolder.is_dir() or subfolder.name in ("original", "desktop", "mobile"):
             continue
 
-        # Get original images
-        original_images = sorted([
-            p for p in subfolder.glob("*")
-            if p.is_file() and p.suffix.lower() in IMAGE_EXTENSIONS
-        ])
+        folder_label = f"images/paintings/{subfolder.name}"
 
-        # Get mobile images
+        # Get desktop images (compressed for desktop)
+        desktop_folder = subfolder / "desktop"
+        desktop_images = []
+        if desktop_folder.exists():
+            desktop_images = sorted([
+                p for p in desktop_folder.glob("*")
+                if p.is_file() and p.suffix.lower() in IMAGE_EXTENSIONS
+            ])
+
+        # Get mobile images (compressed for mobile)
         mobile_folder = subfolder / "mobile"
         mobile_images = []
         if mobile_folder.exists():
@@ -95,26 +101,34 @@ def main():
                 if p.is_file() and p.suffix.lower() in IMAGE_EXTENSIONS
             ])
 
-        folder_label = f"images/paintings/{subfolder.name}"
+        # Skip if no compressed images (original/ folder is OK to have just source files)
+        if not desktop_images and not mobile_images:
+            continue
 
-        # Validate no gaps in originals
-        if original_images:
-            orig_numbers = get_image_numbers(original_images)
-            if not validate_no_gaps(orig_numbers, f"{folder_label} (original)"):
+        # Validate no gaps in desktop
+        if desktop_images:
+            desktop_numbers = get_image_numbers(desktop_images)
+            if not validate_no_gaps(desktop_numbers, f"{folder_label}/desktop"):
                 all_passed = False
 
-        # Validate sync
-        if original_images or mobile_images:
-            if not validate_sync(original_images, mobile_images, folder_label):
+        # Validate no gaps in mobile
+        if mobile_images:
+            mobile_numbers = get_image_numbers(mobile_images)
+            if not validate_no_gaps(mobile_numbers, f"{folder_label}/mobile"):
+                all_passed = False
+
+        # Validate desktop and mobile sync
+        if desktop_images or mobile_images:
+            if not validate_sync(desktop_images, mobile_images, folder_label):
                 all_passed = False
 
         # Check counts match
-        if len(original_images) != len(mobile_images):
-            print(f"❌ {folder_label}: Olika antal bilder. Original: {len(original_images)}, Mobile: {len(mobile_images)}")
+        if len(desktop_images) != len(mobile_images):
+            print(f"❌ {folder_label}: Olika antal bilder. Desktop: {len(desktop_images)}, Mobile: {len(mobile_images)}")
             all_passed = False
 
-        if all_passed and (original_images or mobile_images):
-            print(f"✓ {folder_label}: OK ({len(original_images)} bilder)")
+        if all_passed and (desktop_images or mobile_images):
+            print(f"✓ {folder_label}: OK ({len(desktop_images)} bilder)")
 
     if all_passed:
         print("\n✅ Alla validerings-kontroller passerade!")
