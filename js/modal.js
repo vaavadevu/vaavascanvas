@@ -65,6 +65,8 @@ function openModal(index) {
   populateModal(paintings[index]);
   renderModalButtons(paintings[index]);
   modalElement.style.display = "flex";
+  document.documentElement.style.overflow = "hidden";
+  document.body.style.overflow = "hidden";
   preloadAdjacentImages();
   setUrlParam("painting", paintings[index].id);
 }
@@ -83,12 +85,16 @@ function openModalSilent(index) {
   buildModalThumbnails(imgs);
   configureModalArrows(imgs);
   renderModalButtons(painting);
+  document.documentElement.style.overflow = "hidden";
+  document.body.style.overflow = "hidden";
   preloadAdjacentImages();
   setUrlParam("painting", painting.id);
 }
 
 function closeModal() {
   if (modalElement) modalElement.style.display = "none";
+  document.documentElement.style.overflow = "";
+  document.body.style.overflow = "";
   isTransitioning = false;
   removeUrlParam("painting");
 }
