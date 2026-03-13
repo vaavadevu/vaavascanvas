@@ -23,7 +23,7 @@
 
 /* ─── Header ─── */
 header {
-  height: fit-content;
+  height: 100px;
   background-color: var(--accent-light);
   border-bottom: 1px solid var(--accent-green);
 }
