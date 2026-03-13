@@ -63,7 +63,8 @@
   border-radius: 8px;
   display: block;
   margin: 0;
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: pointer;
   transform: scale(1);
   transform-origin: center center;
   transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -73,6 +74,7 @@
 
   .modalImageWrapper img:hover {
     transform: none;
+    opacity: 0.9;
   }
 }
 
@@ -241,4 +243,71 @@
   .arrow.right {
     right: 30px;
   }
+}
+
+/* ─── Fullscreen Overlay ─── */
+.fullscreenOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.95);
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 2000;
+  overflow: hidden;
+  contain: layout style paint;
+}
+
+.fullscreenOverlay.active {
+  display: flex;
+}
+
+/* Desktop zoom cursor states - only on image hover */
+@media (min-width: 769px) {
+  #fullscreenImg {
+    cursor: zoom-in;
+  }
+
+  .fullscreenOverlay.is-zoomed-1 #fullscreenImg {
+    cursor: zoom-in;
+  }
+
+  .fullscreenOverlay.is-zoomed-2 #fullscreenImg {
+    cursor: zoom-out;
+  }
+}
+
+#fullscreenImg {
+  max-width: 95vw;
+  max-height: 95vh;
+  object-fit: contain;
+  border-radius: 8px;
+  transform: scale(1);
+  transform-origin: center center;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  user-select: none;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+#fullscreenImg:hover {
+  opacity: 0.95;
+}
+
+.fullscreenClose {
+  position: fixed;
+  top: 20px;
+  right: 30px;
+  color: white;
+  font-size: 40px;
+  cursor: pointer;
+  user-select: none;
+  z-index: 2001;
+  transition: transform 0.2s;
+}
+
+.fullscreenClose:hover {
+  transform: scale(1.1);
 }
