@@ -434,11 +434,106 @@ function setupSwipeGestures() {
 
 // ── Listeners ─────────────────────────────────────────────────
 
+// ── Fullscreen image viewer ───────────────────────────────────
+
+let fullscreenZoomLevel = 0;
+
+function resetFullscreenZoom() {
+  const img = document.getElementById("fullscreenImg");
+  if (!img) return;
+  fullscreenZoomLevel = 0;
+  img.style.transform = "scale(1)";
+  img.style.transformOrigin = "center center";
+  document.getElementById("fullscreenOverlay")?.classList.remove("is-zoomed-1", "is-zoomed-2");
+}
+
+function updateFullscreenZoomPosition(e, overlay) {
+  const img = document.getElementById("fullscreenImg");
+  if (!img) return;
+  const rect = overlay.getBoundingClientRect();
+  img.style.transformOrigin =
+    `${((e.clientX - rect.left) / rect.width) * 100}% ${((e.clientY - rect.top) / rect.height) * 100}%`;
+}
+
+function openFullscreen(imageSrc) {
+  const overlay = document.getElementById("fullscreenOverlay");
+  const img = document.getElementById("fullscreenImg");
+  if (!overlay || !img) return;
+
+  img.src = imageSrc;
+  overlay.classList.add("active");
+  resetFullscreenZoom();
+  document.documentElement.style.overflow = "hidden";
+  document.body.style.overflow = "hidden";
+}
+
+function closeFullscreen() {
+  const overlay = document.getElementById("fullscreenOverlay");
+  if (!overlay) return;
+
+  overlay.classList.remove("active");
+  resetFullscreenZoom();
+  document.documentElement.style.overflow = "";
+  document.body.style.overflow = "";
+}
+
+function setupFullscreenZoom() {
+  const overlay = document.getElementById("fullscreenOverlay");
+  const img = document.getElementById("fullscreenImg");
+  if (!overlay || !img) return;
+
+  overlay.addEventListener("click", (e) => {
+    // Only zoom if clicking on the image, not the background
+    if (e.target !== img) {
+      closeFullscreen();
+      return;
+    }
+
+    // Zoom only on desktop
+    if (window.innerWidth <= 768) return;
+
+    fullscreenZoomLevel = (fullscreenZoomLevel + 1) % 3;
+    img.style.transform = ["scale(1)", "scale(2)", "scale(4)"][fullscreenZoomLevel];
+    overlay.classList.toggle("is-zoomed-1", fullscreenZoomLevel === 1);
+    overlay.classList.toggle("is-zoomed-2", fullscreenZoomLevel === 2);
+    updateFullscreenZoomPosition(e, overlay);
+  });
+
+  overlay.addEventListener("mousemove", (e) => {
+    if (window.innerWidth <= 768 || fullscreenZoomLevel === 0) return;
+    updateFullscreenZoomPosition(e, overlay);
+  });
+
+  overlay.addEventListener("mouseleave", () => {
+    if (window.innerWidth <= 768) return;
+    resetFullscreenZoom();
+  });
+}
+
+function setupFullscreenListeners() {
+  const overlay = document.getElementById("fullscreenOverlay");
+  const closeBtn = document.getElementById("fullscreenClose");
+  const modalImg = document.getElementById("modal-img");
+
+  if (!overlay || !closeBtn || !modalImg) return;
+
+  setupFullscreenZoom();
+
+  // Click on image to open fullscreen
+  modalImg.addEventListener("click", () => {
+    openFullscreen(modalImg.src);
+  });
+
+  // Close button
+  closeBtn.addEventListener("click", closeFullscreen);
+}
+
 function attachModalListeners() {
   if (!resolveModalRefs()) return;
 
   setupZoomEffect();
   setupSwipeGestures();
+  setupFullscreenListeners();
 
   if (modalCloseBtn) modalCloseBtn.onclick = closeModal;
   if (modalNextBtn) modalNextBtn.onclick = showNextPainting;
@@ -446,8 +541,17 @@ function attachModalListeners() {
 
   modalElement.onclick = (e) => { if (e.target === modalElement) closeModal(); };
   document.onkeydown = (e) => {
-    if (e.key === "Escape") closeModal();
-    if (e.key === "ArrowRight") showNextPainting();
-    if (e.key === "ArrowLeft") showPrevPainting();
+    const fullscreenOverlay = document.getElementById("fullscreenOverlay");
+    const isFullscreenActive = fullscreenOverlay?.classList.contains("active");
+
+    if (e.key === "Escape") {
+      if (isFullscreenActive) {
+        closeFullscreen();
+      } else {
+        closeModal();
+      }
+    }
+    if (e.key === "ArrowRight" && !isFullscreenActive) showNextPainting();
+    if (e.key === "ArrowLeft" && !isFullscreenActive) showPrevPainting();
   };
 }
