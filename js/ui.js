@@ -9,8 +9,8 @@ async function buildComponents() {
 
     const isIndex = window.location.pathname.includes("index") || window.location.pathname === "/";
     const isPictures = window.location.pathname.includes("pictures");
-    if (isIndex) document.querySelector('a[href="index.html#top"]')?.classList.add("active");
-    if (isPictures) document.querySelector('a[href="pages/pictures.html"]')?.classList.add("active");
+    if (isIndex) document.querySelector('a[href="/#top"]')?.classList.add("active");
+    if (isPictures) document.querySelector('a[href="/pages/pictures.html"]')?.classList.add("active");
 
     setupMobileMenu();
 
@@ -119,7 +119,7 @@ function setupScrollWatcher() {
     if (!footer) return;
     const footerInView = footer.getBoundingClientRect().top <= window.innerHeight / 2;
     const isPictures = window.location.href.includes("pictures.html");
-    const currentQuery = footerInView ? "#footer" : isPictures ? "pages/pictures.html" : "index.html#top";
+    const currentQuery = footerInView ? "#footer" : isPictures ? "/pages/pictures.html" : "/#top";
     activateNavQuery(currentQuery);
   });
 }
