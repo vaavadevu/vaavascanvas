@@ -156,6 +156,43 @@ def generate_counts_json():
 
     print(f"\n✅ counts.json uppdaterad!")
 
+# ── Generera metadata.json ────────────────────────────────────────────────────
+
+def generate_metadata_json():
+    """Generate metadata.json with aspect ratios for each painting's 01.jpg"""
+    paintings_dir = ROOT / "images" / "paintings"
+    metadata = {}
+
+    for painting_folder in sorted(paintings_dir.iterdir()):
+        if not painting_folder.is_dir():
+            continue
+
+        desktop_folder = painting_folder / "desktop"
+        if not desktop_folder.exists():
+            continue
+
+        # Check if 01.jpg exists
+        first_image = desktop_folder / "01.jpg"
+        if not first_image.exists():
+            continue
+
+        # Open image and get dimensions
+        try:
+            with Image.open(first_image) as img:
+                width, height = img.size
+                aspect_ratio = round(width / height, 4)
+                metadata[painting_folder.name] = aspect_ratio
+                print(f"📐 {painting_folder.name}: {width}×{height}px (ratio {aspect_ratio})")
+        except Exception as e:
+            print(f"⚠️  Kunde inte läsa {first_image}: {e}")
+
+    # Write metadata.json
+    metadata_file = paintings_dir / "metadata.json"
+    with open(metadata_file, "w", encoding="utf-8") as f:
+        json.dump(metadata, f, indent=2, ensure_ascii=False)
+
+    print(f"\n✅ metadata.json uppdaterad!")
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
@@ -209,6 +246,10 @@ def main():
     # Steg 4: Generera counts.json för att uppdatera image counts på webbplatsen
     print("\n📊 Genererar counts.json...\n")
     generate_counts_json()
+
+    # Steg 5: Generera metadata.json för aspect ratios
+    print("\n📊 Genererar metadata.json...\n")
+    generate_metadata_json()
 
 if __name__ == "__main__":
     main()
