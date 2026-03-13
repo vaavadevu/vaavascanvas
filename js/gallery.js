@@ -40,54 +40,28 @@ function createGalleryItem(painting, index) {
   const item = document.createElement("div");
   item.classList.add("gallery-item");
 
+  // Apply circular shape if specified
+  if (painting.shape === SHAPE.CIRCLE) {
+    item.classList.add("gallery-item--circle");
+  }
+
   const img = document.createElement("img");
   const paths = getPaintingImagePaths(painting);
   img.src = paths[0];
   img.alt = painting.title;
+
+  // Apply aspect ratio if available, otherwise use 1:1 for circles
+  if (painting.aspectRatio) {
+    img.style.aspectRatio = painting.aspectRatio;
+  } else if (painting.shape === SHAPE.CIRCLE) {
+    img.style.aspectRatio = "1 / 1";
+  }
 
   img.addEventListener("error", () => { img.src = "/images/devika.jpg"; });
   img.addEventListener("click", () => openModal(index));
 
   item.appendChild(img);
   if (painting.status === STATUS.SOLD) addSoldBadge(item);
-
-  if (paths.length > 1) {
-    const dots = document.createElement("div");
-    dots.classList.add("gallery-dots");
-
-    paths.forEach((_, i) => {
-      const dot = document.createElement("span");
-      dot.classList.add("gallery-dot");
-      if (i === 0) dot.classList.add("active");
-      dots.appendChild(dot);
-    });
-
-    item.appendChild(dots);
-
-    item.addEventListener("mousemove", (e) => {
-      if (!paths.length) return;
-      const rect = item.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width;
-
-      // Math.max(0, ...) ser till att indexet aldrig blir lägre än 0
-      const newIndex = Math.max(0, Math.min(Math.floor(x * paths.length), paths.length - 1));
-
-      // Kontrollera att paths[newIndex] faktiskt existerar innan split()
-      if (paths[newIndex] && !img.src.endsWith(paths[newIndex].split("/").pop())) {
-        img.src = paths[newIndex];
-        dots.querySelectorAll(".gallery-dot").forEach((dot, i) => {
-          dot.classList.toggle("active", i === newIndex);
-        });
-      }
-    });
-
-    item.addEventListener("mouseleave", () => {
-      img.src = paths[0];
-      dots.querySelectorAll(".gallery-dot").forEach((dot, i) => {
-        dot.classList.toggle("active", i === 0);
-      });
-    });
-  }
 
   return item;
 }
