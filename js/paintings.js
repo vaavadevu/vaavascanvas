@@ -16,7 +16,7 @@ const paintings = [
   {
     id: "herrOchFruAndersson",
     title: "Herr och Fru Andersson",
-    description: "Gräsänder i sjön",
+    description: "Två gräsänder sedda uppifrån som visar ett stilla ögonblick av samhörighet på vattnet.",
     size: "60 x 90 cm",
     originalPrice: 3000,
     status: STATUS.SOLD,
@@ -24,7 +24,7 @@ const paintings = [
   {
     id: "womanInTheSea",
     title: "Woman of the Sea",
-    description: "En självpoträtt inspirerad av hopp.",
+    description: "Ett självporträtt i havet målad ur ett hopp om att hitta sig själv igen.",
     size: "60 x 90 cm",
     originalPrice: 2000,
     status: STATUS.FOR_SALE,
@@ -40,7 +40,7 @@ const paintings = [
   {
     id: "solnedgang",
     title: "Havet",
-    description: "Solnedgång i havet",
+    description: "Himlen smälter samman med havet i ett stilla ögonblick av guld och ro.",
     size: "41 x 33 cm",
     originalPrice: 1000,
     status: STATUS.FOR_SALE,
@@ -48,7 +48,7 @@ const paintings = [
   {
     id: "sommarstuga",
     title: "Sommarstuga",
-    description: "En somrig dag i Småland.",
+    description: "En varm sommardag i Småland och det doftar nästan nyklippt gräs.",
     size: "42 x 59 cm",
     originalPrice: 1500,
     status: STATUS.FOR_SALE,
@@ -56,15 +56,15 @@ const paintings = [
   {
     id: "sommarPaStranden",
     title: "Beach day",
-    description: "Semester på strand.",
+    description: "Sand, sol och den där semesterkänslan som man aldrig vill ska ta slut.",
     size: "42 x 59 cm",
     originalPrice: 1800,
     status: STATUS.FOR_SALE,
   },
   {
     id: "skaViPlockaBlommor",
-    title: "Ska vi plocka blommor",
-    description: "Stilla sjö med blommor",
+    title: "Näckrosor",
+    description: "En stilla sjö omgiven av vackra näckrosor som en inbjudan att stanna upp lite längre.",
     size: "42 x 59 cm",
     originalPrice: 1500,
     status: STATUS.SOLD,
@@ -72,7 +72,7 @@ const paintings = [
   {
     id: "savannan",
     title: "Dags att gå hem",
-    description: "Savanna temad berättelse",
+    description: "Savannens varma ljus i skymningen när dagen är slut och det är dags att vandra hem.",
     size: "42 x 59 cm",
     originalPrice: 1500,
     status: STATUS.FOR_SALE,
@@ -80,7 +80,7 @@ const paintings = [
   {
     id: "varkansla",
     title: "Vårkänsla",
-    description: "Körsbärsblommor och en trött blåmes som vilar",
+    description: "En trött blåmes som vilar bland körsbärsblommor våren är här, äntligen.",
     size: "42 x 59 cm",
     originalPrice: 1500,
     status: STATUS.SOLD,
@@ -88,7 +88,7 @@ const paintings = [
   {
     id: "norrsken",
     title: "Norrsken",
-    description: "Norrsken bakom bergen.",
+    description: "Ljuset dansar bakom bergen i en natt som känns som ett under.",
     size: "41 x 33 cm",
     originalPrice: 1000,
     status: STATUS.FOR_SALE,
@@ -96,7 +96,7 @@ const paintings = [
   {
     id: "vargen",
     title: "Två sidor av samma mynt",
-    description: "Målning som visar balans och styrka",
+    description: "Vargen både vild och sårbar på en gång. En påminnelse om att styrka och mjukhet kan leva sida vid sida.",
     size: "42 x 59 cm",
     originalPrice: 1500,
     status: STATUS.FOR_SALE,
@@ -104,7 +104,7 @@ const paintings = [
   {
     id: "radjur",
     title: "Savannan",
-    description: "Antiloper som betar i savanna",
+    description: "Antiloper i lugnt bete som visar livet på savannen i sin enklaste, vackraste form.",
     size: "42 x 59 cm",
     originalPrice: 1500,
     status: STATUS.FOR_SALE,
@@ -112,7 +112,7 @@ const paintings = [
   {
     id: "skogsvila",
     title: "Skogsvila",
-    description: "Rävar som myser innuti en trädöppning",
+    description: "Två rävar som myser tryggt inne i en gammal trädöppning, en plats där de kan vila och känna sig säkra.",
     size: "90 cm",
     originalPrice: 3000,
     status: STATUS.FOR_SALE,
@@ -120,14 +120,14 @@ const paintings = [
   {
     id: "brollopspresent",
     title: "Bröllop",
-    description: "Bröllopsdag present till Herr och Fru Elfqvist.",
+    description: "En handmålad present till Herr och Fru Elfqvist på deras stora dag.",
     size: "42 x 59 cm",
     status: STATUS.PERSONAL,
   },
   {
     id: "bonnie",
     title: "Sovven och Bonnie",
-    description: "Illustration som var en present till bebisen på hennes ett års födelsedag",
+    description: "En illustration målad med kärlek som var ett present på ett litet livs första födelsedag.",
     size: "42 x 59 cm",
     status: STATUS.PERSONAL,
   },
@@ -141,7 +141,7 @@ const paintings = [
   {
     id: "sommarvila",
     title: "Sommarvila",
-    description: "Isbjörnsmamma och hennes ungar som vilar i Hudson Bay",
+    description: "En isbjörnsmamma och hennes ungar vilar mjukt i blomsterhaven vid Hudson Bay som visar en stund av absolut frid.",
     size: "42 x 59 cm",
     originalPrice: 2000,
     status: STATUS.FOR_SALE,
