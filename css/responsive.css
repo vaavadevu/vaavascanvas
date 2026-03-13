@@ -182,6 +182,7 @@ nav.active {
     font-size: 0.95rem;
     padding: 0 10px;
     max-width: 100%;
+    /* visibility: hidden; */
   }
 
   main {
@@ -211,7 +212,6 @@ nav.active {
   }
 
   .modal {
-    padding: 15px;
     align-items: flex-start;
   }
 
@@ -219,7 +219,18 @@ nav.active {
     grid-template-columns: 1fr;
     padding: 20px 15px;
     max-height: none;
-    margin-top: 40px;
+    margin-top: 10px;
+    gap: 10px;
+    height: 85vh;
+  }
+
+  .modalLeft {
+    flex-direction: column-reverse;
+  }
+
+  .modalImageWrapper {
+    justify-content: flex-end;
+    height: auto;
   }
 
   .modalImageWrapper img {
@@ -228,6 +239,15 @@ nav.active {
 
   .modalRight {
     text-align: center;
+  }
+
+  .modalRight h3 {
+    margin: 0 0 1px;
+  }
+
+  #modal-buttons {
+    margin-top: 0;
+    gap: 0;
   }
 
   .arrow.left {
