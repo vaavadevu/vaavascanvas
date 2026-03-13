@@ -120,6 +120,10 @@ nav.active {
 
 #nav-menu.active {
   height: calc(100vh - 100px);
+  position: fixed;
+  top: 100px;
+  left: 0;
+  right: 0;
 }
   footer {
     padding: 30px 15px 15px;
