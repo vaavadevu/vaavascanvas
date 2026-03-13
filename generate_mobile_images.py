@@ -18,6 +18,7 @@ from pathlib import Path
 import shutil
 import sys
 import io
+import json
 
 # Fix Unicode on Windows
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
@@ -136,6 +137,35 @@ def process_image(src: Path, painting_folder: Path):
         mob_w, mob_h = mob_img.size
         print(f"   Mobil:   {mob_w}×{mob_h}px  {mob_kb:.0f}kb  (kvalitet {mob_q})\n")
 
+# ── Generera counts.json ──────────────────────────────────────────────────────
+
+def generate_counts_json():
+    """Generate counts.json with image counts for each painting folder"""
+    paintings_dir = ROOT / "images" / "paintings"
+    counts = {}
+
+    for painting_folder in sorted(paintings_dir.iterdir()):
+        if not painting_folder.is_dir():
+            continue
+
+        desktop_folder = painting_folder / "desktop"
+        if desktop_folder.exists():
+            # Count actual images in desktop folder
+            images = [
+                p for p in desktop_folder.glob("*")
+                if p.is_file() and p.suffix.lower() in IMAGE_EXTENSIONS
+            ]
+            if images:
+                counts[painting_folder.name] = len(images)
+                print(f"📁 {painting_folder.name}: {len(images)} bild(er)")
+
+    # Write counts.json
+    counts_file = paintings_dir / "counts.json"
+    with open(counts_file, "w", encoding="utf-8") as f:
+        json.dump(counts, f, indent=2, ensure_ascii=False)
+
+    print(f"\n✅ counts.json uppdaterad!")
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
@@ -185,6 +215,10 @@ def main():
         return
 
     print(f"✅ Bearbetade {total_processed} bild(er) totalt!")
+
+    # Steg 4: Generera counts.json för att uppdatera image counts på webbplatsen
+    print("\n📊 Genererar counts.json...\n")
+    generate_counts_json()
 
 if __name__ == "__main__":
     main()
