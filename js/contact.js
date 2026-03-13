@@ -20,8 +20,18 @@ function setupContactForm() {
   const commissionInfo = document.getElementById("f-commissionInfo");
   const originalInfo   = document.getElementById("f-originalInfo");
   const printInfo      = document.getElementById("f-printInfo");
+  const messageField   = document.getElementById("f-message");
 
   if (!form || !typeSelect) return;
+
+  // Auto-expand textarea as user types
+  if (messageField) {
+    const autoExpandTextarea = () => {
+      messageField.style.height = "40px";
+      messageField.style.height = messageField.scrollHeight + "px";
+    };
+    messageField.addEventListener("input", autoExpandTextarea);
+  }
 
   typeSelect.addEventListener("change", () => {
     const val = typeSelect.value;
@@ -97,7 +107,10 @@ function populateArtworkDropdowns() {
   paintings.filter(p => p.status === STATUS.FOR_SALE).forEach(p => {
     const option = document.createElement("option");
     option.value         = p.id;
-    option.textContent   = `${p.title} – ${p.size} – ${p.originalPrice} kr`;
+    const dimensions = p.shape === SHAPE.CIRCLE
+      ? `${p.diameter} cm`
+      : `${p.width} x ${p.height} cm`;
+    option.textContent   = `${p.title} – ${dimensions} – ${p.originalPrice} kr`;
     option.dataset.title = p.title;
     originalSelect.appendChild(option);
   });
