@@ -4,7 +4,7 @@ async function buildContactForm() {
   const container = document.getElementById("formContainer");
   if (!container) return;
 
-  const response = await fetch("form.html");
+  const response = await fetch("/pages/form.html");
   container.innerHTML = await response.text();
 
   setupContactForm();
@@ -114,7 +114,7 @@ function updateArtworkPreview(select, previewId) {
     preview.style.display = "none";
     return;
   }
-  preview.src           = `images/paintings/${paintingId}/desktop/01.jpg`;
+  preview.src           = `/images/paintings/${paintingId}/desktop/01.jpg`;
   preview.alt           = select.options[select.selectedIndex].dataset.title;
   preview.style.display = "block";
 }

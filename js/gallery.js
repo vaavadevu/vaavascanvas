@@ -3,8 +3,8 @@
 function getPaintingImagePaths(painting) {
   const folderId = painting.id;
   const count = painting.imageCount || 1;
-  const base = `images/paintings/${folderId}/desktop/`;
-  const mobileBase = `images/paintings/${folderId}/mobile/`;
+  const base = `/images/paintings/${folderId}/desktop/`;
+  const mobileBase = `/images/paintings/${folderId}/mobile/`;
   const isMobile = window.innerWidth <= 768;
 
   return Array.from({ length: count }, (_, i) => {
@@ -45,7 +45,7 @@ function createGalleryItem(painting, index) {
   img.src = paths[0];
   img.alt = painting.title;
 
-  img.addEventListener("error", () => { img.src = "images/devika.jpg"; });
+  img.addEventListener("error", () => { img.src = "/images/devika.jpg"; });
   img.addEventListener("click", () => openModal(index));
 
   item.appendChild(img);

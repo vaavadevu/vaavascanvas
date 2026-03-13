@@ -3,14 +3,14 @@
 async function buildComponents() {
   const headerContainer = document.getElementById("header-container");
   if (headerContainer) {
-    const res = await fetch("components/header.html");
+    const res = await fetch("/components/header.html");
     headerContainer.innerHTML = await res.text();
     headerContainer.classList.add("visible");
 
     const isIndex = window.location.pathname.includes("index") || window.location.pathname === "/";
     const isPictures = window.location.pathname.includes("pictures");
     if (isIndex) document.querySelector('a[href="index.html#top"]')?.classList.add("active");
-    if (isPictures) document.querySelector('a[href="pictures.html"]')?.classList.add("active");
+    if (isPictures) document.querySelector('a[href="pages/pictures.html"]')?.classList.add("active");
 
     setupMobileMenu();
 
@@ -24,9 +24,9 @@ async function buildComponents() {
   const modalsContainer = document.getElementById("modals-container");
   if (modalsContainer) {
     const [subscribeRes, successRes, shippingRes] = await Promise.all([
-      fetch("components/subscribe-modal.html"),
-      fetch("components/success-popup.html"),
-      fetch("components/shipping-modal.html")
+      fetch("/components/subscribe-modal.html"),
+      fetch("/components/success-popup.html"),
+      fetch("/components/shipping-modal.html")
     ]);
     modalsContainer.innerHTML =
       await subscribeRes.text() + await successRes.text() + await shippingRes.text();
@@ -119,7 +119,7 @@ function setupScrollWatcher() {
     if (!footer) return;
     const footerInView = footer.getBoundingClientRect().top <= window.innerHeight / 2;
     const isPictures = window.location.href.includes("pictures.html");
-    const currentQuery = footerInView ? "#footer" : isPictures ? "pictures.html" : "index.html#top";
+    const currentQuery = footerInView ? "#footer" : isPictures ? "pages/pictures.html" : "index.html#top";
     activateNavQuery(currentQuery);
   });
 }

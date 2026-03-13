@@ -6,7 +6,7 @@ async function init() {
   if (!document.getElementById("gallery")) return;
 
   try {
-    const response = await fetch("images/paintings/counts.json");
+    const response = await fetch("/images/paintings/counts.json");
     if (!response.ok) throw new Error("File not found");
     const counts = await response.json();
     paintings.forEach(p => { p.imageCount = counts[p.id] || 1; });
