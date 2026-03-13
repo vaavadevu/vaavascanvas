@@ -80,7 +80,7 @@ function openModalSilent(index) {
   modalImg.src = imgs[0];
   modalImg.alt = painting.title;
   modalTitle.textContent = painting.title;
-  modalSize.textContent = painting.size;
+  modalSize.textContent = formatDimensions(painting);
   modalDesc.textContent = t(painting.descKey);
   buildModalThumbnails(imgs);
   configureModalArrows(imgs);
@@ -113,12 +113,19 @@ function removeUrlParam(key) {
 
 // ── Populate helpers ──────────────────────────────────────────
 
+function formatDimensions(painting) {
+  if (painting.shape === SHAPE.CIRCLE) {
+    return `${painting.diameter} cm diameter`;
+  }
+  return `${painting.width} x ${painting.height} cm`;
+}
+
 function populateModal(painting) {
   const imgs = getPaintingImagePaths(painting);
   modalImg.src = imgs[0];
   modalImg.alt = painting.title;
   modalTitle.textContent = painting.title;
-  modalSize.textContent = painting.size;
+  modalSize.textContent = formatDimensions(painting);
   modalDesc.textContent = t(painting.descKey);
   buildModalThumbnails(imgs);
   configureModalArrows(imgs);
@@ -263,7 +270,7 @@ function buildPaintingPreview(painting, height) {
     </div>
     <div class="modalRight">
       <h3>${painting.title}</h3>
-      <p>${painting.size}</p>
+      <p>${formatDimensions(painting)}</p>
       <p>${t(painting.descKey)}</p>
     </div>
   `;
@@ -280,7 +287,7 @@ function transitionToPainting(newIndex, direction) {
   const imgs = getPaintingImagePaths(p);
   modalImg.src = imgs[0];
   modalTitle.textContent = p.title;
-  modalSize.textContent = p.size;
+  modalSize.textContent = formatDimensions(p);
   modalDesc.textContent = t(p.descKey);
   buildModalThumbnails(imgs);
   configureModalArrows(imgs);
@@ -413,7 +420,7 @@ function setupSwipeGestures() {
       const imgs = getPaintingImagePaths(p);
       modalImg.src = imgs[0];
       modalTitle.textContent = p.title;
-      modalSize.textContent = p.size;
+      modalSize.textContent = formatDimensions(p);
       modalDesc.textContent = t(p.descKey);
       buildModalThumbnails(imgs);
       configureModalArrows(imgs);
