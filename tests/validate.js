@@ -69,6 +69,17 @@ function loadPaintingsData() {
     });
   }
 
+  // Extract SHAPE constants
+  const shapeMatch = content.match(/const SHAPE = \{([^}]+)\}/s);
+  const shapes = {};
+  if (shapeMatch) {
+    const shapeStr = shapeMatch[1];
+    shapeStr.match(/(\w+):\s*"([^"]+)"/g)?.forEach(str => {
+      const [key, val] = str.match(/(\w+):\s*"([^"]+)"/).slice(1);
+      shapes[key] = val;
+    });
+  }
+
   // Extract paintings array
   const paintingsMatch = content.match(/const paintings = \[([\s\S]+?)\];/);
   if (!paintingsMatch) throw new Error('Could not find paintings array in paintings.js');
@@ -79,6 +90,11 @@ function loadPaintingsData() {
   // Replace STATUS references with actual values
   paintingsStr = paintingsStr.replace(/STATUS\.(\w+)/g, (match, key) => {
     return `"${statuses[key]}"`;
+  });
+
+  // Replace SHAPE references with actual values
+  paintingsStr = paintingsStr.replace(/SHAPE\.(\w+)/g, (match, key) => {
+    return `"${shapes[key]}"`;
   });
 
   // Convert unquoted keys to quoted keys (JavaScript object notation to JSON)
@@ -204,7 +220,14 @@ test('All paintings have required fields', () => {
     assert(p.id, `Painting ${i} missing id`);
     assert(p.title, `Painting ${i} (${p.id}) missing title`);
     assert(p.descKey, `Painting ${i} (${p.id}) missing descKey`);
-    assert(p.size, `Painting ${i} (${p.id}) missing size`);
+    assert(p.shape, `Painting ${i} (${p.id}) missing shape`);
+    // Check size fields based on shape
+    if (p.shape === 'rectangular') {
+      assert(p.width !== undefined, `Painting ${i} (${p.id}) missing width`);
+      assert(p.height !== undefined, `Painting ${i} (${p.id}) missing height`);
+    } else if (p.shape === 'circle') {
+      assert(p.diameter !== undefined, `Painting ${i} (${p.id}) missing diameter`);
+    }
     assert(p.status, `Painting ${i} (${p.id}) missing status`);
   });
 });

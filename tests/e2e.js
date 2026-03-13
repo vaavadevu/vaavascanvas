@@ -49,34 +49,54 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
-// Start HTTP server
+// Start HTTP server with retry logic - returns {server, port}
 function startServer() {
   return new Promise((resolve, reject) => {
-    const projectRoot = path.join(__dirname, '..');
-    const server = spawn('npx', ['http-server', projectRoot, '-p', '8888', '-s'], {
-      stdio: 'pipe',
-      shell: true
-    });
+    let retries = 0;
+    const maxRetries = 3;
+    const basePort = 8888;
 
-    let started = false;
+    function attemptStart(port) {
+      const projectRoot = path.join(__dirname, '..');
+      const server = spawn('npx', ['http-server', projectRoot, '-p', port.toString(), '-s'], {
+        stdio: 'pipe',
+        shell: true
+      });
 
-    server.stdout.on('data', (data) => {
-      if (!started && data.toString().includes('Hit CTRL-C')) {
-        started = true;
-        resolve(server);
-      }
-    });
+      let started = false;
+      let errorOccurred = false;
 
-    server.stderr.on('data', (data) => {
-      if (!started) {
-        reject(new Error(`Server error: ${data.toString()}`));
-      }
-    });
+      server.stdout.on('data', (data) => {
+        if (!started && data.toString().includes('Hit CTRL-C')) {
+          started = true;
+          resolve({ server, port });
+        }
+      });
 
-    // Fallback: resolve after 2 seconds
-    setTimeout(() => {
-      if (!started) resolve(server);
-    }, 2000);
+      server.stderr.on('data', (data) => {
+        const errorMsg = data.toString();
+        if (!started && errorMsg.includes('EADDRINUSE')) {
+          errorOccurred = true;
+          server.kill();
+          if (retries < maxRetries) {
+            retries++;
+            log.warn(`Port ${port} in use, retrying on port ${basePort + retries}...`);
+            attemptStart(basePort + retries);
+          } else {
+            reject(new Error(`Could not find available port after ${maxRetries} retries`));
+          }
+        } else if (!started && errorMsg.length > 0) {
+          reject(new Error(`Server error: ${errorMsg}`));
+        }
+      });
+
+      // Fallback: resolve after 2 seconds
+      setTimeout(() => {
+        if (!started && !errorOccurred) resolve({ server, port });
+      }, 2000);
+    }
+
+    attemptStart(basePort);
   });
 }
 
@@ -95,9 +115,20 @@ function loadPaintings() {
     });
   }
 
+  const shapeMatch = content.match(/const SHAPE = \{([^}]+)\}/s);
+  const shapes = {};
+  if (shapeMatch) {
+    const shapeStr = shapeMatch[1];
+    shapeStr.match(/(\w+):\s*"([^"]+)"/g)?.forEach(str => {
+      const [key, val] = str.match(/(\w+):\s*"([^"]+)"/).slice(1);
+      shapes[key] = val;
+    });
+  }
+
   const paintingsMatch = content.match(/const paintings = \[([\s\S]+?)\];/);
   let paintingsStr = `[${paintingsMatch[1]}]`;
   paintingsStr = paintingsStr.replace(/STATUS\.(\w+)/g, (match, key) => `"${statuses[key]}"`);
+  paintingsStr = paintingsStr.replace(/SHAPE\.(\w+)/g, (match, key) => `"${shapes[key]}"`);
   paintingsStr = paintingsStr.replace(/(\{|,)\s*(\w+):/g, '$1"$2":');
   paintingsStr = paintingsStr.replace(/,(\s*[}\]])/g, '$1');
 
@@ -115,8 +146,11 @@ async function runTests() {
 
   try {
     // Start server
-    log.info('Starting HTTP server on port 8888...');
-    server = await startServer();
+    const serverInfo = await startServer();
+    server = serverInfo.server;
+    const port = serverInfo.port;
+
+    log.info(`Starting HTTP server on port ${port}...`);
 
     // Wait for server to be ready
     await new Promise(resolve => setTimeout(resolve, 1500));
@@ -126,6 +160,7 @@ async function runTests() {
     browser = await chromium.launch();
 
     const paintings = loadPaintings();
+    const baseUrl = `http://localhost:${port}`;
 
     console.log(colors.blue + '[1] MAIN PAGE TESTS' + colors.reset);
 
@@ -140,7 +175,7 @@ async function runTests() {
         }
       });
 
-      const response = await page.goto('http://localhost:8888/', { waitUntil: 'networkidle' });
+      const response = await page.goto(`${baseUrl}/`, { waitUntil: 'networkidle' });
       assert(response.ok(), `Page load failed with status ${response.status()}`);
       assert(consoleErrors.length === 0, `Console errors found: ${consoleErrors.join(', ')}`);
 
@@ -150,7 +185,7 @@ async function runTests() {
     // Test 2: Hero section is visible
     await test('Hero section is rendered', async () => {
       const page = await browser.newPage();
-      await page.goto('http://localhost:8888/', { waitUntil: 'networkidle' });
+      await page.goto(`${baseUrl}/`, { waitUntil: 'networkidle' });
 
       const heroTitle = await page.locator('[data-i18n="hero_title"]').isVisible();
       assert(heroTitle, 'Hero title not visible');
@@ -161,7 +196,7 @@ async function runTests() {
     // Test 3: Featured cards render on main page
     await test('Featured cards render on main page', async () => {
       const page = await browser.newPage();
-      await page.goto('http://localhost:8888/', { waitUntil: 'networkidle' });
+      await page.goto(`${baseUrl}/`, { waitUntil: 'networkidle' });
 
       // Wait for featured cards to load
       await page.waitForSelector('.featured-card', { timeout: 10000 });
@@ -183,7 +218,7 @@ async function runTests() {
         }
       });
 
-      await page.goto('http://localhost:8888/', { waitUntil: 'networkidle' });
+      await page.goto(`${baseUrl}/`, { waitUntil: 'networkidle' });
       await page.waitForSelector('.featured-card img', { timeout: 10000 });
 
       // Give images time to load
@@ -200,7 +235,7 @@ async function runTests() {
     // Test 5: Full gallery renders on paintings page
     await test(`Gallery renders all ${paintings.length} paintings`, async () => {
       const page = await browser.newPage();
-      await page.goto('http://localhost:8888/pages/pictures.html', { waitUntil: 'networkidle' });
+      await page.goto(`${baseUrl}/pages/pictures.html`, { waitUntil: 'networkidle' });
 
       // Wait for gallery to load
       await page.waitForSelector('.gallery-item', { timeout: 10000 });
@@ -214,7 +249,7 @@ async function runTests() {
     // Test 6: Modal opens for first painting
     await test('Modal opens when clicking first painting', async () => {
       const page = await browser.newPage();
-      await page.goto('http://localhost:8888/pages/pictures.html', { waitUntil: 'networkidle' });
+      await page.goto(`${baseUrl}/pages/pictures.html`, { waitUntil: 'networkidle' });
 
       await page.waitForSelector('.gallery-item img', { timeout: 10000 });
       await page.locator('.gallery-item').first().click();
@@ -237,7 +272,7 @@ async function runTests() {
         }
       });
 
-      await page.goto('http://localhost:8888/pages/pictures.html', { waitUntil: 'networkidle' });
+      await page.goto(`${baseUrl}/pages/pictures.html`, { waitUntil: 'networkidle' });
       await page.waitForSelector('.gallery-item img', { timeout: 10000 });
 
       // Open first painting modal
@@ -256,7 +291,7 @@ async function runTests() {
     // Test 8: Modal closes when clicking close button
     await test('Modal closes properly', async () => {
       const page = await browser.newPage();
-      await page.goto('http://localhost:8888/pages/pictures.html', { waitUntil: 'networkidle' });
+      await page.goto(`${baseUrl}/pages/pictures.html`, { waitUntil: 'networkidle' });
 
       await page.waitForSelector('.gallery-item img', { timeout: 10000 });
       await page.locator('.gallery-item').first().click();
@@ -279,7 +314,7 @@ async function runTests() {
     // Test 9: Language switching works
     await test('Language switching to English works', async () => {
       const page = await browser.newPage();
-      await page.goto('http://localhost:8888/', { waitUntil: 'networkidle' });
+      await page.goto(`${baseUrl}/`, { waitUntil: 'networkidle' });
 
       // Find and click English language button
       const langBtn = page.locator('[data-lang="en"]').first();
@@ -304,7 +339,7 @@ async function runTests() {
     // Test 10: Contact form exists
     await test('Contact form is present', async () => {
       const page = await browser.newPage();
-      await page.goto('http://localhost:8888/', { waitUntil: 'networkidle' });
+      await page.goto(`${baseUrl}/`, { waitUntil: 'networkidle' });
 
       // Scroll to form
       await page.evaluate(() => {
