@@ -18,7 +18,6 @@ const paintings = [
     title: "Herr och Fru Andersson",
     descKey: "desc_herrOchFruAndersson",
     size: "60 x 90 cm",
-    originalPrice: 3000,
     status: STATUS.SOLD,
   },
   {
