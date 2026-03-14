@@ -96,3 +96,4 @@ async function setup() {
 setupScrollWatcher();
 setup();
 init();
+initPageView();

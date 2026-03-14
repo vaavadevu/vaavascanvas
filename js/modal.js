@@ -455,10 +455,16 @@ function updateFullscreenZoomPosition(e, overlay) {
     `${((e.clientX - rect.left) / rect.width) * 100}% ${((e.clientY - rect.top) / rect.height) * 100}%`;
 }
 
-function openFullscreen(imageSrc) {
+function openFullscreen(imageSrc, imageIndex = 0, images = [imageSrc]) {
   const overlay = document.getElementById("fullscreenOverlay");
   const img = document.getElementById("fullscreenImg");
   if (!overlay || !img) return;
+
+  // Store images array globally if available (for page-view navigation)
+  if (typeof fullscreenImageIndex !== 'undefined') {
+    fullscreenImageIndex = imageIndex;
+    fullscreenImages = images;
+  }
 
   img.src = imageSrc;
   overlay.classList.add("active");

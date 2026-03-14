@@ -41,6 +41,9 @@ function setLanguage(lang) {
 
   // Store current lang globally so other JS can access it
   window.currentLang = lang;
+
+  // Dispatch language change event for other components to listen
+  window.dispatchEvent(new CustomEvent("languagechange", { detail: { lang } }));
 }
 
 function t(key, ...args) {

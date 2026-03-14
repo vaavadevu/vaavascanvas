@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="sv">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mina målningar – Vaavascanvas</title>
+  <link rel="icon" type="image/png" href="../images/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@400;600;700&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/header.css" />
+  <link rel="stylesheet" href="../css/footer.css" />
+  <link rel="stylesheet" href="../css/gallery.css" />
+  <link rel="stylesheet" href="../css/modal.css" />
+  <link rel="stylesheet" href="../css/form.css" />
+  <link rel="stylesheet" href="../css/responsive.css" />
+  <link rel="stylesheet" href="../css/page-view.css" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css" />
+</head>
+
+<body id="main">
+
+  <div id="header-container"></div>
+
+  <a href="/pages/pictures.html" class="pageview-back-btn-side" title="Tillbaka">
+    <span class="pageview-back-arrow">←</span>
+    <span class="pageview-back-text" data-i18n="nav_back">Tillbaka</span>
+  </a>
+
+  <main class="page-view-container">
+    <div class="pageViewInner">
+      <div class="pageViewLeft">
+        <div class="pageViewImageWrapper">
+          <span class="pageViewArrow pageViewArrowLeft" id="pageview-img-prev">&#10094;</span>
+          <img id="pageview-img" src="" alt="" />
+          <span class="pageViewArrow pageViewArrowRight" id="pageview-img-next">&#10095;</span>
+        </div>
+        <div class="pageViewThumbs" id="pageview-thumbs"></div>
+      </div>
+      <div class="pageViewRight">
+        <h3 id="pageview-title"></h3>
+        <div id="pageview-price-section"></div>
+        <p id="pageview-size"></p>
+        <p id="pageview-desc"></p>
+        <p id="pageview-medium"></p>
+        <div id="pageview-buttons"></div>
+      </div>
+    </div>
+    <span class="arrow left" id="pageview-prev">&#10094;</span>
+    <span class="arrow right" id="pageview-next">&#10095;</span>
+  </main>
+
+  <div class="fullscreenOverlay" id="fullscreenOverlay">
+    <span class="fullscreenClose" id="fullscreenClose">&times;</span>
+    <span class="fullscreenArrow fullscreenArrowLeft" id="fullscreenPrev">&#10094;</span>
+    <img id="fullscreenImg" src="" alt="" />
+    <span class="fullscreenArrow fullscreenArrowRight" id="fullscreenNext">&#10095;</span>
+  </div>
+
+  <footer id="footer">
+    <div class="footerContent">
+      <div class="footerAbout">
+        <source media="(max-width: 768px)" srcset="../images/mobile/devika.jpg">
+        <img src="../images/devika.jpg" alt="Devika" class="footerImg" />
+        <h2 data-i18n="footer_about_heading">Hej, Devika här!</h2>
+        <p data-i18n="footer_about_p1">Jag är konstnär och illustratör baserad i Sverige.</p>
+        <p data-i18n="footer_about_p2">Genom min konst vill jag skapa närvaro och igenkänning.</p>
+        <div class="footerLinks">
+          <a href="https://www.instagram.com/vaavascanvas/" target="_blank">
+            <i class="fa fa-instagram"></i> @vaavascanvas
+          </a>
+          <a href="mailto:info@vaavascanvas.se">
+            <i class="fa fa-envelope"></i> info@vaavascanvas.se
+          </a>
+        </div>
+        <button class="subscribe-btn" id="subscribeBtn" data-i18n="footer_subscribe_btn">
+          🔔 Prenumerera på nyheter
+        </button>
+      </div>
+      <div class="footerDivider"></div>
+      <div class="footerFormSection" id="formContainer"></div>
+    </div>
+    <p class="footerCopy" data-i18n="footer_copy">© 2026 Devika – All rights reserved</p>
+  </footer>
+
+  <div id="modals-container"></div>
+
+  <script src="../js/translations.js"></script>
+  <script src="../js/i18n.js"></script>
+  <script src="../js/paintings.js"></script>
+  <script src="../js/state.js"></script>
+  <script src="../js/gallery.js"></script>
+  <script src="../js/page-view.js"></script>
+  <script src="../js/modal.js"></script>
+  <script src="../js/contact.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/script.js"></script>
+
+</body>
+
+</html>

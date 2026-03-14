@@ -18,6 +18,11 @@ const SHAPE = {
   CIRCLE: "circle"
 };
 
+// Medium constants
+const MEDIUM = {
+  ACRYLIC_CANVAS: "medium_acrylic_canvas"
+};
+
 const paintings = [
   {
     id: "herrOchFruAndersson",
@@ -28,6 +33,7 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 3000,
     status: STATUS.SOLD,
+    medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {
     id: "womanInTheSea",
@@ -38,6 +44,7 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 2000,
     status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {
     id: "vattenfall",
@@ -48,6 +55,7 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1000,
     status: STATUS.SOLD,
+    medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {
     id: "solnedgang",
@@ -58,6 +66,7 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1000,
     status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {
     id: "sommarstuga",
@@ -68,6 +77,7 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1500,
     status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {
     id: "sommarPaStranden",
@@ -78,6 +88,7 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1800,
     status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {
     id: "skaViPlockaBlommor",
@@ -88,6 +99,7 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1500,
     status: STATUS.SOLD,
+    medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {
     id: "savannan",
@@ -98,6 +110,7 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1500,
     status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {
     id: "varkansla",
@@ -108,6 +121,7 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1500,
     status: STATUS.SOLD,
+    medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {
     id: "norrsken",
@@ -118,6 +132,7 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1000,
     status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {
     id: "vargen",
@@ -128,6 +143,7 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1500,
     status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {
     id: "radjur",
@@ -138,6 +154,7 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1500,
     status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {
     id: "skogsvila",
@@ -147,6 +164,7 @@ const paintings = [
     shape: SHAPE.CIRCLE,
     originalPrice: 3000,
     status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {
     id: "brollopspresent",
@@ -156,6 +174,7 @@ const paintings = [
     height: 42,
     shape: SHAPE.RECTANGULAR,
     status: STATUS.PERSONAL,
+    medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {
     id: "bonnie",
@@ -165,6 +184,7 @@ const paintings = [
     height: 59,
     shape: SHAPE.RECTANGULAR,
     status: STATUS.PERSONAL,
+    medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {
     id: "vinterlek",
@@ -174,6 +194,7 @@ const paintings = [
     height: 59,
     shape: SHAPE.RECTANGULAR,
     status: STATUS.PERSONAL,
+    medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {
     id: "sommarvila",
@@ -184,5 +205,6 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 2000,
     status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
   },
 ];
