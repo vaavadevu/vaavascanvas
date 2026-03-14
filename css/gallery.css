@@ -72,7 +72,7 @@
   cursor: pointer;
   padding: 3px;
   background: var(--frame-gradient);
-  border: 3px solid;
+  border: 5px solid;
   border-color: var(--frame-top) var(--frame-right) var(--frame-bottom) var(--frame-left);
   border-radius: 2px;
   box-shadow:
