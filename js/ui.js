@@ -117,10 +117,28 @@ function setupScrollWatcher() {
 
     const footer = document.getElementById("footer");
     if (!footer) return;
+
     const footerInView = footer.getBoundingClientRect().top <= window.innerHeight / 2;
+    const isViewPage = window.location.href.includes("/pages/view.html");
     const isPictures = window.location.href.includes("pictures.html");
-    const currentQuery = footerInView ? "#footer" : isPictures ? "/pages/pictures.html" : "/#top";
-    activateNavQuery(currentQuery);
+
+    // Determine which nav link to highlight
+    let currentQuery;
+    if (footerInView) {
+      currentQuery = "#footer"; // Highlight "kontakta mig" when footer is in view
+    } else if (isViewPage) {
+      currentQuery = null; // Don't highlight anything on view page when footer not visible
+    } else if (isPictures) {
+      currentQuery = "/pages/pictures.html";
+    } else {
+      currentQuery = "/#top";
+    }
+
+    if (currentQuery) {
+      activateNavQuery(currentQuery);
+    } else {
+      document.querySelectorAll("nav a").forEach(a => a.classList.remove("active"));
+    }
   });
 }
 

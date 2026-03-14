@@ -18,6 +18,10 @@ const keys = {
     sv: "Kontakta mig",
     en: "Contact me",
   },
+  nav_back: {
+    sv: "Tillbaka",
+    en: "Back",
+  },
 
   // ── Hero ───────────────────────────────────────────────────
   hero_title: {
@@ -273,6 +277,12 @@ const keys = {
   shipping_returns_p: {
     sv: "Du har 14 dagars returrätt. Tavlan ska returneras i originalskick och i originalförpackning. Returfrakten bekostas av köparen. Vid skada under transport — kontakta mig omgående med foton så löser vi det.",
     en: "You have 14 days right of return. The painting must be returned in its original condition and packaging. Return shipping is at the buyer's expense. In case of damage during transport — contact me immediately with photos and we'll sort it out.",
+  },
+
+  // ── Medium ─────────────────────────────────────────────────────
+  medium_acrylic_canvas: {
+    sv: "Akryl på duk",
+    en: "Acrylic on canvas",
   },
 
   // ── Painting descriptions ──────────────────────────────────────

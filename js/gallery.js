@@ -1,5 +1,9 @@
 // gallery.js — building and filtering the painting grid
 
+// ── Configuration ──────────────────────────────────────────────
+// Set to true to use page view, false to use modal
+const USE_PAGE_VIEW = true;
+
 function getPaintingImagePaths(painting) {
   const folderId = painting.id;
   const count = painting.imageCount || 1;
@@ -58,7 +62,13 @@ function createGalleryItem(painting, index) {
   }
 
   img.addEventListener("error", () => { img.src = "/images/devika.jpg"; });
-  img.addEventListener("click", () => openModal(index));
+  img.addEventListener("click", () => {
+    if (USE_PAGE_VIEW) {
+      window.location.href = `view.html?painting=${paintings[index].id}`;
+    } else {
+      openModal(index);
+    }
+  });
 
   item.appendChild(img);
   if (painting.status === STATUS.SOLD) addSoldBadge(item);

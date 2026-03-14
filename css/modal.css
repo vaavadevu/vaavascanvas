@@ -311,3 +311,8 @@
 .fullscreenClose:hover {
   transform: scale(1.1);
 }
+
+/* Fullscreen navigation arrows - hidden on all devices (use keyboard instead) */
+.fullscreenArrow {
+  display: none;
+}
