@@ -47,6 +47,17 @@ header.box {
   flex: 1;
 }
 
+.logo-link {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.logo-link:hover {
+  opacity: 0.8;
+}
+
 .headerLogo {
   height: 70px;
   width: auto;
