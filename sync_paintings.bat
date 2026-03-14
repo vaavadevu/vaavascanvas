@@ -68,7 +68,7 @@ REM Go back to root and run Python script
 cd /d ..\..
 echo.
 echo Bearbetar bilder...
-python "scripts\generate_mobile_images.py"
+python -u "scripts\generate_mobile_images.py"
 
 echo.
 echo Allt klart!
