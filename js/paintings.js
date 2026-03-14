@@ -69,6 +69,17 @@ const paintings = [
     medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {
+    id: "solvarmeISkogen",
+    title: "Solvärme i skogen",
+    descKey: "desc_solvarmeISkogen",
+    width: 42,
+    height: 59,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 1800,
+    status: STATUS.SOLD,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+  },
+  {
     id: "sommarstuga",
     title: "Sommarstuga",
     descKey: "desc_sommarstuga",

@@ -354,6 +354,10 @@ const keys = {
     sv: "En isbjörnsmamma och hennes ungar vilar mjukt i blomsterhaven vid Hudson Bay som visar en stund av absolut frid.",
     en: "A mother polar bear and her cubs resting gently in a flower garden by Hudson Bay showing a moment of absolute peace.",
   },
+  desc_solvarmeISkogen: {
+    sv: "Solstrålar som faller på en rävmamma och hennes lekande ungar i en skogsglänta.",
+    en: "Sun rays filtering down through the trees onto a mother fox and her playful cubs in a forest clearing.",
+  },
 };
 
 // Build the translations object that i18n.js expects
