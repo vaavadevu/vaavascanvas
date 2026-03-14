@@ -80,6 +80,17 @@ function loadPaintingsData() {
     });
   }
 
+  // Extract MEDIUM constants
+  const mediumMatch = content.match(/const MEDIUM = \{([^}]+)\}/s);
+  const mediums = {};
+  if (mediumMatch) {
+    const mediumStr = mediumMatch[1];
+    mediumStr.match(/(\w+):\s*"([^"]+)"/g)?.forEach(str => {
+      const [key, val] = str.match(/(\w+):\s*"([^"]+)"/).slice(1);
+      mediums[key] = val;
+    });
+  }
+
   // Extract paintings array
   const paintingsMatch = content.match(/const paintings = \[([\s\S]+?)\];/);
   if (!paintingsMatch) throw new Error('Could not find paintings array in paintings.js');
@@ -95,6 +106,11 @@ function loadPaintingsData() {
   // Replace SHAPE references with actual values
   paintingsStr = paintingsStr.replace(/SHAPE\.(\w+)/g, (match, key) => {
     return `"${shapes[key]}"`;
+  });
+
+  // Replace MEDIUM references with actual values
+  paintingsStr = paintingsStr.replace(/MEDIUM\.(\w+)/g, (match, key) => {
+    return `"${mediums[key]}"`;
   });
 
   // Convert unquoted keys to quoted keys (JavaScript object notation to JSON)

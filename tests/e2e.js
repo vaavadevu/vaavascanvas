@@ -2,7 +2,7 @@
 
 /**
  * End-to-End tests for Vaavascanvas
- * Tests actual browser behavior, image loading, modals, and console errors
+ * Tests actual browser behavior, image loading, page views, and console errors
  */
 
 const { chromium } = require('playwright');
@@ -125,10 +125,21 @@ function loadPaintings() {
     });
   }
 
+  const mediumMatch = content.match(/const MEDIUM = \{([^}]+)\}/s);
+  const mediums = {};
+  if (mediumMatch) {
+    const mediumStr = mediumMatch[1];
+    mediumStr.match(/(\w+):\s*"([^"]+)"/g)?.forEach(str => {
+      const [key, val] = str.match(/(\w+):\s*"([^"]+)"/).slice(1);
+      mediums[key] = val;
+    });
+  }
+
   const paintingsMatch = content.match(/const paintings = \[([\s\S]+?)\];/);
   let paintingsStr = `[${paintingsMatch[1]}]`;
   paintingsStr = paintingsStr.replace(/STATUS\.(\w+)/g, (match, key) => `"${statuses[key]}"`);
   paintingsStr = paintingsStr.replace(/SHAPE\.(\w+)/g, (match, key) => `"${shapes[key]}"`);
+  paintingsStr = paintingsStr.replace(/MEDIUM\.(\w+)/g, (match, key) => `"${mediums[key]}"`);
   paintingsStr = paintingsStr.replace(/(\{|,)\s*(\w+):/g, '$1"$2":');
   paintingsStr = paintingsStr.replace(/,(\s*[}\]])/g, '$1');
 
@@ -246,72 +257,9 @@ async function runTests() {
       await page.close();
     });
 
-    // Test 6: Modal opens for first painting
-    await test('Modal opens when clicking first painting', async () => {
-      const page = await browser.newPage();
-      await page.goto(`${baseUrl}/pages/pictures.html`, { waitUntil: 'networkidle' });
-
-      await page.waitForSelector('.gallery-item img', { timeout: 10000 });
-      await page.locator('.gallery-item').first().click();
-
-      const modal = page.locator('.modal');
-      const isVisible = await modal.isVisible({ timeout: 5000 });
-      assert(isVisible, 'Modal did not open');
-
-      await page.close();
-    });
-
-    // Test 7: Modal images load without errors
-    await test('Modal images load without 404 errors', async () => {
-      const page = await browser.newPage();
-      const failedImages = [];
-
-      page.on('response', (response) => {
-        if (response.url().includes('/images/paintings/') && !response.ok()) {
-          failedImages.push(response.url());
-        }
-      });
-
-      await page.goto(`${baseUrl}/pages/pictures.html`, { waitUntil: 'networkidle' });
-      await page.waitForSelector('.gallery-item img', { timeout: 10000 });
-
-      // Open first painting modal
-      await page.locator('.gallery-item').first().click();
-      await page.waitForSelector('.modal', { timeout: 5000 });
-
-      // Give modal images time to load
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      assert(failedImages.length === 0,
-        `Modal images failed to load: ${failedImages.join(', ')}`);
-
-      await page.close();
-    });
-
-    // Test 8: Modal closes when clicking close button
-    await test('Modal closes properly', async () => {
-      const page = await browser.newPage();
-      await page.goto(`${baseUrl}/pages/pictures.html`, { waitUntil: 'networkidle' });
-
-      await page.waitForSelector('.gallery-item img', { timeout: 10000 });
-      await page.locator('.gallery-item').first().click();
-      await page.waitForSelector('.modal', { timeout: 5000 });
-
-      const closeBtn = page.locator('.close');
-      const hasCloseBtn = await closeBtn.isVisible({ timeout: 2000 }).catch(() => false);
-
-      if (hasCloseBtn) {
-        await closeBtn.click();
-        const modalVisible = await page.locator('.modal').isVisible({ timeout: 2000 }).catch(() => false);
-        assert(!modalVisible, 'Modal did not close');
-      }
-
-      await page.close();
-    });
-
     console.log(colors.blue + '\n[3] LANGUAGE SWITCHING TESTS' + colors.reset);
 
-    // Test 9: Language switching works
+    // Test 6: Language switching works
     await test('Language switching to English works', async () => {
       const page = await browser.newPage();
       await page.goto(`${baseUrl}/`, { waitUntil: 'networkidle' });
