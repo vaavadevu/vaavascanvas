@@ -140,24 +140,8 @@ function setupPageViewZoomEffect() {
   const wrapper = document.querySelector(".pageViewImageWrapper");
   if (!wrapper || !pageViewImg) return;
 
-  wrapper.addEventListener("click", (e) => {
-    if (window.innerWidth <= 768) return;
-    pageViewZoomLevel = (pageViewZoomLevel + 1) % 3;
-    pageViewImg.style.transform = ["scale(1)", "scale(2)", "scale(4)"][pageViewZoomLevel];
-    wrapper.classList.toggle("is-zoomed-1", pageViewZoomLevel === 1);
-    wrapper.classList.toggle("is-zoomed-2", pageViewZoomLevel === 2);
-    updatePageViewZoomPosition(e, wrapper);
-  });
-
-  wrapper.addEventListener("mousemove", (e) => {
-    if (window.innerWidth <= 768 || pageViewZoomLevel === 0) return;
-    updatePageViewZoomPosition(e, wrapper);
-  });
-
-  wrapper.addEventListener("mouseleave", () => {
-    if (window.innerWidth <= 768) return;
-    resetPageViewZoom();
-  });
+  // Zoom is disabled in page view - click opens fullscreen instead
+  // Zoom only available in fullscreen mode (see setupPageViewFullscreenZoom)
 }
 
 function updatePageViewZoomPosition(e, wrapper) {
