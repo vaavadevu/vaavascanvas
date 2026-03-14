@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+Disallow: /pages/subscribe.html
+
+Sitemap: https://vaavascanvas.se/sitemap.xml
