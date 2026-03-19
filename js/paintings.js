@@ -228,8 +228,8 @@ const paintings = [
     originalPrice: 1900,
     status: STATUS.FOR_SALE,
     medium: MEDIUM.ACRYLIC_CANVAS,
-    frameAvailable: true,        // finns ram att köpa till
-    framedPrice: 2300,  
+    frameAvailable: true,
+    framedPrice: 2300,
   },
   
   {
@@ -242,7 +242,7 @@ const paintings = [
     originalPrice: 1800,
     status: STATUS.FOR_SALE,
     medium: MEDIUM.ACRYLIC_CANVAS,
-    frameAvailable: true,        // finns ram att köpa till
-    framedPrice: 2200,  
+    frameAvailable: true,
+    framedPrice: 2200,
   },
 ];

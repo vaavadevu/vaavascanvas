@@ -367,21 +367,21 @@ const keys = {
     en: "A curious deer stretching after a small red apple hanging from a branch.",
   },
   frame_available: {
-  sv: "Finns med eller utan ram",
-  en: "Available with or without frame",
-},
-frame_price_with: {
-  sv: "Pris med ram",
-  en: "Price with frame",
-},
-frame_price_without: {
-  sv: "Pris utan ram",
-  en: "Price without frame",
-},
-frame_confirm_question: {
-  sv: "Vill du köpa med ram? OK = med ram, Avbryt = utan ram.",
-  en: "Would you like to buy with frame? OK = with frame, Cancel = without.",
-},
+    sv: "Finns med eller utan ram",
+    en: "Available with or without frame",
+  },
+  frame_price_with: {
+    sv: "Pris med ram",
+    en: "Price with frame",
+  },
+  frame_price_without: {
+    sv: "Pris utan ram",
+    en: "Price without frame",
+  },
+  frame_confirm_question: {
+    sv: "Vill du köpa med ram? OK = med ram, Avbryt = utan ram.",
+    en: "Would you like to buy with frame? OK = with frame, Cancel = without.",
+  },
 };
 
 // Build the translations object that i18n.js expects
