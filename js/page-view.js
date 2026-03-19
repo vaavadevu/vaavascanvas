@@ -73,16 +73,70 @@ function renderPageViewButtons(painting) {
   pageViewButtons.innerHTML = "";
 
   if (painting.status === STATUS.FOR_SALE && painting.originalPrice) {
+    if (painting.frameAvailable) {
+      const frameContainer = document.createElement("div");
+      frameContainer.classList.add("modal-frame-selector");
+
+      const frameLabel = document.createElement("p");
+      frameLabel.textContent = t("frame_available");
+      frameLabel.classList.add("modal-frame-label");
+      frameContainer.appendChild(frameLabel);
+
+      const optionsWrapper = document.createElement("div");
+      optionsWrapper.classList.add("modal-frame-options");
+
+      const withoutId = `frame-without-${Date.now()}`;
+      const withId = `frame-with-${Date.now()}`;
+      const groupName = `frame-${Date.now()}`;
+
+      // Without frame radio option
+      const withoutLabel = document.createElement("label");
+      withoutLabel.classList.add("frame-radio-label");
+      const withoutInput = document.createElement("input");
+      withoutInput.type = "radio";
+      withoutInput.id = withoutId;
+      withoutInput.name = groupName;
+      withoutInput.value = "without";
+      withoutInput.checked = true;
+      withoutLabel.appendChild(withoutInput);
+      const withoutLabelText = document.createElement("span");
+      withoutLabelText.classList.add("radio-label-text");
+      withoutLabelText.innerHTML = `
+        <span class="option-title">${t("frame_price_without")}</span>
+        <span class="option-price">${painting.originalPrice} kr</span>
+      `;
+      withoutLabel.appendChild(withoutLabelText);
+      optionsWrapper.appendChild(withoutLabel);
+
+      // With frame radio option
+      const withLabel = document.createElement("label");
+      withLabel.classList.add("frame-radio-label");
+      const withInput = document.createElement("input");
+      withInput.type = "radio";
+      withInput.id = withId;
+      withInput.name = groupName;
+      withInput.value = "with";
+      withLabel.appendChild(withInput);
+      const withLabelText = document.createElement("span");
+      withLabelText.classList.add("radio-label-text");
+      withLabelText.innerHTML = `
+        <span class="option-title">${t("frame_price_with")}</span>
+        <span class="option-price">${painting.framedPrice} kr</span>
+      `;
+      withLabel.appendChild(withLabelText);
+      optionsWrapper.appendChild(withLabel);
+
+      frameContainer.appendChild(optionsWrapper);
+      pageViewButtons.appendChild(frameContainer);
+    }
+
     const buyBtn = document.createElement("button");
     buyBtn.textContent = t("modal_buy_btn");
     buyBtn.addEventListener("click", () => {
       if (painting.frameAvailable) {
-        const frameChoice = confirm(
-          `${t("frame_price_without")}: ${painting.originalPrice} kr\n` +
-          `${t("frame_price_with")}: ${painting.framedPrice} kr\n\n` +
-          `${t("frame_confirm_question")}`
-        );
-        handleBuyClick(painting, frameChoice ? "with" : "without");
+        const selectedRadio = pageViewButtons.querySelector('input[type="radio"]:checked');
+        const frameChoice = selectedRadio.value;
+        handleBuyClick(painting, frameChoice);
       } else {
         handleBuyClick(painting, null);
       }

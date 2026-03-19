@@ -207,39 +207,60 @@
   margin-bottom: 5px;
 }
 
-.modal-frame-option {
+.frame-radio-label {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
   padding: 14px 16px;
   border: 2px solid #e0e0e0;
   background: var(--bg-warm);
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.25s ease;
-  font-family: 'Quicksand', sans-serif;
+  gap: 12px;
 }
 
-.modal-frame-option:hover {
+.frame-radio-label:hover {
   border-color: var(--accent-green);
   background: rgba(120, 180, 120, 0.08);
 }
 
-.modal-frame-option.selected {
+.frame-radio-label input[type="radio"] {
+  margin-top: 2px;
+  cursor: pointer;
+  accent-color: var(--accent-green);
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.frame-radio-label input[type="radio"]:checked ~ .radio-label-text {
+  color: var(--text-dark);
+  font-weight: 600;
+}
+
+.frame-radio-label input[type="radio"]:checked {
+  border-color: var(--accent-green);
+}
+
+.frame-radio-label:has(input[type="radio"]:checked) {
   border-color: var(--accent-green);
   background: rgba(120, 180, 120, 0.15);
   font-weight: 600;
 }
 
-.modal-frame-option .option-title {
+.radio-label-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.radio-label-text .option-title {
   font-size: 0.85rem;
   color: var(--text-dark);
   font-weight: 500;
-  margin-bottom: 4px;
 }
 
-.modal-frame-option .option-price {
+.radio-label-text .option-price {
   font-size: 1.1rem;
   font-weight: 700;
   color: var(--accent-green);
