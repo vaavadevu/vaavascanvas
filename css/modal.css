@@ -188,6 +188,63 @@
   margin: 0 0 10px;
 }
 
+.modal-frame-selector {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.modal-frame-label {
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.modal-frame-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 5px;
+}
+
+.modal-frame-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 16px;
+  border: 2px solid #e0e0e0;
+  background: var(--bg-warm);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: 'Quicksand', sans-serif;
+}
+
+.modal-frame-option:hover {
+  border-color: var(--accent-green);
+  background: rgba(120, 180, 120, 0.08);
+}
+
+.modal-frame-option.selected {
+  border-color: var(--accent-green);
+  background: rgba(120, 180, 120, 0.15);
+  font-weight: 600;
+}
+
+.modal-frame-option .option-title {
+  font-size: 0.85rem;
+  color: var(--text-dark);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.modal-frame-option .option-price {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent-green);
+}
+
 .close {
   position: fixed;
   top: 15px;

@@ -185,43 +185,67 @@ function renderModalButtons(painting) {
   }
 
   if (painting.originalPrice) {
-    const price = document.createElement("p");
-    price.textContent = `${painting.originalPrice} kr`;
-    price.classList.add("modal-price");
-    modalButtons.appendChild(price);
-
     if (painting.frameAvailable) {
-  const frameInfo = document.createElement("p");
-  frameInfo.textContent = t("frame_available");
-  frameInfo.classList.add("modal-frame-info");
-  modalButtons.appendChild(frameInfo);
+      const frameContainer = document.createElement("div");
+      frameContainer.classList.add("modal-frame-selector");
 
-  const priceWithout = document.createElement("p");
-  priceWithout.textContent = `${t("frame_price_without")}: ${painting.originalPrice} kr`;
-  priceWithout.classList.add("modal-price-secondary");
-  modalButtons.appendChild(priceWithout);
+      const frameLabel = document.createElement("p");
+      frameLabel.textContent = t("frame_available");
+      frameLabel.classList.add("modal-frame-label");
+      frameContainer.appendChild(frameLabel);
 
-  if (painting.framedPrice) {
-    const priceWith = document.createElement("p");
-    priceWith.textContent = `${t("frame_price_with")}: ${painting.framedPrice} kr`;
-    priceWith.classList.add("modal-price-secondary");
-    modalButtons.appendChild(priceWith);
-  }
-}
+      const optionsWrapper = document.createElement("div");
+      optionsWrapper.classList.add("modal-frame-options");
+
+      const withoutBtn = document.createElement("button");
+      withoutBtn.classList.add("modal-frame-option");
+      withoutBtn.classList.add("selected");
+      withoutBtn.dataset.frame = "without";
+      withoutBtn.innerHTML = `
+        <span class="option-title">${t("frame_price_without")}</span>
+        <span class="option-price">${painting.originalPrice} kr</span>
+      `;
+
+      const withBtn = document.createElement("button");
+      withBtn.classList.add("modal-frame-option");
+      withBtn.dataset.frame = "with";
+      withBtn.innerHTML = `
+        <span class="option-title">${t("frame_price_with")}</span>
+        <span class="option-price">${painting.framedPrice} kr</span>
+      `;
+
+      withoutBtn.addEventListener("click", () => {
+        withoutBtn.classList.add("selected");
+        withBtn.classList.remove("selected");
+      });
+
+      withBtn.addEventListener("click", () => {
+        withBtn.classList.add("selected");
+        withoutBtn.classList.remove("selected");
+      });
+
+      optionsWrapper.appendChild(withoutBtn);
+      optionsWrapper.appendChild(withBtn);
+      frameContainer.appendChild(optionsWrapper);
+      modalButtons.appendChild(frameContainer);
+    } else {
+      const price = document.createElement("p");
+      price.textContent = `${painting.originalPrice} kr`;
+      price.classList.add("modal-price");
+      modalButtons.appendChild(price);
+    }
+
     const buyBtn = document.createElement("button");
     buyBtn.textContent = t("modal_buy_btn");
     buyBtn.addEventListener("click", () => {
-  if (painting.frameAvailable) {
-    const frameChoice = confirm(
-      `${t("frame_price_without")}: ${painting.originalPrice} kr\n` +
-      `${t("frame_price_with")}: ${painting.framedPrice} kr\n\n` +
-      `${t("frame_confirm_question")}`
-    );
-    handleBuyClick(painting, frameChoice ? "with" : "without");
-  } else {
-    handleBuyClick(painting, null);
-  }
-});
+      if (painting.frameAvailable) {
+        const selectedBtn = modalButtons.querySelector(".modal-frame-option.selected");
+        const frameChoice = selectedBtn.dataset.frame === "with" ? "with" : "without";
+        handleBuyClick(painting, frameChoice);
+      } else {
+        handleBuyClick(painting, null);
+      }
+    });
     modalButtons.appendChild(buyBtn);
   }
 
