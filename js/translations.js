@@ -358,6 +358,30 @@ const keys = {
     sv: "Solstrålar som faller på en rävmamma och hennes lekande ungar i en skogsglänta.",
     en: "Sun rays filtering down through the trees onto a mother fox and her playful cubs in a forest clearing.",
   },
+  desc_dagensFynd: {
+    sv: "En liten ekorre som har hittat en skatt i naturen.",
+    en: "A little squirrel that has found a treasure in nature.",
+  },
+  desc_sugenPaEttApple: {
+    sv: "En nyfiken dovhjort som sträcker sig efter ett litet rött äpple som hänger från en gren.",
+    en: "A curious deer stretching after a small red apple hanging from a branch.",
+  },
+  frame_available: {
+  sv: "Finns med eller utan ram",
+  en: "Available with or without frame",
+},
+frame_price_with: {
+  sv: "Pris med ram",
+  en: "Price with frame",
+},
+frame_price_without: {
+  sv: "Pris utan ram",
+  en: "Price without frame",
+},
+frame_confirm_question: {
+  sv: "Vill du köpa med ram? OK = med ram, Avbryt = utan ram.",
+  en: "Would you like to buy with frame? OK = with frame, Cancel = without.",
+},
 };
 
 // Build the translations object that i18n.js expects
@@ -369,3 +393,4 @@ for (const [key, langs] of Object.entries(keys)) {
     translations[lang][key] = val;
   }
 }
+

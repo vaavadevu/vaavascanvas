@@ -190,11 +190,41 @@ function renderModalButtons(painting) {
     price.classList.add("modal-price");
     modalButtons.appendChild(price);
 
+    if (painting.frameAvailable) {
+  const frameInfo = document.createElement("p");
+  frameInfo.textContent = t("frame_available");
+  frameInfo.classList.add("modal-frame-info");
+  modalButtons.appendChild(frameInfo);
+
+  const priceWithout = document.createElement("p");
+  priceWithout.textContent = `${t("frame_price_without")}: ${painting.originalPrice} kr`;
+  priceWithout.classList.add("modal-price-secondary");
+  modalButtons.appendChild(priceWithout);
+
+  if (painting.framedPrice) {
+    const priceWith = document.createElement("p");
+    priceWith.textContent = `${t("frame_price_with")}: ${painting.framedPrice} kr`;
+    priceWith.classList.add("modal-price-secondary");
+    modalButtons.appendChild(priceWith);
+  }
+}
     const buyBtn = document.createElement("button");
     buyBtn.textContent = t("modal_buy_btn");
-    buyBtn.addEventListener("click", () => handleBuyClick(painting));
+    buyBtn.addEventListener("click", () => {
+  if (painting.frameAvailable) {
+    const frameChoice = confirm(
+      `${t("frame_price_without")}: ${painting.originalPrice} kr\n` +
+      `${t("frame_price_with")}: ${painting.framedPrice} kr\n\n` +
+      `${t("frame_confirm_question")}`
+    );
+    handleBuyClick(painting, frameChoice ? "with" : "without");
+  } else {
+    handleBuyClick(painting, null);
+  }
+});
     modalButtons.appendChild(buyBtn);
   }
+
 }
 
 // ── Zoom ──────────────────────────────────────────────────────

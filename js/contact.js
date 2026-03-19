@@ -72,10 +72,11 @@ function setupContactForm() {
   });
 }
 
-function handleBuyClick(painting) {
+function handleBuyClick(painting, frameChoice = null) {
   const typeSelect     = document.getElementById("f-type");
   const subjectInput   = document.getElementById("f-subject");
   const originalSelect = document.getElementById("f-artwork-original");
+  const messageField   = document.getElementById("f-message");
 
   if (typeSelect) {
     typeSelect.value = "Originals";
@@ -85,6 +86,14 @@ function handleBuyClick(painting) {
   if (originalSelect) {
     originalSelect.value = painting.id;
     originalSelect.dispatchEvent(new Event("change"));
+  }
+
+  // Förifyll meddelandet med ramval om relevant
+  if (messageField && frameChoice) {
+    const frameText = frameChoice === "with"
+      ? t("frame_price_with")
+      : t("frame_price_without");
+    messageField.value = frameText;
   }
 
   closeModal();

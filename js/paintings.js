@@ -218,4 +218,31 @@ const paintings = [
     status: STATUS.FOR_SALE,
     medium: MEDIUM.ACRYLIC_CANVAS,
   },
+  {
+    id: "dagensFynd",
+    title: "Dagens fynd",
+    descKey: "desc_dagensFynd",
+    width: 34,
+    height: 34,
+    shape: SHAPE.SQUARE,
+    originalPrice: 1900,
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    frameAvailable: true,        // finns ram att köpa till
+    framedPrice: 2300,  
+  },
+  
+  {
+    id: "sugenPaEttApple",
+    title: "Sugen på ett äpple",
+    descKey: "desc_sugenPaEttApple",
+    width: 30,
+    height: 30,
+    shape: SHAPE.SQUARE,
+    originalPrice: 1800,
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    frameAvailable: true,        // finns ram att köpa till
+    framedPrice: 2200,  
+  },
 ];
