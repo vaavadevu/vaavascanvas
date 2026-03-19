@@ -72,14 +72,25 @@ function configurePageViewArrows(imgs) {
 function renderPageViewButtons(painting) {
   pageViewButtons.innerHTML = "";
 
-  // Only show buy button if painting is for sale
   if (painting.status === STATUS.FOR_SALE && painting.originalPrice) {
     const buyBtn = document.createElement("button");
     buyBtn.textContent = t("modal_buy_btn");
-    buyBtn.addEventListener("click", () => handleBuyClick(painting));
+    buyBtn.addEventListener("click", () => {
+      if (painting.frameAvailable) {
+        const frameChoice = confirm(
+          `${t("frame_price_without")}: ${painting.originalPrice} kr\n` +
+          `${t("frame_price_with")}: ${painting.framedPrice} kr\n\n` +
+          `${t("frame_confirm_question")}`
+        );
+        handleBuyClick(painting, frameChoice ? "with" : "without");
+      } else {
+        handleBuyClick(painting, null);
+      }
+    });
     pageViewButtons.appendChild(buyBtn);
   }
 }
+
 
 function updatePageViewDescription(painting) {
   pageViewDesc.textContent = t(painting.descKey);
