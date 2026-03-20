@@ -114,13 +114,21 @@ function populateArtworkDropdowns() {
     const dimensions = p.shape === SHAPE.CIRCLE
       ? `${p.diameter} cm`
       : `${p.width} x ${p.height} cm`;
-    option.textContent   = `${p.title} – ${dimensions} – ${p.originalPrice} kr`;
+    option.textContent   = `${p.title} – ${dimensions} – ${formatPrice(p.originalPrice)}`;
     option.dataset.title = p.title;
+    option.dataset.dimensions = dimensions;
     originalSelect.appendChild(option);
   });
 
   printSelect.addEventListener("change",    () => updateArtworkPreview(printSelect,    "f-artwork-preview"));
   originalSelect.addEventListener("change", () => updateArtworkPreview(originalSelect, "f-artwork-original-preview"));
+
+  window.addEventListener("languagechange", () => {
+    originalSelect.querySelectorAll("option[value]").forEach(option => {
+      const p = paintings.find(p => p.id === option.value);
+      if (p) option.textContent = `${p.title} – ${option.dataset.dimensions} – ${formatPrice(p.originalPrice)}`;
+    });
+  });
 }
 
 function updateArtworkPreview(select, previewId) {

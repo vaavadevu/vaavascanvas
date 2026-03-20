@@ -147,7 +147,7 @@ function renderPageViewButtons(painting) {
       withoutLabelText.classList.add("radio-label-text");
       withoutLabelText.innerHTML = `
         <span class="option-title">${t("frame_price_without")}</span>
-        <span class="option-price">${painting.originalPrice} kr</span>
+        <span class="option-price">${formatPrice(painting.originalPrice)}</span>
       `;
       withoutLabel.appendChild(withoutLabelText);
       optionsWrapper.appendChild(withoutLabel);
@@ -165,7 +165,7 @@ function renderPageViewButtons(painting) {
       withLabelText.classList.add("radio-label-text");
       withLabelText.innerHTML = `
         <span class="option-title">${t("frame_price_with")}</span>
-        <span class="option-price">${painting.framedPrice} kr</span>
+        <span class="option-price">${formatPrice(painting.framedPrice)}</span>
       `;
       withLabel.appendChild(withLabelText);
       optionsWrapper.appendChild(withLabel);
@@ -224,7 +224,7 @@ function showFrameSelectorModal(painting) {
     withoutBtn.classList.add("frame-action-btn", "frame-action-without");
     withoutBtn.innerHTML = `
       <span class="btn-title">${t("frame_price_without")}</span>
-      <span class="btn-price">${painting.originalPrice} kr</span>
+      <span class="btn-price">${formatPrice(painting.originalPrice)}</span>
     `;
     withoutBtn.addEventListener("click", () => {
       hideFrameSelectorModal(() => {
@@ -239,7 +239,7 @@ function showFrameSelectorModal(painting) {
     withBtn.classList.add("frame-action-btn", "frame-action-with");
     withBtn.innerHTML = `
       <span class="btn-title">${t("frame_price_with")}</span>
-      <span class="btn-price">${painting.framedPrice} kr</span>
+      <span class="btn-price">${formatPrice(painting.framedPrice)}</span>
     `;
     withBtn.addEventListener("click", () => {
       hideFrameSelectorModal(() => {
@@ -367,7 +367,7 @@ function renderPageViewPrice(painting) {
 
   if (painting.originalPrice) {
     const price = document.createElement("p");
-    price.textContent = `${painting.originalPrice} kr`;
+    price.textContent = formatPrice(painting.originalPrice);
     price.classList.add("pageview-price");
     pageViewPriceSection.appendChild(price);
   }
