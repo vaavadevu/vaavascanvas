@@ -73,8 +73,8 @@ function resolvePageViewRefs() {
 
 function openPageView(index) {
   if (!resolvePageViewRefs()) return;
-  currentPaintingIndex = index;
-  currentImageIndex = 0;
+  State.currentPaintingIndex = index;
+  State.currentImageIndex = 0;
   populatePageView(paintings[index]);
   renderPageViewFrameInfo(paintings[index]);
   renderPageViewButtons(paintings[index]);
@@ -107,7 +107,7 @@ function buildPageViewThumbnails(imgs) {
     thumb.classList.add("pageViewThumb");
     if (idx === 0) thumb.classList.add("active");
     thumb.addEventListener("click", () =>
-      transitionToPageViewImage(imgs, idx, idx > currentImageIndex ? 1 : -1)
+      transitionToPageViewImage(imgs, idx, idx > State.currentImageIndex ? 1 : -1)
     );
     container.appendChild(thumb);
   });
@@ -407,24 +407,24 @@ function updatePageViewZoomPosition(e, wrapper) {
 // ── Image transitions (within a painting) ────────────────────
 
 function transitionToPageViewImage(imgs, newIndex, direction) {
-  if (isTransitioning) return;
-  isTransitioning = true;
+  if (State.isTransitioning) return;
+  State.isTransitioning = true;
 
-  currentImageIndex = newIndex;
+  State.currentImageIndex = newIndex;
   pageViewImg.src = imgs[newIndex];
   resetPageViewZoom();
   updatePageViewThumbHighlight(newIndex);
-  isTransitioning = false;
+  State.isTransitioning = false;
 }
 
 // ── Painting transitions (between paintings) ─────────────────
 
 function transitionToPageViewPainting(newIndex, direction) {
-  if (isTransitioning) return;
-  isTransitioning = true;
+  if (State.isTransitioning) return;
+  State.isTransitioning = true;
 
-  currentPaintingIndex = newIndex;
-  currentImageIndex = 0;
+  State.currentPaintingIndex = newIndex;
+  State.currentImageIndex = 0;
   const p = paintings[newIndex];
   const imgs = getPaintingImagePaths(p);
   pageViewImg.src = imgs[0];
@@ -439,15 +439,15 @@ function transitionToPageViewPainting(newIndex, direction) {
   renderPageViewButtons(p);
   setUrlParam("painting", p.id);
   preloadAdjacentImages();
-  isTransitioning = false;
+  State.isTransitioning = false;
 }
 
 function showNextPageViewPainting() {
-  transitionToPageViewPainting((currentPaintingIndex + 1) % paintings.length, 1);
+  transitionToPageViewPainting((State.currentPaintingIndex + 1) % paintings.length, 1);
 }
 
 function showPrevPageViewPainting() {
-  transitionToPageViewPainting((currentPaintingIndex - 1 + paintings.length) % paintings.length, -1);
+  transitionToPageViewPainting((State.currentPaintingIndex - 1 + paintings.length) % paintings.length, -1);
 }
 
 // ── Swipe gestures ────────────────────────────────────────────
@@ -462,12 +462,12 @@ function setupPageViewSwipeGestures() {
     let nextImg = null;
 
     setupSwipe(wrapper, (phase, dx, dy) => {
-      const painting = paintings[currentPaintingIndex];
+      const painting = paintings[State.currentPaintingIndex];
       const imgs = getPaintingImagePaths(painting);
       if (imgs.length <= 1) return;
 
       const direction = dx < 0 ? 1 : -1;
-      const newIndex = (currentImageIndex + direction + imgs.length) % imgs.length;
+      const newIndex = (State.currentImageIndex + direction + imgs.length) % imgs.length;
 
       if (phase === "move") {
         const wrapperRect = wrapper.getBoundingClientRect();
@@ -516,7 +516,7 @@ function setupPageViewSwipeGestures() {
       }
 
       // Swiped far enough — load immediately
-      currentImageIndex = newIndex;
+      State.currentImageIndex = newIndex;
       pageViewImg.src = imgs[newIndex];
       cleanup();
       updatePageViewThumbHighlight(newIndex);
@@ -573,9 +573,9 @@ function setupPageViewFullscreenListeners() {
 
   // Click on image to open fullscreen
   pageViewImg.addEventListener("click", () => {
-    const painting = paintings[currentPaintingIndex];
+    const painting = paintings[State.currentPaintingIndex];
     const imgs = getPaintingImagePaths(painting);
-    openFullscreen(pageViewImg.src, currentImageIndex, imgs);
+    openFullscreen(pageViewImg.src, State.currentImageIndex, imgs);
   });
 
   // Close button
@@ -685,8 +685,8 @@ function setupBackButtonPositioning() {
 
 function setupLanguageChangeListener() {
   window.addEventListener("languagechange", () => {
-    if (currentPaintingIndex !== undefined && paintings[currentPaintingIndex]) {
-      const painting = paintings[currentPaintingIndex];
+    if (State.currentPaintingIndex !== undefined && paintings[State.currentPaintingIndex]) {
+      const painting = paintings[State.currentPaintingIndex];
       updatePageViewDescription(painting);
       renderPageViewMedium(painting);
       renderPageViewFrameInfo(painting);
