@@ -8,6 +8,53 @@ let pageViewPrevBtn, pageViewNextBtn;
 // Fullscreen navigation
 let fullscreenImageIndex = 0;
 let fullscreenImages = [];
+let fullscreenZoomLevel = 0;
+
+// ── Fullscreen image viewer ───────────────────────────────────
+
+function resetFullscreenZoom() {
+  const img = document.getElementById("fullscreenImg");
+  if (!img) return;
+  fullscreenZoomLevel = 0;
+  img.style.transform = "scale(1)";
+  img.style.transformOrigin = "center center";
+  document.getElementById("fullscreenOverlay")?.classList.remove("is-zoomed-1", "is-zoomed-2");
+}
+
+function updateFullscreenZoomPosition(e, overlay) {
+  const img = document.getElementById("fullscreenImg");
+  if (!img) return;
+  const rect = overlay.getBoundingClientRect();
+  img.style.transformOrigin =
+    `${((e.clientX - rect.left) / rect.width) * 100}% ${((e.clientY - rect.top) / rect.height) * 100}%`;
+}
+
+function openFullscreen(imageSrc, imageIndex = 0, images = [imageSrc]) {
+  const overlay = document.getElementById("fullscreenOverlay");
+  const img = document.getElementById("fullscreenImg");
+  if (!overlay || !img) return;
+
+  if (typeof fullscreenImageIndex !== 'undefined') {
+    fullscreenImageIndex = imageIndex;
+    fullscreenImages = images;
+  }
+
+  img.src = imageSrc;
+  overlay.classList.add("active");
+  resetFullscreenZoom();
+  document.documentElement.style.overflow = "hidden";
+  document.body.style.overflow = "hidden";
+}
+
+function closeFullscreen() {
+  const overlay = document.getElementById("fullscreenOverlay");
+  if (!overlay) return;
+
+  overlay.classList.remove("active");
+  resetFullscreenZoom();
+  document.documentElement.style.overflow = "";
+  document.body.style.overflow = "";
+}
 
 function resolvePageViewRefs() {
   pageViewImg = document.getElementById("pageview-img");

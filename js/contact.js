@@ -96,7 +96,6 @@ function handleBuyClick(painting, frameChoice = null) {
     messageField.value = frameText;
   }
 
-  closeModal();
   document.getElementById("formContainer").scrollIntoView({ behavior: "smooth" });
 }
 

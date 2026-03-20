@@ -76,13 +76,12 @@ async function init() {
 
   sortPaintings();
   buildGallery();
-  attachModalListeners();
 
+  // Legacy: redirect old ?painting= URLs to view.html
   const params     = new URLSearchParams(window.location.search);
   const paintingId = params.get("painting");
   if (paintingId) {
-    const index = paintings.findIndex(p => p.id === paintingId);
-    if (index !== -1) openModal(index);
+    window.location.href = `view.html?painting=${paintingId}`;
   }
 }
 
@@ -96,4 +95,8 @@ async function setup() {
 setupScrollWatcher();
 setup();
 init();
-initPageView();
+
+// Only initialize page view on view.html
+if (window.location.pathname.includes("view.html")) {
+  initPageView();
+}

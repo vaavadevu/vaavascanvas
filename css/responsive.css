@@ -17,6 +17,12 @@
 
 /* --- Mobilanpassning (max-width: 768px) --- */
 @media (max-width: 768px) {
+  /* On mobile, header is sticky so keep padding-top for spacing */
+  html,
+  body {
+    padding-top: 100px;
+  }
+
   .stickyHeader {
   position: sticky;
   top: 0;
@@ -212,7 +218,7 @@ nav.active {
   #gallery {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
-    padding: 130px 10px ;
+    padding: 20px 10px ;
   }
 
   .modal {
