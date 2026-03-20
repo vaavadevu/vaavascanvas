@@ -123,18 +123,23 @@ function setupFab() {
   }
 
   // Klick-logik med ripple
+  const ripple = document.createElement("span");
+  ripple.classList.add("fab-ripple");
+  trigger.appendChild(ripple);
+
+  ripple.addEventListener("animationend", () => ripple.classList.remove("fab-ripple--active"));
+
   trigger.addEventListener("click", (e) => {
     e.stopPropagation();
     fab.classList.toggle("open");
 
-    const ripple = document.createElement("span");
-    ripple.classList.add("fab-ripple");
     const size = trigger.offsetWidth;
     ripple.style.width = ripple.style.height = size + "px";
     ripple.style.left = (e.offsetX - size / 2) + "px";
     ripple.style.top = (e.offsetY - size / 2) + "px";
-    trigger.appendChild(ripple);
-    ripple.addEventListener("animationend", () => ripple.remove());
+    ripple.classList.remove("fab-ripple--active");
+    void ripple.offsetWidth; // force reflow to restart animation
+    ripple.classList.add("fab-ripple--active");
   });
 
   // Funktion för att sätta positionen

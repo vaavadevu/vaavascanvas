@@ -47,8 +47,11 @@
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.4);
   transform: scale(0);
-  animation: fab-ripple-anim 0.5s ease-out forwards;
   pointer-events: none;
+}
+
+.fab-ripple--active {
+  animation: fab-ripple-anim 0.5s ease-out forwards;
 }
 
 @keyframes fab-ripple-anim {
