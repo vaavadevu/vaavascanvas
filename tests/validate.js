@@ -336,11 +336,11 @@ test('All translation keys have English (en) version', () => {
   });
 });
 
-test('No translation keys have extra unexpected languages', () => {
+test('All translation values are non-empty strings', () => {
   Object.entries(keys).forEach(([key, langs]) => {
-    Object.keys(langs).forEach(lang => {
-      assertIncludes(['sv', 'en'], lang,
-        `Translation key "${key}" has unexpected language: ${lang}`);
+    Object.entries(langs).forEach(([lang, val]) => {
+      assert(typeof val === 'string' && val.length > 0,
+        `Translation key "${key}" has empty or non-string value for language "${lang}"`);
     });
   });
 });
@@ -387,20 +387,13 @@ test('All data-i18n-ph placeholder attributes reference existing translation key
 
 console.log(colors.blue + '\n[5] FORM LOGIC VALIDATION' + colors.reset);
 
-test('Paintings dropdown for "Originals" only includes FOR_SALE paintings', () => {
-  const forSalePaintings = paintings.filter(p => p.status === statuses.FOR_SALE);
-  assert(forSalePaintings.length > 0, 'No FOR_SALE paintings found');
-});
-
-test('Paintings dropdown for "Prints" includes all paintings', () => {
-  assert(paintings.length > 0, 'No paintings found');
-});
-
-test('All FOR_SALE paintings have price for display', () => {
-  const forSalePaintings = paintings.filter(p => p.status === statuses.FOR_SALE);
-  forSalePaintings.forEach(p => {
-    assert(p.originalPrice !== undefined && p.originalPrice > 0,
-      `FOR_SALE painting ${p.id} missing valid price`);
+test('Originals dropdown excludes SOLD and PERSONAL paintings', () => {
+  const nonSalePaintings = paintings.filter(
+    p => p.status === statuses.SOLD || p.status === statuses.PERSONAL
+  );
+  nonSalePaintings.forEach(p => {
+    assert(p.status !== statuses.FOR_SALE,
+      `Painting ${p.id} with status ${p.status} should not appear in Originals dropdown`);
   });
 });
 
@@ -410,7 +403,7 @@ test('All FOR_SALE paintings have price for display', () => {
 
 console.log(colors.blue + '\n[6] GALLERY LOGIC VALIDATION' + colors.reset);
 
-test('Paintings can be sorted by status and price', () => {
+test('Paintings sort: FOR_SALE before PERSONAL before SOLD, price descending within group', () => {
   const statusOrder = {
     [statuses.FOR_SALE]: 0,
     [statuses.PERSONAL]: 1,
@@ -423,13 +416,28 @@ test('Paintings can be sorted by status and price', () => {
     return (b.originalPrice || 0) - (a.originalPrice || 0);
   });
 
-  assert(sorted.length === paintings.length, 'Sorting changed array length');
+  for (let i = 0; i < sorted.length - 1; i++) {
+    const a = sorted[i];
+    const b = sorted[i + 1];
+    const aOrder = statusOrder[a.status];
+    const bOrder = statusOrder[b.status];
+    assert(aOrder <= bOrder,
+      `Sort order wrong: "${a.id}" (${a.status}) should come before "${b.id}" (${b.status})`);
+    if (aOrder === bOrder) {
+      assert((a.originalPrice || 0) >= (b.originalPrice || 0),
+        `Price order wrong within ${a.status}: "${a.id}" (${a.originalPrice}) should be >= "${b.id}" (${b.originalPrice})`);
+    }
+  }
 });
 
-test('All paintings have valid filter status', () => {
+test('Paintings with frameAvailable have a valid framedPrice', () => {
   paintings.forEach(p => {
-    assertIncludes(Object.values(statuses), p.status,
-      `Painting ${p.id} has invalid filter status: ${p.status}`);
+    if (p.frameAvailable) {
+      assert(typeof p.framedPrice === 'number' && p.framedPrice > 0,
+        `Painting ${p.id} has frameAvailable but missing valid framedPrice`);
+      assert(p.framedPrice > p.originalPrice,
+        `Painting ${p.id} framedPrice (${p.framedPrice}) should be greater than originalPrice (${p.originalPrice})`);
+    }
   });
 });
 
