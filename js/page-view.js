@@ -666,15 +666,13 @@ function setupBackButtonPositioning() {
     const initialTop = 140;
     const gap = 20;
 
-    // Button is fixed at 140px from top of viewport
-    // If footer is overlapping with button position, move button up
-    if (footerRect.top > 0 && footerRect.top < initialTop + btnHeight) {
-      // Footer is entering button space - push button above footer
-      const newTop = footerRect.top - btnHeight - gap;
-      backBtn.style.top = newTop + "px";
-    } else {
-      // Footer is not overlapping - keep button at initial position
-      backBtn.style.top = initialTop + "px";
+    if (footerRect.top > 0) {
+      if (footerRect.top < initialTop + btnHeight) {
+        const newTop = footerRect.top - btnHeight - gap;
+        backBtn.style.top = newTop + "px";
+      } else {
+        backBtn.style.top = initialTop + "px";
+      }
     }
   };
 
@@ -722,7 +720,7 @@ function attachPageViewListeners() {
       if (isFullscreenActive) {
         closeFullscreen();
       } else {
-        hideFrameSelectorModal(() => {});
+        hideFrameSelectorModal(() => { });
       }
     }
   };
