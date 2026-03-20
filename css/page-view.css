@@ -202,6 +202,123 @@
   #pageview-buttons button {
     width: 100%;
   }
+
+  /* Frame selector modal on mobile */
+  .frame-selector {
+    display: none;
+  }
+
+  .frame-selector.mobile-visible {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    padding: 20px;
+    background: var(--bg-warm);
+    border-top: 2px solid var(--accent-green);
+    border-radius: 16px 16px 0 0;
+    box-sizing: border-box;
+    z-index: 10001;
+    animation: slideUp 0.3s ease-out;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  .frame-selector.mobile-visible.closing {
+    animation: slideDown 0.3s ease-out forwards;
+  }
+
+  .frame-selector.mobile-visible .frame-options {
+    display: none;
+  }
+
+  .frame-action-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .frame-action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 14px 12px;
+    border: 1.5px solid var(--accent-green);
+    background: var(--accent-green);
+    color: var(--text-light);
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 600;
+    transition: 0.2s;
+  }
+
+  .frame-action-btn:hover {
+    background: var(--bg-warm);
+    color: var(--accent-green);
+  }
+
+  .frame-action-btn .btn-title {
+    font-size: 0.85rem;
+    opacity: 0.9;
+  }
+
+  .frame-action-btn .btn-price {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideDown {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+  }
+
+  .frame-selector-overlay {
+    display: none;
+  }
+
+  .frame-selector-overlay.mobile-visible {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 10000;
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
 }
 
 #pageview-price-section {
@@ -216,6 +333,13 @@
 }
 
 #pageview-medium {
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  margin: 8px 0;
+  font-style: italic;
+}
+
+.pageview-frame-info {
   font-size: 0.95rem;
   color: var(--text-dark);
   margin: 8px 0;

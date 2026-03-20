@@ -76,6 +76,7 @@ function openPageView(index) {
   currentPaintingIndex = index;
   currentImageIndex = 0;
   populatePageView(paintings[index]);
+  renderPageViewFrameInfo(paintings[index]);
   renderPageViewButtons(paintings[index]);
   preloadAdjacentImages();
   setUrlParam("painting", paintings[index].id);
@@ -121,13 +122,9 @@ function renderPageViewButtons(painting) {
 
   if (painting.status === STATUS.FOR_SALE && painting.originalPrice) {
     if (painting.frameAvailable) {
+      // Frame selector (for desktop only, contains radio buttons)
       const frameContainer = document.createElement("div");
       frameContainer.classList.add("frame-selector");
-
-      const frameLabel = document.createElement("p");
-      frameLabel.textContent = t("frame_available");
-      frameLabel.classList.add("frame-label");
-      frameContainer.appendChild(frameLabel);
 
       const optionsWrapper = document.createElement("div");
       optionsWrapper.classList.add("frame-options");
@@ -180,15 +177,146 @@ function renderPageViewButtons(painting) {
     const buyBtn = document.createElement("button");
     buyBtn.textContent = t("modal_buy_btn");
     buyBtn.addEventListener("click", () => {
-      if (painting.frameAvailable) {
+      if (painting.frameAvailable && window.innerWidth <= 768) {
+        // On mobile with frame available: show modal
+        showFrameSelectorModal(painting);
+      } else if (painting.frameAvailable) {
+        // On desktop with frame available: proceed with buy
         const selectedRadio = pageViewButtons.querySelector('input[type="radio"]:checked');
         const frameChoice = selectedRadio.value;
         handleBuyClick(painting, frameChoice);
       } else {
+        // No frame available: proceed directly
         handleBuyClick(painting, null);
       }
     });
     pageViewButtons.appendChild(buyBtn);
+  }
+}
+
+function showFrameSelectorModal(painting) {
+  // Check if we already have a cloned modal in the body
+  let frameSelector = document.querySelector("body > .frame-selector");
+
+  // If not, create one by cloning from pageViewButtons
+  if (!frameSelector) {
+    const original = pageViewButtons.querySelector(".frame-selector");
+    if (original) {
+      frameSelector = original.cloneNode(true);
+      document.body.appendChild(frameSelector);
+    }
+  }
+
+  const overlay = document.querySelector(".frame-selector-overlay");
+
+  if (frameSelector) {
+    // Remove any existing action buttons
+    const existingBtns = frameSelector.querySelectorAll(".frame-action-btn");
+    existingBtns.forEach(btn => btn.remove());
+
+    // Create button container
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("frame-action-buttons");
+
+    // Without frame button
+    const withoutBtn = document.createElement("button");
+    withoutBtn.type = "button";
+    withoutBtn.classList.add("frame-action-btn", "frame-action-without");
+    withoutBtn.innerHTML = `
+      <span class="btn-title">${t("frame_price_without")}</span>
+      <span class="btn-price">${painting.originalPrice} kr</span>
+    `;
+    withoutBtn.addEventListener("click", () => {
+      hideFrameSelectorModal(() => {
+        handleBuyClick(painting, "without");
+      });
+    });
+    btnContainer.appendChild(withoutBtn);
+
+    // With frame button
+    const withBtn = document.createElement("button");
+    withBtn.type = "button";
+    withBtn.classList.add("frame-action-btn", "frame-action-with");
+    withBtn.innerHTML = `
+      <span class="btn-title">${t("frame_price_with")}</span>
+      <span class="btn-price">${painting.framedPrice} kr</span>
+    `;
+    withBtn.addEventListener("click", () => {
+      hideFrameSelectorModal(() => {
+        handleBuyClick(painting, "with");
+      });
+    });
+    btnContainer.appendChild(withBtn);
+
+    frameSelector.appendChild(btnContainer);
+    frameSelector.classList.add("mobile-visible");
+    // Prevent scroll when modal is open
+    document.body.style.overflow = "hidden";
+  }
+  if (overlay) {
+    overlay.classList.add("mobile-visible");
+  }
+}
+
+function hideFrameSelectorModal(callback) {
+  const frameSelector = document.querySelector(".frame-selector.mobile-visible");
+  const overlay = document.querySelector(".frame-selector-overlay.mobile-visible");
+
+  if (frameSelector) {
+    frameSelector.classList.add("closing");
+    setTimeout(() => {
+      frameSelector.classList.remove("mobile-visible", "closing");
+      document.body.style.overflow = "";
+      if (callback) callback();
+    }, 300);
+  }
+  if (overlay) {
+    overlay.classList.remove("mobile-visible");
+  }
+}
+
+function setupFrameSelectorModal() {
+  // Create overlay element if we're on mobile
+  if (window.innerWidth <= 768) {
+    let overlay = document.querySelector(".frame-selector-overlay");
+    if (!overlay) {
+      overlay = document.createElement("div");
+      overlay.classList.add("frame-selector-overlay");
+      document.body.appendChild(overlay);
+
+      overlay.addEventListener("click", () => hideFrameSelectorModal());
+
+      // Add swipe gesture to close modal
+      setupFrameSelectorSwipe(overlay);
+    }
+  }
+}
+
+function setupFrameSelectorSwipe(overlay) {
+  let touchStartY = 0;
+  let touchEndY = 0;
+
+  overlay.addEventListener("touchstart", (e) => {
+    touchStartY = e.changedTouches[0].clientY;
+  }, false);
+
+  overlay.addEventListener("touchend", (e) => {
+    touchEndY = e.changedTouches[0].clientY;
+    handleFrameSelectorSwipe(touchStartY, touchEndY);
+  }, false);
+}
+
+function handleFrameSelectorSwipe(startY, endY) {
+  const swipeThreshold = 50; // Minimum swipe distance in pixels
+  const swipeDistance = endY - startY;
+
+  // Swipe down to close
+  if (swipeDistance > swipeThreshold) {
+    hideFrameSelectorModal();
+  }
+  // Swipe up to close (upward swipe on overlay)
+  else if (swipeDistance < -swipeThreshold) {
+    hideFrameSelectorModal();
   }
 }
 
@@ -202,6 +330,20 @@ function renderPageViewMedium(painting) {
     pageViewMedium.textContent = `${t(painting.medium)}`;
   } else {
     pageViewMedium.textContent = "";
+  }
+}
+
+function renderPageViewFrameInfo(painting) {
+  // Remove any existing frame info paragraph
+  const existing = document.getElementById("pageview-frame-info");
+  if (existing) existing.remove();
+
+  if (painting.frameAvailable) {
+    const frameInfo = document.createElement("p");
+    frameInfo.id = "pageview-frame-info";
+    frameInfo.textContent = t("frame_available");
+    frameInfo.classList.add("pageview-frame-info");
+    pageViewMedium.parentNode.insertBefore(frameInfo, pageViewMedium.nextSibling);
   }
 }
 
@@ -290,6 +432,7 @@ function transitionToPageViewPainting(newIndex, direction) {
   pageViewSize.textContent = formatDimensions(p);
   updatePageViewDescription(p);
   renderPageViewMedium(p);
+  renderPageViewFrameInfo(p);
   renderPageViewPrice(p);
   buildPageViewThumbnails(imgs);
   configurePageViewArrows(imgs);
@@ -548,6 +691,7 @@ function setupLanguageChangeListener() {
       const painting = paintings[currentPaintingIndex];
       updatePageViewDescription(painting);
       renderPageViewMedium(painting);
+      renderPageViewFrameInfo(painting);
       renderPageViewPrice(painting);
       renderPageViewButtons(painting);
     }
@@ -565,6 +709,7 @@ function attachPageViewListeners() {
   setupFullscreenNavigation();
   setupBackButtonPositioning();
   setupLanguageChangeListener();
+  setupFrameSelectorModal();
 
   // Arrows are disabled in page view
   // Only thumbnail navigation and swipe gestures are available
@@ -576,6 +721,8 @@ function attachPageViewListeners() {
     if (e.key === "Escape") {
       if (isFullscreenActive) {
         closeFullscreen();
+      } else {
+        hideFrameSelectorModal(() => {});
       }
     }
   };
