@@ -1,4 +1,4 @@
-// modal.js — shared utilities for painting display
+// utilities.js — shared utility functions for painting display and interactions
 
 // ── Shared utilities ──────────────────────────────────────────
 
