@@ -230,7 +230,7 @@ function showFrameSelectorModal(painting) {
       hideFrameSelectorModal(() => {
         handleBuyClick(painting, "without");
       });
-    });
+    }, { once: true });
     btnContainer.appendChild(withoutBtn);
 
     // With frame button
@@ -245,7 +245,7 @@ function showFrameSelectorModal(painting) {
       hideFrameSelectorModal(() => {
         handleBuyClick(painting, "with");
       });
-    });
+    }, { once: true });
     btnContainer.appendChild(withBtn);
 
     frameSelector.appendChild(btnContainer);
