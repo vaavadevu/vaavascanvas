@@ -1,8 +1,3 @@
-/* ─── Legacy modal (hidden) ─── */
-.modal {
-  display: none;
-}
-
 /* ─── Fullscreen Overlay ─── */
 .fullscreenOverlay {
   display: none;
@@ -76,19 +71,19 @@
 }
 
 /* ─── Frame selector styles ─── */
-.modal-frame-selector {
+.frame-selector {
   width: 100%;
   margin-bottom: 10px;
 }
 
-.modal-frame-label {
+.frame-label {
   font-size: 0.95rem;
   color: var(--text-dark);
   margin-bottom: 12px;
   font-weight: 500;
 }
 
-.modal-frame-options {
+.frame-options {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;

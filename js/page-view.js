@@ -74,7 +74,7 @@ function resolvePageViewRefs() {
 function openPageView(index) {
   if (!resolvePageViewRefs()) return;
   currentPaintingIndex = index;
-  currentModalImageIndex = 0;
+  currentImageIndex = 0;
   populatePageView(paintings[index]);
   renderPageViewButtons(paintings[index]);
   preloadAdjacentImages();
@@ -106,7 +106,7 @@ function buildPageViewThumbnails(imgs) {
     thumb.classList.add("pageViewThumb");
     if (idx === 0) thumb.classList.add("active");
     thumb.addEventListener("click", () =>
-      transitionToPageViewImage(imgs, idx, idx > currentModalImageIndex ? 1 : -1)
+      transitionToPageViewImage(imgs, idx, idx > currentImageIndex ? 1 : -1)
     );
     container.appendChild(thumb);
   });
@@ -122,15 +122,15 @@ function renderPageViewButtons(painting) {
   if (painting.status === STATUS.FOR_SALE && painting.originalPrice) {
     if (painting.frameAvailable) {
       const frameContainer = document.createElement("div");
-      frameContainer.classList.add("modal-frame-selector");
+      frameContainer.classList.add("frame-selector");
 
       const frameLabel = document.createElement("p");
       frameLabel.textContent = t("frame_available");
-      frameLabel.classList.add("modal-frame-label");
+      frameLabel.classList.add("frame-label");
       frameContainer.appendChild(frameLabel);
 
       const optionsWrapper = document.createElement("div");
-      optionsWrapper.classList.add("modal-frame-options");
+      optionsWrapper.classList.add("frame-options");
 
       const withoutId = `frame-without-${Date.now()}`;
       const withId = `frame-with-${Date.now()}`;
@@ -268,7 +268,7 @@ function transitionToPageViewImage(imgs, newIndex, direction) {
   if (isTransitioning) return;
   isTransitioning = true;
 
-  currentModalImageIndex = newIndex;
+  currentImageIndex = newIndex;
   pageViewImg.src = imgs[newIndex];
   resetPageViewZoom();
   updatePageViewThumbHighlight(newIndex);
@@ -282,7 +282,7 @@ function transitionToPageViewPainting(newIndex, direction) {
   isTransitioning = true;
 
   currentPaintingIndex = newIndex;
-  currentModalImageIndex = 0;
+  currentImageIndex = 0;
   const p = paintings[newIndex];
   const imgs = getPaintingImagePaths(p);
   pageViewImg.src = imgs[0];
@@ -324,7 +324,7 @@ function setupPageViewSwipeGestures() {
       if (imgs.length <= 1) return;
 
       const direction = dx < 0 ? 1 : -1;
-      const newIndex = (currentModalImageIndex + direction + imgs.length) % imgs.length;
+      const newIndex = (currentImageIndex + direction + imgs.length) % imgs.length;
 
       if (phase === "move") {
         const wrapperRect = wrapper.getBoundingClientRect();
@@ -373,7 +373,7 @@ function setupPageViewSwipeGestures() {
       }
 
       // Swiped far enough — load immediately
-      currentModalImageIndex = newIndex;
+      currentImageIndex = newIndex;
       pageViewImg.src = imgs[newIndex];
       cleanup();
       updatePageViewThumbHighlight(newIndex);
@@ -432,7 +432,7 @@ function setupPageViewFullscreenListeners() {
   pageViewImg.addEventListener("click", () => {
     const painting = paintings[currentPaintingIndex];
     const imgs = getPaintingImagePaths(painting);
-    openFullscreen(pageViewImg.src, currentModalImageIndex, imgs);
+    openFullscreen(pageViewImg.src, currentImageIndex, imgs);
   });
 
   // Close button

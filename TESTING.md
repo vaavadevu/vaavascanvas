@@ -44,9 +44,7 @@ Both test suites run on every push and pull request to catch issues before deplo
 - Hero section renders correctly
 - Gallery displays all paintings
 - All gallery images load without 404 errors
-- Modal opens when clicking a painting
-- Modal images load successfully
-- Modal closes properly
+- Clicking a painting navigates to page view
 - Language switching works (Swedish ↔ English)
 - Contact form is present and accessible
 - Paintings page loads without errors
@@ -105,10 +103,9 @@ VAAVASCANVAS END-TO-END TESTS
 ✓ Gallery renders all 17 paintings
 ✓ Gallery images load successfully
 
-[2] MODAL TESTS
-✓ Modal opens when clicking first painting
-✓ Modal images load without 404 errors
-✓ Modal closes properly
+[2] PAGE VIEW TESTS
+✓ Page view loads when clicking a painting
+✓ Page view images load without 404 errors
 
 [3] LANGUAGE SWITCHING TESTS
 ✓ Language switching to English works
@@ -121,8 +118,8 @@ VAAVASCANVAS END-TO-END TESTS
 E2E TEST RESULTS
 ═══════════════════════════════════════════════════════════
 
-Total tests: 10
-Passed: 10
+Total tests: 9
+Passed: 9
 Failed: 0
 
 ✓ All E2E tests passed!
@@ -138,13 +135,13 @@ Failed: 0
 ✗ Won't catch runtime JavaScript errors
 ✗ Won't catch broken image paths that return 404
 ✗ Won't catch missing DOM elements
-✗ Won't catch modal/interaction bugs
+✗ Won't catch runtime interaction bugs
 
 ### E2E Tests (Slower - ~30 seconds)
 ✓ Actually opens pages in a real browser
 ✓ Catches JavaScript console errors
 ✓ Verifies images load (404 detection)
-✓ Tests modal opening/closing
+✓ Tests page view navigation
 ✓ Tests language switching
 ✓ Tests form presence and accessibility
 ✓ Catches runtime bugs that data tests miss
@@ -219,7 +216,7 @@ desc_myPainting: {
 **Fix:** Check the browser console for JavaScript errors:
 - Look for undefined variables or functions
 - Check that all required JS files are loaded
-- Verify modal.js, gallery.js, i18n.js are properly initialized
+- Verify utilities.js, gallery.js, i18n.js are properly initialized
 
 ### Issue: "Gallery renders all paintings - Gallery item count mismatch"
 **Fix:** Make sure:
@@ -233,11 +230,11 @@ desc_myPainting: {
 - Confirm image files are named correctly: `01.jpg`, `02.jpg`, etc.
 - Ensure the image counts in `counts.json` match actual files
 
-### Issue: "Modal opens when clicking painting - Modal did not open"
-**Fix:** Check modal functionality:
-- Verify `.modal` element exists in the HTML
-- Check that gallery items have click handlers
-- Ensure `openModal()` function is defined in modal.js
+### Issue: "Clicking a painting - Navigation did not work"
+**Fix:** Check page view functionality:
+- Verify gallery items have click handlers
+- Check that view.html page exists
+- Ensure `USE_PAGE_VIEW` is set to true in gallery.js
 
 ### Issue: "Language switching to English works - Language did not switch"
 **Fix:** Make sure:
