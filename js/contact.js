@@ -30,28 +30,24 @@ function setupContactForm() {
 
   if (!form || !typeSelect) return;
 
-  // Auto-expand textarea as user types
-  if (messageField) {
-    const autoExpandTextarea = () => {
-      messageField.style.height = "40px";
-      messageField.style.height = messageField.scrollHeight + "px";
-    };
-    messageField.addEventListener("input", autoExpandTextarea);
-  }
-
-  typeSelect.addEventListener("change", () => {
-    const val = typeSelect.value;
-
+  function applyTypeVisibility(val) {
     if (printField)     printField.style.display     = val === "Prints"      ? "block" : "none";
     if (originalField)  originalField.style.display  = val === "Originals"   ? "block" : "none";
     if (commissionInfo) commissionInfo.style.display = val === "Commissions" ? "block" : "none";
     if (originalInfo)   originalInfo.style.display   = val === "Originals"   ? "block" : "none";
     if (printInfo)      printInfo.style.display      = val === "Prints"      ? "block" : "none";
+    if (subjectInput)   subjectInput.value           = val ? `New Inquiry - ${val}` : "New Inquiry";
+  }
 
-    if (subjectInput) {
-      subjectInput.value = val ? `New Inquiry - ${val}` : "New Inquiry";
-    }
-  });
+  // Auto-expand textarea as user types
+  if (messageField) {
+    messageField.addEventListener("input", () => {
+      messageField.style.height = "40px";
+      messageField.style.height = messageField.scrollHeight + "px";
+    });
+  }
+
+  typeSelect.addEventListener("change", () => applyTypeVisibility(typeSelect.value));
 
   form.addEventListener("submit", async function (e) {
     e.preventDefault();
@@ -64,13 +60,7 @@ function setupContactForm() {
 
     if (response.ok) {
       form.reset();
-      
-      [printField, originalField, commissionInfo, originalInfo, printInfo].forEach(el => {
-        if (el) el.style.display = "none";
-      });
-
-      if (subjectInput) subjectInput.value = "New Inquiry";
-      
+      applyTypeVisibility("");
       showSuccessPopup();
     } else {
       alert("Något gick fel. Maila direkt till info@vaavascanvas.se");
