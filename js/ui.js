@@ -3,33 +3,49 @@
 async function buildComponents() {
   const headerContainer = document.getElementById("header-container");
   if (headerContainer) {
-    const res = await fetch("/components/header.html");
-    headerContainer.innerHTML = await res.text();
-    headerContainer.classList.add("visible");
+    try {
+      const res = await fetch("/components/header.html");
+      if (!res.ok) throw new Error(`Failed to load header: ${res.status}`);
+      headerContainer.innerHTML = await res.text();
+      headerContainer.classList.add("visible");
 
-    const isIndex = window.location.pathname.includes("index") || window.location.pathname === "/";
-    const isPictures = window.location.pathname.includes("pictures");
-    if (isIndex) document.querySelector('a[href="/#top"]')?.classList.add("active");
-    if (isPictures) document.querySelector('a[href="/pages/pictures.html"]')?.classList.add("active");
+      const isIndex = window.location.pathname.includes("index") || window.location.pathname === "/";
+      const isPictures = window.location.pathname.includes("pictures");
+      if (isIndex) document.querySelector('a[href="/#top"]')?.classList.add("active");
+      if (isPictures) document.querySelector('a[href="/pages/pictures.html"]')?.classList.add("active");
 
-    setupMobileMenu();
+      setupMobileMenu();
 
-    requestAnimationFrame(() => {
-      document.body.style.paddingTop = "0";
-      document.documentElement.style.paddingTop = "0";
-      window.scrollTo(0, 0);
-    });
+      requestAnimationFrame(() => {
+        document.body.style.paddingTop = "0";
+        document.documentElement.style.paddingTop = "0";
+        window.scrollTo(0, 0);
+      });
+    } catch (err) {
+      console.warn("Could not load header component:", err);
+    }
   }
 
   const modalsContainer = document.getElementById("modals-container");
   if (modalsContainer) {
-    const [subscribeRes, successRes, shippingRes] = await Promise.all([
-      fetch("/components/subscribe-modal.html"),
-      fetch("/components/success-popup.html"),
-      fetch("/components/shipping-modal.html")
-    ]);
-    modalsContainer.innerHTML =
-      await subscribeRes.text() + await successRes.text() + await shippingRes.text();
+    try {
+      const [subscribeRes, successRes, shippingRes] = await Promise.all([
+        fetch("/components/subscribe-modal.html"),
+        fetch("/components/success-popup.html"),
+        fetch("/components/shipping-modal.html")
+      ]);
+      const html = await Promise.all([
+        subscribeRes.ok ? subscribeRes.text() : Promise.resolve(""),
+        successRes.ok   ? successRes.text()   : Promise.resolve(""),
+        shippingRes.ok  ? shippingRes.text()  : Promise.resolve(""),
+      ]);
+      if (!subscribeRes.ok) console.warn(`Could not load subscribe-modal.html: ${subscribeRes.status}`);
+      if (!successRes.ok)   console.warn(`Could not load success-popup.html: ${successRes.status}`);
+      if (!shippingRes.ok)  console.warn(`Could not load shipping-modal.html: ${shippingRes.status}`);
+      modalsContainer.innerHTML = html.join("");
+    } catch (err) {
+      console.warn("Could not load modal components:", err);
+    }
   }
 }
 
