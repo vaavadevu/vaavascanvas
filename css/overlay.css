@@ -73,7 +73,6 @@
 /* ─── Frame selector styles ─── */
 .frame-selector {
   width: 100%;
-  margin-bottom: 10px;
 }
 
 .frame-label {
@@ -147,4 +146,11 @@
   font-size: 1.1rem;
   font-weight: 700;
   color: var(--accent-green);
+}
+
+/* Mobile adjustments for frame selector modal */
+@media (max-width: 768px) {
+  .frame-selector {
+    display: none;
+  }
 }
