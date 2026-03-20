@@ -1,5 +1,16 @@
 // utilities.js — shared utility functions for painting display and interactions
 
+// ── Price formatting ──────────────────────────────────────────
+
+const SEK_TO_EUR = 0.088;
+
+function formatPrice(sek) {
+  if ((window.currentLang || "sv") === "en") {
+    return `€${Math.round(sek * SEK_TO_EUR)}`;
+  }
+  return `${sek} kr`;
+}
+
 // ── Shared utilities ──────────────────────────────────────────
 
 function setupSwipe(element, handler, shouldIgnore) {
