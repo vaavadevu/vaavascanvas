@@ -119,7 +119,6 @@ function setupFab() {
   const footer = document.querySelector("footer");
   
   if (!fab || !trigger) {
-    console.log("FAB hittades inte i DOM:en än!");
     return;
   }
 
