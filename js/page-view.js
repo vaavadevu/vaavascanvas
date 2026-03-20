@@ -740,11 +740,15 @@ async function initPageView() {
     if (countsRes.ok) {
       const counts = await countsRes.json();
       paintings.forEach(p => { p.imageCount = counts[p.id] || 1; });
+    } else {
+      console.warn("Could not load counts.json, defaulting to 1 image per painting.");
     }
 
     if (metaRes.ok) {
       const metadata = await metaRes.json();
       paintings.forEach(p => { p.aspectRatio = metadata[p.id]; });
+    } else {
+      console.warn("Could not load metadata.json, using default aspect ratio.");
     }
   } catch (err) {
     console.warn("Error loading painting data:", err);

@@ -4,8 +4,14 @@ async function buildContactForm() {
   const container = document.getElementById("formContainer");
   if (!container) return;
 
-  const response = await fetch("/pages/form.html");
-  container.innerHTML = await response.text();
+  try {
+    const response = await fetch("/pages/form.html");
+    if (!response.ok) throw new Error(`Failed to load form: ${response.status}`);
+    container.innerHTML = await response.text();
+  } catch (err) {
+    console.warn("Could not load contact form:", err);
+    return;
+  }
 
   setupContactForm();
   populateArtworkDropdowns();
