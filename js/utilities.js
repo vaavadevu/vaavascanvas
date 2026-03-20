@@ -6,14 +6,14 @@ function setupSwipe(element, handler, shouldIgnore) {
   let startX = 0, startY = 0, dragging = false;
 
   element.addEventListener("touchstart", (e) => {
-    if (shouldIgnore?.(e) || isTransitioning) return;
+    if (shouldIgnore?.(e) || State.isTransitioning) return;
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
     dragging = false;
   }, { passive: true });
 
   element.addEventListener("touchmove", (e) => {
-    if (shouldIgnore?.(e) || isTransitioning) return;
+    if (shouldIgnore?.(e) || State.isTransitioning) return;
     const dx = e.touches[0].clientX - startX;
     const dy = e.touches[0].clientY - startY;
     if (Math.abs(dx) < 5) return;
@@ -39,9 +39,9 @@ function formatDimensions(painting) {
 }
 
 function preloadAdjacentImages() {
-  getPaintingImagePaths(paintings[currentPaintingIndex]).forEach(src => { new Image().src = src; });
-  new Image().src = getPaintingImagePaths(paintings[(currentPaintingIndex + 1) % paintings.length])[0];
-  new Image().src = getPaintingImagePaths(paintings[(currentPaintingIndex - 1 + paintings.length) % paintings.length])[0];
+  getPaintingImagePaths(paintings[State.currentPaintingIndex]).forEach(src => { new Image().src = src; });
+  new Image().src = getPaintingImagePaths(paintings[(State.currentPaintingIndex + 1) % paintings.length])[0];
+  new Image().src = getPaintingImagePaths(paintings[(State.currentPaintingIndex - 1 + paintings.length) % paintings.length])[0];
 }
 
 function setUrlParam(key, value) {
