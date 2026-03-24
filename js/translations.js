@@ -382,6 +382,10 @@ const keys = {
     sv: "Vill du köpa med ram? OK = med ram, Avbryt = utan ram.",
     en: "Would you like to buy with frame? OK = with frame, Cancel = without.",
   },
+  desc_efterIde: {
+  sv: "Björnmamma med sina ungar precis efter ide, när de är som mest lekfulla och nyfikna på världen.",
+  en: "A mother bear with her cubs right after an idea, when they are most playful and curious about the world.",
+}
 };
 
 // Build the translations object that i18n.js expects
