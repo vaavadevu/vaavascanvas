@@ -100,7 +100,7 @@ const paintings = [
     height: 42,
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1500,
-    status: STATUS.FOR_SALE,
+    status: STATUS.SOLD,
     medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {
