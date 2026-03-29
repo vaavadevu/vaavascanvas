@@ -18,6 +18,10 @@ const keys = {
     sv: "Kontakta mig",
     en: "Contact me",
   },
+ nav_commissions: {
+  sv: "Beställningar",
+  en: "Commissions",
+},
   nav_back: {
     sv: "Tillbaka",
     en: "Back",
