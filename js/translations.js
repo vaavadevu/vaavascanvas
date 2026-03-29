@@ -358,6 +358,10 @@ const keys = {
     sv: "Solstrålar som faller på en rävmamma och hennes lekande ungar i en skogsglänta.",
     en: "Sun rays filtering down through the trees onto a mother fox and her playful cubs in a forest clearing.",
   },
+  desc_minMamma: {
+  sv: "En ko och hennes kalv som möts i ett stilla och kärleksfullt ögonblick på sommarbetet.",
+  en: "A cow and her calf meeting in a quiet and loving moment on the summer pasture.",
+},
   desc_dagensFynd: {
     sv: "En liten ekorre som har hittat en skatt i naturen.",
     en: "A little squirrel that has found a treasure in nature.",
