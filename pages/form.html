@@ -24,7 +24,20 @@
             <option value="General"     data-i18n="form_type_general">Allmän fråga</option>
         </select>
     </div>
+   <div class="formGroup" id="f-commissionFields" style="display:none;">
+  
+  <label for="f-size">Storlek</label>
+  <select id="f-size" name="size">
+    <option value="">– Välj storlek –</option>
+    <option value="30x30 cm">30 × 30 cm</option>
+    <option value="30x40 cm">30 × 40 cm</option>
+    <option value="A2">A2</option>
+  </select>
 
+  <label for="f-image">Referensbild</label>
+  <input type="file" id="f-image" name="image">
+  
+</div>
     <div class="formGroup" id="f-printField" style="display:none;">
         <label for="f-artwork" data-i18n="form_artwork_label">Vilket verk?</label>
         <select id="f-artwork" name="artwork">
