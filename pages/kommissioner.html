@@ -19,139 +19,11 @@
   <link rel="stylesheet" href="../css/overlay.css" />
   <link rel="stylesheet" href="../css/form.css" />
   <link rel="stylesheet" href="../css/responsive.css" />
+  <link rel="stylesheet" href="../css/kommissioner.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css"/>
 
-  <style>
-    a {
-      color: var(--accent-green, #5C9485);
-      text-decoration: none;
-    }
-    a:hover { text-decoration: underline; }
-
-    .comm-page {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 4rem 1.5rem 5rem;
-      font-family: 'Quicksand', sans-serif;
-      color: var(--text-dark, #3a2f2a);
-    }
-
-    .comm-hero {
-      text-align: center;
-      padding: 2rem 1rem 3rem;
-      margin-bottom: 1rem;
-    }
-    .comm-hero h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 5vw, 2.8rem);
-      font-weight: 400;
-      font-style: italic;
-      line-height: 1.25;
-      margin: 0 0 1.2rem;
-      color: var(--text-dark, #2a1f1a);
-    }
-    .comm-hero p {
-      font-size: 1rem;
-      line-height: 1.8;
-      max-width: 520px;
-      margin: 0 auto;
-      color: var(--text-dark, #5a4a40);
-      opacity: 0.85;
-    }
-
-    .comm-section { margin-bottom: 3.5rem; }
-    .comm-section-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.4rem;
-      font-weight: 400;
-      color: var(--text-dark, #2a1f1a);
-      margin: 0 0 1.4rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1.5px solid var(--accent-light, #e8d9cc);
-    }
-
-    .steps { display: flex; flex-direction: column; gap: 1.3rem; }
-    .step { display: flex; align-items: flex-start; gap: 1.2rem; }
-    .step-num {
-      flex-shrink: 0;
-      width: 2.2rem; height: 2.2rem;
-      border-radius: 50%;
-      background: var(--bg-warm, #f5ede5);
-      border: 1.5px solid #c9a98a;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Playfair Display', serif;
-      font-size: 0.95rem; color: #b07d5a;
-      margin-top: 0.15rem;
-    }
-    .step-text strong { display: block; font-weight: 700; margin-bottom: 0.25rem; color: var(--text-dark, #3a2f2a); }
-    .step-text p { margin: 0; font-size: 0.93rem; color: var(--text-dark, #5a4a40); opacity: 0.85; line-height: 1.65; }
-
-    .price-note { font-size: 0.88rem; color: #9a7c6a; margin-bottom: 1.2rem; font-style: italic; }
-    .price-table { width: 100%; border-collapse: collapse; font-size: 0.93rem; }
-    .price-table th { text-align: left; font-weight: 700; padding: 0.6rem 0.9rem; background: var(--bg-warm, #f5ede5); color: var(--text-dark, #3a2f2a); }
-    .price-table td { padding: 0.6rem 0.9rem; border-bottom: 1px solid var(--accent-light, #ede0d4); color: var(--text-dark, #5a4a40); }
-    .price-table tr:last-child td { border-bottom: none; }
-    .price-table .price-col { font-family: 'Playfair Display', serif; color: #b07d5a; }
-
-    .comm-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
-    .comm-gallery-item {
-      aspect-ratio: 3/4;
-      background: var(--bg-warm, #f5ede5);
-      border-radius: 4px;
-      display: flex; align-items: center; justify-content: center;
-      color: #c9a98a; font-size: 0.8rem;
-      font-family: 'Quicksand', sans-serif;
-      overflow: hidden;
-    }
-    .comm-gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-    .terms-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.8rem; }
-    .terms-list li { display: flex; align-items: flex-start; gap: 0.7rem; font-size: 0.93rem; line-height: 1.65; color: var(--text-dark, #5a4a40); opacity: 0.9; }
-    .terms-list li::before { content: '—'; color: #b07d5a; flex-shrink: 0; margin-top: 0.05rem; }
-
-    .comm-form { display: flex; flex-direction: column; gap: 1.1rem; max-width: 620px; }
-    .comm-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    @media (max-width: 520px) { .comm-form-row { grid-template-columns: 1fr; } }
-    .comm-form-group { display: flex; flex-direction: column; gap: 0.35rem; }
-    .comm-form-group label { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.05em; color: var(--text-dark, #5a4a40); text-transform: uppercase; }
-    .comm-form-group input,
-    .comm-form-group select,
-    .comm-form-group textarea {
-      font-family: 'Quicksand', sans-serif; font-size: 0.93rem;
-      color: var(--text-dark, #3a2f2a); background: var(--bg-light, #fdf8f4);
-      border: 1.5px solid #ddd0c4; border-radius: 3px;
-      padding: 0.6rem 0.8rem; transition: border-color 0.2s; outline: none; resize: vertical;
-    }
-    .comm-form-group input:focus,
-    .comm-form-group select:focus,
-    .comm-form-group textarea:focus { border-color: var(--accent-green, #5C9485); }
-    .comm-checkbox-label {
-      display: flex; align-items: flex-start; gap: 0.6rem;
-      font-size: 0.88rem; color: var(--text-dark, #6b5a50);
-      cursor: pointer; text-transform: none !important; letter-spacing: 0 !important; font-weight: 400 !important;
-    }
-    .comm-checkbox-label input { margin-top: 0.15rem; flex-shrink: 0; }
-    .comm-submit {
-      align-self: flex-start; padding: 0.8rem 2rem;
-      background: var(--accent-green, #5C9485); color: #fff;
-      font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 0.9rem;
-      letter-spacing: 0.06em; border: none; border-radius: 8px;
-      cursor: pointer; transition: background 0.2s, transform 0.15s;
-    }
-    .comm-submit:hover { background: #4a7d6e; transform: translateY(-1px); }
-    .comm-submit:disabled { background: #9ac4ba; cursor: not-allowed; transform: none; }
-
-    [data-lang] { display: none; }
-    [data-lang].visible { display: block; }
-    .steps[data-lang].visible,
-    .terms-list[data-lang].visible { display: flex; }
-
-    @media (max-width: 600px) {
-      .comm-hero { padding: 1rem 0.5rem 2rem; }
-      .price-table th, .price-table td { padding: 0.45rem 0.5rem; }
-    }
-  </style>
+ 
 </head>
 
 <body id="top">
@@ -162,26 +34,20 @@
 
       <div class="comm-hero">
         <h1>
-          <span data-lang="sv" class="visible">En målning gjord<br>just för dig</span>
-          <span data-lang="en">A painting made<br>just for you</span>
+          <span data-i18n="comm-hero-title" class="visible">En målning gjord<br>just för dig</span>
         </h1>
-        <p data-lang="sv" class="visible">
+        <p data-i18n="comm-hero-description" class="visible">
           Jag målar djur, natur och de stunder som känns viktiga att bevara.
           Varje beställning är unik från den första idén till färdig duk.
-        </p>
-        <p data-lang="en">
-          I paint animals, nature and the moments worth holding onto.
-          Every commission is one of a kind – from the first idea to the finished canvas.
         </p>
       </div>
 
       <section class="comm-section">
         <h2 class="comm-section-title">
-          <span data-lang="sv" class="visible">Så här går det till</span>
-          <span data-lang="en">How it works</span>
+          <span data-i18n="comm-section-title" class="visible">Så här går det till</span>
         </h2>
 
-        <div class="steps" data-lang="sv" style="display:flex">
+        <div class="steps" data-i18n="comm-steps" style="display:flex">
           <div class="step"><div class="step-num">1</div><div class="step-text">
             <strong>Hör av dig</strong>
             <p>Skicka ett meddelande via formuläreta <a href="#footer">nedan</a> eller mejla <a href="mailto:info@vaavascanvas.se">info@vaavascanvas.se</a>. Berätta om motivet du drömmer om – gärna med referensbild.</p>
@@ -199,39 +65,18 @@
             <p>Resterande 50 % betalas när målningen är klar. Frakt tillkommer om du inte hämtar i Stockholm.</p>
           </div></div>
         </div>
-
-        <div class="steps" data-lang="en">
-          <div class="step"><div class="step-num">1</div><div class="step-text">
-            <strong>Get in touch</strong>
-            <p>Send a message via the form below or email <a href="mailto:info@vaavascanvas.se">info@vaavascanvas.se</a>. Tell me about the subject you have in mind – a reference image is very helpful.</p>
-          </div></div>
-          <div class="step"><div class="step-num">2</div><div class="step-text">
-            <strong>We align on the details</strong>
-            <p>I'll get back to you with a quote and timeline. A 50 % deposit confirms the commission.</p>
-          </div></div>
-          <div class="step"><div class="step-num">3</div><div class="step-text">
-            <strong>I paint</strong>
-            <p>I'll share progress photos along the way and welcome your thoughts and feedback.</p>
-          </div></div>
-          <div class="step"><div class="step-num">4</div><div class="step-text">
-            <strong>Delivery</strong>
-            <p>The remaining 50 % is due when the painting is complete. Shipping is available if you can't collect in Stockholm.</p>
-          </div></div>
-        </div>
       </section>
 
       <section class="comm-section">
         <h2 class="comm-section-title">
-          <span data-lang="sv" class="visible">Priser</span>
-          <span data-lang="en">Pricing</span>
+          <span data-i18n="comm-section-prices" class="visible">Priser</span>
         </h2>
-        <p class="price-note" data-lang="sv" style="display:block">Ungefärliga priser – slutpriset kan variera beroende på motivets komplexitet.</p>
-        <p class="price-note" data-lang="en">Approximate prices – the final price may vary depending on the complexity of the subject.</p>
+        <p class="price-note" data-i18n="comm-price-note" style="display:block">Ungefärliga priser – slutpriset kan variera beroende på motivets komplexitet.</p>
         <table class="price-table">
           <thead>
             <tr>
-              <th><span data-lang="sv" class="visible">Storlek</span><span data-lang="en">Size</span></th>
-              <th><span data-lang="sv" class="visible">Från</span><span data-lang="en">From</span></th>
+              <th><span data-i18n="comm-size" class="visible">Storlek</span><span data-i18n="comm-size-en" class="visible">Size</span></th>
+
             </tr>
           </thead>
           <tbody>
@@ -239,47 +84,36 @@
             <tr><td>30 × 40 cm</td><td class="price-col">1 800 kr</td></tr>
             <tr><td>A2 – 42 × 60 cm</td><td class="price-col">2 000 kr</td></tr>
             <tr>
-              <td><span data-lang="sv" class="visible">Större / anpassat</span><span data-lang="en">Larger / custom</span></td>
-              <td class="price-col"><span data-lang="sv" class="visible">Vi pratar</span><span data-lang="en">Let's talk</span></td>
+              <td><span data-i18n="comm-size-custom" class="visible">Större / anpassat</span><span data-i18n="comm-size-custom-en" class="visible">Larger / custom</span></td>
+              <td class="price-col"><span data-i18n="comm-price-custom" class="visible">Vi pratar</span><span data-i18n="comm-price-custom-en" class="visible">Let's talk</span></td>
             </tr>
           </tbody>
         </table>
       </section>
 
       <section class="comm-section">
-        <h2 class="comm-section-title">
-          <span data-lang="sv" class="visible">Tidigare beställningar</span>
-          <span data-lang="en">Previous commissions</span>
-        </h2>
-        <div class="comm-gallery">
-          <!-- Byt ut mot riktiga bilder när du har dem:
-          <div class="comm-gallery-item"><img src="../images/commissions/01.jpg" alt="Beställd målning" /></div>
-          -->
-          <div class="comm-gallery-item">Foto kommer snart</div>
-          <div class="comm-gallery-item">Foto kommer snart</div>
-          <div class="comm-gallery-item">Foto kommer snart</div>
-        </div>
-  
-      </section>
+  <h2 class="comm-section-title">Tidigare beställningar</h2>
+  <div class="comm-gallery">
+    <div class="comm-gallery-item">
+      <img src="../images/paintings/solvarmeISkogen/original/01.jpg" alt="Beställd målning" />
+      <!-- <p>Solvärme i skogen</p> valfritt -->
+    </div>
+    <div class="comm-gallery-item">
+      <img src="../images/paintings/brollopspresent/original/01.jpg" alt="Beställd målning" />
+    </div>
+  </div>
+</section>
 
       <section class="comm-section">
         <h2 class="comm-section-title">
-          <span data-lang="sv" class="visible">Köpevillkor</span>
-          <span data-lang="en">Terms & conditions</span>
+          <span data-i18n="comm-section-terms" class="visible">Köpevillkor</span>
         </h2>
-        <ul class="terms-list" data-lang="sv" style="display:flex">
+        <ul class="terms-list" data-i18n="comm-terms" style="display:flex">
           <li>Betalning sker med 50 % förskott vid beställning. Resterande belopp betalas när målningen är klar.</li>
           <li>Beställda originalverk ångras inte – motivet är personligt och kan inte säljas vidare.</li>
           <li>Jag förbehåller mig rätten att dokumentera och visa beställda verk i min portfolio och på sociala medier, om inget annat avtalas.</li>
           <li>Leveranstid varierar – räkna med 2–6 veckor beroende på storlek och ordervolym. Hör av dig om du har en deadline.</li>
           <li>Frakt sker på köparens bekostnad. Upphämtning i Stockholm är alltid möjlig.</li>
-        </ul>
-        <ul class="terms-list" data-lang="en">
-          <li>A 50 % deposit is required to start the commission. The remaining balance is due upon completion.</li>
-          <li>Commissioned original works are non-refundable, as the subject is personal and cannot be resold.</li>
-          <li>I reserve the right to document and display commissioned works in my portfolio and on social media, unless otherwise agreed.</li>
-          <li>Lead time varies – please allow 2–6 weeks depending on size and current workload. Let me know if you have a deadline.</li>
-          <li>Shipping is at the buyer's cost. Collection in Stockholm is always possible.</li>
         </ul>
       </section>
 
@@ -326,40 +160,6 @@
   <script src="../js/contact.js"></script>
   <script src="../js/ui.js"></script>
   <script src="../js/script.js"></script>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const lang = localStorage.getItem('lang') || 'sv';
-      applyLang(lang);
-    });
-
-
-    function applyLang(lang) {
-      document.querySelectorAll('[data-lang]').forEach(el => {
-        const match = el.dataset.lang === lang;
-        el.classList.toggle('visible', match);
-        if (el.tagName === 'SPAN') return;
-        const isFlex = el.tagName === 'UL' || el.classList.contains('steps');
-        el.style.display = match ? (isFlex ? 'flex' : '') : 'none';
-      });
-      const phs = {
-        'cf-name':    { sv: 'Ditt namn', en: 'Your name' },
-        'cf-message': { sv: 'Vilket djur eller motiv vill du ha? Finns det referensbilder?',
-                        en: 'Which animal or subject? Any reference images?' }
-      };
-      for (const [id, v] of Object.entries(phs)) {
-        const el = document.getElementById(id);
-        if (el) el.placeholder = v[lang] || v.sv;
-      }
-    }
-
-    // Hook into site's setLanguage so the flag buttons in the header also update this page
-    const _siteSetLang = window.setLanguage;
-    window.setLanguage = function(lang) {
-      if (_siteSetLang) _siteSetLang(lang);
-      applyLang(lang);
-    };
-  </script>
 
 </body>
 </html>
