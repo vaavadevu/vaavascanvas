@@ -307,61 +307,9 @@
       </div>
       <div class="footerDivider"></div>
       <div class="footerFormSection" id="formContainer">
-        <form action="https://formspree.io/f/xgolgnoj" method="POST" id="commForm" class="comm-form">
-          <input type="hidden" name="_subject" value="Beställningsförfrågan – Vaavascanvas">
-          <input type="hidden" name="type" value="Commissions">
-
-          <div class="comm-form-row">
-            <div class="comm-form-group">
-              <label for="cf-name" data-lang="sv" class="visible">Namn</label>
-              <label for="cf-name" data-lang="en">Name</label>
-              <input type="text" id="cf-name" name="name" placeholder="Ditt namn" required />
-            </div>
-            <div class="comm-form-group">
-              <label for="cf-email">E-post</label>
-              <input type="email" id="cf-email" name="email" placeholder="din@email.com" required />
-            </div>
-          </div>
-
-          <div class="comm-form-group">
-            <label for="cf-size" data-lang="sv" class="visible">Önskad storlek</label>
-            <label for="cf-size" data-lang="en">Preferred size</label>
-            <select id="cf-size" name="size">
-              <option value="" data-lang="sv">– Välj storlek –</option>
-              <option value="" data-lang="en">– Select size –</option>
-              <option value="30x30 cm">30 × 30 cm (~1 500 kr)</option>
-              <option value="30x40 cm">30 × 40 cm (~1 800 kr)</option>
-              <option value="A2 42x60 cm">A2 – 42 × 60 cm (~2 000 kr)</option>
-              <option value="Större / offert" data-lang="sv">Större – vi pratar</option>
-              <option value="Larger / quote" data-lang="en">Larger – let's talk</option>
-            </select>
-          </div>
-
-          <div class="comm-form-group">
-            <label for="cf-message" data-lang="sv" class="visible">Berätta om ditt motiv</label>
-            <label for="cf-message" data-lang="en">Describe your subject</label>
-            <textarea id="cf-message" name="message" rows="4"
-              placeholder="Vilket djur eller motiv vill du ha? Finns det referensbilder?"></textarea>
-          </div>
-
-          <div class="comm-form-group">
-            <label class="comm-checkbox-label">
-              <input type="checkbox" name="subscribe" id="cf-subscribe" />
-              <span data-lang="sv" class="visible">Ja, jag vill få mail när nya målningar läggs upp</span>
-              <span data-lang="en">Yes, notify me when new paintings are added</span>
-            </label>
-          </div>
-
-          <button type="submit" class="comm-submit">
-            <span data-lang="sv" class="visible">✉ Skicka förfrågan</span>
-            <span data-lang="en">✉ Send request</span>
-          </button>
-
-          <p id="commSuccess" style="display:none; color:var(--accent-green,#5C9485); font-weight:600; margin-top:1rem;">
-            <span data-lang="sv" class="visible">Tack! Jag hör av mig så snart jag kan. 🎨</span>
-            <span data-lang="en">Thank you! I'll be in touch as soon as I can. 🎨</span>
-          </p>
-        </form>
+       <a href="form.html?type=Commissions" class="comm-submit">
+  ✨ Beställ din målning
+</a>
       </div>
     </div>
     <p class="footerCopy" data-i18n="footer_copy">© 2026 Devika – All rights reserved</p>
@@ -383,36 +331,8 @@
     document.addEventListener('DOMContentLoaded', () => {
       const lang = localStorage.getItem('lang') || 'sv';
       applyLang(lang);
-
-      const form = document.getElementById('commForm');
-      if (form) {
-        form.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const btn = form.querySelector('.comm-submit');
-          const orig = btn.innerHTML;
-          btn.disabled = true;
-          btn.textContent = '…';
-          try {
-            const res = await fetch(form.action, {
-              method: 'POST',
-              body: new FormData(form),
-              headers: { 'Accept': 'application/json' }
-            });
-            if (res.ok) {
-              form.reset();
-              document.getElementById('commSuccess').style.display = 'block';
-              applyLang(localStorage.getItem('lang') || 'sv');
-            } else {
-              btn.disabled = false;
-              btn.innerHTML = orig;
-            }
-          } catch {
-            btn.disabled = false;
-            btn.innerHTML = orig;
-          }
-        });
-      }
     });
+
 
     function applyLang(lang) {
       document.querySelectorAll('[data-lang]').forEach(el => {
