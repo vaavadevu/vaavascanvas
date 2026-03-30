@@ -1,0 +1,230 @@
+/* ===== COMMISSIONS PAGE ===== */
+
+.comm-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 7rem 1.5rem 5rem;
+}
+/* ─── Commission gallery ─── */
+.comm-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* små bilder */
+  gap: 15px;
+  padding: 20px 0;
+  justify-items: center;
+}
+
+.comm-gallery-item {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.comm-gallery-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  cursor: pointer;
+  padding: 3px;
+  background: repeating-linear-gradient(
+    90deg,
+    #D4B896 0px,
+    #E5C9A8 1px,
+    #C5A885 2px,
+    #DFC4A2 3px,
+    #D4B896 4px,
+    #E5C9A8 5px
+  );
+  border: 5px solid;
+  border-color: #B59970 #D4B896 #C5A885 #B89A78;
+  border-radius: 2px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2), 0 3px 10px rgba(181, 153, 112, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.comm-gallery-item img:hover {
+  transform: scale(1.05); /* lite mindre hover än main gallery */
+}
+
+/* Optional: small “sold” badge */
+.comm-sold-badge {
+  position: absolute;
+  top: 10px;
+  right: -35px;
+  background: #88C070;
+  color: white;
+  padding: 5px 40px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+/* Text under bilder (valfritt) */
+.comm-gallery-item p {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 5px;
+  color: #333;
+}
+
+/* Responsive */
+@media (max-width: 720px) {
+  .comm-gallery {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+}
+/* HERO */
+
+.comm-hero {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.comm-hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.2rem, 5vw, 3rem);
+  font-weight: 400;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+}
+
+.comm-hero p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  max-width: 600px;
+  margin: 0 auto;
+  opacity: 0.85;
+}
+
+/* SECTIONS */
+
+.comm-section {
+  margin-bottom: 4.5rem;
+}
+
+.comm-section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--accent-light);
+  padding-bottom: 0.5rem;
+}
+
+/* STEPS */
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.step {
+  display: flex;
+  gap: 1rem;
+}
+
+.step-num {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--bg-warm);
+  border: 1px solid var(--accent-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+}
+
+.step-text strong {
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.step-text p {
+  font-size: 1rem;
+  line-height: 1.7;
+  opacity: 0.9;
+}
+
+/* TABLE */
+
+.price-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+}
+
+.price-table td,
+.price-table th {
+  padding: 0.7rem;
+  border-bottom: 1px solid var(--accent-light);
+}
+
+.price-col {
+  font-family: 'Playfair Display', serif;
+}
+
+/* GALLERY */
+
+.comm-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.comm-gallery-item {
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.comm-gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* TERMS */
+
+.terms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.terms-list li {
+  font-size: 1rem;
+  line-height: 1.7;
+  opacity: 0.9;
+}
+
+/* BUTTON */
+
+.comm-submit {
+  margin-top: 1rem;
+  padding: 0.8rem 2rem;
+  background: var(--accent-green);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.comm-submit:hover {
+  opacity: 0.9;
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+  .comm-page {
+    padding: 5rem 1rem 3rem;
+  }
+
+  .comm-hero h1 {
+    font-size: 2rem;
+  }
+}
