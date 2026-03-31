@@ -184,6 +184,10 @@ const keys = {
     sv: "Allmän fråga",
     en: "General question",
   },
+  form_commission_link: {
+    sv: "🎨 Läs om beställningar & priser",
+    en: "🎨 Read about commissions & prices",
+  },
   form_size_label: {
     sv: "Storlek",
     en: "Size",
