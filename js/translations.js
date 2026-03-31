@@ -324,6 +324,10 @@ const keys = {
     sv: "Priser",
     en: "Prices",
   },
+  "comm-section-references": {
+    sv: "Tidigare beställningar",
+    en: "Previous Orders",
+  },
   "comm-price-note": {
     sv: "Ungefärliga priser – slutpriset kan variera beroende på motivets komplexitet.",
     en: "Approximate prices – the final price may vary depending on the complexity of the motif.",
