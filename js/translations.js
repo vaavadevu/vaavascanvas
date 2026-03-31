@@ -105,7 +105,7 @@ const keys = {
     en: "I'm an artist and illustrator based in Sweden. I draw inspiration from nature, relationships, animals and the quiet moments where emotions can surface without filters.",
   },
   footer_about_p2: {
-    sv: "Genom min konst vill jag skapa närvaro och igenkänning – något som känns mänskligt, mjukt och äkta. Jag hoppas att det finns en målning som talar till dig. Hör av dig om ni vill veta mer om vad jag gör!",
+    sv: "Genom min konst vill jag skapa närvaro och igenkänning – något som känns mänskligt, mjukt och äkta. Jag hoppas att det finns en målning som talar till dig. Hör av dig om du vill veta mer om vad jag gör!",
     en: "Through my art I want to create presence and recognition – something that feels human, soft and genuine. I hope there's a painting that speaks to you. Reach out if you'd like to know more!",
   },
   footer_subscribe_btn: {
@@ -341,7 +341,7 @@ const keys = {
     en: "Let's talk",
   },
   "comm-section-terms": {
-    sv: "Köpevillkor",
+    sv: "Köpvillkor",
     en: "Terms",
   },
   "comm-terms": {
@@ -361,7 +361,7 @@ const keys = {
     en: "Two mallards seen from above showing a quiet moment of togetherness on the water.",
   },
   desc_womanInTheSea: {
-    sv: "Ett självporträtt i havet målad ur ett hopp om att hitta sig själv igen.",
+    sv: "Ett självporträtt i havet målat ur ett hopp om att hitta sig själv igen.",
     en: "A self-portrait in the sea painted from hope of finding myself again.",
   },
   desc_vattenfall: {
@@ -389,7 +389,7 @@ const keys = {
     en: "The warm light of the savanna at dusk when the day is done and it's time to head home.",
   },
   desc_varkansla: {
-    sv: "En trött blåmes som vilar bland körsbärsblommor våren är här, äntligen.",
+    sv: "En trött blåmes som vilar bland körsbärsblommor – våren är här, äntligen.",
     en: "A tired blue tit resting among cherry blossoms, spring is here, finally.",
   },
   desc_norrsken: {
@@ -413,7 +413,7 @@ const keys = {
     en: "A hand-painted gift for Mr. and Mrs. Elfqvist on their big day.",
   },
   desc_bonnie: {
-    sv: "En illustration målad med kärlek som var ett present på ett litet livs första födelsedag.",
+    sv: "En illustration målad med kärlek som var en present på ett litet livs första födelsedag.",
     en: "An illustration painted with love as a gift on a little life's first birthday.",
   },
   desc_vinterlek: {
