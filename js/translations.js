@@ -184,6 +184,26 @@ const keys = {
     sv: "Allmän fråga",
     en: "General question",
   },
+  form_size_label: {
+    sv: "Storlek",
+    en: "Size",
+  },
+  form_size_default: {
+    sv: "– Välj storlek –",
+    en: "– Select size –",
+  },
+  form_image_label: {
+    sv: "Referensbild",
+    en: "Reference image",
+  },
+  form_image_type_error: {
+    sv: "Filen måste vara en bild.",
+    en: "The file must be an image.",
+  },
+  form_image_size_error: {
+    sv: "Bilden får max vara 5 MB.",
+    en: "Image must be 5 MB or less.",
+  },
   form_artwork_label: {
     sv: "Vilket verk?",
     en: "Which work?",
