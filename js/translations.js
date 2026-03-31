@@ -192,18 +192,6 @@ const keys = {
     sv: "– Välj storlek –",
     en: "– Select size –",
   },
-  form_image_label: {
-    sv: "Referensbild",
-    en: "Reference image",
-  },
-  form_image_type_error: {
-    sv: "Filen måste vara en bild.",
-    en: "The file must be an image.",
-  },
-  form_image_size_error: {
-    sv: "Bilden får max vara 5 MB.",
-    en: "Image must be 5 MB or less.",
-  },
   form_artwork_label: {
     sv: "Vilket verk?",
     en: "Which work?",
@@ -317,8 +305,8 @@ const keys = {
     en: "How it works",
   },
   "comm-steps": {
-    sv: "<div class='step'><div class='step-num'>1</div><div class='step-text'><strong>Hör av dig</strong><p>Skicka ett meddelande via formuläret <a href='#footer'>nedan</a> eller mejla <a href='mailto:info@vaavascanvas.se'>info@vaavascanvas.se</a>. Berätta om motivet du drömmer om – gärna med referensbild.</p></div></div><div class='step'><div class='step-num'>2</div><div class='step-text'><strong>Vi stämmer av</strong><p>Jag återkommer med pris och leveranstid. Vid bekräftelse betalar du 50 % i förskott.</p></div></div><div class='step'><div class='step-num'>3</div><div class='step-text'><strong>Jag målar</strong><p>Under processen delar jag gärna bilder. Du är välkommen att komma med tankar och feedback längs vägen.</p></div></div><div class='step'><div class='step-num'>4</div><div class='step-text'><strong>Leverans</strong><p>Resterande 50 % betalas när målningen är klar. Frakt tillkommer om du inte hämtar i Stockholm.</p></div></div>",
-    en: "<div class='step'><div class='step-num'>1</div><div class='step-text'><strong>Get in touch</strong><p>Send a message via the form <a href='#footer'>below</a> or email <a href='mailto:info@vaavascanvas.se'>info@vaavascanvas.se</a>. Tell me about the motif you have in mind – feel free to include a reference image.</p></div></div><div class='step'><div class='step-num'>2</div><div class='step-text'><strong>We align</strong><p>I'll get back to you with a price and delivery time. Upon confirmation, you pay 50% upfront.</p></div></div><div class='step'><div class='step-num'>3</div><div class='step-text'><strong>I paint</strong><p>I'm happy to share progress photos along the way. You're welcome to share thoughts and feedback throughout the process.</p></div></div><div class='step'><div class='step-num'>4</div><div class='step-text'><strong>Delivery</strong><p>The remaining 50% is paid when the painting is complete. Shipping is added if you're not picking up in Stockholm.</p></div></div>",
+    sv: "<div class='step'><div class='step-num'>1</div><div class='step-text'><strong>Hör av dig</strong><p>Skicka ett meddelande via formuläret <a href='#footer'>nedan</a> eller mejla <a href='mailto:info@vaavascanvas.se'>info@vaavascanvas.se</a>. Berätta om motivet du drömmer om – referensbilder och detaljer kan du skicka via mail när vi börjat prata.</p></div></div><div class='step'><div class='step-num'>2</div><div class='step-text'><strong>Vi stämmer av</strong><p>Jag återkommer med pris och leveranstid. Vid bekräftelse betalar du 50 % i förskott.</p></div></div><div class='step'><div class='step-num'>3</div><div class='step-text'><strong>Jag målar</strong><p>Under processen delar jag gärna bilder. Du är välkommen att komma med tankar och feedback längs vägen.</p></div></div><div class='step'><div class='step-num'>4</div><div class='step-text'><strong>Leverans</strong><p>Resterande 50 % betalas när målningen är klar. Frakt tillkommer om du inte hämtar i Stockholm.</p></div></div>",
+    en: "<div class='step'><div class='step-num'>1</div><div class='step-text'><strong>Get in touch</strong><p>Send a message via the form <a href='#footer'>below</a> or email <a href='mailto:info@vaavascanvas.se'>info@vaavascanvas.se</a>. Tell me about the motif you have in mind – reference images and details can be shared via email once we start talking.</p></div></div><div class='step'><div class='step-num'>2</div><div class='step-text'><strong>We align</strong><p>I'll get back to you with a price and delivery time. Upon confirmation, you pay 50% upfront.</p></div></div><div class='step'><div class='step-num'>3</div><div class='step-text'><strong>I paint</strong><p>I'm happy to share progress photos along the way. You're welcome to share thoughts and feedback throughout the process.</p></div></div><div class='step'><div class='step-num'>4</div><div class='step-text'><strong>Delivery</strong><p>The remaining 50% is paid when the painting is complete. Shipping is added if you're not picking up in Stockholm.</p></div></div>",
   },
   "comm-section-prices": {
     sv: "Priser",

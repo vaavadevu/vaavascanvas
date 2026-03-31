@@ -58,33 +58,6 @@ if (type) {
 
   typeSelect.addEventListener("change", () => applyTypeVisibility(typeSelect.value));
 
-  const imageInput  = document.getElementById("f-image");
-  const imageError  = document.getElementById("f-image-error");
-  const submitBtn   = form.querySelector("[type='submit']");
-
-  if (imageInput && imageError) {
-    imageInput.addEventListener("change", () => {
-      const file = imageInput.files[0];
-      imageError.style.display = "none";
-      imageError.textContent   = "";
-      submitBtn.disabled       = false;
-
-      if (!file) return;
-
-      if (!file.type.startsWith("image/")) {
-        imageError.textContent   = t("form_image_type_error");
-        imageError.style.display = "block";
-        submitBtn.disabled       = true;
-        return;
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        imageError.textContent   = t("form_image_size_error");
-        imageError.style.display = "block";
-        submitBtn.disabled       = true;
-      }
-    });
-  }
-
   form.addEventListener("submit", async function (e) {
     e.preventDefault();
     const formData = new FormData(form);
