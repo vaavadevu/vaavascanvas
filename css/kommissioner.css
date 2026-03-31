@@ -51,7 +51,7 @@
   position: absolute;
   top: 10px;
   right: -35px;
-  background: #88C070;
+  background: var(--accent-green);
   color: white;
   padding: 5px 40px;
   font-size: 0.7rem;
@@ -164,26 +164,6 @@
 
 .price-col {
   font-family: 'Playfair Display', serif;
-}
-
-/* GALLERY */
-
-.comm-gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
-}
-
-.comm-gallery-item {
-  aspect-ratio: 3/4;
-  overflow: hidden;
-  border-radius: 6px;
-}
-
-.comm-gallery-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 /* TERMS */
