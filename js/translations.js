@@ -303,6 +303,64 @@ const keys = {
     en: "You have 14 days right of return. The painting must be returned in its original condition and packaging. Return shipping is at the buyer's expense. In case of damage during transport — contact me immediately with photos and we'll sort it out.",
   },
 
+  // ── Commissions page ──────────────────────────────────────────
+  "comm-hero-title": {
+    sv: "En målning gjord\njust för dig",
+    en: "A painting made\njust for you",
+  },
+  "comm-hero-description": {
+    sv: "Jag målar djur, natur och de stunder som känns viktiga att bevara.\nVarje beställning är unik från den första idén till färdig duk.",
+    en: "I paint animals, nature and the moments that feel important to preserve.\nEvery commission is unique from the first idea to the finished canvas.",
+  },
+  "comm-section-title": {
+    sv: "Så här går det till",
+    en: "How it works",
+  },
+  "comm-steps": {
+    sv: "<div class='step'><div class='step-num'>1</div><div class='step-text'><strong>Hör av dig</strong><p>Skicka ett meddelande via formuläret <a href='#footer'>nedan</a> eller mejla <a href='mailto:info@vaavascanvas.se'>info@vaavascanvas.se</a>. Berätta om motivet du drömmer om – gärna med referensbild.</p></div></div><div class='step'><div class='step-num'>2</div><div class='step-text'><strong>Vi stämmer av</strong><p>Jag återkommer med pris och leveranstid. Vid bekräftelse betalar du 50 % i förskott.</p></div></div><div class='step'><div class='step-num'>3</div><div class='step-text'><strong>Jag målar</strong><p>Under processen delar jag gärna bilder. Du är välkommen att komma med tankar och feedback längs vägen.</p></div></div><div class='step'><div class='step-num'>4</div><div class='step-text'><strong>Leverans</strong><p>Resterande 50 % betalas när målningen är klar. Frakt tillkommer om du inte hämtar i Stockholm.</p></div></div>",
+    en: "<div class='step'><div class='step-num'>1</div><div class='step-text'><strong>Get in touch</strong><p>Send a message via the form <a href='#footer'>below</a> or email <a href='mailto:info@vaavascanvas.se'>info@vaavascanvas.se</a>. Tell me about the motif you have in mind – feel free to include a reference image.</p></div></div><div class='step'><div class='step-num'>2</div><div class='step-text'><strong>We align</strong><p>I'll get back to you with a price and delivery time. Upon confirmation, you pay 50% upfront.</p></div></div><div class='step'><div class='step-num'>3</div><div class='step-text'><strong>I paint</strong><p>I'm happy to share progress photos along the way. You're welcome to share thoughts and feedback throughout the process.</p></div></div><div class='step'><div class='step-num'>4</div><div class='step-text'><strong>Delivery</strong><p>The remaining 50% is paid when the painting is complete. Shipping is added if you're not picking up in Stockholm.</p></div></div>",
+  },
+  "comm-section-prices": {
+    sv: "Priser",
+    en: "Prices",
+  },
+  "comm-price-note": {
+    sv: "Ungefärliga priser – slutpriset kan variera beroende på motivets komplexitet.",
+    en: "Approximate prices – the final price may vary depending on the complexity of the motif.",
+  },
+  "comm-size": {
+    sv: "Storlek",
+    en: "Size",
+  },
+  "comm-size-en": {
+    sv: "Storlek",
+    en: "Size",
+  },
+  "comm-size-custom": {
+    sv: "Större / anpassat",
+    en: "Larger / custom",
+  },
+  "comm-size-custom-en": {
+    sv: "Större / anpassat",
+    en: "Larger / custom",
+  },
+  "comm-price-custom": {
+    sv: "Vi pratar",
+    en: "Let's talk",
+  },
+  "comm-price-custom-en": {
+    sv: "Vi pratar",
+    en: "Let's talk",
+  },
+  "comm-section-terms": {
+    sv: "Köpevillkor",
+    en: "Terms",
+  },
+  "comm-terms": {
+    sv: "<li>Betalning sker med 50 % förskott vid beställning. Resterande belopp betalas när målningen är klar.</li><li>Beställda originalverk ångras inte – motivet är personligt och kan inte säljas vidare.</li><li>Jag förbehåller mig rätten att dokumentera och visa beställda verk i min portfolio och på sociala medier, om inget annat avtalas.</li><li>Leveranstid varierar – räkna med 2-6 veckor beroende på storlek och ordervolym. Hör av dig om du har en deadline.</li><li>Frakt sker på köparens bekostnad. Upphämtning i Stockholm är alltid möjlig.</li>",
+    en: "<li>Payment is made with 50% upfront at the time of ordering. The remaining amount is paid when the painting is complete.</li><li>Commissioned original works are non-refundable – the motif is personal and cannot be resold.</li><li>I reserve the right to document and display commissioned works in my portfolio and on social media, unless otherwise agreed.</li><li>Delivery time varies – allow 2-6 weeks depending on size and order volume. Let me know if you have a deadline.</li><li>Shipping is at the buyer's expense. Pick-up in Stockholm is always available.</li>",
+  },
+
   // ── Medium ─────────────────────────────────────────────────────
   medium_acrylic_canvas: {
     sv: "Akryl på duk",
