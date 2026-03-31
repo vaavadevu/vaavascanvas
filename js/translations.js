@@ -332,23 +332,11 @@ const keys = {
     sv: "Storlek",
     en: "Size",
   },
-  "comm-size-en": {
-    sv: "Storlek",
-    en: "Size",
-  },
   "comm-size-custom": {
     sv: "Större / anpassat",
     en: "Larger / custom",
   },
-  "comm-size-custom-en": {
-    sv: "Större / anpassat",
-    en: "Larger / custom",
-  },
   "comm-price-custom": {
-    sv: "Vi pratar",
-    en: "Let's talk",
-  },
-  "comm-price-custom-en": {
     sv: "Vi pratar",
     en: "Let's talk",
   },
