@@ -3,7 +3,11 @@
 .comm-page {
   max-width: 1000px;
   margin: 0 auto;
-  padding: 7rem 1.5rem 5rem;
+  padding: 7rem 1.5rem 0;
+}
+
+.comm-page > .comm-section:last-child {
+  margin-bottom: 2rem;
 }
 /* ─── Commission gallery ─── */
 .comm-gallery {
@@ -82,11 +86,12 @@
 .comm-hero {
   text-align: center;
   margin-bottom: 3rem;
+  padding-top: 3rem;
 }
 
 .comm-hero h1 {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(2.2rem, 5vw, 3rem);
+  font-size: clamp(2.8rem, 6vw, 4rem);
   font-weight: 400;
   line-height: 1.2;
   margin-bottom: 1.5rem;
@@ -95,15 +100,17 @@
 .comm-hero p {
   font-size: 1.1rem;
   line-height: 1.8;
-  max-width: 600px;
+  max-width: 900px;
   margin: 0 auto;
   opacity: 0.85;
+  white-space: nowrap;
 }
 
 /* SECTIONS */
 
 .comm-section {
   margin-bottom: 4.5rem;
+  text-align: center;
 }
 
 .comm-section-title {
@@ -118,13 +125,17 @@
 
 .steps {
   display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  flex-direction: row;
+  gap: 2rem;
+  justify-content: center;
 }
 
 .step {
   display: flex;
-  gap: 1rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
 }
 
 .step-num {
@@ -137,6 +148,11 @@
   align-items: center;
   justify-content: center;
   font-family: 'Playfair Display', serif;
+  flex-shrink: 0;
+}
+
+.step-text {
+  text-align: center;
 }
 
 .step-text strong {
@@ -148,6 +164,9 @@
   font-size: 1rem;
   line-height: 1.7;
   opacity: 0.9;
+  text-align: justify;
+  text-align-last: left;
+  hyphens: auto;
 }
 
 .step-text a {
@@ -158,7 +177,8 @@
 /* TABLE */
 
 .price-table {
-  width: 100%;
+  width: auto;
+  margin: 0 auto;
   border-collapse: collapse;
   font-size: 1rem;
 }
@@ -185,12 +205,53 @@
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
+  max-width: 680px;
+  margin: 0 auto;
+  padding-left: 1.5rem;
+  text-align: left;
 }
 
 .terms-list li {
   font-size: 1rem;
   line-height: 1.7;
   opacity: 0.9;
+}
+
+/* CTA */
+
+.comm-cta {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.comm-cta-sticky {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+}
+
+.comm-cta-sticky.hidden {
+  display: none;
+}
+
+.comm-cta-btn {
+  display: inline-block;
+  padding: 0.9rem 2.5rem;
+  background: var(--accent-green);
+  color: var(--text-light);
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+
+.comm-cta-btn:hover {
+  opacity: 0.85;
 }
 
 /* BUTTON */
@@ -211,6 +272,35 @@
 }
 
 /* MOBILE */
+
+@media (max-width: 768px) {
+  .comm-hero p {
+    white-space: normal;
+  }
+
+  .steps {
+    flex-direction: column;
+  }
+
+  .step {
+    flex-direction: row;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .step-num {
+    margin-top: 0.15rem;
+    flex-shrink: 0;
+  }
+
+  .step-text {
+    text-align: left;
+  }
+
+  .step-text strong {
+    line-height: 1.4;
+  }
+}
 
 @media (max-width: 600px) {
   .comm-page {
