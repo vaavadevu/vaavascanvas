@@ -39,10 +39,7 @@
         <h1>
           <span data-i18n="comm-hero-title" class="visible">En målning gjord just för dig</span>
         </h1>
-        <p data-i18n="comm-hero-description" class="visible">
-          Jag målar djur, natur och de stunder som känns viktiga att bevara.
-          Varje beställning är unik från den första idén till färdig duk.
-        </p>
+        <p data-i18n="comm-hero-description" class="visible">Varje beställning är unik från den första idén till färdig duk.</p>
       </div>
 
       <section class="comm-section">
@@ -55,9 +52,7 @@
             <div class="step-num">1</div>
             <div class="step-text">
               <strong>Hör av dig</strong>
-              <p>Skicka ett meddelande via formuläreta <a href="#footer">nedan</a> eller mejla <a
-                  href="mailto:info@vaavascanvas.se">info@vaavascanvas.se</a>. Berätta om motivet du drömmer om – gärna
-                med referensbild.</p>
+              <p>Skicka ett meddelande via formuläret <a href="#footer">nedan</a>. Berätta om motivet du drömmer om – gärna med referensbild.</p>
             </div>
           </div>
           <div class="step">
@@ -128,14 +123,14 @@
             <img src="../images/paintings/solvarmeISkogen/original/01.jpg" alt="Beställd målning" />
             <!-- <p>Solvärme i skogen</p> valfritt -->
           </div>
-          <div class="comm-gallery-item">
-            <img src="../images/paintings/brollopspresent/original/01.jpg" alt="Beställd målning" />
-          </div>
            <div class="comm-gallery-item">
             <img src="../images/paintings/bonnie/original/01.jpg" alt="Beställd målning" />
           </div>
            <div class="comm-gallery-item">
             <img src="../images/paintings/vinterlek/original/01.jpg" alt="Beställd målning" />
+          </div>
+          <div class="comm-gallery-item">
+            <img src="../images/paintings/brollopspresent/original/01.jpg" alt="Beställd målning" />
           </div>
         </div>
       </section>
@@ -153,10 +148,21 @@
             deadline.</li>
           <li>Frakt sker på köparens bekostnad. Upphämtning i Stockholm är alltid möjlig.</li>
         </ul>
+        <div class="comm-cta" id="comm-cta-anchor">
+          <a href="#footer" class="comm-cta-btn">
+            <span data-i18n="comm-cta-btn" class="visible">Beställ din målning</span>
+          </a>
+        </div>
       </section>
 
     </div>
   </main>
+
+  <div class="comm-cta-sticky hidden" id="comm-cta-sticky">
+    <a href="#footer" class="comm-cta-btn">
+      <span data-i18n="comm-cta-btn" class="visible">Beställ din målning</span>
+    </a>
+  </div>
 
   <footer id="footer">
     <div class="footerContent">
@@ -194,6 +200,37 @@
   <script src="../js/contact.js"></script>
   <script src="../js/ui.js"></script>
   <script src="../js/script.js"></script>
+  <script>
+    const anchor = document.getElementById('comm-cta-anchor');
+    const sticky = document.getElementById('comm-cta-sticky');
+    const footer = document.getElementById('footer');
+
+    function goToCommissionForm(e) {
+      e.preventDefault();
+      const select = document.getElementById('f-type');
+      if (select) {
+        select.value = 'Commissions';
+        select.dispatchEvent(new Event('change'));
+      }
+      const formTarget = document.getElementById('formContainer') || footer;
+      formTarget.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('.comm-cta-btn').forEach(btn => {
+      btn.addEventListener('click', goToCommissionForm);
+    });
+
+    if (anchor && sticky) {
+      sticky.classList.remove('hidden');
+      const update = () => {
+        const anchorVisible = anchor.getBoundingClientRect().top < window.innerHeight;
+        const footerVisible = footer ? footer.getBoundingClientRect().top < window.innerHeight : false;
+        sticky.classList.toggle('hidden', anchorVisible || footerVisible);
+      };
+      window.addEventListener('scroll', update, { passive: true });
+      update();
+    }
+  </script>
 
 </body>
 
