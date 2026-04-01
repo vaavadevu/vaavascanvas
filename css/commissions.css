@@ -7,11 +7,15 @@
 }
 /* ─── Commission gallery ─── */
 .comm-gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* små bilder */
+  display: flex;
+  flex-wrap: nowrap;
   gap: 15px;
   padding: 20px 0;
-  justify-items: center;
+}
+
+.comm-gallery .comm-gallery-item {
+  flex: 1;
+  min-width: 0;
 }
 
 .comm-gallery-item {
@@ -66,7 +70,11 @@
 /* Responsive */
 @media (max-width: 720px) {
   .comm-gallery {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    flex-wrap: wrap;
+  }
+
+  .comm-gallery .comm-gallery-item {
+    flex: 1 1 40%;
   }
 }
 /* HERO */
@@ -142,6 +150,11 @@
   opacity: 0.9;
 }
 
+.step-text a {
+  color: var(--accent-green);
+  text-decoration: none;
+}
+
 /* TABLE */
 
 .price-table {
@@ -154,10 +167,16 @@
 .price-table th {
   padding: 0.7rem;
   border-bottom: 1px solid var(--accent-light);
+  text-align: left;
 }
 
-.price-col {
+.price-table .price-col {
   font-family: 'Playfair Display', serif;
+  text-align: right;
+}
+
+.price-table th:last-child {
+  text-align: right;
 }
 
 /* TERMS */
