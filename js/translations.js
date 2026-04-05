@@ -475,6 +475,10 @@ const keys = {
   desc_efterIde: {
   sv: "Björnmamma med sina ungar precis efter ide, när de är som mest lekfulla och nyfikna på världen.",
   en: "A mother bear with her cubs right after an idea, when they are most playful and curious about the world.",
+},
+  desc_varlek: {
+  sv: "Två glada lamm som hoppar och leker på en blommig äng en fin kväll, fyllda av bus och vårkänslor.",
+  en: "Two happy lambs jumping and playing in a flowery meadow on a nice evening, full of mischief and spring feelings.",
 }
 };
 
