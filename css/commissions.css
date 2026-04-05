@@ -1,0 +1,406 @@
+/* ===== COMMISSIONS PAGE ===== */
+
+.comm-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-top: 0;
+}
+
+.comm-page > .comm-section:last-child {
+  margin-bottom: 2rem;
+}
+/* ─── Commission gallery ─── */
+.comm-gallery {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 15px;
+  padding: 20px 0;
+}
+
+.comm-gallery .comm-gallery-item {
+  flex: 1;
+  min-width: 0;
+}
+
+.comm-gallery-item {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.comm-gallery-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  padding: 3px;
+  background: repeating-linear-gradient(
+    90deg,
+    #D4B896 0px,
+    #E5C9A8 1px,
+    #C5A885 2px,
+    #DFC4A2 3px,
+    #D4B896 4px,
+    #E5C9A8 5px
+  );
+  border: 5px solid;
+  border-color: #B59970 #D4B896 #C5A885 #B89A78;
+  border-radius: 2px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2), 0 3px 10px rgba(181, 153, 112, 0.3);
+}
+
+/* Optional: small “sold” badge */
+.comm-sold-badge {
+  position: absolute;
+  top: 10px;
+  right: -35px;
+  background: var(--accent-green);
+  color: white;
+  padding: 5px 40px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+/* Text under bilder (valfritt) */
+.comm-gallery-item p {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 5px;
+  color: #333;
+}
+
+/* Responsive */
+@media (max-width: 720px) {
+  .comm-gallery {
+    flex-wrap: wrap;
+  }
+
+  .comm-gallery .comm-gallery-item {
+    flex: 1 1 40%;
+  }
+}
+/* HERO */
+
+.comm-hero {
+  margin-top: 0;          /* ingen margin alls */
+  width: 100%;            /* full bredd naturligt */
+  left: auto;             /* ta bort left-tricket */
+  transform: none;        /* ta bort transform-tricket */
+  position: relative;     /* tillbaka till normal */
+  height: 55vh;
+  z-index: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+   border-bottom: 3px solid var(--accent-light);
+}
+
+.comm-section--first .comm-section-title {
+  padding-top: 1.75rem;  /* behåll lite luft UNDER linjen men inte ovanför */
+  margin-top: 0;
+}
+.comm-section--first .comm-section-title::before {
+  display: none;
+}
+
+.comm-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('../images/paintings/herrOchFruAndersson/original/02.jpg');
+  background-size: cover;
+  background-position: center;
+  z-index: -2;
+}
+
+.comm-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.55) 100%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.comm-hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.8rem, 6vw, 4rem);
+  font-weight: 400;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+  color: #fff;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.4);
+}
+
+.comm-hero p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  max-width: 900px;
+  margin: 0 auto;
+  color: rgba(255,255,255,0.88);
+  text-shadow: 0 1px 8px rgba(0,0,0,0.4);
+  white-space: nowrap;
+}
+
+/* SECTIONS */
+
+.comm-section {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+
+.comm-section-title {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent-green);
+  text-align: center;
+  margin-bottom: 1.75rem;
+  position: relative;
+  display: block;
+  padding-top: 2rem;
+}
+
+.comm-section-title::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  height: 1px;
+  background: var(--accent-light);
+}
+
+/* STEPS */
+
+.steps {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  justify-content: center;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid var(--accent-light);
+  border-radius: 10px;
+  padding: 1.5rem 1.25rem;
+}
+
+.step-num {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--bg-warm);
+  border: 1px solid var(--accent-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  flex-shrink: 0;
+}
+
+.step-text {
+  text-align: center;
+}
+
+.step-text strong {
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.step-text p {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  opacity: 0.9;
+  text-align: left;
+}
+
+.step-text a {
+  color: var(--accent-green);
+  text-decoration: none;
+}
+
+/* PRICE NOTE */
+
+.price-note {
+  font-size: 0.82rem;
+  font-style: italic;
+  opacity: 0.65;
+  margin-top: 0.85rem;
+}
+
+/* TABLE */
+
+.price-table {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid var(--accent-light);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.price-table thead tr {
+  border-bottom: 2px solid var(--accent-light);
+}
+
+.price-table th {
+  padding: 0.9rem 1.25rem;
+  text-align: left;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+}
+
+.price-table td {
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--accent-light);
+  text-align: left;
+}
+
+.price-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.price-table .price-col {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  text-align: right;
+}
+
+.price-table th:last-child {
+  text-align: right;
+}
+
+/* TERMS */
+
+.terms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  max-width: 680px;
+  margin: 0 auto;
+  padding-left: 1.5rem;
+  text-align: left;
+}
+
+.terms-list li {
+  font-size: 1rem;
+  line-height: 1.7;
+  opacity: 0.9;
+}
+
+/* CTA */
+
+.comm-cta {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.comm-cta-sticky {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+}
+
+.comm-cta-sticky.hidden {
+  display: none;
+}
+
+.comm-cta-btn {
+  display: inline-block;
+  padding: 0.9rem 2.5rem;
+  background: var(--accent-green);
+  color: var(--text-light);
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+
+.comm-cta-btn:hover {
+  opacity: 0.85;
+}
+
+/* BUTTON */
+
+.comm-submit {
+  margin-top: 1rem;
+  padding: 0.8rem 2rem;
+  background: var(--accent-green);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.comm-submit:hover {
+  opacity: 0.9;
+}
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+  .comm-hero p {
+    white-space: normal;
+  }
+
+  .steps {
+    flex-direction: column;
+  }
+
+  .step {
+    flex-direction: row;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .step-num {
+    margin-top: 0.15rem;
+    flex-shrink: 0;
+  }
+
+  .step-text {
+    text-align: left;
+    font-family: 'Quicksand', sans-serif;
+  }
+
+  .step-text strong {
+    line-height: 1.4;
+  }
+}
+
+@media (max-width: 600px) {
+  .comm-page {
+    padding: 5rem 1rem 3rem;
+  }
+
+  .comm-hero h1 {
+    font-size: 2rem;
+  }
+}

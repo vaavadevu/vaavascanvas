@@ -93,6 +93,13 @@
   text-decoration: none;
 }
 
+.field-error {
+  color: #c0392b;
+  font-size: 0.82rem;
+  margin-top: 5px;
+  font-style: normal;
+}
+
 .artwork-preview {
   margin-top: 10px;
   width: 80px;

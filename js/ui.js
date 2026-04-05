@@ -11,8 +11,11 @@ async function buildComponents() {
 
       const isIndex = window.location.pathname.includes("index") || window.location.pathname === "/";
       const isPictures = window.location.pathname.includes("pictures");
+      const isCommissions = window.location.pathname.includes("commissions"); // ← ny rad
       if (isIndex) document.querySelector('a[href="/#top"]')?.classList.add("active");
       if (isPictures) document.querySelector('a[href="/pages/pictures.html"]')?.classList.add("active");
+      if (isCommissions) document.querySelector('a[href="/pages/commissions.html"]')?.classList.add("active");
+
 
       setupMobileMenu();
 
@@ -137,6 +140,7 @@ function setupScrollWatcher() {
     const footerInView = footer.getBoundingClientRect().top <= window.innerHeight / 2;
     const isViewPage = window.location.href.includes("/pages/view.html");
     const isPictures = window.location.href.includes("pictures.html");
+    const isCommissions = window.location.href.includes("commissions.html"); // ← ny rad
 
     // Determine which nav link to highlight
     let currentQuery;
@@ -146,6 +150,8 @@ function setupScrollWatcher() {
       currentQuery = null; // Don't highlight anything on view page when footer not visible
     } else if (isPictures) {
       currentQuery = "/pages/pictures.html";
+    }  else if (isCommissions) {                              // ← nytt block
+  currentQuery = "/pages/commissions.html";             // ← nytt block
     } else {
       currentQuery = "/#top";
     }

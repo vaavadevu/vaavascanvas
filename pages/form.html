@@ -24,7 +24,21 @@
             <option value="General"     data-i18n="form_type_general">Allmän fråga</option>
         </select>
     </div>
+    <div id="f-commissionFields" style="display:none;">
+      <a href="/pages/commissions.html#top" class="shipping-link" data-i18n="form_commission_link">🎨 Läs om beställningar & priser</a>
 
+      <div class="formGroup">
+        <label for="f-size" data-i18n="form_size_label">Storlek</label>
+        <select id="f-size" name="size">
+          <option value="" data-i18n="form_size_default">– Välj storlek –</option>
+          <option value="30x30 cm">30 × 30 cm</option>
+          <option value="30x40 cm">30 × 40 cm</option>
+          <option value="A2">A2</option>
+        </select>
+      </div>
+
+
+    </div>
     <div class="formGroup" id="f-printField" style="display:none;">
         <label for="f-artwork" data-i18n="form_artwork_label">Vilket verk?</label>
         <select id="f-artwork" name="artwork">
