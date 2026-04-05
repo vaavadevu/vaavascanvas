@@ -23,21 +23,30 @@ function setupContactForm() {
   const subjectInput   = document.getElementById("f-subject");
   const printField     = document.getElementById("f-printField");
   const originalField  = document.getElementById("f-originalField");
-  const commissionInfo = document.getElementById("f-commissionInfo");
+  const commissionFields = document.getElementById("f-commissionFields");
   const originalInfo   = document.getElementById("f-originalInfo");
   const printInfo      = document.getElementById("f-printInfo");
   const messageField   = document.getElementById("f-message");
 
   if (!form || !typeSelect) return;
+  // 🔥 AUTOSELECT från URL (NU funkar det)
+const params = new URLSearchParams(window.location.search);
+const type = params.get("type");
 
+if (type) {
+  typeSelect.value = type;
+  applyTypeVisibility(type); // VIKTIGT
+}
   function applyTypeVisibility(val) {
-    if (printField)     printField.style.display     = val === "Prints"      ? "block" : "none";
-    if (originalField)  originalField.style.display  = val === "Originals"   ? "block" : "none";
-    if (commissionInfo) commissionInfo.style.display = val === "Commissions" ? "block" : "none";
-    if (originalInfo)   originalInfo.style.display   = val === "Originals"   ? "block" : "none";
-    if (printInfo)      printInfo.style.display      = val === "Prints"      ? "block" : "none";
-    if (subjectInput)   subjectInput.value           = val ? `New Inquiry - ${val}` : "New Inquiry";
-  }
+  if (printField)     printField.style.display     = val === "Prints"      ? "block" : "none";
+  if (originalField)  originalField.style.display  = val === "Originals"   ? "block" : "none";
+  if (commissionFields) commissionFields.style.display = val === "Commissions" ? "block" : "none";
+
+  if (originalInfo)   originalInfo.style.display   = val === "Originals"   ? "block" : "none";
+  if (printInfo)      printInfo.style.display      = val === "Prints"      ? "block" : "none";
+
+  if (subjectInput)   subjectInput.value = val ? `New Inquiry - ${val}` : "New Inquiry";
+}
 
   // Auto-expand textarea as user types
   if (messageField) {

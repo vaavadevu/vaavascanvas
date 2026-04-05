@@ -18,6 +18,10 @@ const keys = {
     sv: "Kontakta mig",
     en: "Contact me",
   },
+ nav_commissions: {
+  sv: "Beställningar",
+  en: "Commissions",
+},
   nav_back: {
     sv: "Tillbaka",
     en: "Back",
@@ -101,7 +105,7 @@ const keys = {
     en: "I'm an artist and illustrator based in Sweden. I draw inspiration from nature, relationships, animals and the quiet moments where emotions can surface without filters.",
   },
   footer_about_p2: {
-    sv: "Genom min konst vill jag skapa närvaro och igenkänning – något som känns mänskligt, mjukt och äkta. Jag hoppas att det finns en målning som talar till dig. Hör av dig om ni vill veta mer om vad jag gör!",
+    sv: "Genom min konst vill jag skapa närvaro och igenkänning – något som känns mänskligt, mjukt och äkta. Jag hoppas att det finns en målning som talar till dig. Hör av dig om du vill veta mer om vad jag gör!",
     en: "Through my art I want to create presence and recognition – something that feels human, soft and genuine. I hope there's a painting that speaks to you. Reach out if you'd like to know more!",
   },
   footer_subscribe_btn: {
@@ -179,6 +183,18 @@ const keys = {
   form_type_general: {
     sv: "Allmän fråga",
     en: "General question",
+  },
+  form_commission_link: {
+    sv: "🎨 Läs om beställningar & priser",
+    en: "🎨 Read about commissions & prices",
+  },
+  form_size_label: {
+    sv: "Storlek",
+    en: "Size",
+  },
+  form_size_default: {
+    sv: "– Välj storlek –",
+    en: "– Select size –",
   },
   form_artwork_label: {
     sv: "Vilket verk?",
@@ -279,6 +295,76 @@ const keys = {
     en: "You have 14 days right of return. The painting must be returned in its original condition and packaging. Return shipping is at the buyer's expense. In case of damage during transport — contact me immediately with photos and we'll sort it out.",
   },
 
+  // ── Commissions page ──────────────────────────────────────────
+  "comm-hero-title": {
+    sv: "En målning gjord just för dig",
+    en: "A painting made just for you",
+  },
+  "comm-hero-description": {
+    sv: "Varje beställning är unik från den första idén till färdig duk.",
+    en: "Every commission is unique from the first idea to the finished canvas.",
+  },
+  "comm-section-title": {
+    sv: "Så här går det till",
+    en: "How it works",
+  },
+  "comm-steps": {
+    sv: "<div class='step'><div class='step-num'>1</div><div class='step-text'><strong>Hör av dig</strong><p>Fyll i formuläret <a href='#footer'>nedan</a> och berätta om motivet – gärna med referensbild.</p></div></div><div class='step'><div class='step-num'>2</div><div class='step-text'><strong>Vi stämmer av</strong><p>Jag återkommer med pris och leveranstid.</p></div></div><div class='step'><div class='step-num'>3</div><div class='step-text'><strong>Jag målar</strong><p>Jag delar gärna bilder längs vägen och välkomnar din feedback.</p></div></div><div class='step'><div class='step-num'>4</div><div class='step-text'><strong>Leverans</strong><p>Resterande 50 % betalas när målningen är klar.</p></div></div>",
+    en: "<div class='step'><div class='step-num'>1</div><div class='step-text'><strong>Get in touch</strong><p>Fill in the form <a href='#footer'>below</a> and tell me about your motif – feel free to include a reference image.</p></div></div><div class='step'><div class='step-num'>2</div><div class='step-text'><strong>We align</strong><p>I'll get back to you with a price and delivery time.</p></div></div><div class='step'><div class='step-num'>3</div><div class='step-text'><strong>I paint</strong><p>I'll happily share progress photos and welcome your feedback along the way.</p></div></div><div class='step'><div class='step-num'>4</div><div class='step-text'><strong>Delivery</strong><p>The remaining 50% is paid when the painting is complete.</p></div></div>",
+  },
+  "comm-section-prices": {
+    sv: "Priser",
+    en: "Prices",
+  },
+  "comm-section-references": {
+    sv: "Tidigare beställningar",
+    en: "Previous Orders",
+  },
+  "comm-price-note": {
+    sv: "Ungefärliga priser – slutpriset kan variera beroende på motivets komplexitet.",
+    en: "Approximate prices – the final price may vary depending on the complexity of the motif.",
+  },
+  "comm-size": {
+    sv: "Storlek",
+    en: "Size",
+  },
+  "comm-price": {
+    sv: "Pris",
+    en: "Price",
+  },
+  "comm-size-custom": {
+    sv: "Större / anpassat",
+    en: "Larger / custom",
+  },
+  "comm-price-custom": {
+    sv: "Vi pratar",
+    en: "Let's talk",
+  },
+  "comm-price-30x30": {
+    sv: "1 500 kr",
+    en: "€135",
+  },
+  "comm-price-30x40": {
+    sv: "1 800 kr",
+    en: "€160",
+  },
+  "comm-price-a2": {
+    sv: "2 000 kr",
+    en: "€180",
+  },
+  "comm-cta-btn": {
+    sv: "Beställ din målning",
+    en: "Order your painting",
+  },
+  "comm-section-terms": {
+    sv: "Köpvillkor",
+    en: "Terms",
+  },
+  "comm-terms": {
+    sv: "<li>Betalning sker med 50 % förskott vid beställning. Resterande belopp betalas när målningen är klar.</li><li>Beställda originalverk ångras inte – motivet är personligt och kan inte säljas vidare.</li><li>Jag förbehåller mig rätten att dokumentera och visa beställda verk i min portfolio och på sociala medier, om inget annat avtalas.</li><li>Leveranstid varierar – räkna med 2-6 veckor beroende på storlek och ordervolym. Hör av dig om du har en deadline.</li><li>Frakt sker på köparens bekostnad. Upphämtning i Stockholm är alltid möjlig.</li>",
+    en: "<li>Payment is made with 50% upfront at the time of ordering. The remaining amount is paid when the painting is complete.</li><li>Commissioned original works are non-refundable – the motif is personal and cannot be resold.</li><li>I reserve the right to document and display commissioned works in my portfolio and on social media, unless otherwise agreed.</li><li>Delivery time varies – allow 2-6 weeks depending on size and order volume. Let me know if you have a deadline.</li><li>Shipping is at the buyer's expense. Pick-up in Stockholm is always available.</li>",
+  },
+
   // ── Medium ─────────────────────────────────────────────────────
   medium_acrylic_canvas: {
     sv: "Akryl på duk",
@@ -291,7 +377,7 @@ const keys = {
     en: "Two mallards seen from above showing a quiet moment of togetherness on the water.",
   },
   desc_womanInTheSea: {
-    sv: "Ett självporträtt i havet målad ur ett hopp om att hitta sig själv igen.",
+    sv: "Ett självporträtt i havet målat ur ett hopp om att hitta sig själv igen.",
     en: "A self-portrait in the sea painted from hope of finding myself again.",
   },
   desc_vattenfall: {
@@ -319,7 +405,7 @@ const keys = {
     en: "The warm light of the savanna at dusk when the day is done and it's time to head home.",
   },
   desc_varkansla: {
-    sv: "En trött blåmes som vilar bland körsbärsblommor våren är här, äntligen.",
+    sv: "En trött blåmes som vilar bland körsbärsblommor – våren är här, äntligen.",
     en: "A tired blue tit resting among cherry blossoms, spring is here, finally.",
   },
   desc_norrsken: {
@@ -343,7 +429,7 @@ const keys = {
     en: "A hand-painted gift for Mr. and Mrs. Elfqvist on their big day.",
   },
   desc_bonnie: {
-    sv: "En illustration målad med kärlek som var ett present på ett litet livs första födelsedag.",
+    sv: "En illustration målad med kärlek som var en present på ett litet livs första födelsedag.",
     en: "An illustration painted with love as a gift on a little life's first birthday.",
   },
   desc_vinterlek: {
