@@ -3,7 +3,7 @@
 .comm-page {
   max-width: 1000px;
   margin: 0 auto;
-  padding: 7rem 1.5rem 0;
+  padding-top: 0;
 }
 
 .comm-page > .comm-section:last-child {
@@ -84,10 +84,12 @@
 /* HERO */
 
 .comm-hero {
-  margin-top: 100px;
-  margin-bottom: 0;
-  height: 42vh;
-  position: relative;
+  margin-top: 0;          /* ingen margin alls */
+  width: 100%;            /* full bredd naturligt */
+  left: auto;             /* ta bort left-tricket */
+  transform: none;        /* ta bort transform-tricket */
+  position: relative;     /* tillbaka till normal */
+  height: 55vh;
   z-index: 0;
   overflow: hidden;
   display: flex;
@@ -95,6 +97,15 @@
   align-items: center;
   justify-content: center;
   text-align: center;
+   border-bottom: 3px solid var(--accent-light);
+}
+
+.comm-section--first .comm-section-title {
+  padding-top: 1.75rem;  /* behåll lite luft UNDER linjen men inte ovanför */
+  margin-top: 0;
+}
+.comm-section--first .comm-section-title::before {
+  display: none;
 }
 
 .comm-hero::before {
@@ -165,7 +176,7 @@
   left: 50%;
   transform: translateX(-50%);
   width: 100vw;
-  height: 3px;
+  height: 1px;
   background: var(--accent-light);
 }
 
