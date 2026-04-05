@@ -348,9 +348,13 @@ const keys = {
     sv: "1 800 kr",
     en: "€160",
   },
-  "comm-price-a2": {
+  "comm-price-40x40": {
     sv: "2 000 kr",
     en: "€180",
+  },
+  "comm-price-42x60": {
+    sv: "2 800 kr",
+    en: "€250",
   },
   "comm-cta-btn": {
     sv: "Beställ din målning",
