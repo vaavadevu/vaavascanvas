@@ -369,4 +369,11 @@ nav.active {
   .intro-text-side {
     padding: 60px 40px;
   }
+  nav ul {
+    gap: 20px;   /* ← var 50px på desktop */
+  }
+  
+  nav a {
+    font-size: 0.9rem;
+  }
 }
