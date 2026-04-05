@@ -271,4 +271,17 @@ const paintings = [
     frameAvailable: true,
     framedPrice: 2200,
   },
+  {
+  id: "varlek",
+  title: "Vårlek",
+  descKey: "desc_varlek",
+  width: 40,
+  height: 40,
+  shape: SHAPE.SQUARE,
+  originalPrice: 2200,
+  framedPrice: 2600,
+  status: STATUS.FOR_SALE,
+  medium: MEDIUM.ACRYLIC_CANVAS,
+  frameAvailable: true,
+},
 ];
