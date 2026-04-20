@@ -36,6 +36,17 @@ const paintings = [
     medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {
+    id: "aldrigEnsam",
+    title: "Aldrig ensam",
+    descKey: "desc_aldrigEnsam",
+    width: 18,
+    height: 24,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 900,
+    status: STATUS.TILL_SALU,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+  },
+  {
     id: "womanInTheSea",
     title: "Woman of the Sea",
     descKey: "desc_womanInTheSea",

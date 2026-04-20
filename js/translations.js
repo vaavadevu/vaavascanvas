@@ -392,6 +392,10 @@ const keys = {
     sv: "Himlen smälter samman med havet i ett stilla ögonblick av guld och ro.",
     en: "The sky merges with the sea in a quiet moment of gold and peace.",
   },
+  desc_aldrigEnsam: {
+    sv: "En antilop som delar en stund med en oxpeckare",
+    en: "An antelope sharing a moment with an oxpecker",
+  },
   desc_sommarstuga: {
     sv: "En varm sommardag i Småland och det doftar nästan nyklippt gräs.",
     en: "A warm summer day in Småland and it smells almost like freshly mowed grass.",
