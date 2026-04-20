@@ -4,7 +4,7 @@ async function buildComponents() {
   const headerContainer = document.getElementById("header-container");
   if (headerContainer) {
     try {
-      const res = await fetch("components/header.html");
+      const res = await fetch("/components/header.html");
       if (!res.ok) throw new Error(`Failed to load header: ${res.status}`);
       headerContainer.innerHTML = await res.text();
       headerContainer.classList.add("visible");
@@ -33,9 +33,9 @@ async function buildComponents() {
   if (modalsContainer) {
     try {
       const [subscribeRes, successRes, shippingRes] = await Promise.all([
-        fetch("components/subscribe-modal.html"),
-        fetch("components/success-popup.html"),
-        fetch("components/shipping-modal.html")
+        fetch("/components/subscribe-modal.html"),
+        fetch("/components/success-popup.html"),
+        fetch("/components/shipping-modal.html")
       ]);
       const html = await Promise.all([
         subscribeRes.ok ? subscribeRes.text() : Promise.resolve(""),
