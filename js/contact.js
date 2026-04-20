@@ -5,7 +5,7 @@ async function buildContactForm() {
   if (!container) return;
 
   try {
-    const response = await fetch("pages/form.html");
+    const response = await fetch("/pages/form.html");
     if (!response.ok) throw new Error(`Failed to load form: ${response.status}`);
     container.innerHTML = await response.text();
   } catch (err) {

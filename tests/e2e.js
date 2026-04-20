@@ -58,16 +58,16 @@ function startServer() {
 
     function attemptStart(port) {
       const projectRoot = path.join(__dirname, '..');
-      const server = spawn('python', ['-m', 'http.server', port.toString()], {
-        cwd: projectRoot,
-        stdio: 'pipe'
+      const server = spawn('npx', ['http-server', projectRoot, '-p', port.toString(), '-s'], {
+        stdio: 'pipe',
+        shell: true
       });
 
       let started = false;
       let errorOccurred = false;
 
       server.stdout.on('data', (data) => {
-        if (!started && data.toString().includes('Serving HTTP')) {
+        if (!started && data.toString().includes('Hit CTRL-C')) {
           started = true;
           resolve({ server, port });
         }
@@ -188,26 +188,7 @@ async function runTests() {
 
       const response = await page.goto(`${baseUrl}/`, { waitUntil: 'networkidle' });
       assert(response.ok(), `Page load failed with status ${response.status()}`);
-      
-      // Filter out expected localhost errors from external services
-      const relevantErrors = consoleErrors.filter(err => {
-        const errLower = err.toLowerCase();
-        // Ignore Cookiebot/Google Analytics/external service errors - these are expected on localhost
-        if (errLower.includes('cookiebot') || 
-            errLower.includes('googletagmanager') || 
-            errLower.includes('consentcdn') || 
-            errLower.includes('not authorized') ||
-            errLower.includes('domain group') ||
-            errLower.includes('cdn.') ||
-            errLower.includes('googleapis') ||
-            errLower.includes('failed to load resource') ||
-            errLower.includes('404')) {
-          return false;
-        }
-        return true;
-      });
-      
-      assert(relevantErrors.length === 0, `Console errors found: ${relevantErrors.join(', ')}`);
+      assert(consoleErrors.length === 0, `Console errors found: ${consoleErrors.join(', ')}`);
 
       await page.close();
     });
