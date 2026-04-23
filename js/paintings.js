@@ -47,6 +47,17 @@ const paintings = [
     medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {
+    id: "operationBaver",
+    title: "Operation bäver",
+    descKey: "desc_operationBaver",
+    width: 18,
+    height: 24,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 900,
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+  },
+  {
     id: "womanInTheSea",
     title: "Woman of the Sea",
     descKey: "desc_womanInTheSea",
