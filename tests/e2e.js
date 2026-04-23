@@ -58,16 +58,16 @@ function startServer() {
 
     function attemptStart(port) {
       const projectRoot = path.join(__dirname, '..');
-      const server = spawn('python', ['-m', 'http.server', port.toString()], {
-        cwd: projectRoot,
-        stdio: 'pipe'
+      const server = spawn('npx', ['http-server', projectRoot, '-p', port.toString(), '-s'], {
+        stdio: 'pipe',
+        shell: true
       });
 
       let started = false;
       let errorOccurred = false;
 
       server.stdout.on('data', (data) => {
-        if (!started && data.toString().includes('Serving HTTP')) {
+        if (!started && data.toString().includes('Hit CTRL-C')) {
           started = true;
           resolve({ server, port });
         }
@@ -173,57 +173,46 @@ async function runTests() {
     const paintings = loadPaintings();
     const baseUrl = `http://localhost:${port}`;
 
-    console.log(colors.blue + '[1] MAIN PAGE TESTS' + colors.reset);
+    console.log(colors.blue + '[1] PAGE HEALTH TESTS (all pages)' + colors.reset);
 
-    // Test 1: Main page loads without errors
-    await test('Main page loads without console errors', async () => {
-      const page = await browser.newPage();
-      const consoleErrors = [];
+    // Test 1: Every page loads without console errors and has a header
+    const allPages = [
+      { label: 'Main page',        url: `${baseUrl}/` },
+      { label: 'Gallery page',     url: `${baseUrl}/pages/pictures.html` },
+      { label: 'View page',        url: `${baseUrl}/pages/view.html` },
+      { label: 'Commissions page', url: `${baseUrl}/pages/commissions.html` },
+    ];
 
-      page.on('console', (msg) => {
-        if (msg.type() === 'error') {
-          consoleErrors.push(msg.text());
-        }
+    for (const { label, url } of allPages) {
+      await test(`${label} loads without console errors`, async () => {
+        const page = await browser.newPage();
+        const consoleErrors = [];
+
+        page.on('console', (msg) => {
+          if (msg.type() === 'error') consoleErrors.push(msg.text());
+        });
+
+        const response = await page.goto(url, { waitUntil: 'networkidle' });
+        assert(response.ok(), `Page load failed with status ${response.status()}`);
+        assert(consoleErrors.length === 0, `Console errors: ${consoleErrors.join(', ')}`);
+
+        await page.close();
       });
 
-      const response = await page.goto(`${baseUrl}/`, { waitUntil: 'networkidle' });
-      assert(response.ok(), `Page load failed with status ${response.status()}`);
-      
-      // Filter out expected localhost errors from external services
-      const relevantErrors = consoleErrors.filter(err => {
-        const errLower = err.toLowerCase();
-        // Ignore Cookiebot/Google Analytics/external service errors - these are expected on localhost
-        if (errLower.includes('cookiebot') || 
-            errLower.includes('googletagmanager') || 
-            errLower.includes('consentcdn') || 
-            errLower.includes('not authorized') ||
-            errLower.includes('domain group') ||
-            errLower.includes('cdn.') ||
-            errLower.includes('googleapis') ||
-            errLower.includes('failed to load resource') ||
-            errLower.includes('404')) {
-          return false;
-        }
-        return true;
+      await test(`${label} header is loaded`, async () => {
+        const page = await browser.newPage();
+        await page.goto(url, { waitUntil: 'networkidle' });
+
+        const headerContent = await page.locator('#header-container').innerHTML();
+        assert(headerContent.trim().length > 0, 'Header container is empty — component failed to load');
+
+        await page.close();
       });
-      
-      assert(relevantErrors.length === 0, `Console errors found: ${relevantErrors.join(', ')}`);
+    }
 
-      await page.close();
-    });
+    console.log(colors.blue + '\n[2] MAIN PAGE TESTS' + colors.reset);
 
-    // Test 2: Hero section is visible
-    await test('Hero section is rendered', async () => {
-      const page = await browser.newPage();
-      await page.goto(`${baseUrl}/`, { waitUntil: 'networkidle' });
-
-      const heroTitle = await page.locator('[data-i18n="hero_title"]').isVisible();
-      assert(heroTitle, 'Hero title not visible');
-
-      await page.close();
-    });
-
-    // Test 3: Featured cards render on main page
+    // Test: Featured cards render on main page
     await test('Featured cards render on main page', async () => {
       const page = await browser.newPage();
       await page.goto(`${baseUrl}/`, { waitUntil: 'networkidle' });
@@ -260,7 +249,7 @@ async function runTests() {
       await page.close();
     });
 
-    console.log(colors.blue + '\n[2] GALLERY & MODAL TESTS (Paintings Page)' + colors.reset);
+    console.log(colors.blue + '\n[3] GALLERY & MODAL TESTS (Paintings Page)' + colors.reset);
 
     // Test 5: Full gallery renders on paintings page
     await test(`Gallery renders all ${paintings.length} paintings`, async () => {
@@ -276,7 +265,7 @@ async function runTests() {
       await page.close();
     });
 
-    console.log(colors.blue + '\n[3] LANGUAGE SWITCHING TESTS' + colors.reset);
+    console.log(colors.blue + '\n[4] LANGUAGE SWITCHING TESTS' + colors.reset);
 
     // Test 6: Language switching works
     await test('Language switching to English works', async () => {
@@ -297,7 +286,7 @@ async function runTests() {
       await page.close();
     });
 
-    console.log(colors.blue + '\n[4] PAINTING DETAIL TESTS' + colors.reset);
+    console.log(colors.blue + '\n[5] PAINTING DETAIL TESTS' + colors.reset);
 
     // Test 7: Painting detail page loads
     await test('Painting detail page renders correctly', async () => {
@@ -318,7 +307,7 @@ async function runTests() {
       await page.close();
     });
 
-    console.log(colors.blue + '\n[5] FORM TESTS' + colors.reset);
+    console.log(colors.blue + '\n[6] FORM TESTS' + colors.reset);
 
     // Test 8: Contact form exists
     await test('Contact form is present', async () => {
