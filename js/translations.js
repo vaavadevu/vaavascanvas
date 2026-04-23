@@ -396,6 +396,10 @@ const keys = {
     sv: "En antilop som delar en stund med en oxpeckare",
     en: "An antelope sharing a moment with an oxpecker",
   },
+  desc_operationBaver: {
+    sv: "En simmande bäver som äter en gren",
+    en: "A swimming beaver eating a branch",
+  },
   desc_sommarstuga: {
     sv: "En varm sommardag i Småland och det doftar nästan nyklippt gräs.",
     en: "A warm summer day in Småland and it smells almost like freshly mowed grass.",
