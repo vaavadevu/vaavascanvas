@@ -95,6 +95,12 @@ const keys = {
     en: "Personal",
   },
 
+  // ── Cookie policy ──────────────────────────────────────────
+  cookie_policy_link: {
+    sv: "Cookiepolicy",
+    en: "Cookie policy",
+  },
+
   // ── Footer ─────────────────────────────────────────────────
   footer_about_heading: {
     sv: "Hej, Devika här!",
