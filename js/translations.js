@@ -100,6 +100,10 @@ const keys = {
     sv: "Cookiepolicy",
     en: "Cookie policy",
   },
+  cookie_settings_link: {
+    sv: "Cookieinställningar",
+    en: "Cookie settings",
+  },
 
   // ── Footer ─────────────────────────────────────────────────
   footer_about_heading: {
