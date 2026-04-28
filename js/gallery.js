@@ -80,12 +80,20 @@ function addSoldBadge(container) {
 
 // ── Filter ────────────────────────────────────────────────────
 
-let activeFilter = "all";
+let activeStatusFilter = "all";
+let activeSizeFilter = "size_all";
 
 function attachFilterListeners() {
   document.querySelectorAll(".filter-btn, .fab-filter-btn").forEach(btn => {
     btn.addEventListener("click", () => {
-      setActiveFilter(btn.dataset.filter);
+      const filter = btn.dataset.filter;
+      
+      // Determine if this is a status or size filter
+      if (filter.startsWith("size_")) {
+        setActiveSizeFilter(filter);
+      } else {
+        setActiveStatusFilter(filter);
+      }
       closeFab();
     });
   });
@@ -94,20 +102,38 @@ function attachFilterListeners() {
   setupFilterBar();
 }
 
-function setActiveFilter(filter) {
-  activeFilter = filter;
-  document.querySelectorAll(".filter-btn, .fab-filter-btn").forEach(b => {
+function setActiveStatusFilter(filter) {
+  activeStatusFilter = filter;
+  document.querySelectorAll(".filter-btn:not(.size-filter), .fab-filter-btn:not(.size-filter)").forEach(b => {
     b.classList.toggle("active", b.dataset.filter === filter);
   });
-  filterGallery(filter);
+  filterGallery();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function filterGallery(filter) {
+function setActiveSizeFilter(filter) {
+  activeSizeFilter = filter;
+  document.querySelectorAll(".size-filter").forEach(b => {
+    b.classList.toggle("active", b.dataset.filter === filter);
+  });
+  filterGallery();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function filterGallery() {
   document.querySelectorAll(".gallery-item").forEach((item, idx) => {
-    const status = paintings[idx].status;
-    const show = filter === "all" || status === filter;
-    item.style.display = show ? "" : "none";
+    const painting = paintings[idx];
+    const status = painting.status;
+    const size = getPaintingSize(painting);
+    
+    // Check status filter
+    const statusMatch = activeStatusFilter === "all" || status === activeStatusFilter;
+    
+    // Check size filter
+    const sizeMatch = activeSizeFilter === "size_all" || size === activeSizeFilter.replace("size_", "");
+    
+    // Show only if both filters match
+    item.style.display = (statusMatch && sizeMatch) ? "" : "none";
   });
 }
 

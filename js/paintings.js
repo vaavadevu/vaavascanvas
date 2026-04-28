@@ -23,6 +23,24 @@ const MEDIUM = {
   ACRYLIC_CANVAS: "medium_acrylic_canvas"
 };
 
+// Size constants
+const SIZE = {
+  SMALL: "small",
+  MEDIUM: "medium",
+  LARGE: "large"
+};
+
+// Helper function to get painting size category based on max dimension
+function getPaintingSize(painting) {
+  const maxDim = Math.max(
+    painting.width || painting.diameter || 0,
+    painting.height || 0
+  );
+  if (maxDim < 40) return SIZE.SMALL;
+  if (maxDim < 60) return SIZE.MEDIUM;
+  return SIZE.LARGE;
+}
+
 const paintings = [
   {
     id: "herrOchFruAndersson",
@@ -50,6 +68,17 @@ const paintings = [
     id: "operationBaver",
     title: "Operation bäver",
     descKey: "desc_operationBaver",
+    width: 18,
+    height: 24,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 900,
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+  },
+  {
+    id: "tjuvsmak",
+    title: "Tjuvsmak",
+    descKey: "desc_tjuvsmak",
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
