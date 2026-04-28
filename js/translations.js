@@ -95,6 +95,28 @@ const keys = {
     en: "Personal",
   },
 
+  // ── Size filters ───────────────────────────────────────────
+  filter_size_label: {
+    sv: "Storlek ▼",
+    en: "Size ▼",
+  },
+  filter_size_all: {
+    sv: "Alla storlekar",
+    en: "All sizes",
+  },
+  filter_size_small: {
+    sv: "Små",
+    en: "Small",
+  },
+  filter_size_medium: {
+    sv: "Medel",
+    en: "Medium",
+  },
+  filter_size_large: {
+    sv: "Stora",
+    en: "Large",
+  },
+
   // ── Cookie policy ──────────────────────────────────────────
   cookie_policy_link: {
     sv: "Cookiepolicy",
@@ -410,6 +432,11 @@ const keys = {
     sv: "En simmande bäver som äter en gren",
     en: "A swimming beaver eating a branch",
   },
+  desc_tjuvsmak: {
+    sv: "En busig chinchilla som tjuvsmakar en saftig jordgubbe",
+    en: "A little naughty chinchilla enjoying a stolen juicy strawberry"
+},
+
   desc_sommarstuga: {
     sv: "En varm sommardag i Småland och det doftar nästan nyklippt gräs.",
     en: "A warm summer day in Småland and it smells almost like freshly mowed grass.",

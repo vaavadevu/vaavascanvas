@@ -166,3 +166,12 @@
   font-weight: 700;
   background: transparent;
 }
+
+.filter-divider {
+  height: 1.5px;
+  background: var(--accent-green);
+  margin: 0 4px;
+  opacity: 0.3;
+  width: 1px;
+  flex-shrink: 0;
+}

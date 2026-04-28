@@ -180,6 +180,10 @@ nav.active {
     font-size: 0.8rem;
   }
 
+  .filter-divider {
+    display: none;
+  }
+
   h1 {
     font-size: 2rem;
   }
