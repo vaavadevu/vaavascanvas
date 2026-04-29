@@ -2,98 +2,107 @@
 
 const blogPosts = [
   {
-    id: "why-i-paint",
-    title: "Varför jag målar",
-    titleEn: "Why I Paint",
-    date: "2026-01-15",
-    dateFormatted: "15 januari 2026",
+    id: "began-to-survive",
+    title: "Jag började måla för att överleva",
+    titleEn: "I Started Painting to Survive",
+    date: "2026-04-28",
+    dateFormatted: "28 april 2026",
     author: "Devika",
-    excerpt: "Tankar om vad som driver mig att skapa konst och vilka känslor jag vill förmedla.",
-    excerptEn: "Thoughts on what drives me to create art and the emotions I want to convey.",
+    excerpt: "Varför jag verkligen började måla, och vad det betyder för mig idag.",
+    excerptEn: "Why I really started painting, and what it means to me today.",
     content: `
-      <p>Jag målar för att skapa närvaro. Det kanske låter abstrakt, men för mig handlar det om att fånga de stunder och känslor som ofta förblir osagda.</p>
+      <p>Jag tror inte att jag började måla av "rätt" anledning.<br>
+      Det var inte för att bli duktig. Inte för att sälja. Inte ens för att ha en hobby.</p>
       
-      <p>Genom akrylmålningarna försöker jag bygga en bro mellan det jag känner och det andra människor kan känna när de ser mitt verk. Det är ett sätt att säga "Du är inte ensam med dessa känslor."</p>
+      <p>Jag började för att jag behövde något som fick mig att stanna kvar.</p>
       
-      <p>Varje målning börjar med en känsla – ibland är det fred, ibland sorg, ibland glädje. Jag låter färgerna och formerna tala för sig själva, utan att försöka förkla allt till minsta detalj.</p>
+      <p>Det fanns perioder där allt kändes tungt. Där dagarna bara gick, utan att jag riktigt var med i dem. Och i allt det där… började jag måla. Inte för att jag trodde jag var bra, utan för att det var något att hålla fast vid.</p>
       
-      <p>Det som driver mig framåt är när någon ser en av mina målningar och känner sig sedd. Det är då jag vet att jag gjort något rätt.</p>
+      <h2 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin: 30px 0 20px 0;">I början var det rörigt</h2>
+      
+      <p>Färger överallt, inga riktiga planer, misstag hela tiden. Ibland kändes det som att jag förstörde mer än jag skapade. Som när en underpainting råkade ta bort hela min skiss och jag bara satt där och tänkte: vad gör jag ens?</p>
+      
+      <p>Men ändå fortsatte jag.</p>
+      
+      <p>För något hände när jag målade.<br>
+      Tiden saktade ner lite. Tankarna blev inte lika högljudda. Jag kunde fokusera på något konkret – en färg, en form, ett litet steg i taget.</p>
+      
+      <p>Och det räckte.</p>
+      
+      <h2 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin: 30px 0 20px 0;">Jag är fortfarande i början</h2>
+      
+      <p>Jag är fortfarande i början av min resa. Jag lär mig fortfarande. Jag gör fortfarande misstag (hela tiden). Men jag börjar också se något växa fram – inte bara i mina målningar, utan i mig själv.</p>
+      
+      <p><strong>Den här bloggen är inte här för att visa perfektion.<br>
+      Den är här för att visa processen.</strong></p>
+      
+      <p>Jag vill dela:</p>
+      
+      <ul style="margin: 15px 0; padding-left: 20px;">
+        <li>hur jag lär mig måla, steg för steg</li>
+        <li>vad som går fel (för det gör det ofta)</li>
+        <li>vad jag känner under tiden</li>
+        <li>och hur konsten sakta börjar ta plats i mitt liv</li>
+      </ul>
+      
+      <p>Kanske är du också i början av något.<br>
+      Kanske känner du dig lost ibland.<br>
+      Kanske letar du efter något som får dig att känna lite mer igen.</p>
+      
+      <p>Då hoppas jag att du kan hitta något här.</p>
+      
+      <p style="margin-top: 40px;"><strong>Det här är bara början.</strong></p>
+      
+      <p style="text-align: right; margin-top: 10px; font-style: italic;">– Devika</p>
     `,
     contentEn: `
-      <p>I paint to create presence. It might sound abstract, but for me it's about capturing the moments and emotions that often remain unspoken.</p>
+      <p>I don't think I started painting for the "right" reasons.<br>
+      It wasn't to become good. Not to sell. Not even as a hobby.</p>
       
-      <p>Through my acrylic paintings, I try to build a bridge between what I feel and what others can feel when they see my work. It's a way of saying "You're not alone with these feelings."</p>
+      <p>I started because I needed something that would help me stay present.</p>
       
-      <p>Every painting starts with a feeling – sometimes it's peace, sometimes sorrow, sometimes joy. I let the colors and shapes speak for themselves, without trying to explain everything down to the smallest detail.</p>
+      <p>There were periods when everything felt heavy. When days just passed without me really being part of them. And in all of that… I started painting. Not because I thought I was good, but because it was something to hold onto.</p>
       
-      <p>What drives me forward is when someone sees one of my paintings and feels seen. That's when I know I've done something right.</p>
+      <h2 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin: 30px 0 20px 0;">In the beginning, it was messy</h2>
+      
+      <p>Colors everywhere, no real plans, mistakes constantly. Sometimes it felt like I was destroying more than I was creating. Like when an underpainting accidentally wiped out my entire sketch and I just sat there thinking: what am I even doing?</p>
+      
+      <p>But I kept going anyway.</p>
+      
+      <p>Because something happened when I painted.<br>
+      Time slowed down a little. My thoughts weren't as loud. I could focus on something concrete – a color, a shape, one small step at a time.</p>
+      
+      <p>And that was enough.</p>
+      
+      <h2 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin: 30px 0 20px 0;">I'm still at the beginning</h2>
+      
+      <p>I'm still at the beginning of my journey. I'm still learning. I still make mistakes (all the time). But I'm also starting to see something growing – not just in my paintings, but in myself.</p>
+      
+      <p><strong>This blog is not here to show perfection.<br>
+      It's here to show the process.</strong></p>
+      
+      <p>I want to share:</p>
+      
+      <ul style="margin: 15px 0; padding-left: 20px;">
+        <li>how I learn to paint, step by step</li>
+        <li>what goes wrong (because it does often)</li>
+        <li>what I feel along the way</li>
+        <li>and how art slowly finds its place in my life</li>
+      </ul>
+      
+      <p>Maybe you're also at the beginning of something.<br>
+      Maybe you feel lost sometimes.<br>
+      Maybe you're looking for something that makes you feel a little more again.</p>
+      
+      <p>Then I hope you can find something here.</p>
+      
+      <p style="margin-top: 40px;"><strong>This is just the beginning.</strong></p>
+      
+      <p style="text-align: right; margin-top: 10px; font-style: italic;">– Devika</p>
     `,
-    image: "/images/paintings/norrsken/desktop/01.jpg",
-    tags: ["inspiration", "process"],
-  },
-  {
-    id: "animal-paintings",
-    title: "Varför djurmålningar",
-    titleEn: "Why Animals",
-    date: "2026-02-10",
-    dateFormatted: "10 februari 2026",
-    author: "Devika",
-    excerpt: "Djur fascinerar mig – deras expressivitet, deras närvaro, och det de kan lära oss.",
-    excerptEn: "Animals fascinate me – their expressiveness, their presence, and what they can teach us.",
-    content: `
-      <p>Många frågar mig varför jag ofta målar djur. Svaret är enkelt: de är autentiska.</p>
-      
-      <p>Djur utgår inte ifrån vad andra tycker. De är helt sig själva – en varglook är alltid äkta, en älgs närvaro är alltid respektingivande. Det är något jag strävade efter att fånga i mina målningar.</p>
-      
-      <p>Men det handlar inte bara om djuren själva. Det handlar om vad de representerar för oss. Ett hjortpar kan symbolisera vänskapen, en ensam varg kan symbolisera självständighet, en flock fåglar kan symbolisera frihet.</p>
-      
-      <p>Genom djurmålningarna kan jag tala om mänskliga känslor på ett sätt som ofta känns mindre påtvingad än direkta porträtt. Djuren blir en metafor för något större.</p>
-    `,
-    contentEn: `
-      <p>Many ask me why I often paint animals. The answer is simple: they are authentic.</p>
-      
-      <p>Animals don't go based on what others think. They are completely themselves – a wolf's gaze is always genuine, a moose's presence is always commanding. That's something I strive to capture in my paintings.</p>
-      
-      <p>But it's not just about the animals themselves. It's about what they represent to us. A pair of deer can symbolize friendship, a lone wolf can symbolize independence, a flock of birds can symbolize freedom.</p>
-      
-      <p>Through animal paintings, I can speak of human emotions in a way that often feels less forced than direct portraits. The animals become a metaphor for something greater.</p>
-    `,
-    image: "/images/paintings/radjur/desktop/01.jpg",
-    tags: ["animals", "inspiration"],
-  },
-  {
-    id: "color-mixing-mistake",
-    title: "Det gick snett – och hur jag fixade det",
-    titleEn: "When It Went Wrong – And How I Fixed It",
-    date: "2026-03-05",
-    dateFormatted: "5 mars 2026",
-    author: "Devika",
-    excerpt: "En historia om en målning som inte blev som jag tänkt – och vad jag lärde mig av det.",
-    excerptEn: "A story about a painting that didn't turn out as planned – and what I learned from it.",
-    content: `
-      <p>Det hände på en grå vinterdag. Jag var säker på att jag blandade rätt färg för himlen – en mjuk lavendel-blå. Men när jag strök på den på duken blev den helt fel. För brun. För dov. Det var inte det jag såg i mitt huvud.</p>
-      
-      <p>Min första tanke var att ge upp. Börja om från början. Det finns inget värre för en konstnär än att veta att något inte stämmer.</p>
-      
-      <p>Men istället försökte jag något jag aldrig gjort innan: jag målade över den delen med vita och ljusa nyanser, och byggde då en helt ny atmosfär runt den gamla misfärgningen. Istället för en klar himmel fick jag ett mjukt, molnigt väder som faktiskt passade målningen mycket bättre.</p>
-      
-      <p>Den lektionen tog mig långt. Inte varje misstag är en katastrof – ibland är det bara en möjlighet att göra något annorlunda. Det hände när jag målade "Norrsken" – en målning jag älskar nu.</p>
-      
-      <p>Så om du misslyckas, om färgerna inte stämmer, eller om idén inte blir vad du tänkte – försök en sak till innan du ger upp. Det kan bli mycket bättre än du anade.</p>
-    `,
-    contentEn: `
-      <p>It happened on a gray winter day. I was sure I mixed the right color for the sky – a soft lavender-blue. But when I painted it on the canvas, it was completely wrong. Too brown. Too dull. It wasn't what I saw in my head.</p>
-      
-      <p>My first thought was to give up. Start over. There's nothing worse for an artist than knowing something isn't right.</p>
-      
-      <p>But instead, I tried something I'd never done before: I painted over that part with whites and light shades, and built a completely new atmosphere around the old miscoloring. Instead of a clear sky, I got a soft, cloudy weather that actually fit the painting much better.</p>
-      
-      <p>That lesson took me far. Not every mistake is a disaster – sometimes it's just an opportunity to do something different. It happened when I painted "Norrsken" – a painting I love now.</p>
-      
-      <p>So if you fail, if the colors don't match, or if the idea doesn't become what you thought – try one more thing before you give up. It could turn out much better than you imagined.</p>
-    `,
-    image: "/images/paintings/norrsken/desktop/01.jpg",
-    tags: ["process", "mistakes", "learning"],
+    image: "/images/Baby.jpg",
+    alt: "Jag som en lugn och glad bebis, haha",
+    tags: ["inspiration", "process", "beginning"],
   },
 ];
 

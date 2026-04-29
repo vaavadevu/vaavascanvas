@@ -52,7 +52,10 @@ function getCurrentLanguage() {
 }
 
 // Initialize on page load
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  // Setup header and modals first
+  await setup();
+  setupScrollWatcher();
+  // Then render blog content
   renderBlogPostsList();
-  initializeLanguage();
 });
