@@ -32,7 +32,7 @@ body {
   font-family: 'Quicksand', sans-serif;
   color: var(--text-dark);
   line-height: 1.6;
-  background-color: var(--bg-warm);
+  background-color: #FFFFFF;
   margin: 0;
   padding: 0;
   display: grid;

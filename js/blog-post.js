@@ -34,7 +34,7 @@ function renderBlogPost() {
   // Render post content
   document.getElementById("post-heading").textContent = title;
   document.getElementById("post-date").textContent = dateStr;
-  document.getElementById("post-author").textContent = post.author;
+  // document.getElementById("post-author").textContent = post.author; // Removed to show only date
   document.getElementById("post-image").src = post.image;
   document.getElementById("post-image").alt = title;
   document.getElementById("post-content").innerHTML = content;
