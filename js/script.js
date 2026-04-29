@@ -92,9 +92,14 @@ async function setup() {
   initLanguage();           // now everything exists, apply saved language
 }
 
-setupScrollWatcher();
-setup();
-init();
+// Skip setup and init on blog pages - they handle it themselves
+const isBlogPage = window.location.pathname.includes("blog");
+
+if (!isBlogPage) {
+  setupScrollWatcher();
+  setup();
+  init();
+}
 
 // Only initialize page view on view.html
 if (window.location.pathname.includes("view.html")) {

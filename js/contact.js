@@ -14,7 +14,10 @@ async function buildContactForm() {
   }
 
   setupContactForm();
-  populateArtworkDropdowns();
+  // Only populate artwork dropdowns if paintings data is loaded
+  if (typeof paintings !== "undefined") {
+    populateArtworkDropdowns();
+  }
 }
 
 function setupContactForm() {
@@ -105,6 +108,9 @@ function handleBuyClick(painting, frameChoice = null) {
 }
 
 function populateArtworkDropdowns() {
+  // Only populate if paintings data is available (not loaded on blog pages)
+  if (typeof paintings === "undefined") return;
+  
   const printSelect    = document.getElementById("f-artwork");
   const originalSelect = document.getElementById("f-artwork-original");
   if (!printSelect || !originalSelect) return;

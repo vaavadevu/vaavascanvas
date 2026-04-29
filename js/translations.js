@@ -22,6 +22,10 @@ const keys = {
   sv: "Beställningar",
   en: "Commissions",
 },
+  nav_blog: {
+    sv: "Blogg",
+    en: "Blog",
+  },
   nav_back: {
     sv: "Tillbaka",
     en: "Back",
@@ -528,7 +532,22 @@ const keys = {
   desc_varlek: {
   sv: "Två glada lamm som hoppar och leker på en blommig äng en fin kväll, fyllda av bus och vårkänslor.",
   en: "Two happy lambs jumping and playing in a flowery meadow on a nice evening, full of mischief and spring feelings.",
-}
+},
+
+  // ── Blog ───────────────────────────────────────────────────
+  blog_title: {
+    sv: "Blogg",
+    en: "Blog",
+  },
+  blog_read_more: {
+    sv: "Läs mer",
+    en: "Read more",
+  },
+  blog_back: {
+    sv: "Tillbaka till blogg",
+    en: "Back to blog",
+  },
+
 };
 
 // Build the translations object that i18n.js expects
