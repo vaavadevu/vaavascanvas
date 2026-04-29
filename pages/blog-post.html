@@ -76,6 +76,13 @@
           <span class="nav-arrow">→</span>
         </a>
       </nav>
+      <!-- Likes -->
+<div class="blog-likes">
+  <button class="like-btn" id="like-btn">
+    <span class="like-heart">♡</span>
+    <span class="like-count" id="like-count">0</span>
+  </button>
+</div>
     </article>
   </main>
 
@@ -120,6 +127,52 @@
   <script src="../js/ui.js"></script>
   <script src="../js/blog-post.js"></script>
   <script src="../js/script.js"></script>
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc, increment } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBPJLdjWw8v9W4eMj62rFFn_RaXwq7FZqY",
+    authDomain: "vaavascanvas-37626.firebaseapp.com",
+    projectId: "vaavascanvas-37626",
+    storageBucket: "vaavascanvas-37626.firebasestorage.app",
+    messagingSenderId: "172065550967",
+    appId: "1:172065550967:web:51dbb1ceac232241898c72"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const params = new URLSearchParams(window.location.search);
+  const postId = params.get("post");
+
+  if (postId) {
+    const btn = document.getElementById("like-btn");
+    const countEl = document.getElementById("like-count");
+    const docRef = doc(db, "likes", postId);
+
+    // Hämta antal likes
+    const docSnap = await getDoc(docRef);
+    countEl.textContent = docSnap.exists() ? docSnap.data().count : 0;
+
+    // Kolla om redan likat
+    if (localStorage.getItem(`liked_${postId}`)) {
+      btn.classList.add("liked");
+      btn.querySelector(".like-heart").textContent = "♥";
+    }
+
+    // Klick
+    btn.addEventListener("click", async () => {
+      if (btn.classList.contains("liked")) return;
+      btn.classList.add("liked");
+      btn.querySelector(".like-heart").textContent = "♥";
+      localStorage.setItem(`liked_${postId}`, "true");
+      await setDoc(docRef, { count: increment(1) }, { merge: true });
+      const snap = await getDoc(docRef);
+      countEl.textContent = snap.data().count;
+    });
+  }
+</script>
 </body>
 
 </html>
