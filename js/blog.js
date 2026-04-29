@@ -24,8 +24,6 @@ function renderBlogPostsList() {
           </a>
           <div class="blog-post-preview-meta">
             <span class="post-date">${dateStr}</span>
-            <span class="post-separator">•</span>
-            <span class="post-author">${post.author}</span>
           </div>
           <p class="blog-post-preview-excerpt">${excerpt}</p>
           <a href="blog-post.html?post=${post.id}" class="blog-post-preview-read-more">
