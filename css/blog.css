@@ -135,6 +135,44 @@
   color: var(--text-dark);
 }
 
+/* ─── Likes ─── */
+
+.blog-likes {
+  display: flex;
+  justify-content: center;
+  margin: 40px 0;
+}
+
+.like-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: 1px solid var(--accent-green);
+  border-radius: 30px;
+  padding: 10px 22px;
+  cursor: pointer;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1rem;
+  color: var(--accent-green);
+  transition: all 0.3s ease;
+}
+
+.like-btn:hover {
+  background: var(--accent-green);
+  color: white;
+}
+
+.like-btn.liked {
+  background: var(--accent-green);
+  color: white;
+  cursor: default;
+}
+
+.like-heart {
+  font-size: 1.2rem;
+  line-height: 1;
+}
 
 .blog-post-meta {
   font-family: 'Quicksand', sans-serif;
