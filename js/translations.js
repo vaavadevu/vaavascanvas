@@ -548,9 +548,21 @@ const keys = {
     en: "Back to blog",
   },
   comments_title: {
-  sv: "Kommentarer",
-  en: "Comments",
-}
+    sv: "Kommentarer",
+    en: "Comments",
+  },
+  comment_name: {
+    sv: "Ditt namn",
+    en: "Your name",
+  },
+  comment_text: {
+    sv: "Skriv en kommentar...",
+    en: "Write a comment...",
+  },
+  comment_submit: {
+    sv: "Skicka",
+    en: "Send",
+  },
 
 };
 
