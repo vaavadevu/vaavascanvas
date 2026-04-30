@@ -18,17 +18,18 @@ function renderBlogPost() {
   const isSwedish = getCurrentLanguage() === "sv";
   const title = isSwedish ? post.title : post.titleEn;
   const content = isSwedish ? post.content : post.contentEn;
+  const excerpt = isSwedish ? post.excerpt : post.excerptEn;
   const dateStr = isSwedish ? post.dateFormatted : formatDateEnglish(post.date);
 
   // Update page title and meta tags
   document.title = `${title} – Vaavascanvas`;
   document.getElementById("post-title").textContent = `${title} – Vaavascanvas`;
-  document.getElementById("post-meta-desc").content = post.excerpt;
+  document.getElementById("post-meta-desc").content = excerpt;
   document.getElementById("post-canonical").href = `https://vaavascanvas.se/pages/blog-post.html?post=${post.id}`;
   
   document.getElementById("og-url").content = `https://vaavascanvas.se/pages/blog-post.html?post=${post.id}`;
   document.getElementById("og-title").content = title;
-  document.getElementById("og-description").content = post.excerpt;
+  document.getElementById("og-description").content = excerpt;
   document.getElementById("og-image").content = `https://vaavascanvas.se${post.image}`;
 
   // Render post content
@@ -72,7 +73,7 @@ function renderBlogPost() {
 
 // Get current language
 function getCurrentLanguage() {
-  return localStorage.getItem("language") || "sv";
+  return window.currentLang || localStorage.getItem("lang") || localStorage.getItem("language") || "sv";
 }
 
 // Helper function to format date in English
@@ -89,5 +90,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   await setup();
   setupScrollWatcher();
   // Then render blog post
+  renderBlogPost();
+});
+
+// Re-render the blog post immediately when the language changes
+window.addEventListener("languagechange", () => {
   renderBlogPost();
 });
