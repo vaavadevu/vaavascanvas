@@ -46,7 +46,7 @@ function formatDateEnglish(dateStr) {
 
 // Get current language (fallback to Swedish if not available)
 function getCurrentLanguage() {
-  return localStorage.getItem("language") || "sv";
+  return window.currentLang || localStorage.getItem("lang") || localStorage.getItem("language") || "sv";
 }
 
 // Initialize on page load
@@ -55,5 +55,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   await setup();
   setupScrollWatcher();
   // Then render blog content
+  renderBlogPostsList();
+});
+
+// Re-render the blog list immediately when the language changes
+window.addEventListener("languagechange", () => {
   renderBlogPostsList();
 });
