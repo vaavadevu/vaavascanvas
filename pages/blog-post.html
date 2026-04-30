@@ -183,6 +183,15 @@
     const commentsRef = collection(db, "comments", postId, "entries");
     const q = query(commentsRef, orderBy("timestamp", "asc"));
 
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
     async function loadComments() {
       const snapshot = await getDocs(q);
       const list = document.getElementById("comments-list");
@@ -199,10 +208,10 @@
         list.innerHTML += `
           <div class="comment-item">
             <div class="comment-header">
-              <span class="comment-name">${data.name}</span>
+              <span class="comment-name">${escapeHtml(data.name)}</span>
               <span class="comment-date">${dateStr}</span>
             </div>
-            <p class="comment-text">${data.text}</p>
+            <p class="comment-text">${escapeHtml(data.text)}</p>
           </div>`;
       });
     }
