@@ -75,9 +75,9 @@
 .no-comments {
   font-family: 'Quicksand', sans-serif;
   font-size: 0.95rem;
-  color: var(--text-light);
+  color: var(--text-dark);
   font-style: italic;
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 /* ─── Kommentarsformulär ─── */
@@ -201,7 +201,8 @@
 
 .blog-post-preview-meta {
   font-size: 0.9rem;
-  color: var(--text-light);
+  color: var(--text-dark);
+  opacity: 0.6;
   margin-bottom: 15px;
   display: flex;
   gap: 10px;
@@ -315,12 +316,12 @@
 .blog-post-meta {
   font-family: 'Quicksand', sans-serif;
   font-size: 0.95rem;
-  color: var(--text-light);
+  color: var(--text-dark);
   display: flex;
   gap: 8px;
   align-items: center;
-  opacity: 0.8;
-   margin-bottom: 40px;   /* luftigt gap innan bilden */
+  opacity: 0.6;
+  margin-bottom: 40px;
 }
 
 .post-date,
