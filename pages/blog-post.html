@@ -75,11 +75,22 @@
         </a>
       </nav>
       <!-- Likes -->
+<!-- Likes & Kommentarer -->
 <div class="blog-likes">
   <button class="like-btn" id="like-btn">
     <span class="like-heart">♡</span>
     <span class="like-count" id="like-count">0</span>
   </button>
+</div>
+
+<div class="blog-comments">
+  <h3 class="comments-title" data-i18n="comments_title">Kommentarer</h3>
+  <div id="comments-list" class="comments-list"></div>
+  <form class="comment-form" id="comment-form">
+    <input type="text" id="comment-name" class="comment-input" placeholder="Ditt namn" data-i18n-placeholder="comment_name" maxlength="50" />
+    <textarea id="comment-text" class="comment-textarea" placeholder="Skriv en kommentar..." data-i18n-placeholder="comment_text" maxlength="500" rows="4"></textarea>
+    <button type="submit" class="comment-submit" id="comment-submit">Skicka</button>
+  </form>
 </div>
     </article>
   </main>
@@ -127,7 +138,7 @@
   <script src="../js/script.js"></script>
   <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-  import { getFirestore, doc, getDoc, setDoc, increment } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, setDoc, increment, collection, addDoc, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBPJLdjWw8v9W4eMj62rFFn_RaXwq7FZqY",
@@ -145,29 +156,83 @@
   const postId = params.get("post");
 
   if (postId) {
+    // ─── Likes ───
     const btn = document.getElementById("like-btn");
     const countEl = document.getElementById("like-count");
-    const docRef = doc(db, "likes", postId);
+    const likeRef = doc(db, "likes", postId);
 
-    // Hämta antal likes
-    const docSnap = await getDoc(docRef);
-    countEl.textContent = docSnap.exists() ? docSnap.data().count : 0;
+    const likeSnap = await getDoc(likeRef);
+    countEl.textContent = likeSnap.exists() ? likeSnap.data().count : 0;
 
-    // Kolla om redan likat
     if (localStorage.getItem(`liked_${postId}`)) {
       btn.classList.add("liked");
       btn.querySelector(".like-heart").textContent = "♥";
     }
 
-    // Klick
     btn.addEventListener("click", async () => {
       if (btn.classList.contains("liked")) return;
       btn.classList.add("liked");
       btn.querySelector(".like-heart").textContent = "♥";
       localStorage.setItem(`liked_${postId}`, "true");
-      await setDoc(docRef, { count: increment(1) }, { merge: true });
-      const snap = await getDoc(docRef);
+      await setDoc(likeRef, { count: increment(1) }, { merge: true });
+      const snap = await getDoc(likeRef);
       countEl.textContent = snap.data().count;
+    });
+
+    // ─── Kommentarer — ladda ───
+    const commentsRef = collection(db, "comments", postId, "entries");
+    const q = query(commentsRef, orderBy("timestamp", "asc"));
+
+    async function loadComments() {
+      const snapshot = await getDocs(q);
+      const list = document.getElementById("comments-list");
+      list.innerHTML = "";
+      if (snapshot.empty) {
+        list.innerHTML = `<p class="no-comments">Inga kommentarer än — bli den första!</p>`;
+        return;
+      }
+      snapshot.forEach(d => {
+        const data = d.data();
+        const date = data.timestamp?.toDate();
+        const dateStr = date ? date.toLocaleDateString("sv-SE", { day: "numeric", month: "long", year: "numeric" }) : "";
+        list.innerHTML += `
+          <div class="comment-item">
+            <div class="comment-header">
+              <span class="comment-name">${data.name}</span>
+              <span class="comment-date">${dateStr}</span>
+            </div>
+            <p class="comment-text">${data.text}</p>
+          </div>`;
+      });
+    }
+
+    await loadComments();
+
+    // ─── Kommentarer — skicka ───
+    document.getElementById("comment-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("comment-name").value.trim();
+      const text = document.getElementById("comment-text").value.trim();
+      const submitBtn = document.getElementById("comment-submit");
+
+      if (!name || !text) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Skickar...";
+
+      await addDoc(commentsRef, {
+        name,
+        text,
+        timestamp: new Date()
+      });
+
+      document.getElementById("comment-name").value = "";
+      document.getElementById("comment-text").value = "";
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Skickat! ♡";
+      setTimeout(() => submitBtn.textContent = "Skicka", 3000);
+
+      await loadComments();
     });
   }
 </script>
