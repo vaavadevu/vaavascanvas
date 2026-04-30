@@ -547,6 +547,10 @@ const keys = {
     sv: "Tillbaka till blogg",
     en: "Back to blog",
   },
+  comments_title: {
+  sv: "Kommentarer",
+  en: "Comments",
+}
 
 };
 
