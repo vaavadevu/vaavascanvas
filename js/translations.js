@@ -536,8 +536,8 @@ const keys = {
 
   // ── Blog ───────────────────────────────────────────────────
   blog_title: {
-    sv: "Blogg",
-    en: "Blog",
+    sv: "Mellan penseldrag och tankar",
+    en: "Between brushstrokes and thoughts.",
   },
   blog_read_more: {
     sv: "Läs mer",
