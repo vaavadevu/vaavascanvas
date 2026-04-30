@@ -54,7 +54,13 @@ function t(key, ...args) {
 }
 
 function initLanguage() {
-  const saved = localStorage.getItem("lang") || "sv";
+  const saved = localStorage.getItem("lang") || localStorage.getItem("language") || "sv";
   window.currentLang = saved;
+
+  // Migrate old key to new key for consistency
+  if (localStorage.getItem("language") && !localStorage.getItem("lang")) {
+    localStorage.setItem("lang", saved);
+  }
+
   setLanguage(saved);
 }
