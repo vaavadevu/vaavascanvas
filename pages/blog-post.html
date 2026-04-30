@@ -188,13 +188,14 @@
       const list = document.getElementById("comments-list");
       list.innerHTML = "";
       if (snapshot.empty) {
-        list.innerHTML = `<p class="no-comments">Inga kommentarer än — bli den första!</p>`;
+        list.innerHTML = `<p class="no-comments">${t("comment_no_comments")}</p>`;
         return;
       }
       snapshot.forEach(d => {
         const data = d.data();
         const date = data.timestamp?.toDate();
-        const dateStr = date ? date.toLocaleDateString("sv-SE", { day: "numeric", month: "long", year: "numeric" }) : "";
+        const locale = window.currentLang === "en" ? "en-GB" : "sv-SE";
+        const dateStr = date ? date.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" }) : "";
         list.innerHTML += `
           <div class="comment-item">
             <div class="comment-header">
@@ -218,7 +219,7 @@
       if (!name || !text) return;
 
       submitBtn.disabled = true;
-      submitBtn.textContent = "Skickar...";
+      submitBtn.textContent = t("comment_sending");
 
       await addDoc(commentsRef, {
         name,
@@ -229,8 +230,8 @@
       document.getElementById("comment-name").value = "";
       document.getElementById("comment-text").value = "";
       submitBtn.disabled = false;
-      submitBtn.textContent = "Skickat! ♡";
-      setTimeout(() => submitBtn.textContent = "Skicka", 3000);
+      submitBtn.textContent = t("comment_sent");
+      setTimeout(() => submitBtn.textContent = t("comment_submit"), 3000);
 
       await loadComments();
     });

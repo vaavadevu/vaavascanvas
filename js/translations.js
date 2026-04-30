@@ -563,6 +563,18 @@ const keys = {
     sv: "Skicka",
     en: "Send",
   },
+  comment_sending: {
+    sv: "Skickar...",
+    en: "Sending...",
+  },
+  comment_sent: {
+    sv: "Skickat! ♡",
+    en: "Sent! ♡",
+  },
+  comment_no_comments: {
+    sv: "Inga kommentarer än — bli den första!",
+    en: "No comments yet — be the first!",
+  },
 
 };
 
