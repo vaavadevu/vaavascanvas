@@ -155,6 +155,7 @@
   border-bottom: 1px solid var(--accent-green);
   padding-bottom: 40px;
   transition: opacity 0.3s ease;
+  position: relative;
 }
 
 .blog-post-preview:last-child {
@@ -191,6 +192,7 @@
   margin-bottom: 10px;
   text-decoration: none;
   display: block;
+  position: relative;
 }
 
 .blog-post-preview-title:hover {
@@ -219,6 +221,12 @@
   text-decoration: none;
   font-style: italic;
   transition: color 0.3s ease;
+}
+
+.blog-post-preview-read-more::after {
+  content: '';
+  position: absolute;
+  inset: 0;
 }
 
 .blog-post-preview-read-more:hover {
