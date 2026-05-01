@@ -349,6 +349,55 @@ test('All original images have been synced to desktop and mobile', () => {
   );
 });
 
+test('No Swedish characters (å/ä/ö) in identifiers that become URLs or JS keys', () => {
+  const swedish = /[åäöÅÄÖ]/;
+  const violations = [];
+
+  // Painting IDs (used in folder paths and URLs)
+  paintings.forEach(p => {
+    if (swedish.test(p.id))
+      violations.push(`paintings.js id: "${p.id}"`);
+    if (swedish.test(p.descKey))
+      violations.push(`paintings.js descKey: "${p.descKey}" (painting: ${p.id})`);
+  });
+
+  // Translation key names (parsed as JSON keys in tests and referenced in code)
+  Object.keys(keys).forEach(key => {
+    if (swedish.test(key))
+      violations.push(`translations.js key: "${key}"`);
+  });
+
+  // Image folder names on disk (become URL path segments)
+  const paintingsDir = path.join(__dirname, '../images/paintings');
+  if (fs.existsSync(paintingsDir)) {
+    fs.readdirSync(paintingsDir).forEach(name => {
+      if (swedish.test(name))
+        violations.push(`images/paintings/ folder: "${name}"`);
+    });
+  }
+
+  // counts.json keys (must match folder names and painting IDs)
+  Object.keys(counts).forEach(key => {
+    if (swedish.test(key))
+      violations.push(`counts.json key: "${key}"`);
+  });
+
+  // metadata.json keys (must match folder names and painting IDs)
+  const metadataPath = path.join(__dirname, '../images/paintings/metadata.json');
+  if (fs.existsSync(metadataPath)) {
+    const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+    Object.keys(metadata).forEach(key => {
+      if (swedish.test(key))
+        violations.push(`metadata.json key: "${key}"`);
+    });
+  }
+
+  assert(
+    violations.length === 0,
+    'Swedish characters found in identifiers (causes 404s and parse errors):\n  ' + violations.join('\n  ')
+  );
+});
+
 // ─────────────────────────────────────────────────────────────
 // SUITE 3: Translation System Validation
 // ─────────────────────────────────────────────────────────────
