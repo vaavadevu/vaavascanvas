@@ -139,6 +139,7 @@
   <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
   import { getFirestore, doc, getDoc, setDoc, increment, collection, addDoc, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+  import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBPJLdjWw8v9W4eMj62rFFn_RaXwq7FZqY",
@@ -151,16 +152,86 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const auth = getAuth(app);
 
   const params = new URLSearchParams(window.location.search);
   const postId = params.get("post");
+
+  let isAdmin = false;
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  // ─── Admin login UI ───
+  function renderAdminBar() {
+  const existing = document.getElementById("admin-bar");
+  if (existing) existing.remove();
+
+  const adminMode = new URLSearchParams(window.location.search).get("admin") === "true";
+  if (!adminMode && !isAdmin) return;
+
+    const bar = document.createElement("div");
+    bar.id = "admin-bar";
+
+    if (isAdmin) {
+      bar.innerHTML = `
+        <span class="admin-logged-in">✓ Inloggad som admin</span>
+        <button id="admin-logout">Logga ut</button>
+      `;
+      bar.querySelector("#admin-logout").addEventListener("click", () => signOut(auth));
+    } else {
+      bar.innerHTML = `
+        <button id="admin-login-toggle">🔒 Admin</button>
+        <div id="admin-login-form" style="display:none;">
+          <input type="email" id="admin-email" placeholder="Email" />
+          <input type="password" id="admin-password" placeholder="Lösenord" />
+          <button id="admin-login-btn">Logga in</button>
+          <span id="admin-login-error" class="admin-error"></span>
+        </div>
+      `;
+      bar.querySelector("#admin-login-toggle").addEventListener("click", () => {
+        const form = bar.querySelector("#admin-login-form");
+        form.style.display = form.style.display === "none" ? "flex" : "none";
+      });
+      bar.querySelector("#admin-login-btn").addEventListener("click", async () => {
+        const email = bar.querySelector("#admin-email").value;
+        const password = bar.querySelector("#admin-password").value;
+        try {
+          await signInWithEmailAndPassword(auth, email, password);
+        } catch (e) {
+          bar.querySelector("#admin-login-error").textContent = "Fel email eller lösenord";
+        }
+      });
+    }
+
+    document.querySelector(".blog-comments").prepend(bar);
+  }
+
+  onAuthStateChanged(auth, (user) => {
+    isAdmin = !!user;
+    renderAdminBar();
+    loadComments();
+  });
 
   if (postId) {
     // ─── Likes ───
     const btn = document.getElementById("like-btn");
     const countEl = document.getElementById("like-count");
     const likeRef = doc(db, "likes", postId);
-
+    // ─── Sidvisningar ───
+const viewRef = doc(db, "views", postId);
+await setDoc(viewRef, { count: increment(1) }, { merge: true });
+const viewSnap = await getDoc(viewRef);
+const viewCount = viewSnap.exists() ? viewSnap.data().count : 1;
+document.getElementById("post-date").insertAdjacentHTML("afterend", 
+  `<span class="post-separator">•</span><span class="post-views">👁 ${viewCount} läsningar</span>`
+);
     const likeSnap = await getDoc(likeRef);
     countEl.textContent = likeSnap.exists() ? likeSnap.data().count : 0;
 
@@ -179,68 +250,138 @@
       countEl.textContent = snap.data().count;
     });
 
-    // ─── Kommentarer — ladda ───
+    // ─── Kommentarer ───
     const commentsRef = collection(db, "comments", postId, "entries");
     const q = query(commentsRef, orderBy("timestamp", "asc"));
-
-    function escapeHtml(str) {
-      return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-    }
 
     async function loadComments() {
       const snapshot = await getDocs(q);
       const list = document.getElementById("comments-list");
       list.innerHTML = "";
+
       if (snapshot.empty) {
-        list.innerHTML = `<p class="no-comments">${t("comment_no_comments")}</p>`;
+        list.innerHTML = `<p class="no-comments">Inga kommentarer än — bli den första!</p>`;
         return;
       }
+
       snapshot.forEach(d => {
         const data = d.data();
+        const commentId = d.id;
         const date = data.timestamp?.toDate();
         const locale = window.currentLang === "en" ? "en-GB" : "sv-SE";
         const dateStr = date ? date.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" }) : "";
+        const isAdminComment = data.isAdmin === true;
+
+        // Replies HTML
+        let repliesHtml = "";
+        if (data.replies && data.replies.length > 0) {
+          repliesHtml = data.replies.map(r => {
+            const rDate = r.timestamp?.toDate ? r.timestamp.toDate() : new Date(r.timestamp);
+            const rDateStr = rDate ? rDate.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" }) : "";
+            const rIsAdmin = r.isAdmin === true;
+            return `
+              <div class="comment-reply ${rIsAdmin ? "admin-reply" : ""}">
+                <div class="comment-header">
+                  <span class="comment-name">${rIsAdmin ? "Vaavascanvas ✦" : escapeHtml(r.name)}</span>
+                  <span class="comment-date">${rDateStr}</span>
+                </div>
+                <p class="comment-text">${escapeHtml(r.text)}</p>
+              </div>`;
+          }).join("");
+        }
+
+        // Reply form — visas bara om admin eller vanlig användare klickar Svara
+        const replyFormHtml = `
+          <div class="reply-form" id="reply-form-${commentId}" style="display:none;">
+            ${!isAdmin ? `<input type="text" class="comment-input reply-name-input" placeholder="Ditt namn" maxlength="50" />` : ""}
+            <textarea class="comment-textarea reply-text-input" placeholder="Skriv ett svar..." maxlength="500" rows="3"></textarea>
+            <button class="comment-submit reply-submit-btn" data-id="${commentId}">Svara</button>
+          </div>`;
+
         list.innerHTML += `
-          <div class="comment-item">
+          <div class="comment-item ${isAdminComment ? "admin-comment" : ""}" id="comment-${commentId}">
             <div class="comment-header">
-              <span class="comment-name">${escapeHtml(data.name)}</span>
+              <span class="comment-name">${isAdminComment ? "Vaavascanvas ✦" : escapeHtml(data.name)}</span>
               <span class="comment-date">${dateStr}</span>
             </div>
             <p class="comment-text">${escapeHtml(data.text)}</p>
+            <div class="comment-replies">${repliesHtml}</div>
+            <button class="reply-toggle-btn" data-id="${commentId}">↩ Svara</button>
+            ${replyFormHtml}
           </div>`;
+      });
+
+      // Reply toggle
+      list.querySelectorAll(".reply-toggle-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const form = document.getElementById(`reply-form-${btn.dataset.id}`);
+          form.style.display = form.style.display === "none" ? "flex" : "none";
+        });
+      });
+
+      // Reply submit
+      list.querySelectorAll(".reply-submit-btn").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const commentId = btn.dataset.id;
+          const form = document.getElementById(`reply-form-${commentId}`);
+          const nameInput = form.querySelector(".reply-name-input");
+          const textInput = form.querySelector(".reply-text-input");
+          const text = textInput.value.trim();
+          const name = isAdmin ? "Vaavascanvas" : (nameInput ? nameInput.value.trim() : "");
+
+          if (!text || (!isAdmin && !name)) return;
+
+          btn.disabled = true;
+          btn.textContent = "Skickar...";
+
+          const commentDocRef = doc(db, "comments", postId, "entries", commentId);
+          const commentSnap = await getDoc(commentDocRef);
+          const existing = commentSnap.data().replies || [];
+
+          await setDoc(commentDocRef, {
+            replies: [...existing, {
+              name,
+              text,
+              isAdmin: isAdmin,
+              timestamp: new Date().toISOString()
+            }]
+          }, { merge: true });
+
+          form.style.display = "none";
+          textInput.value = "";
+          if (nameInput) nameInput.value = "";
+          btn.disabled = false;
+          btn.textContent = "Svara";
+
+          await loadComments();
+        });
       });
     }
 
-    await loadComments();
-
-    // ─── Kommentarer — skicka ───
+    // ─── Ny kommentar ───
     document.getElementById("comment-form").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const name = document.getElementById("comment-name").value.trim();
+      const name = isAdmin ? "Vaavascanvas" : document.getElementById("comment-name").value.trim();
       const text = document.getElementById("comment-text").value.trim();
       const submitBtn = document.getElementById("comment-submit");
 
-      if (!name || !text) return;
+      if (!text || (!isAdmin && !name)) return;
 
       submitBtn.disabled = true;
-      submitBtn.textContent = t("comment_sending");
+      submitBtn.textContent = "Skickar...";
 
       await addDoc(commentsRef, {
         name,
         text,
+        isAdmin: isAdmin,
         timestamp: new Date()
       });
 
       document.getElementById("comment-name").value = "";
       document.getElementById("comment-text").value = "";
       submitBtn.disabled = false;
-      submitBtn.textContent = t("comment_sent");
-      setTimeout(() => submitBtn.textContent = t("comment_submit"), 3000);
+      submitBtn.textContent = "Skickat! ♡";
+      setTimeout(() => submitBtn.textContent = "Skicka", 3000);
 
       await loadComments();
     });

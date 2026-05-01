@@ -16,6 +16,127 @@
   padding: 20px;
   padding-top: 40px;
 }
+/* ─── Admin bar ─── */
+
+#admin-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+#admin-login-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+#admin-login-form input {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.85rem;
+  border: 1px solid var(--accent-green);
+  border-radius: 6px;
+  padding: 6px 10px;
+  background: transparent;
+  color: var(--text-dark);
+  outline: none;
+  width: 160px;
+}
+
+#admin-login-btn,
+#admin-logout,
+#admin-login-toggle {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.8rem;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--accent-green);
+  background: none;
+  color: var(--accent-green);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+#admin-login-btn:hover,
+#admin-logout:hover,
+#admin-login-toggle:hover {
+  background: var(--accent-green);
+  color: white;
+}
+
+.admin-logged-in {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.85rem;
+  color: var(--accent-green);
+}
+
+.admin-error {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.8rem;
+  color: #c0392b;
+}
+
+/* ─── Admin kommentar & svar ─── */
+
+.admin-comment {
+  border-left-color: var(--accent-green);
+  background: rgba(92, 148, 133, 0.05);
+  padding: 12px 16px;
+  border-radius: 0 6px 6px 0;
+}
+
+.admin-comment .comment-name,
+.admin-reply .comment-name {
+  color: var(--accent-green);
+  font-weight: 700;
+}
+
+/* ─── Replies ─── */
+
+.comment-replies {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.comment-reply {
+  border-left: 2px solid var(--accent-light);
+  padding-left: 14px;
+  margin-left: 16px;
+}
+
+.admin-reply {
+  border-left-color: var(--accent-green);
+  background: rgba(92, 148, 133, 0.05);
+  padding: 8px 14px;
+  border-radius: 0 6px 6px 0;
+}
+
+.reply-toggle-btn {
+  background: none;
+  border: none;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.85rem;
+  color: var(--accent-green);
+  cursor: pointer;
+  padding: 6px 0;
+  margin-top: 8px;
+  transition: opacity 0.2s;
+}
+
+.reply-toggle-btn:hover {
+  opacity: 0.7;
+}
+
+.reply-form {
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+  margin-left: 16px;
+}
 /* ─── Kommentarer ─── */
 
 .blog-comments {
