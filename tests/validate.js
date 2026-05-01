@@ -314,6 +314,41 @@ test('Image counts match painting imageCount property (if set)', () => {
   });
 });
 
+test('All original images have been synced to desktop and mobile', () => {
+  const paintingsDir = path.join(__dirname, '../images/paintings');
+  const unsynced = [];
+
+  if (!fs.existsSync(paintingsDir)) return;
+
+  fs.readdirSync(paintingsDir).forEach(paintingId => {
+    const paintingPath = path.join(paintingsDir, paintingId);
+    if (!fs.statSync(paintingPath).isDirectory()) return;
+
+    const originalDir = path.join(paintingPath, 'original');
+    if (!fs.existsSync(originalDir)) return;
+
+    const countJpg = dir =>
+      fs.existsSync(dir)
+        ? fs.readdirSync(dir).filter(f => /\.(jpg|jpeg|png)$/i.test(f)).length
+        : 0;
+
+    const originalCount = countJpg(originalDir);
+    const desktopCount  = countJpg(path.join(paintingPath, 'desktop'));
+    const mobileCount   = countJpg(path.join(paintingPath, 'mobile'));
+
+    if (originalCount !== desktopCount || originalCount !== mobileCount) {
+      unsynced.push(
+        `${paintingId}: original=${originalCount}, desktop=${desktopCount}, mobile=${mobileCount}`
+      );
+    }
+  });
+
+  assert(
+    unsynced.length === 0,
+    'Some paintings have unsynced images (run sync_paintings.bat):\n  ' + unsynced.join('\n  ')
+  );
+});
+
 // ─────────────────────────────────────────────────────────────
 // SUITE 3: Translation System Validation
 // ─────────────────────────────────────────────────────────────
