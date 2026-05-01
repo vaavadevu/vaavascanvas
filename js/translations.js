@@ -440,6 +440,10 @@ const keys = {
     sv: "En busig chinchilla som tjuvsmakar en saftig jordgubbe",
     en: "A little naughty chinchilla enjoying a stolen juicy strawberry"
 },
+  desc_maskrosdröm: {
+    sv: "En igelkott som ligger mellan maskrosor i väntan på sommarens första dag",
+    en: "A little hedgehog lying among dandelions waiting for the first day of summer"
+},
 
   desc_sommarstuga: {
     sv: "En varm sommardag i Småland och det doftar nästan nyklippt gräs.",
