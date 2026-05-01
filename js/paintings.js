@@ -87,9 +87,9 @@ const paintings = [
     medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {
-    id: "maskrosdröm",
+    id: "maskrosdrom",
     title: "Maskrosdröm",
-    descKey: "desc_maskrosdröm",
+    descKey: "desc_maskrosdrom",
     width: 24,
     height: 18,
     shape: SHAPE.RECTANGULAR,
