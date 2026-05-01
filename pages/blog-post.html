@@ -156,7 +156,6 @@
 
   const params = new URLSearchParams(window.location.search);
   const postId = params.get("post");
-
   let isAdmin = false;
 
   function escapeHtml(str) {
@@ -168,13 +167,118 @@
       .replace(/'/g, "&#39;");
   }
 
-  // ─── Admin login UI ───
-  function renderAdminBar() {
-  const existing = document.getElementById("admin-bar");
-  if (existing) existing.remove();
+  // ─── Kommentarer ───
+  const commentsRef = postId ? collection(db, "comments", postId, "entries") : null;
+  const q = commentsRef ? query(commentsRef, orderBy("timestamp", "asc")) : null;
 
-  const adminMode = new URLSearchParams(window.location.search).get("admin") === "true";
-  if (!adminMode && !isAdmin) return;
+  async function loadComments() {
+    if (!postId || !q) return;
+    const snapshot = await getDocs(q);
+    const list = document.getElementById("comments-list");
+    list.innerHTML = "";
+
+    if (snapshot.empty) {
+      list.innerHTML = `<p class="no-comments">Inga kommentarer än — bli den första!</p>`;
+      return;
+    }
+
+    snapshot.forEach(d => {
+      const data = d.data();
+      const commentId = d.id;
+      const date = data.timestamp?.toDate();
+      const locale = window.currentLang === "en" ? "en-GB" : "sv-SE";
+      const dateStr = date ? date.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" }) : "";
+      const isAdminComment = data.isAdmin === true;
+
+      let repliesHtml = "";
+      if (data.replies && data.replies.length > 0) {
+        repliesHtml = data.replies.map(r => {
+          const rDate = r.timestamp?.toDate ? r.timestamp.toDate() : new Date(r.timestamp);
+          const rDateStr = rDate ? rDate.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" }) : "";
+          const rIsAdmin = r.isAdmin === true;
+          return `
+            <div class="comment-reply ${rIsAdmin ? "admin-reply" : ""}">
+              <div class="comment-header">
+                <span class="comment-name">${rIsAdmin ? "Vaavascanvas ✦" : escapeHtml(r.name)}</span>
+                <span class="comment-date">${rDateStr}</span>
+              </div>
+              <p class="comment-text">${escapeHtml(r.text)}</p>
+            </div>`;
+        }).join("");
+      }
+
+      const replyFormHtml = `
+        <div class="reply-form" id="reply-form-${commentId}" style="display:none;">
+          ${!isAdmin ? `<input type="text" class="comment-input reply-name-input" placeholder="Ditt namn" maxlength="50" />` : ""}
+          <textarea class="comment-textarea reply-text-input" placeholder="Skriv ett svar..." maxlength="500" rows="3"></textarea>
+          <button class="comment-submit reply-submit-btn" data-id="${commentId}">Svara</button>
+        </div>`;
+
+      list.innerHTML += `
+        <div class="comment-item ${isAdminComment ? "admin-comment" : ""}" id="comment-${commentId}">
+          <div class="comment-header">
+            <span class="comment-name">${isAdminComment ? "Vaavascanvas ✦" : escapeHtml(data.name)}</span>
+            <span class="comment-date">${dateStr}</span>
+          </div>
+          <p class="comment-text">${escapeHtml(data.text)}</p>
+          <div class="comment-replies">${repliesHtml}</div>
+          <button class="reply-toggle-btn" data-id="${commentId}">↩ Svara</button>
+          ${replyFormHtml}
+        </div>`;
+    });
+
+    list.querySelectorAll(".reply-toggle-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const form = document.getElementById(`reply-form-${btn.dataset.id}`);
+        form.style.display = form.style.display === "none" ? "flex" : "none";
+      });
+    });
+
+    list.querySelectorAll(".reply-submit-btn").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const commentId = btn.dataset.id;
+        const form = document.getElementById(`reply-form-${commentId}`);
+        const nameInput = form.querySelector(".reply-name-input");
+        const textInput = form.querySelector(".reply-text-input");
+        const text = textInput.value.trim();
+        const name = isAdmin ? "Vaavascanvas" : (nameInput ? nameInput.value.trim() : "");
+
+        if (!text || (!isAdmin && !name)) return;
+
+        btn.disabled = true;
+        btn.textContent = "Skickar...";
+
+        const commentDocRef = doc(db, "comments", postId, "entries", commentId);
+        const commentSnap = await getDoc(commentDocRef);
+        const existing = commentSnap.data().replies || [];
+
+        await setDoc(commentDocRef, {
+          replies: [...existing, {
+            name,
+            text,
+            isAdmin: isAdmin,
+            timestamp: new Date().toISOString()
+          }]
+        }, { merge: true });
+
+        form.style.display = "none";
+        textInput.value = "";
+        if (nameInput) nameInput.value = "";
+        btn.disabled = false;
+        btn.textContent = "Svara";
+
+        await loadComments();
+      });
+    });
+  }
+
+  // ─── Admin bar ───
+  function renderAdminBar() {
+    const existing = document.getElementById("admin-bar");
+    if (existing) existing.remove();
+
+    const adminMode = new URLSearchParams(window.location.search).get("admin") === "true";
+    if (!adminMode && !isAdmin) return;
 
     const bar = document.createElement("div");
     bar.id = "admin-bar";
@@ -220,18 +324,20 @@
   });
 
   if (postId) {
+    // ─── Sidvisningar ───
+    const viewRef = doc(db, "views", postId);
+    await setDoc(viewRef, { count: increment(1) }, { merge: true });
+    const viewSnap = await getDoc(viewRef);
+    const viewCount = viewSnap.exists() ? viewSnap.data().count : 1;
+    document.getElementById("post-date").insertAdjacentHTML("afterend",
+      `<span class="post-separator">•</span><span class="post-views">👁 ${viewCount} läsningar</span>`
+    );
+
     // ─── Likes ───
     const btn = document.getElementById("like-btn");
     const countEl = document.getElementById("like-count");
     const likeRef = doc(db, "likes", postId);
-    // ─── Sidvisningar ───
-const viewRef = doc(db, "views", postId);
-await setDoc(viewRef, { count: increment(1) }, { merge: true });
-const viewSnap = await getDoc(viewRef);
-const viewCount = viewSnap.exists() ? viewSnap.data().count : 1;
-document.getElementById("post-date").insertAdjacentHTML("afterend", 
-  `<span class="post-separator">•</span><span class="post-views">👁 ${viewCount} läsningar</span>`
-);
+
     const likeSnap = await getDoc(likeRef);
     countEl.textContent = likeSnap.exists() ? likeSnap.data().count : 0;
 
@@ -249,114 +355,6 @@ document.getElementById("post-date").insertAdjacentHTML("afterend",
       const snap = await getDoc(likeRef);
       countEl.textContent = snap.data().count;
     });
-
-    // ─── Kommentarer ───
-    const commentsRef = collection(db, "comments", postId, "entries");
-    const q = query(commentsRef, orderBy("timestamp", "asc"));
-
-    async function loadComments() {
-      const snapshot = await getDocs(q);
-      const list = document.getElementById("comments-list");
-      list.innerHTML = "";
-
-      if (snapshot.empty) {
-        list.innerHTML = `<p class="no-comments">Inga kommentarer än — bli den första!</p>`;
-        return;
-      }
-
-      snapshot.forEach(d => {
-        const data = d.data();
-        const commentId = d.id;
-        const date = data.timestamp?.toDate();
-        const locale = window.currentLang === "en" ? "en-GB" : "sv-SE";
-        const dateStr = date ? date.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" }) : "";
-        const isAdminComment = data.isAdmin === true;
-
-        // Replies HTML
-        let repliesHtml = "";
-        if (data.replies && data.replies.length > 0) {
-          repliesHtml = data.replies.map(r => {
-            const rDate = r.timestamp?.toDate ? r.timestamp.toDate() : new Date(r.timestamp);
-            const rDateStr = rDate ? rDate.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" }) : "";
-            const rIsAdmin = r.isAdmin === true;
-            return `
-              <div class="comment-reply ${rIsAdmin ? "admin-reply" : ""}">
-                <div class="comment-header">
-                  <span class="comment-name">${rIsAdmin ? "Vaavascanvas ✦" : escapeHtml(r.name)}</span>
-                  <span class="comment-date">${rDateStr}</span>
-                </div>
-                <p class="comment-text">${escapeHtml(r.text)}</p>
-              </div>`;
-          }).join("");
-        }
-
-        // Reply form — visas bara om admin eller vanlig användare klickar Svara
-        const replyFormHtml = `
-          <div class="reply-form" id="reply-form-${commentId}" style="display:none;">
-            ${!isAdmin ? `<input type="text" class="comment-input reply-name-input" placeholder="Ditt namn" maxlength="50" />` : ""}
-            <textarea class="comment-textarea reply-text-input" placeholder="Skriv ett svar..." maxlength="500" rows="3"></textarea>
-            <button class="comment-submit reply-submit-btn" data-id="${commentId}">Svara</button>
-          </div>`;
-
-        list.innerHTML += `
-          <div class="comment-item ${isAdminComment ? "admin-comment" : ""}" id="comment-${commentId}">
-            <div class="comment-header">
-              <span class="comment-name">${isAdminComment ? "Vaavascanvas ✦" : escapeHtml(data.name)}</span>
-              <span class="comment-date">${dateStr}</span>
-            </div>
-            <p class="comment-text">${escapeHtml(data.text)}</p>
-            <div class="comment-replies">${repliesHtml}</div>
-            <button class="reply-toggle-btn" data-id="${commentId}">↩ Svara</button>
-            ${replyFormHtml}
-          </div>`;
-      });
-
-      // Reply toggle
-      list.querySelectorAll(".reply-toggle-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const form = document.getElementById(`reply-form-${btn.dataset.id}`);
-          form.style.display = form.style.display === "none" ? "flex" : "none";
-        });
-      });
-
-      // Reply submit
-      list.querySelectorAll(".reply-submit-btn").forEach(btn => {
-        btn.addEventListener("click", async () => {
-          const commentId = btn.dataset.id;
-          const form = document.getElementById(`reply-form-${commentId}`);
-          const nameInput = form.querySelector(".reply-name-input");
-          const textInput = form.querySelector(".reply-text-input");
-          const text = textInput.value.trim();
-          const name = isAdmin ? "Vaavascanvas" : (nameInput ? nameInput.value.trim() : "");
-
-          if (!text || (!isAdmin && !name)) return;
-
-          btn.disabled = true;
-          btn.textContent = "Skickar...";
-
-          const commentDocRef = doc(db, "comments", postId, "entries", commentId);
-          const commentSnap = await getDoc(commentDocRef);
-          const existing = commentSnap.data().replies || [];
-
-          await setDoc(commentDocRef, {
-            replies: [...existing, {
-              name,
-              text,
-              isAdmin: isAdmin,
-              timestamp: new Date().toISOString()
-            }]
-          }, { merge: true });
-
-          form.style.display = "none";
-          textInput.value = "";
-          if (nameInput) nameInput.value = "";
-          btn.disabled = false;
-          btn.textContent = "Svara";
-
-          await loadComments();
-        });
-      });
-    }
 
     // ─── Ny kommentar ───
     document.getElementById("comment-form").addEventListener("submit", async (e) => {
