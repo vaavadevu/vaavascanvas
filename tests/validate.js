@@ -113,8 +113,8 @@ function loadPaintingsData() {
     return `"${mediums[key]}"`;
   });
 
-  // Convert unquoted keys to quoted keys (JavaScript object notation to JSON)
-  paintingsStr = paintingsStr.replace(/(\{|,)\s*(\w+):/g, '$1"$2":');
+  // Convert unquoted keys to quoted keys (including keys with non-ASCII chars like å, ä, ö)
+  paintingsStr = paintingsStr.replace(/(\{|,)\s*([\wÀ-ɏ]+):/g, '$1"$2":');
 
   // Remove trailing commas before } or ]
   paintingsStr = paintingsStr.replace(/,(\s*[}\]])/g, '$1');
@@ -137,8 +137,8 @@ function loadTranslationsData() {
   // Remove comments
   keysStr = keysStr.replace(/\/\/[^\n]*\n/g, '\n');
 
-  // Quote unquoted keys
-  keysStr = keysStr.replace(/(\{|,)\s*(\w+):/g, '$1"$2":');
+  // Quote unquoted keys (including keys with non-ASCII chars like å, ä, ö)
+  keysStr = keysStr.replace(/(\{|,)\s*([\wÀ-ɏ]+):/g, '$1"$2":');
 
   // Remove trailing commas
   keysStr = keysStr.replace(/,(\s*[}\]])/g, '$1');
