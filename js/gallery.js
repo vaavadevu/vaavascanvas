@@ -142,11 +142,35 @@ function filterGallery() {
 function setupFab() {
   const fab = document.getElementById("filter-fab");
   const trigger = document.getElementById("fab-trigger");
+  const popup = fab?.querySelector(".fab-popup");
   const footer = document.querySelector("footer");
-  
-  if (!fab || !trigger) {
+
+  if (!fab || !trigger || !popup) {
     return;
   }
+
+  // Popup gömd vid start – containern är då bara 52×52px (knappen)
+  popup.style.display = "none";
+
+  let closeTimer = null;
+
+  const openFab = () => {
+    clearTimeout(closeTimer);
+    popup.style.display = "flex";
+    // Två rAF-frames så webbläsaren hinner rendera initial state
+    // (opacity:0, transform) innan .open-klassen triggar transitionen
+    requestAnimationFrame(() => requestAnimationFrame(() => fab.classList.add("open")));
+  };
+
+  const closeFabLocal = () => {
+    fab.classList.remove("open");
+    // Vänta tills längsta transition+delay är klar innan display:none sätts
+    closeTimer = setTimeout(() => { popup.style.display = "none"; }, 550);
+  };
+
+  const toggleFab = () => {
+    fab.classList.contains("open") ? closeFabLocal() : openFab();
+  };
 
   // Klick-logik med ripple
   const ripple = document.createElement("span");
@@ -155,17 +179,32 @@ function setupFab() {
 
   ripple.addEventListener("animationend", () => ripple.classList.remove("fab-ripple--active"));
 
-  trigger.addEventListener("click", (e) => {
-    e.stopPropagation();
-    fab.classList.toggle("open");
-
+  const doRipple = (x, y) => {
     const size = trigger.offsetWidth;
     ripple.style.width = ripple.style.height = size + "px";
-    ripple.style.left = (e.offsetX - size / 2) + "px";
-    ripple.style.top = (e.offsetY - size / 2) + "px";
+    ripple.style.left = (x - size / 2) + "px";
+    ripple.style.top = (y - size / 2) + "px";
     ripple.classList.remove("fab-ripple--active");
-    void ripple.offsetWidth; // force reflow to restart animation
+    void ripple.offsetWidth;
     ripple.classList.add("fab-ripple--active");
+  };
+
+  // touchend + preventDefault stoppar iOS från att skicka ett syntetiskt
+  // click-event till gallery-bilden under FAB-knappen
+  trigger.addEventListener("touchend", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleFab();
+    const touch = e.changedTouches[0];
+    const rect = trigger.getBoundingClientRect();
+    doRipple(touch.clientX - rect.left, touch.clientY - rect.top);
+  }, { passive: false });
+
+  // Desktop/mus
+  trigger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggleFab();
+    doRipple(e.offsetX, e.offsetY);
   });
 
   // Funktion för att sätta positionen
@@ -215,7 +254,11 @@ function setupFab() {
 }
 
 function closeFab() {
-  document.getElementById("filter-fab")?.classList.remove("open");
+  const fab = document.getElementById("filter-fab");
+  if (!fab) return;
+  fab.classList.remove("open");
+  const popup = fab.querySelector(".fab-popup");
+  if (popup) setTimeout(() => { popup.style.display = "none"; }, 550);
 }
 
 // ── Sticky filter bar (desktop) ───────────────────────────────
