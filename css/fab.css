@@ -8,7 +8,6 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 10px;
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
