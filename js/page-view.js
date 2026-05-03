@@ -741,18 +741,23 @@ async function initPageView() {
     if (countsRes.ok) {
       const counts = await countsRes.json();
       paintings.forEach(p => { p.imageCount = counts[p.id] || 1; });
-    } else {
-      console.warn("Could not load counts.json, defaulting to 1 image per painting.");
     }
 
     if (metaRes.ok) {
       const metadata = await metaRes.json();
       paintings.forEach(p => { p.aspectRatio = metadata[p.id]; });
-    } else {
-      console.warn("Could not load metadata.json, using default aspect ratio.");
     }
   } catch (err) {
-    console.warn("Error loading painting data:", err);
+    const lang = localStorage.getItem("lang") || "sv";
+    const container = document.querySelector(".page-view-container");
+    if (container) {
+      const banner = document.createElement("p");
+      banner.textContent = lang === "en"
+        ? "Image data could not be loaded – check your connection."
+        : "Bilddata kunde inte laddas – kontrollera din anslutning.";
+      banner.style.cssText = "text-align:center;padding:1rem;opacity:0.6;font-size:0.9rem;";
+      container.prepend(banner);
+    }
   }
 
   // Calculate size scales
