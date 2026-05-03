@@ -103,6 +103,7 @@ function buildPageViewThumbnails(imgs) {
   if (imgs.length <= 1) return;
   imgs.forEach((src, idx) => {
     const thumb = document.createElement("img");
+    thumb.loading = "lazy";
     thumb.src = src;
     thumb.classList.add("pageViewThumb");
     if (idx === 0) thumb.classList.add("active");

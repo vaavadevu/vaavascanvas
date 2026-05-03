@@ -49,6 +49,7 @@ function createGalleryItem(painting, index) {
 
   const img = document.createElement("img");
   const paths = getPaintingImagePaths(painting);
+  img.loading = "lazy";
   img.src = paths[0];
   img.alt = painting.title;
 
