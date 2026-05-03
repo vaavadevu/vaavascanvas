@@ -45,6 +45,18 @@ function calculateSizeScales() {
   });
 }
 
+function showGalleryLoadError() {
+  const gallery = document.getElementById("gallery");
+  if (!gallery) return;
+  const lang = localStorage.getItem("lang") || "sv";
+  const banner = document.createElement("p");
+  banner.textContent = lang === "en"
+    ? "Some images may not display correctly – check your connection."
+    : "Bilder kanske inte visas korrekt – kontrollera din anslutning.";
+  banner.style.cssText = "text-align:center;padding:2rem;opacity:0.6;font-size:0.9rem;";
+  gallery.parentNode.insertBefore(banner, gallery);
+}
+
 async function init() {
   if (!document.getElementById("gallery")) return;
 
@@ -57,18 +69,14 @@ async function init() {
     if (countsRes.ok) {
       const counts = await countsRes.json();
       paintings.forEach(p => { p.imageCount = counts[p.id] || 1; });
-    } else {
-      console.warn("Could not load counts.json, defaulting to 1 image per painting.");
     }
 
     if (metaRes.ok) {
       const metadata = await metaRes.json();
       paintings.forEach(p => { p.aspectRatio = metadata[p.id]; });
-    } else {
-      console.warn("Could not load metadata.json, using default aspect ratio.");
     }
   } catch (err) {
-    console.warn("Error loading painting data:", err);
+    showGalleryLoadError();
   }
 
   // Calculate size scale factors based on physical dimensions
