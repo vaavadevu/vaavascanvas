@@ -67,8 +67,8 @@ const keys = {
     en: "Through my art I want to create presence and recognition – something that feels human, soft and genuine. I hope there's a painting that speaks to you. Reach out if you'd like to know more!",
   },
   intro_link: {
-    sv: "Utforska galleriet",
-    en: "Explore the gallery",
+    sv: "Läs min blogg",
+    en: "Read my blog",
   },
 
   // ── Featured ───────────────────────────────────────────────
