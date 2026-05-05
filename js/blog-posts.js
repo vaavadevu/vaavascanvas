@@ -11,6 +11,168 @@ function formatDate(date, locale = "sv-SE") {
 
 const blogPosts = [
   {
+    id: "from-geology-to-painting",
+
+    // Titles
+    title: "Jag gjorde allt \"rätt\", men valde ändå en annan väg",
+    titleEn: "I Did Everything 'Right' — But Chose a Different Path",
+
+    // SEO
+    seoTitle: "Jag gjorde allt \"rätt\", men valde ändå en annan väg | Vaavas Canvas",
+    seoTitleEn: "I Did Everything 'Right' — But Chose a Different Path | Vaavas Canvas",
+
+    seoDescription:
+      "Från åtta år av geologistudier till att välja min egen väg mot konst. En berättelse om rädsla, mod och att lyssna på sig själv.",
+    seoDescriptionEn:
+      "From eight years of geology studies to choosing my own path toward art. A story about fear, courage, and listening to yourself.",
+
+    // Date
+    date: "2026-05-05",
+
+    // Author
+    author: "Devika",
+
+    // Excerpt
+    excerpt:
+      "Åtta år av studier, ett svårt beslut och starten på min resa mot konst.",
+    excerptEn:
+      "Eight years of studies, a difficult decision, and the beginning of my journey toward art.",
+
+    // Content (SWEDISH)
+    content: `
+      <p>🎓 Jag pluggade i åtta år.</p>
+
+      <p>Nej, inte konst – utan naturvetenskap, specifikt geologi.</p>
+
+      <p>År 2016 började jag mina universitetsstudier inom geologi. 📚</p>
+
+      <p>Jag fortsatte fram till 2024, tills jag blev sjukskriven på grund av psykisk ohälsa (mer om det i ett annat inlägg, om ni vill det haha). 💔</p>
+
+      <p>Det var då, för första gången i mitt liv, som jag faktiskt frågade mig själv:<br>
+      <strong>Vad vill jag egentligen göra?</strong> 🤔</p>
+
+      <p>Jag testade att måla, och ganska snabbt förstod jag hur mycket jag hade saknat att vara kreativ. 🎨</p>
+
+      <p>Jag har kunnat vara kreativ inom geologi också, men inte på det här sättet. ✨</p>
+
+      <h2>Att hitta min egen väg</h2>
+
+      <p>Ett år senare avbröt jag mina magisterstudier i geologi vid Stockholms universitet och bestämde mig för att satsa all-in. 💪</p>
+
+      <p>Att försöka hitta min egen väg mot min dröm. Att en dag kunna försörja mig på min konst.</p>
+
+      <p>Det är en stor dröm, jag vet. Men egentligen handlar det inte om att bli rik. 💰</p>
+
+      <p>Jag vill bara kunna leva ett lugnt och okej liv där jag gör något som känns meningsfullt för mig. 🌱</p>
+
+      <p>Det här året – 2026 – blev starten.</p>
+
+      <p>Jag började måla varje dag. Ibland i femton minuter, ibland i fem timmar, haha. 🎨</p>
+
+      <p>Även när jag hade migrän (som jag har nästan varje dag), eller när jag egentligen inte orkade. 💪</p>
+
+      <p>Det är ganska läskigt, eller hur? Att ha lagt så många år på något och sedan börja om. 😰</p>
+
+      <p>Men kanske betyder rädslan också att det finns något viktigt där.<br>
+      Att jag bryr mig. Att jag vill att det här ska fungera. 💖</p>
+
+      <p>Geologi var ett “rätt” val på många sätt. Men jag fick det aldrig att kännas rätt för mig.</p>
+
+      <p>Det här valet är annorlunda. Det är mitt. 🙌</p>
+
+      <p>Och oavsett om jag lyckas eller misslyckas med det här, så känns det redan som att jag har vunnit något.</p>
+
+      <p>För jag lyssnade på mig själv. 💭</p>
+
+      <p>Jag vill inte få det att låta som att det här var lätt. Och jag tror inte heller att det ser likadant ut för alla.</p>
+
+      <p>Men om det finns något du längtar efter, och du har möjlighet att ta ett litet steg mot det — kanske är det värt att prova. 🌟</p>
+
+      <p>Jag hade tur som hamnade i en situation där jag kunde börja ge min dröm lite utrymme.</p>
+
+      <p>Och kanske är du också där, eller på väg dit, på ditt eget sätt. 🙏</p>
+
+      <figure class="blog-inline-image">
+        <img src="/images/blogg/4.jpg" alt="Atelier med målningsprocess" />
+        <figcaption>Jag nu, p\u00e5 min trygga plats</figcaption>
+      </figure>
+
+      <p>– Devika</p>
+    `,
+
+    // Content (ENGLISH)
+    contentEn: `
+      <p>🎓 I studied for eight years.</p>
+
+      <p>No, not art — natural science, specifically geology.</p>
+
+      <p>In 2016 I started my university studies in geology.</p>
+
+      <p>I continued until 2024, when I went on sick leave due to mental health issues (more about that in another post, if you want haha).</p>
+
+      <p>It was then, for the first time in my life, that I actually asked myself:<br>
+      <strong>What do I really want to do?</strong></p>
+
+      <p>I tried painting, and pretty quickly I understood how much I had missed being creative.</p>
+
+      <p>I could also be creative within geology, but not in this way.</p>
+
+      <h2>Finding my own path</h2>
+
+      <p>A year later I left my master’s studies in geology at Stockholm University and decided to go all in.</p>
+
+      <p>Trying to find my own path toward my dream. One day being able to support myself with my art.</p>
+
+      <p>It is a big dream, I know. But it is really not about getting rich.</p>
+
+      <p>I just want to live a calm and okay life where I do something that feels meaningful to me.</p>
+
+      <p>This year — 2026 — became the beginning.</p>
+
+      <p>I started painting every day. Sometimes for fifteen minutes, sometimes for five hours, haha.</p>
+
+      <p>Even when I had a migraine (which I have almost every day), or when I honestly didn’t have the energy.</p>
+
+      <p>It is pretty scary, isn’t it? To have spent so many years on something and then start over.</p>
+
+      <p>But maybe the fear also means there is something important there.<br>
+      That I care. That I want this to work.</p>
+
+      <p>Geology was a “right” choice in many ways. But it never felt right for me.</p>
+
+      <p>This choice is different. It is mine.</p>
+
+      <p>And whether I succeed or fail at this, it already feels like I have won something.</p>
+
+      <p>Because I listened to myself.</p>
+
+      <p>I don’t want to make it sound like this was easy. And I don’t think it looks the same for everyone.</p>
+
+      <p>But if there is something you long for, and you can take a small step toward it — maybe it is worth trying.</p>
+
+      <p>I was lucky to end up in a situation where I could start giving my dream some room.</p>
+
+      <p>And maybe you are there too, or on your way there, in your own way.</p>
+
+      <figure class="blog-inline-image">
+        <img src="/images/blogg/4.jpg" alt="Atelier with painting process" />
+        <figcaption>Me now, in my safe place</figcaption>
+      </figure>
+
+      <p>– Devika</p>
+    `,
+
+    // Image
+    image: "/images/blogg/3.jpg",
+    alt: "Målarpågående i min ateljé",
+    imageCaption: "N\u00e4r jag studerade geologi p\u00e5 en f\u00e4ltresa",
+    imageCaptionEn: "When I studied geology on a field trip",
+
+    // Tags
+    tags: ["livsval", "konstresa", "geologi"],
+  },
+
+  {
     id: "began-to-survive",
 
     // Titles
@@ -131,8 +293,10 @@ const blogPosts = [
     `,
 
     // Image
-    image: "/images/Baby.jpg",
+    image: "/images/blogg/Baby.jpg",
     alt: "Jag som en lugn och glad bebis",
+    imageCaption: "Jag som en glad liten bebis",
+    imageCaptionEn: "Me as a happy little baby",
 
     // Tags
     tags: ["inspiration", "process", "beginning"],
@@ -274,8 +438,10 @@ const blogPosts = [
     `,
 
     // Image
-    image: "/images/2.jpg",
+    image: "/images/blogg/2.jpg",
     alt: "Pensel och färgpalett",
+    imageCaption: "Natur är min största glädje",
+    imageCaptionEn: "Nature is my greatest joy",
 
     // Tags
     tags: ["inspiration", "process", "impostor-syndrome"],

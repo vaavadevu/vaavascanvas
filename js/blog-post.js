@@ -38,6 +38,11 @@ function renderBlogPost() {
   // document.getElementById("post-author").textContent = post.author; // Removed to show only date
   document.getElementById("post-image").src = post.image;
   document.getElementById("post-image").alt = title;
+  
+  // Add caption
+  const captionText = isSwedish ? post.imageCaption : post.imageCaptionEn;
+  document.getElementById("post-image-caption").textContent = captionText || '';
+  
   document.getElementById("post-content").innerHTML = content;
 
   // Render tags
