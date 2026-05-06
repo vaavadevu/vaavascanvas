@@ -1,0 +1,229 @@
+/* PRINTS PAGE STYLES */
+
+.prints-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2.5rem;
+  max-width: 1100px;
+  margin: 3rem auto;
+  padding: 0 2rem;
+}
+
+.print-card {
+  background: var(--warm-white);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+.print-card:hover {
+  box-shadow: 0 8px 32px rgba(44, 36, 22, 0.1);
+}
+
+.print-image {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  display: block;
+  background: var(--border);
+}
+
+.print-image.square {
+  aspect-ratio: 1/1;
+}
+
+.print-image-placeholder {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: linear-gradient(135deg, #e8e0d5 0%, #d4c9bb 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+}
+
+.print-image-placeholder.square {
+  aspect-ratio: 1/1;
+}
+
+.print-info {
+  padding: 1.5rem;
+}
+
+.print-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  font-weight: 400;
+  margin-bottom: 0.3rem;
+}
+
+.print-medium {
+  font-size: 0.78rem;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  margin-bottom: 1.2rem;
+  text-transform: uppercase;
+}
+
+.size-selector {
+  margin-bottom: 1.2rem;
+}
+
+.size-selector label {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.size-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.size-btn {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--border);
+  background: transparent;
+  border-radius: 2px;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--ink);
+}
+
+.size-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.size-btn.selected {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--warm-white);
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.size-btn.selected::after {
+  content: " ✓";
+  margin-left: 0.3rem;
+}
+
+.price-display {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  margin-bottom: 1.2rem;
+  color: var(--ink);
+}
+
+.btn-add-to-cart {
+  width: 100%;
+  padding: 0.85rem;
+  background: var(--ink);
+  color: var(--warm-white);
+  border: none;
+  border-radius: 2px;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-add-to-cart:hover {
+  background: var(--accent);
+}
+
+.btn-add-to-cart:disabled {
+  background: var(--border);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+/* LOADING SPINNER */
+.btn-add-to-cart.loading {
+  position: relative;
+  color: transparent;
+}
+
+.btn-add-to-cart.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+.info-section {
+  max-width: 600px;
+  margin: 0 auto 4rem;
+  padding: 0 2rem;
+  text-align: center;
+}
+
+.info-section h2 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 400;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  letter-spacing: 0.05em;
+}
+
+.info-section p {
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.9;
+}
+
+.divider {
+  width: 40px;
+  height: 1px;
+  background: var(--accent);
+  margin: 2rem auto;
+}
+
+.success-banner {
+  display: none;
+  background: var(--success);
+  color: white;
+  text-align: center;
+  padding: 1rem 2rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+}
+
+.error-msg {
+  color: #c0392b;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  display: none;
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .prints-grid {
+    grid-template-columns: 1fr;
+    padding: 0 1rem;
+  }
+}
