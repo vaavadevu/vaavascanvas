@@ -16,6 +16,11 @@ const Cart = (() => {
     const key = `${item.id}-${item.size || 'original'}`;
     const existing = items.find(i => i.key === key);
     if (existing) {
+      if (item.type === 'original') {
+        openCart();
+        showToast(`"${item.title}" finns redan i varukorgen`);
+        return;
+      }
       existing.qty = (existing.qty || 1) + 1;
     } else {
       items.push({ ...item, key, qty: 1 });
@@ -28,6 +33,7 @@ const Cart = (() => {
   function remove(key) {
     items = items.filter(i => i.key !== key);
     save();
+    if (items.length === 0) closeCart();
   }
 
   function updateQty(key, delta) {
@@ -86,11 +92,12 @@ const Cart = (() => {
           <div class="cart-item-title">${item.title}</div>
           <div class="cart-item-meta">${item.type === 'print' ? 'Print · ' + item.size : 'Original'}</div>
           <div class="cart-item-price">${(item.price * (item.qty || 1)).toLocaleString('sv-SE')} kr</div>
+          ${item.type === 'original' ? '' : `
           <div class="cart-item-qty">
             <button onclick="Cart.updateQty('${item.key}', -1)">−</button>
             <span>${item.qty || 1}</span>
             <button onclick="Cart.updateQty('${item.key}', 1)">+</button>
-          </div>
+          </div>`}
         </div>
         <button class="cart-item-remove" onclick="Cart.remove('${item.key}')">×</button>
       `;
@@ -155,9 +162,13 @@ const Cart = (() => {
   function init() {
     updateBadge();
 
-    // Close on overlay click
-    const overlay = document.getElementById('cart-overlay');
-    if (overlay) overlay.addEventListener('click', closeCart);
+    // Close when clicking outside the drawer
+    document.addEventListener('click', (e) => {
+      const drawer = document.getElementById('cart-drawer');
+      if (!drawer?.classList.contains('open')) return;
+      const cartBtn = document.querySelector('.cart-icon-btn');
+      if (!drawer.contains(e.target) && !cartBtn?.contains(e.target)) closeCart();
+    });
 
     // Check for success redirect
     const params = new URLSearchParams(window.location.search);
@@ -167,7 +178,7 @@ const Cart = (() => {
     }
   }
 
-  return { add, remove, updateQty, openCart, closeCart, checkout, init, count };
+  return { add, remove, updateQty, openCart, closeCart, checkout, init, count, updateBadge };
 })();
 
 // Toast notification

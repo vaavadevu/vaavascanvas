@@ -18,6 +18,20 @@ const SHAPE = {
   CIRCLE: "circle"
 };
 
+const PRINT_PAINTINGS = ['minMamma', 'efterIde', 'sommarvila'];
+
+const PRINT_SIZES_SQUARE = [
+  { label: '30×30 cm', size: '30x30', price: 450 },
+  { label: '40×40 cm', size: '40x40', price: 550 },
+  { label: '50×50 cm', size: '50x50', price: 650 },
+];
+
+const PRINT_SIZES_STANDARD = [
+  { label: 'A4', size: 'A4', price: 450 },
+  { label: 'A3', size: 'A3', price: 550 },
+  { label: 'A2', size: 'A2', price: 650 },
+];
+
 // Medium constants
 const MEDIUM = {
   ACRYLIC_CANVAS: "medium_acrylic_canvas"

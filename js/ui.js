@@ -144,18 +144,21 @@ function setupScrollWatcher() {
     const footerInView = footer.getBoundingClientRect().top <= window.innerHeight / 2;
     const isViewPage = window.location.href.includes("/pages/view.html");
     const isPictures = window.location.href.includes("pictures.html");
-    const isCommissions = window.location.href.includes("commissions.html"); // ← ny rad
+    const isCommissions = window.location.href.includes("commissions.html");
+    const isPrints = window.location.href.includes("prints.html");
 
     // Determine which nav link to highlight
     let currentQuery;
     if (footerInView) {
-      currentQuery = "#footer"; // Highlight "kontakta mig" when footer is in view
+      currentQuery = "#footer";
     } else if (isViewPage) {
-      currentQuery = null; // Don't highlight anything on view page when footer not visible
+      currentQuery = null;
     } else if (isPictures) {
       currentQuery = "/pages/pictures.html";
-    }  else if (isCommissions) {                              // ← nytt block
-  currentQuery = "/pages/commissions.html";             // ← nytt block
+    } else if (isCommissions) {
+      currentQuery = "/pages/commissions.html";
+    } else if (isPrints) {
+      currentQuery = "/pages/prints.html";
     } else {
       currentQuery = "/#top";
     }

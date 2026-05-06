@@ -159,8 +159,8 @@ const keys = {
     en: "Sold",
   },
   modal_buy_btn: {
-    sv: "✉ Skicka köpförfrågan",
-    en: "✉ Send purchase inquiry",
+    sv: "Lägg i varukorg",
+    en: "Add to cart",
   },
   status_sold: {
     sv: "Den här tavlan är såld.",

@@ -1,20 +1,5 @@
 // page-view.js — page view display, navigation, zoom, and swipe logic
 
-// ── Print config ──────────────────────────────────────────────
-
-const PRINT_PAINTINGS = ['minMamma', 'efterIde', 'sommarvila'];
-
-const PRINT_SIZES_SQUARE = [
-  { label: '30×30 cm', size: '30x30', price: 450 },
-  { label: '40×40 cm', size: '40x40', price: 550 },
-  { label: '50×50 cm', size: '50x50', price: 650 },
-];
-
-const PRINT_SIZES_STANDARD = [
-  { label: 'A4', size: 'A4', price: 450 },
-  { label: 'A3', size: 'A3', price: 550 },
-  { label: 'A2', size: 'A2', price: 650 },
-];
 
 // ── DOM refs ──────────────────────────────────────────────────
 
@@ -134,6 +119,18 @@ function configurePageViewArrows(imgs) {
   // Arrows are hidden in page view - no configuration needed
 }
 
+function addPaintingToCart(painting, withFrame) {
+  const price = withFrame ? painting.framedPrice : painting.originalPrice;
+  const title = withFrame ? `${painting.title} (${t("frame_price_with")})` : painting.title;
+  Cart.add({
+    id: withFrame ? `${painting.id}-framed` : painting.id,
+    title,
+    type: 'original',
+    price,
+    image: getPaintingImagePaths(painting)[0],
+  });
+}
+
 function renderPageViewButtons(painting) {
   pageViewButtons.innerHTML = "";
 
@@ -195,67 +192,18 @@ function renderPageViewButtons(painting) {
     buyBtn.textContent = t("modal_buy_btn");
     buyBtn.addEventListener("click", () => {
       if (painting.frameAvailable && window.innerWidth <= 768) {
-        // On mobile with frame available: show modal
         showFrameSelectorModal(painting);
       } else if (painting.frameAvailable) {
-        // On desktop with frame available: proceed with buy
         const selectedRadio = pageViewButtons.querySelector('input[type="radio"]:checked');
-        const frameChoice = selectedRadio.value;
-        handleBuyClick(painting, frameChoice);
+        const withFrame = selectedRadio?.value === "with";
+        addPaintingToCart(painting, withFrame);
       } else {
-        // No frame available: proceed directly
-        handleBuyClick(painting, null);
+        addPaintingToCart(painting, false);
       }
     });
     pageViewButtons.appendChild(buyBtn);
   }
 
-  // Add print purchase option for selected paintings
-  if (PRINT_PAINTINGS.includes(painting.id)) {
-    const printWrap = document.createElement('div');
-    printWrap.className = 'print-option';
-
-    const isSquare = painting.shape === SHAPE.SQUARE || painting.shape === 'square';
-    const sizes = isSquare ? PRINT_SIZES_SQUARE : PRINT_SIZES_STANDARD;
-
-    const select = document.createElement('select');
-    select.className = 'print-size-select';
-    select.id = `pageview-print-size-${painting.id}`;
-    sizes.forEach(s => {
-      const opt = document.createElement('option');
-      opt.value = s.size;
-      opt.dataset.price = s.price;
-      opt.textContent = `${s.label} – ${s.price} kr`;
-      select.appendChild(opt);
-    });
-
-    const printBtn = document.createElement('button');
-    printBtn.className = 'btn-add-to-cart btn-print';
-    printBtn.textContent = `Köp print ${sizes[0].price} kr`;
-    printBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const opt = select.options[select.selectedIndex];
-      Cart.add({
-        id: `${painting.id}-print-${opt.value}`,
-        title: `${painting.title} (Print ${opt.value})`,
-        type: 'print',
-        size: opt.value,
-        price: parseInt(opt.dataset.price),
-        image: getPaintingImagePaths(painting)[0],
-      });
-      showToast('Print tillagd i varukorgen!');
-    });
-
-    // Update button text when size changes
-    select.addEventListener('change', () => {
-      const opt = select.options[select.selectedIndex];
-      printBtn.textContent = `Köp print ${opt.dataset.price} kr`;
-    });
-
-    printWrap.appendChild(select);
-    printWrap.appendChild(printBtn);
-    pageViewButtons.appendChild(printWrap);
-  }
 }
 
 function showFrameSelectorModal(painting) {
@@ -291,9 +239,7 @@ function showFrameSelectorModal(painting) {
       <span class="btn-price">${formatPrice(painting.originalPrice)}</span>
     `;
     withoutBtn.addEventListener("click", () => {
-      hideFrameSelectorModal(() => {
-        handleBuyClick(painting, "without");
-      });
+      hideFrameSelectorModal(() => addPaintingToCart(painting, false));
     }, { once: true });
     btnContainer.appendChild(withoutBtn);
 
@@ -306,9 +252,7 @@ function showFrameSelectorModal(painting) {
       <span class="btn-price">${formatPrice(painting.framedPrice)}</span>
     `;
     withBtn.addEventListener("click", () => {
-      hideFrameSelectorModal(() => {
-        handleBuyClick(painting, "with");
-      });
+      hideFrameSelectorModal(() => addPaintingToCart(painting, true));
     }, { once: true });
     btnContainer.appendChild(withBtn);
 

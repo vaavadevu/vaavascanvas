@@ -56,9 +56,6 @@ const PRINT_SIZES = {
   ],
 };
 
-// Vilka målningar som finns som prints (lägg till fler här)
-const PRINT_PAINTINGS = ['minMamma', 'efterIde', 'sommarvila'];
-
 function createPrintButton(painting) {
   if (!PRINT_PAINTINGS.includes(painting.id)) return '';
 
