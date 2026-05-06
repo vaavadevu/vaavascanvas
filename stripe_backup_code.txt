@@ -1,0 +1,3 @@
+Kontrollera alltid att du befinner dig på dashboard.stripe.com innan du anger koden och dela den aldrig med någon (detta inkluderar Stripes support och Stripe-anställda).
+
+Din kod är: nfgt-ofxv-tsbx-decr-dsfo

@@ -13,10 +13,12 @@ async function buildComponents() {
       const isPictures = window.location.pathname.includes("pictures");
       const isCommissions = window.location.pathname.includes("commissions");
       const isBlog = window.location.pathname.includes("blog");
+      const isPrints = window.location.pathname.includes("prints");
       if (isIndex) document.querySelector('a[href="/#top"]')?.classList.add("active");
       if (isPictures) document.querySelector('a[href="/pages/pictures.html"]')?.classList.add("active");
       if (isCommissions) document.querySelector('a[href="/pages/commissions.html"]')?.classList.add("active");
       if (isBlog) document.querySelector('a[href="/pages/blog.html"]')?.classList.add("active");
+      if (isPrints) document.querySelector('a[href="/pages/prints.html"]')?.classList.add("active");
 
 
       setupMobileMenu();

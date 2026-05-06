@@ -1,0 +1,83 @@
+/* ============================================================
+   GALLERY BUY BUTTONS + HEADER CART ICON
+   Lägg till i slutet av din gallery.css eller base.css
+   ============================================================ */
+
+/* Header right section (cart + lang) */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+/* Gallery item action bar */
+.gallery-item-actions {
+  padding: 0.6rem 0.5rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  background: rgba(250, 247, 242, 0.97);
+}
+
+/* Price display instead of buttons */
+.gallery-item-price {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #2c2416;
+  text-align: center;
+  padding: 0.4rem 0.8rem;
+  background: rgba(250, 247, 242, 0.95);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  border: 1px solid transparent;
+}
+
+.gallery-item-price:hover {
+  background: #2c2416;
+  color: #faf7f2;
+  border-color: #2c2416;
+}
+
+.gallery-item-price.print-price {
+  font-size: 0.85rem;
+  padding: 0.3rem 0.6rem;
+}
+
+.print-option {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.print-size-select {
+  flex: 1;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid #e8e0d5;
+  border-radius: 2px;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.75rem;
+  background: white;
+  color: #2c2416;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.btn-sold-label {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: #7a6e62;
+  text-transform: uppercase;
+}
+
+/* Smaller print button */
+.btn-add-to-cart.btn-print {
+  padding: 0.4rem 0.7rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}

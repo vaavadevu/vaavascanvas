@@ -1,5 +1,21 @@
 // page-view.js — page view display, navigation, zoom, and swipe logic
 
+// ── Print config ──────────────────────────────────────────────
+
+const PRINT_PAINTINGS = ['minMamma', 'efterIde', 'sommarvila'];
+
+const PRINT_SIZES_SQUARE = [
+  { label: '30×30 cm', size: '30x30', price: 450 },
+  { label: '40×40 cm', size: '40x40', price: 550 },
+  { label: '50×50 cm', size: '50x50', price: 650 },
+];
+
+const PRINT_SIZES_STANDARD = [
+  { label: 'A4', size: 'A4', price: 450 },
+  { label: 'A3', size: 'A3', price: 550 },
+  { label: 'A2', size: 'A2', price: 650 },
+];
+
 // ── DOM refs ──────────────────────────────────────────────────
 
 let pageViewImg, pageViewTitle, pageViewSize, pageViewDesc, pageViewButtons, pageViewPriceSection, pageViewMedium;
@@ -192,6 +208,53 @@ function renderPageViewButtons(painting) {
       }
     });
     pageViewButtons.appendChild(buyBtn);
+  }
+
+  // Add print purchase option for selected paintings
+  if (PRINT_PAINTINGS.includes(painting.id)) {
+    const printWrap = document.createElement('div');
+    printWrap.className = 'print-option';
+
+    const isSquare = painting.shape === SHAPE.SQUARE || painting.shape === 'square';
+    const sizes = isSquare ? PRINT_SIZES_SQUARE : PRINT_SIZES_STANDARD;
+
+    const select = document.createElement('select');
+    select.className = 'print-size-select';
+    select.id = `pageview-print-size-${painting.id}`;
+    sizes.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.size;
+      opt.dataset.price = s.price;
+      opt.textContent = `${s.label} – ${s.price} kr`;
+      select.appendChild(opt);
+    });
+
+    const printBtn = document.createElement('button');
+    printBtn.className = 'btn-add-to-cart btn-print';
+    printBtn.textContent = `Köp print ${sizes[0].price} kr`;
+    printBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const opt = select.options[select.selectedIndex];
+      Cart.add({
+        id: `${painting.id}-print-${opt.value}`,
+        title: `${painting.title} (Print ${opt.value})`,
+        type: 'print',
+        size: opt.value,
+        price: parseInt(opt.dataset.price),
+        image: getPaintingImagePaths(painting)[0],
+      });
+      showToast('Print tillagd i varukorgen!');
+    });
+
+    // Update button text when size changes
+    select.addEventListener('change', () => {
+      const opt = select.options[select.selectedIndex];
+      printBtn.textContent = `Köp print ${opt.dataset.price} kr`;
+    });
+
+    printWrap.appendChild(select);
+    printWrap.appendChild(printBtn);
+    pageViewButtons.appendChild(printWrap);
   }
 }
 
