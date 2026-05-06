@@ -67,7 +67,9 @@
 
   <!-- MIN MAMMA -->
   <div class="print-card" data-print="min-mamma">
-    <div class="print-image-placeholder square">MIN MAMMA</div>
+    <div class="print-image-wrapper">
+      <img class="print-image square" src="/images/paintings/minMamma/desktop/01.jpg" alt="Min mamma" />
+    </div>
     <div class="print-info">
       <h2 class="print-title">Min mamma</h2>
       <p class="print-medium">Akryl · Kvadratisk</p>
@@ -87,16 +89,18 @@
 
   <!-- EFTER IDE -->
   <div class="print-card" data-print="efter-ide">
-    <div class="print-image-placeholder">EFTER IDE</div>
+    <div class="print-image-wrapper">
+      <img class="print-image square" src="/images/paintings/efterIde/desktop/01.jpg" alt="Efter ide" />
+    </div>
     <div class="print-info">
       <h2 class="print-title">Efter ide</h2>
-      <p class="print-medium">Akryl · Liggande</p>
+      <p class="print-medium">Akryl · Kvadratisk</p>
       <div class="size-selector">
         <label>Välj storlek</label>
         <div class="size-buttons">
-          <button class="size-btn selected" data-size="A4" data-price="450">A4</button>
-          <button class="size-btn" data-size="A3" data-price="550">A3</button>
-          <button class="size-btn" data-size="A2" data-price="650">A2</button>
+          <button class="size-btn selected" data-size="30x30" data-price="450">30×30 cm</button>
+          <button class="size-btn" data-size="40x40" data-price="550">40×40 cm</button>
+          <button class="size-btn" data-size="50x50" data-price="650">50×50 cm</button>
         </div>
       </div>
       <div class="price-display">450 kr</div>
@@ -107,10 +111,12 @@
 
   <!-- SOMMARVILA -->
   <div class="print-card" data-print="sommarvila">
-    <div class="print-image-placeholder">SOMMARVILA</div>
+    <div class="print-image-wrapper">
+      <img class="print-image portrait" src="/images/paintings/sommarvila/desktop/01.jpg" alt="Sommarvila" />
+    </div>
     <div class="print-info">
       <h2 class="print-title">Sommarvila</h2>
-      <p class="print-medium">Akryl · Liggande</p>
+      <p class="print-medium">Akryl · Stående</p>
       <div class="size-selector">
         <label>Välj storlek</label>
         <div class="size-buttons">
@@ -136,11 +142,23 @@
 
 </main>
 
+<div id="prints-lightbox-bg" class="prints-lightbox-bg"></div>
+<div id="prints-lightbox" class="prints-lightbox" role="dialog" aria-modal="true">
+  <button class="prints-lightbox-close" id="prints-lightbox-close">&times;</button>
+  <div class="prints-lightbox-main">
+    <img id="prints-lightbox-img" src="" alt="" />
+  </div>
+  <div class="prints-lightbox-thumbs" id="prints-lightbox-thumbs"></div>
+</div>
+
+<div id="modals-container"></div>
+
 <script src="../js/translations.js"></script>
 <script src="../js/i18n.js"></script>
 <script src="../js/paintings.js"></script>
 <script src="../js/state.js"></script>
 <script src="../js/gallery.js"></script>
+<script src="../js/page-view.js"></script>
 <script src="../js/utilities.js"></script>
 <script src="../js/contact.js"></script>
 <script src="../js/ui.js"></script>
@@ -206,6 +224,81 @@
     document.getElementById('successBanner').style.display = 'block';
     window.scrollTo(0, 0);
   }
+
+  // Lightbox for print images
+  let lbImages = [];
+  let lbIndex = 0;
+
+  function openPrintsLightbox(images, startIndex = 0) {
+    lbImages = images;
+    lbIndex = startIndex;
+    const lb = document.getElementById('prints-lightbox');
+    const bg = document.getElementById('prints-lightbox-bg');
+    const mainImg = document.getElementById('prints-lightbox-img');
+    const thumbs = document.getElementById('prints-lightbox-thumbs');
+
+    mainImg.src = images[lbIndex];
+
+    thumbs.innerHTML = '';
+    images.forEach((src, i) => {
+      const t = document.createElement('img');
+      t.src = src;
+      t.className = 'prints-lightbox-thumb' + (i === lbIndex ? ' active' : '');
+      t.addEventListener('click', () => setLbImage(i));
+      thumbs.appendChild(t);
+    });
+
+    lb.classList.add('open');
+    bg.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closePrintsLightbox() {
+    document.getElementById('prints-lightbox').classList.remove('open');
+    document.getElementById('prints-lightbox-bg').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function setLbImage(i) {
+    lbIndex = i;
+    document.getElementById('prints-lightbox-img').src = lbImages[i];
+    document.querySelectorAll('.prints-lightbox-thumb').forEach((t, idx) => {
+      t.classList.toggle('active', idx === i);
+    });
+  }
+
+  async function initPrintsLightbox() {
+    try {
+      const res = await fetch('/images/paintings/counts.json');
+      if (res.ok) {
+        const counts = await res.json();
+        paintings.forEach(p => { p.imageCount = counts[p.id] || 1; });
+      }
+    } catch (e) {}
+
+    document.querySelectorAll('.print-card').forEach(card => {
+      const paintingId = card.dataset.print;
+      const camelId = paintingId.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+      const painting = paintings.find(p => p.id === camelId);
+      const img = card.querySelector('.print-image');
+      if (!img || !painting) return;
+
+      img.style.cursor = 'pointer';
+      img.addEventListener('click', () => {
+        openPrintsLightbox(getPaintingImagePaths(painting), 0);
+      });
+    });
+
+    document.getElementById('prints-lightbox-close').addEventListener('click', closePrintsLightbox);
+    document.getElementById('prints-lightbox-bg').addEventListener('click', closePrintsLightbox);
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closePrintsLightbox();
+      if (e.key === 'ArrowRight') setLbImage((lbIndex + 1) % lbImages.length);
+      if (e.key === 'ArrowLeft') setLbImage((lbIndex - 1 + lbImages.length) % lbImages.length);
+    });
+  }
+
+  initPrintsLightbox();
 </script>
 
 <!-- FOOTER -->

@@ -9,6 +9,13 @@ async function buildComponents() {
       headerContainer.innerHTML = await res.text();
       headerContainer.classList.add("visible");
 
+      // Move cart drawer and overlay out of header-container so they
+      // aren't affected by the header's translateY transform
+      const cartDrawer = document.getElementById('cart-drawer');
+      const cartOverlay = document.getElementById('cart-overlay');
+      if (cartDrawer) document.body.appendChild(cartDrawer);
+      if (cartOverlay) document.body.appendChild(cartOverlay);
+
       const isIndex = window.location.pathname.includes("index") || window.location.pathname === "/";
       const isPictures = window.location.pathname.includes("pictures");
       const isCommissions = window.location.pathname.includes("commissions");
@@ -193,10 +200,10 @@ function setupModals() {
     // Shipping modal
     if (e.target.closest("#shippingBtn")) {
       e.preventDefault();
-      document.getElementById("shippingModal").style.display = "flex";
+      document.getElementById("shippingModal")?.style.setProperty("display", "flex");
     }
     if (e.target.closest("#shippingClose")) {
-      document.getElementById("shippingModal").style.display = "none";
+      document.getElementById("shippingModal")?.style.setProperty("display", "none");
     }
     if (e.target.id === "shippingModal") {
       e.target.style.display = "none";

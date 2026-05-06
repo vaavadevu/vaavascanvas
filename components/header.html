@@ -65,7 +65,10 @@
       <span class="cart-total-label">Totalt</span>
       <span id="cart-total">0 kr</span>
     </div>
-    <p class="cart-note">Frakt beräknas i kassan. Prints levereras inom 3–7 arbetsdagar.</p>
+    <label class="cart-terms-label">
+      <input type="checkbox" id="cart-terms-checkbox" />
+      <span>Jag har läst och godkänner <a href="#" id="shippingBtn">frakt &amp; leveransvillkor</a></span>
+    </label>
     <button id="checkout-btn" onclick="Cart.checkout()">Till betalning →</button>
   </div>
 </div>
