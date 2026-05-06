@@ -1,21 +1,5 @@
 // gallery.js — building and filtering the painting grid
 
-// ── Print config ──────────────────────────────────────────────
-
-const PRINT_PAINTINGS = ['minMamma', 'efterIde', 'sommarvila'];
-
-const PRINT_SIZES_SQUARE = [
-  { label: '30×30 cm', size: '30x30', price: 450 },
-  { label: '40×40 cm', size: '40x40', price: 550 },
-  { label: '50×50 cm', size: '50x50', price: 650 },
-];
-
-const PRINT_SIZES_STANDARD = [
-  { label: 'A4', size: 'A4', price: 450 },
-  { label: 'A3', size: 'A3', price: 550 },
-  { label: 'A2', size: 'A2', price: 650 },
-];
-
 // ── Configuration ──────────────────────────────────────────────
 
 function getPaintingImagePaths(painting) {
@@ -143,7 +127,7 @@ function createBuyActions(painting, imageUrl) {
 
     const printBtn = document.createElement('button');
     printBtn.className = 'btn-add-to-cart btn-print';
-    printBtn.textContent = `Köp print ${sizes[0].price} kr`;
+    printBtn.textContent = `Lägg i varukorg – ${sizes[0].price} kr`;
     printBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       const opt = select.options[select.selectedIndex];
@@ -161,7 +145,7 @@ function createBuyActions(painting, imageUrl) {
     // Update button text when size changes
     select.addEventListener('change', () => {
       const opt = select.options[select.selectedIndex];
-      printBtn.textContent = `Köp print ${opt.dataset.price} kr`;
+      printBtn.textContent = `Lägg i varukorg – ${opt.dataset.price} kr`;
     });
 
     printWrap.appendChild(select);

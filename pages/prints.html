@@ -58,9 +58,9 @@
     ✓ Tack för din beställning! Du får ett bekräftelsemail inom kort.
   </div>
 
-  <section class="hero">
-    <h1>Prints</h1>
-    <p>Fine art prints av mina målningar, tryckta på arkivkvalitetspapper. Varje print levereras direkt till din dörr.</p>
+  <section class="prints-hero">
+    <h1>Fine art prints av mina målningar, tryckta på arkivkvalitetspapper.</h1>
+    <p>Varje print levereras direkt till din dörr.</p>
   </section>
 
   <div class="prints-grid" id="printsGrid">
@@ -80,7 +80,7 @@
         </div>
       </div>
       <div class="price-display">450 kr</div>
-      <button class="btn-add-to-cart btn-print" id="buy-min-mamma">Köp print 450 kr</button>
+      <button class="btn-add-to-cart btn-print" id="buy-min-mamma">Lägg i varukorg</button>
       <div class="error-msg"></div>
     </div>
   </div>
@@ -100,7 +100,7 @@
         </div>
       </div>
       <div class="price-display">450 kr</div>
-      <button class="btn-add-to-cart btn-print" id="buy-efter-ide">Köp print 450 kr</button>
+      <button class="btn-add-to-cart btn-print" id="buy-efter-ide">Lägg i varukorg</button>
       <div class="error-msg"></div>
     </div>
   </div>
@@ -120,7 +120,7 @@
         </div>
       </div>
       <div class="price-display">450 kr</div>
-      <button class="btn-add-to-cart btn-print" id="buy-sommarvila">Köp print 450 kr</button>
+      <button class="btn-add-to-cart btn-print" id="buy-sommarvila">Lägg i varukorg</button>
       <div class="error-msg"></div>
     </div>
   </div>
@@ -160,7 +160,7 @@
         btn.classList.add('selected');
         const price = btn.dataset.price;
         priceDisplay.textContent = price + ' kr';
-        buyBtn.textContent = `Köp print ${price} kr`;
+        buyBtn.textContent = `Lägg i varukorg`;
         buyBtn.dataset.price = price;
         buyBtn.dataset.size = btn.dataset.size;
       });
