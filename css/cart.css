@@ -288,8 +288,45 @@
   transition: background 0.2s;
 }
 
-#checkout-btn:hover { background: #c4956a; }
+#checkout-btn:hover:not(:disabled) { background: #c4956a; }
 #checkout-btn:disabled { background: #e8e0d5; color: #7a6e62; cursor: not-allowed; }
+
+.cart-terms-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: #7a6e62;
+  margin-bottom: 0.75rem;
+  cursor: pointer;
+  line-height: 1.5;
+}
+
+.cart-terms-label input[type="checkbox"] {
+  margin-top: 2px;
+  accent-color: var(--accent-green);
+  cursor: pointer;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+}
+
+.cart-terms-label a {
+  color: var(--accent-green);
+  text-decoration: underline;
+}
+
+@keyframes cart-terms-shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-6px); }
+  40%       { transform: translateX(6px); }
+  60%       { transform: translateX(-4px); }
+  80%       { transform: translateX(4px); }
+}
+
+.cart-terms-label.cart-terms-error {
+  animation: cart-terms-shake 0.4s ease;
+}
 
 /* BUY BUTTONS on paintings/prints */
 .btn-add-to-cart {

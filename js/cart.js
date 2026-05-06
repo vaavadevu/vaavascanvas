@@ -32,6 +32,8 @@ const Cart = (() => {
 
   function remove(key) {
     items = items.filter(i => i.key !== key);
+    justOpened = true;
+    setTimeout(() => { justOpened = false; }, 0);
     save();
     if (items.length === 0) closeCart();
   }
@@ -40,6 +42,8 @@ const Cart = (() => {
     const item = items.find(i => i.key === key);
     if (!item) return;
     item.qty = (item.qty || 1) + delta;
+    justOpened = true;
+    setTimeout(() => { justOpened = false; }, 0);
     if (item.qty <= 0) remove(key);
     else save();
   }
@@ -107,6 +111,8 @@ const Cart = (() => {
     if (totalEl) totalEl.textContent = total().toLocaleString('sv-SE') + ' kr';
   }
 
+  let justOpened = false;
+
   function openCart() {
     const drawer = document.getElementById('cart-drawer');
     const overlay = document.getElementById('cart-overlay');
@@ -114,6 +120,8 @@ const Cart = (() => {
     if (overlay) overlay.classList.add('show');
     document.body.style.overflow = 'hidden';
     render();
+    justOpened = true;
+    setTimeout(() => { justOpened = false; }, 0);
   }
 
   function closeCart() {
@@ -122,10 +130,25 @@ const Cart = (() => {
     if (drawer) drawer.classList.remove('open');
     if (overlay) overlay.classList.remove('show');
     document.body.style.overflow = '';
+    const cb = document.getElementById('cart-terms-checkbox');
+    const btn = document.getElementById('checkout-btn');
+    if (cb) cb.checked = false;
+    document.querySelector('.cart-terms-label')?.classList.remove('cart-terms-error');
   }
 
   async function checkout() {
     if (items.length === 0) return;
+
+    const cb = document.getElementById('cart-terms-checkbox');
+    if (!cb?.checked) {
+      const label = cb?.closest('.cart-terms-label');
+      if (label) {
+        label.classList.remove('cart-terms-error');
+        void label.offsetWidth; // force reflow to restart animation
+        label.classList.add('cart-terms-error');
+      }
+      return;
+    }
 
     const btn = document.getElementById('checkout-btn');
     if (btn) {
@@ -162,11 +185,23 @@ const Cart = (() => {
   function init() {
     updateBadge();
 
+    // Terms checkbox — clear error state when checked
+    document.addEventListener('change', (e) => {
+      if (e.target.id === 'cart-terms-checkbox' && e.target.checked) {
+        document.getElementById('cart-terms-checkbox')
+          ?.closest('.cart-terms-label')
+          ?.classList.remove('cart-terms-error');
+      }
+    });
+
     // Close when clicking outside the drawer
     document.addEventListener('click', (e) => {
+      if (justOpened) return;
       const drawer = document.getElementById('cart-drawer');
       if (!drawer?.classList.contains('open')) return;
       const cartBtn = document.querySelector('.cart-icon-btn');
+      const shippingModal = document.getElementById('shippingModal');
+      if (shippingModal?.contains(e.target) || e.target === shippingModal) return;
       if (!drawer.contains(e.target) && !cartBtn?.contains(e.target)) closeCart();
     });
 

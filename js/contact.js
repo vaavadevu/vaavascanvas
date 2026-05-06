@@ -25,9 +25,7 @@ function setupContactForm() {
   const typeSelect     = document.getElementById("f-type");
   const subjectInput   = document.getElementById("f-subject");
   const printField     = document.getElementById("f-printField");
-  const originalField  = document.getElementById("f-originalField");
   const commissionFields = document.getElementById("f-commissionFields");
-  const originalInfo   = document.getElementById("f-originalInfo");
   const printInfo      = document.getElementById("f-printInfo");
   const messageField   = document.getElementById("f-message");
 
@@ -41,14 +39,10 @@ if (type) {
   applyTypeVisibility(type); // VIKTIGT
 }
   function applyTypeVisibility(val) {
-  if (printField)     printField.style.display     = val === "Prints"      ? "block" : "none";
-  if (originalField)  originalField.style.display  = val === "Originals"   ? "block" : "none";
-  if (commissionFields) commissionFields.style.display = val === "Commissions" ? "block" : "none";
-
-  if (originalInfo)   originalInfo.style.display   = val === "Originals"   ? "block" : "none";
-  if (printInfo)      printInfo.style.display      = val === "Prints"      ? "block" : "none";
-
-  if (subjectInput)   subjectInput.value = val ? `New Inquiry - ${val}` : "New Inquiry";
+  if (printField)       printField.style.display       = val === "Prints"       ? "block" : "none";
+  if (commissionFields) commissionFields.style.display = val === "Commissions"  ? "block" : "none";
+  if (printInfo)        printInfo.style.display        = val === "Prints"       ? "block" : "none";
+  if (subjectInput)     subjectInput.value = val ? `New Inquiry - ${val}` : "New Inquiry";
 }
 
   // Auto-expand textarea as user types
@@ -80,40 +74,11 @@ if (type) {
   });
 }
 
-function handleBuyClick(painting, frameChoice = null) {
-  const typeSelect     = document.getElementById("f-type");
-  const subjectInput   = document.getElementById("f-subject");
-  const originalSelect = document.getElementById("f-artwork-original");
-  const messageField   = document.getElementById("f-message");
-
-  if (typeSelect) {
-    typeSelect.value = "Originals";
-    typeSelect.dispatchEvent(new Event("change"));
-  }
-  if (subjectInput)   subjectInput.value = "New Inquiry - Originals";
-  if (originalSelect) {
-    originalSelect.value = painting.id;
-    originalSelect.dispatchEvent(new Event("change"));
-  }
-
-  // Förifyll meddelandet med ramval om relevant
-  if (messageField && frameChoice) {
-    const frameText = frameChoice === "with"
-      ? t("frame_price_with")
-      : t("frame_price_without");
-    messageField.value = frameText;
-  }
-
-  document.getElementById("formContainer").scrollIntoView({ behavior: "smooth" });
-}
-
 function populateArtworkDropdowns() {
-  // Only populate if paintings data is available (not loaded on blog pages)
   if (typeof paintings === "undefined") return;
-  
-  const printSelect    = document.getElementById("f-artwork");
-  const originalSelect = document.getElementById("f-artwork-original");
-  if (!printSelect || !originalSelect) return;
+
+  const printSelect = document.getElementById("f-artwork");
+  if (!printSelect) return;
 
   paintings.forEach(p => {
     const option = document.createElement("option");
@@ -123,27 +88,7 @@ function populateArtworkDropdowns() {
     printSelect.appendChild(option);
   });
 
-  paintings.filter(p => p.status === STATUS.FOR_SALE).forEach(p => {
-    const option = document.createElement("option");
-    option.value         = p.id;
-    const dimensions = p.shape === SHAPE.CIRCLE
-      ? `${p.diameter} cm`
-      : `${p.width} x ${p.height} cm`;
-    option.textContent   = `${p.title} – ${dimensions} – ${formatPrice(p.originalPrice)}`;
-    option.dataset.title = p.title;
-    option.dataset.dimensions = dimensions;
-    originalSelect.appendChild(option);
-  });
-
-  printSelect.addEventListener("change",    () => updateArtworkPreview(printSelect,    "f-artwork-preview"));
-  originalSelect.addEventListener("change", () => updateArtworkPreview(originalSelect, "f-artwork-original-preview"));
-
-  window.addEventListener("languagechange", () => {
-    originalSelect.querySelectorAll("option[value]").forEach(option => {
-      const p = paintings.find(p => p.id === option.value);
-      if (p) option.textContent = `${p.title} – ${option.dataset.dimensions} – ${formatPrice(p.originalPrice)}`;
-    });
-  });
+  printSelect.addEventListener("change", () => updateArtworkPreview(printSelect, "f-artwork-preview"));
 }
 
 function updateArtworkPreview(select, previewId) {
