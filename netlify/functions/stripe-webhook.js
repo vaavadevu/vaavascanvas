@@ -34,52 +34,83 @@ exports.handler = async (event) => {
 
   if (stripeEvent.type === 'checkout.session.completed') {
     const session = stripeEvent.data.object;
-    const { printId, size, title } = session.metadata;
+    const { items: itemsJson } = session.metadata;
+    
+    let items = [];
+    try {
+      items = JSON.parse(itemsJson || '[]');
+    } catch (e) {
+      console.error('Failed to parse items metadata:', e);
+      items = [];
+    }
+
     const shipping = session.shipping_details;
 
-    // Build Gelato order
-    const gelatoOrder = {
-      orderReferenceId: session.id,
-      customerReferenceId: session.customer_email || session.id,
-      currency: 'SEK',
-      items: [
-        {
-          itemReferenceId: `${printId}-${size}`,
-          productUid: GELATO_UIDS[size] || 'fine-art-print_210x297-mm_vertical',
-          files: [
-            {
-              type: 'default',
-              url: PRINT_IMAGES[printId],
-            },
-          ],
-          quantity: 1,
-        },
-      ],
-      shippingAddress: {
-        firstName: shipping?.name?.split(' ')[0] || '',
-        lastName: shipping?.name?.split(' ').slice(1).join(' ') || '',
-        addressLine1: shipping?.address?.line1 || '',
-        addressLine2: shipping?.address?.line2 || '',
-        city: shipping?.address?.city || '',
-        postCode: shipping?.address?.postal_code || '',
-        country: shipping?.address?.country || 'SE',
-      },
-    };
+    console.log('Order received:', {
+      sessionId: session.id,
+      customerEmail: session.customer_email,
+      items,
+      shippingAddress: shipping,
+      totalAmount: session.amount_total / 100,
+    });
 
-    try {
-      const response = await fetch('https://order.gelatoapis.com/v4/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-API-KEY': process.env.GELATO_API_KEY,
+    // Handle print orders with Gelato integration
+    const printItems = items.filter(item => item.type === 'print');
+    for (const item of printItems) {
+      const gelatoOrder = {
+        orderReferenceId: `${session.id}-${item.id}`,
+        customerReferenceId: session.customer_email || session.id,
+        currency: 'SEK',
+        items: [
+          {
+            itemReferenceId: `${item.id}-${item.size}`,
+            productUid: GELATO_UIDS[item.size] || 'fine-art-print_210x297-mm_vertical',
+            files: [
+              {
+                type: 'default',
+                url: PRINT_IMAGES[item.id],
+              },
+            ],
+            quantity: item.qty || 1,
+          },
+        ],
+        shippingAddress: {
+          firstName: shipping?.name?.split(' ')[0] || '',
+          lastName: shipping?.name?.split(' ').slice(1).join(' ') || '',
+          addressLine1: shipping?.address?.line1 || '',
+          addressLine2: shipping?.address?.line2 || '',
+          city: shipping?.address?.city || '',
+          postCode: shipping?.address?.postal_code || '',
+          country: shipping?.address?.country || 'SE',
         },
-        body: JSON.stringify(gelatoOrder),
+      };
+
+      try {
+        const response = await fetch('https://order.gelatoapis.com/v4/orders', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-API-KEY': process.env.GELATO_API_KEY,
+          },
+          body: JSON.stringify(gelatoOrder),
+        });
+
+        const result = await response.json();
+        console.log('Gelato order placed:', result);
+      } catch (err) {
+        console.error('Gelato order failed:', err);
+      }
+    }
+
+    // Handle original paintings (requires manual processing)
+    const originalItems = items.filter(item => item.type === 'original');
+    if (originalItems.length > 0) {
+      console.log('Original painting order - requires manual processing:', {
+        sessionId: session.id,
+        items: originalItems,
+        shippingAddress: shipping,
       });
-
-      const result = await response.json();
-      console.log('Gelato order placed:', result);
-    } catch (err) {
-      console.error('Gelato order failed:', err);
+      // TODO: Implement email notification or database storage for original painting orders
     }
   }
 
