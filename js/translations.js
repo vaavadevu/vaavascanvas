@@ -444,7 +444,10 @@ const keys = {
     sv: "En igelkott som ligger mellan maskrosor i väntan på sommarens första dag",
     en: "A little hedgehog lying among dandelions waiting for the first day of summer"
 },
-
+ desc_koslapp: {
+    sv: "Glada kossar som njuter av friheten p[ sommarbete utan ett nummer på örat.",
+    en: "Happy cows enjoying the freedom of summer pasture without a number on their ear."
+},
   desc_sommarstuga: {
     sv: "En varm sommardag i Småland och det doftar nästan nyklippt gräs.",
     en: "A warm summer day in Småland and it smells almost like freshly mowed grass.",

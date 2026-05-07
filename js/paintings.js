@@ -90,6 +90,18 @@ const paintings = [
     medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {
+    id: "koslapp",
+    title: "Koslapp",
+    descKey: "desc_koslapp",
+    width: 69,
+    height: 58,
+    shape: SHAPE.RECTANGULAR,
+    framedPrice: 3600,
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    frameAvailable: true,
+  },
+  {
     id: "tjuvsmak",
     title: "Tjuvsmak",
     descKey: "desc_tjuvsmak",
