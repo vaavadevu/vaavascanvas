@@ -205,7 +205,7 @@ function renderPageViewButtons(painting) {
     } else {
       buyBtn.textContent = t("modal_buy_btn");
       buyBtn.addEventListener("click", () => {
-        if (painting.frameAvailable && window.innerWidth <= 768) {
+        if (painting.frameAvailable && window.innerWidth <= 960) {
           showFrameSelectorModal(painting);
         } else if (painting.frameAvailable) {
           const selectedRadio = pageViewButtons.querySelector('input[type="radio"]:checked');
@@ -313,7 +313,7 @@ function hideFrameSelectorModal(callback) {
 
 function setupFrameSelectorModal() {
   // Create overlay element if we're on mobile
-  if (window.innerWidth <= 768) {
+  if (window.innerWidth <= 960) {
     let overlay = document.querySelector(".frame-selector-overlay");
     if (!overlay) {
       overlay = document.createElement("div");
@@ -587,7 +587,7 @@ function setupFullscreenNavigation() {
   window.addEventListener("keydown", (e) => {
     const overlay = document.getElementById("fullscreenOverlay");
     if (!overlay?.classList.contains("active")) return;
-    if (window.innerWidth <= 768) return;
+    if (window.innerWidth <= 960) return;
 
     if (e.key === "ArrowLeft") {
       e.preventDefault();
@@ -631,7 +631,7 @@ function setupPageViewFullscreenZoom() {
     }
 
     // Zoom only on desktop
-    if (window.innerWidth <= 768) return;
+    if (window.innerWidth <= 960) return;
 
     fullscreenZoomLevel = (fullscreenZoomLevel + 1) % 3;
     img.style.transform = ["scale(1)", "scale(2)", "scale(4)"][fullscreenZoomLevel];
@@ -641,12 +641,12 @@ function setupPageViewFullscreenZoom() {
   });
 
   overlay.addEventListener("mousemove", (e) => {
-    if (window.innerWidth <= 768 || fullscreenZoomLevel === 0) return;
+    if (window.innerWidth <= 960 || fullscreenZoomLevel === 0) return;
     updateFullscreenZoomPosition(e, overlay);
   });
 
   overlay.addEventListener("mouseleave", () => {
-    if (window.innerWidth <= 768) return;
+    if (window.innerWidth <= 960) return;
     resetFullscreenZoom();
   });
 }
@@ -655,7 +655,7 @@ function setupPageViewFullscreenZoom() {
 
 function setupBuyButtonPositioning() {
   // Only apply sticky button positioning on mobile (max-width: 768px)
-  if (window.innerWidth > 768) return;
+  if (window.innerWidth > 960) return;
 
   const button = document.querySelector("#pageview-buttons button");
   if (!button) return;

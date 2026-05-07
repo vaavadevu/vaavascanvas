@@ -8,7 +8,7 @@ function getPaintingImagePaths(painting) {
   const isViewPage = window.location.pathname.includes('view.html');
   const base = isViewPage ? `../images/paintings/${folderId}/desktop/` : `/images/paintings/${folderId}/desktop/`;
   const mobileBase = isViewPage ? `../images/paintings/${folderId}/mobile/` : `/images/paintings/${folderId}/mobile/`;
-  const isMobile = window.innerWidth <= 768;
+  const isMobile = window.innerWidth <= 960;
 
   return Array.from({ length: count }, (_, i) => {
     const idx = String(i + 1).padStart(2, "0");

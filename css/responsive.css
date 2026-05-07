@@ -15,8 +15,8 @@
   }
 }
 
-/* --- Mobilanpassning (max-width: 768px) --- */
-@media (max-width: 768px) {
+/* --- Mobilanpassning (max-width: 960px) --- */
+@media (max-width: 960px) {
   /* On mobile, header is sticky so keep padding-top for spacing */
   html,
   body {
@@ -374,11 +374,14 @@ nav.active {
   .intro-text-side {
     padding: 60px 40px;
   }
-  nav ul {
-    gap: 20px;   /* ← var 50px på desktop */
-  }
-  
+
   nav a {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (min-width: 961px) and (max-width: 1024px) {
+  #gallery-filter-bar {
+    gap: 20px;
   }
 }

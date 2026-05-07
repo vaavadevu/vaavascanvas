@@ -650,7 +650,7 @@
 
 /* ─── Responsive ─── */
 
-@media (max-width: 768px) {
+@media (max-width: 960px) {
   .blog-title {
     font-size: 2rem;
     margin-bottom: 40px;
