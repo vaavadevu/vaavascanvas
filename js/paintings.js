@@ -286,6 +286,7 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
+    originalPrice: 1600,
     status: STATUS.SOLD,
     medium: MEDIUM.ACRYLIC_CANVAS,
   },
