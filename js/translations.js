@@ -11,8 +11,8 @@ const keys = {
     en: "Home",
   },
   nav_gallery: {
-    sv: "Mina verk",
-    en: "My works",
+    sv: "Original",
+    en: "Originals",
   },
   nav_contact: {
     sv: "Kontakta mig",
