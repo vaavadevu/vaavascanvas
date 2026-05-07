@@ -538,6 +538,65 @@ const keys = {
   en: "Two happy lambs jumping and playing in a flowery meadow on a nice evening, full of mischief and spring feelings.",
 },
 
+  nav_prints: {
+    sv: "Prints",
+    en: "Prints",
+  },
+
+  // ── Cart ──────────────────────────────────────────────────────
+  cart_heading: {
+    sv: "Varukorg",
+    en: "Cart",
+  },
+  cart_empty: {
+    sv: "Din varukorg är tom",
+    en: "Your cart is empty",
+  },
+  cart_total_label: {
+    sv: "Totalt",
+    en: "Total",
+  },
+  cart_terms_text: {
+    sv: "Jag har läst och godkänner",
+    en: "I have read and accept the",
+  },
+  cart_terms_link: {
+    sv: "frakt & leveransvillkor",
+    en: "shipping & delivery terms",
+  },
+  cart_checkout_btn: {
+    sv: "Till betalning →",
+    en: "Proceed to payment →",
+  },
+  cart_processing: {
+    sv: "Bearbetar...",
+    en: "Processing...",
+  },
+  cart_error: {
+    sv: "Något gick fel. Försök igen.",
+    en: "Something went wrong. Please try again.",
+  },
+  cart_order_success: {
+    sv: "✓ Tack för din beställning! Bekräftelse skickas till din e-post.",
+    en: "✓ Thank you for your order! A confirmation will be sent to your email.",
+  },
+  cart_toast_added: {
+    sv: "lagd i varukorgen",
+    en: "added to cart",
+  },
+  cart_toast_already: {
+    sv: "finns redan i varukorgen",
+    en: "is already in your cart",
+  },
+  cart_frame_included: {
+    sv: "Ram ingår",
+    en: "Frame included",
+  },
+  cart_frame_add: {
+    sv: "Lägg till ram",
+    en: "Add frame",
+  },
+
   // ── Prints page ───────────────────────────────────────────────
   prints_hero_h1: {
     sv: "Fine art prints av mina målningar, tryckta på arkivkvalitetspapper.",

@@ -54,21 +54,21 @@
 <div id="cart-overlay"></div>
 <div id="cart-drawer" role="dialog" aria-label="Varukorg">
   <div class="cart-header">
-    <h2>Varukorg</h2>
+    <h2 data-i18n="cart_heading">Varukorg</h2>
     <button class="cart-close-btn" onclick="Cart.closeCart()" aria-label="Stäng">×</button>
   </div>
   <div id="cart-items">
-    <div id="cart-empty">Din varukorg är tom</div>
+    <div id="cart-empty" data-i18n="cart_empty">Din varukorg är tom</div>
   </div>
   <div id="cart-footer">
     <div class="cart-total-row">
-      <span class="cart-total-label">Totalt</span>
+      <span class="cart-total-label" data-i18n="cart_total_label">Totalt</span>
       <span id="cart-total">0 kr</span>
     </div>
     <label class="cart-terms-label">
       <input type="checkbox" id="cart-terms-checkbox" />
-      <span>Jag har läst och godkänner <a href="#" id="shippingBtn">frakt &amp; leveransvillkor</a></span>
+      <span><span data-i18n="cart_terms_text">Jag har läst och godkänner</span> <a href="#" id="shippingBtn" data-i18n="cart_terms_link">frakt &amp; leveransvillkor</a></span>
     </label>
-    <button id="checkout-btn" onclick="Cart.checkout()">Till betalning →</button>
+    <button id="checkout-btn" onclick="Cart.checkout()" data-i18n="cart_checkout_btn">Till betalning →</button>
   </div>
 </div>

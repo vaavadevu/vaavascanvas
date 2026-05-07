@@ -18,7 +18,7 @@ const Cart = (() => {
       const existing = items.find(i => i.key === key);
       if (existing) {
         openCart();
-        showToast(`"${item.title}" finns redan i varukorgen`);
+        showToast(`"${item.title}" ${t('cart_toast_already')}`);
         return;
       }
       // Remove any other frame-variant of the same painting
@@ -34,7 +34,7 @@ const Cart = (() => {
         existing.qty = (existing.qty || 1) + 1;
         save();
         openCart();
-        showToast(`"${item.title}" lagd i varukorgen`);
+        showToast(`"${item.title}" ${t('cart_toast_added')}`);
         return;
       }
     }
@@ -128,8 +128,8 @@ const Cart = (() => {
           <label class="cart-frame-toggle">
             <input type="checkbox" ${item.withFrame ? 'checked' : ''} onchange="Cart.toggleFrame('${item.key}', this.checked)" />
             <span>${item.withFrame
-              ? 'Ram ingår'
-              : `Lägg till ram <em>+${(item.framedPrice - item.basePrice).toLocaleString('sv-SE')} kr</em>`
+              ? t('cart_frame_included')
+              : `${t('cart_frame_add')} <em>+${(item.framedPrice - item.basePrice).toLocaleString('sv-SE')} kr</em>`
             }</span>
           </label>` : ''}
           ${item.type === 'original' ? '' : `
@@ -196,7 +196,7 @@ const Cart = (() => {
     const btn = document.getElementById('checkout-btn');
     if (btn) {
       btn.disabled = true;
-      btn.textContent = 'Bearbetar...';
+      btn.textContent = t('cart_processing');
     }
 
     try {
@@ -217,10 +217,10 @@ const Cart = (() => {
         throw new Error(data.error || 'Något gick fel');
       }
     } catch (err) {
-      showToast('Något gick fel. Försök igen.');
+      showToast(t('cart_error'));
       if (btn) {
         btn.disabled = false;
-        btn.textContent = 'Till betalning';
+        btn.textContent = t('cart_checkout_btn');
       }
     }
   }
@@ -260,7 +260,7 @@ const Cart = (() => {
     // Check for success redirect
     const params = new URLSearchParams(window.location.search);
     if (params.get('order') === 'success') {
-      showToast('✓ Tack för din beställning! Bekräftelse skickas till din e-post.');
+      showToast(t('cart_order_success'));
       window.history.replaceState({}, '', window.location.pathname);
     }
   }
