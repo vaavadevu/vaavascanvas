@@ -197,18 +197,25 @@ function renderPageViewButtons(painting) {
     }
 
     const buyBtn = document.createElement("button");
-    buyBtn.textContent = t("modal_buy_btn");
-    buyBtn.addEventListener("click", () => {
-      if (painting.frameAvailable && window.innerWidth <= 768) {
-        showFrameSelectorModal(painting);
-      } else if (painting.frameAvailable) {
-        const selectedRadio = pageViewButtons.querySelector('input[type="radio"]:checked');
-        const withFrame = selectedRadio?.value === "with";
-        addPaintingToCart(painting, withFrame);
-      } else {
-        addPaintingToCart(painting, false);
-      }
-    });
+    const inCart = Cart.hasOriginal(painting.id);
+
+    if (inCart) {
+      buyBtn.textContent = t("modal_in_cart_btn");
+      buyBtn.addEventListener("click", () => Cart.openCart());
+    } else {
+      buyBtn.textContent = t("modal_buy_btn");
+      buyBtn.addEventListener("click", () => {
+        if (painting.frameAvailable && window.innerWidth <= 768) {
+          showFrameSelectorModal(painting);
+        } else if (painting.frameAvailable) {
+          const selectedRadio = pageViewButtons.querySelector('input[type="radio"]:checked');
+          const withFrame = selectedRadio?.value === "with";
+          addPaintingToCart(painting, withFrame);
+        } else {
+          addPaintingToCart(painting, false);
+        }
+      });
+    }
     pageViewButtons.appendChild(buyBtn);
   }
 
@@ -713,7 +720,7 @@ function setupBackButtonPositioning() {
 // ── Language change handler ──────────────────────────────────
 
 function setupLanguageChangeListener() {
-  window.addEventListener("languagechange", () => {
+  const rerender = () => {
     if (State.currentPaintingIndex !== undefined && paintings[State.currentPaintingIndex]) {
       const painting = paintings[State.currentPaintingIndex];
       updatePageViewDescription(painting);
@@ -722,7 +729,9 @@ function setupLanguageChangeListener() {
       renderPageViewPrice(painting);
       renderPageViewButtons(painting);
     }
-  });
+  };
+  window.addEventListener("languagechange", rerender);
+  document.addEventListener("cartupdate", rerender);
 }
 
 // ── Listeners ─────────────────────────────────────────────────

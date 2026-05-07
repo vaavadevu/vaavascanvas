@@ -9,6 +9,14 @@ const Cart = (() => {
     localStorage.setItem('vc_cart', JSON.stringify(items));
     render();
     updateBadge();
+    document.dispatchEvent(new CustomEvent('cartupdate'));
+  }
+
+  function hasOriginal(baseId) {
+    return items.some(i =>
+      i.type === 'original' &&
+      (i.paintingBaseId === baseId || i.id === baseId || i.id === baseId + '-framed')
+    );
   }
 
   function add(item) {
@@ -265,7 +273,7 @@ const Cart = (() => {
     }
   }
 
-  return { add, remove, updateQty, toggleFrame, openCart, closeCart, checkout, init, count, updateBadge };
+  return { add, remove, updateQty, toggleFrame, openCart, closeCart, checkout, init, count, updateBadge, hasOriginal };
 })();
 
 // Toast notification
