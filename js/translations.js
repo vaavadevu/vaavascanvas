@@ -303,16 +303,16 @@ const keys = {
     en: "Shipping within Sweden",
   },
   shipping_sweden_p: {
-    sv: "59 kr för frakt på alla beställningar under 999 kr. Fri frakt över 999 kr. Leveranstid 1–3 arbetsdagar via PostNord.",
-    en: "59 SEK shipping on all orders under 999 SEK. Free shipping over 999 SEK. Delivery time 1–3 business days via PostNord.",
+    sv: "59 kr för frakt på alla beställningar under 599 kr. Fri frakt över 599 kr. Leveranstid 1–3 arbetsdagar via PostNord.",
+    en: "59 SEK shipping on all orders under 599 SEK. Free shipping over 599 SEK. Delivery time 1–3 business days via PostNord.",
   },
   shipping_europe_h: {
-    sv: "Frakt inom Europa",
-    en: "Shipping within Europe",
+    sv: "Internationell frakt",
+    en: "International shipping",
   },
   shipping_europe_p: {
-    sv: "Leveranstid 3–7 arbetsdagar. Fraktkostnad varierar per destination och tavlans storlek. Kontakta mig för en offert innan köp.",
-    en: "Delivery time 3–7 business days. Shipping cost varies by destination and painting size. Contact me for a quote before purchasing.",
+    sv: "Prints kan beställas och levereras internationellt. Originalmålningar fraktas enbart inom Sverige, beställningar med original och utländsk leveransadress återbetalas. Leveranstid ca 5–14 arbetsdagar.",
+    en: "Prints can be ordered and delivered internationally. Original paintings ship within Sweden only, orders with originals and a foreign delivery address will be refunded. Delivery time approx. 5–14 business days.",
   },
   shipping_packaging_h: {
     sv: "Förpackning",
@@ -602,6 +602,38 @@ const keys = {
   cart_frame_add: {
     sv: "Lägg till ram",
     en: "Add frame",
+  },
+  cart_shipping_label: {
+    sv: "Frakt",
+    en: "Shipping",
+  },
+  cart_free_shipping: {
+    sv: "Fri frakt",
+    en: "Free shipping",
+  },
+  cart_free_shipping_achieved: {
+    sv: "✓ Fri frakt uppnådd!",
+    en: "✓ Free shipping unlocked!",
+  },
+  cart_free_shipping_remaining: {
+    sv: (n) => `${n} kr kvar till fri frakt`,
+    en: (n) => `${n} kr left for free shipping`,
+  },
+  cart_country_label: {
+    sv: "Leveransland",
+    en: "Delivery country",
+  },
+  cart_country_se: {
+    sv: "Sverige",
+    en: "Sweden",
+  },
+  cart_country_other: {
+    sv: "Annat land",
+    en: "Another country",
+  },
+  cart_intl_warning: {
+    sv: "OBS: Originalmålningar fraktas enbart inom Sverige. Din beställning innehåller original som återbetalas om leveransadressen är utanför Sverige.",
+    en: "Note: Original paintings ship within Sweden only. Your order contains originals that will be refunded if the delivery address is outside Sweden.",
   },
 
   // ── Prints page ───────────────────────────────────────────────
