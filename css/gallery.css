@@ -211,12 +211,12 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 16px;
-  border: 1px solid #d4ccc4;
-  border-radius: 4px;
-  background: #fff;
+  padding: 7px 14px;
+  border: 1px solid var(--accent-light);
+  border-radius: 3px;
+  background: var(--bg-warm);
   cursor: pointer;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, background 0.2s;
 }
 
 .filter-dropdown-trigger:hover,
@@ -225,29 +225,31 @@
 }
 
 .filter-dropdown.has-filter .filter-dropdown-trigger {
-  background: #5a8a6a;
-  border-color: #5a8a6a;
+  background: var(--accent-green);
+  border-color: var(--accent-green);
 }
 
-.filter-dropdown.has-filter .filter-dropdown-label,
+.filter-dropdown.has-filter .filter-dropdown-label {
+  color: var(--text-light);
+}
+
 .filter-dropdown.has-filter .filter-chevron {
-  color: white;
-  fill: white;
+  fill: var(--text-light);
 }
 
 .filter-dropdown-label {
-  font-family: 'Quicksand', sans-serif;
-  font-size: 0.9rem;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 0.95rem;
   font-weight: 600;
   color: var(--text-dark);
   white-space: nowrap;
-  letter-spacing: 0.03em;
 }
 
 .filter-chevron {
-  width: 10px;
+  width: 9px;
   height: 6px;
-  fill: #7a6e62;
+  fill: var(--accent-green);
   flex-shrink: 0;
   transition: transform 0.2s ease;
 }
@@ -259,14 +261,15 @@
 .filter-dropdown-panel {
   display: none;
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 6px);
   left: 0;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-  padding: 8px;
+  background: var(--bg-light);
+  border: 1px solid var(--accent-light);
+  border-radius: 3px;
+  box-shadow: 0 4px 16px var(--shadow-light);
+  padding: 6px;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   z-index: 200;
   min-width: 100%;
 }
@@ -276,22 +279,26 @@
 }
 
 .filter-option {
-  background: white;
-  color: #5a8a6a;
-  border: 2px solid #5a8a6a;
-  padding: 8px 18px;
-  border-radius: 20px;
-  font-family: 'Quicksand', sans-serif;
-  font-weight: 700;
-  font-size: 0.85rem;
+  background: transparent;
+  color: var(--text-dark);
+  border: none;
+  padding: 7px 14px;
+  border-radius: 2px;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 0.9rem;
+  font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
   transition: background 0.15s, color 0.15s;
   text-align: left;
 }
 
-.filter-option:hover,
+.filter-option:hover {
+  background: var(--bg-warm);
+}
+
 .filter-option.active {
-  background: #5a8a6a;
-  color: white;
+  background: var(--accent-green);
+  color: var(--text-light);
 }
