@@ -520,6 +520,10 @@ const keys = {
     sv: "Finns med eller utan ram",
     en: "Available with or without frame",
   },
+  frame_included: {
+    sv: "Levereras med ram",
+    en: "Includes frame",
+  },
   frame_price_with: {
     sv: "Pris med ram",
     en: "Price with frame",

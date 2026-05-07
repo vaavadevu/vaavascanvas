@@ -385,6 +385,14 @@
   font-style: italic;
 }
 
+.frame-included-note {
+  font-size: 0.85rem;
+  color: var(--accent-green);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
 /* Painting navigation arrows (left/right of page) - HIDDEN */
 .page-view-container .arrow {
   display: none !important;

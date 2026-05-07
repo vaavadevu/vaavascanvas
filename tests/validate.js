@@ -255,13 +255,18 @@ test('All painting statuses are valid', () => {
   });
 });
 
-test('FOR_SALE paintings have originalPrice', () => {
+test('FOR_SALE paintings have originalPrice (or framedOnly with framedPrice)', () => {
   paintings.forEach(p => {
     if (p.status === statuses.FOR_SALE) {
-      assert(p.originalPrice !== undefined && p.originalPrice !== null,
-        `FOR_SALE painting ${p.id} missing originalPrice`);
-      assert(typeof p.originalPrice === 'number' && p.originalPrice > 0,
-        `FOR_SALE painting ${p.id} has invalid price: ${p.originalPrice}`);
+      if (p.framedOnly) {
+        assert(typeof p.framedPrice === 'number' && p.framedPrice > 0,
+          `framedOnly painting ${p.id} missing valid framedPrice`);
+      } else {
+        assert(p.originalPrice !== undefined && p.originalPrice !== null,
+          `FOR_SALE painting ${p.id} missing originalPrice`);
+        assert(typeof p.originalPrice === 'number' && p.originalPrice > 0,
+          `FOR_SALE painting ${p.id} has invalid price: ${p.originalPrice}`);
+      }
     }
   });
 });
@@ -519,8 +524,19 @@ test('Paintings with frameAvailable have a valid framedPrice', () => {
     if (p.frameAvailable) {
       assert(typeof p.framedPrice === 'number' && p.framedPrice > 0,
         `Painting ${p.id} has frameAvailable but missing valid framedPrice`);
-      assert(p.framedPrice > p.originalPrice,
-        `Painting ${p.id} framedPrice (${p.framedPrice}) should be greater than originalPrice (${p.originalPrice})`);
+      if (!p.framedOnly) {
+        assert(p.framedPrice > p.originalPrice,
+          `Painting ${p.id} framedPrice (${p.framedPrice}) should be greater than originalPrice (${p.originalPrice})`);
+      }
+    }
+  });
+});
+
+test('framedOnly paintings have no originalPrice', () => {
+  paintings.forEach(p => {
+    if (p.framedOnly) {
+      assert(p.originalPrice === undefined,
+        `framedOnly painting ${p.id} should not have originalPrice`);
     }
   });
 });

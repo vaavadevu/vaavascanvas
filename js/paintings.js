@@ -97,6 +97,7 @@ const paintings = [
     height: 58,
     shape: SHAPE.RECTANGULAR,
     framedPrice: 3600,
+    framedOnly: true,
     status: STATUS.FOR_SALE,
     medium: MEDIUM.ACRYLIC_CANVAS,
     frameAvailable: true,

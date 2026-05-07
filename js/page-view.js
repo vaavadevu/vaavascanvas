@@ -142,8 +142,14 @@ function renderPageViewButtons(painting) {
   const printLinkContainer = document.getElementById("pageview-print-link");
   if (printLinkContainer) printLinkContainer.innerHTML = "";
 
-  if (painting.status === STATUS.FOR_SALE && painting.originalPrice) {
-    if (painting.frameAvailable) {
+  if (painting.status === STATUS.FOR_SALE && (painting.originalPrice || painting.framedOnly)) {
+    if (painting.framedOnly) {
+      // Frame-only painting: show a note instead of a radio selector
+      const frameNote = document.createElement("p");
+      frameNote.classList.add("frame-included-note");
+      frameNote.textContent = t("frame_included");
+      pageViewButtons.appendChild(frameNote);
+    } else if (painting.frameAvailable) {
       // Frame selector (for desktop only, contains radio buttons)
       const frameContainer = document.createElement("div");
       frameContainer.classList.add("frame-selector");
@@ -205,7 +211,9 @@ function renderPageViewButtons(painting) {
     } else {
       buyBtn.textContent = t("modal_buy_btn");
       buyBtn.addEventListener("click", () => {
-        if (painting.frameAvailable && window.innerWidth <= 960) {
+        if (painting.framedOnly) {
+          addPaintingToCart(painting, true);
+        } else if (painting.frameAvailable && window.innerWidth <= 960) {
           showFrameSelectorModal(painting);
         } else if (painting.frameAvailable) {
           const selectedRadio = pageViewButtons.querySelector('input[type="radio"]:checked');
@@ -258,18 +266,20 @@ function showFrameSelectorModal(painting) {
     const btnContainer = document.createElement("div");
     btnContainer.classList.add("frame-action-buttons");
 
-    // Without frame button
-    const withoutBtn = document.createElement("button");
-    withoutBtn.type = "button";
-    withoutBtn.classList.add("frame-action-btn", "frame-action-without");
-    withoutBtn.innerHTML = `
-      <span class="btn-title">${t("frame_price_without")}</span>
-      <span class="btn-price">${formatPrice(painting.originalPrice)}</span>
-    `;
-    withoutBtn.addEventListener("click", () => {
-      hideFrameSelectorModal(() => addPaintingToCart(painting, false));
-    }, { once: true });
-    btnContainer.appendChild(withoutBtn);
+    // Without frame button (only if painting is not frame-only)
+    if (!painting.framedOnly) {
+      const withoutBtn = document.createElement("button");
+      withoutBtn.type = "button";
+      withoutBtn.classList.add("frame-action-btn", "frame-action-without");
+      withoutBtn.innerHTML = `
+        <span class="btn-title">${t("frame_price_without")}</span>
+        <span class="btn-price">${formatPrice(painting.originalPrice)}</span>
+      `;
+      withoutBtn.addEventListener("click", () => {
+        hideFrameSelectorModal(() => addPaintingToCart(painting, false));
+      }, { once: true });
+      btnContainer.appendChild(withoutBtn);
+    }
 
     // With frame button
     const withBtn = document.createElement("button");
@@ -401,7 +411,12 @@ function renderPageViewPrice(painting) {
     return;
   }
 
-  if (painting.originalPrice) {
+  if (painting.framedOnly && painting.framedPrice) {
+    const price = document.createElement("p");
+    price.textContent = formatPrice(painting.framedPrice);
+    price.classList.add("pageview-price");
+    pageViewPriceSection.appendChild(price);
+  } else if (painting.originalPrice) {
     const price = document.createElement("p");
     price.textContent = formatPrice(painting.originalPrice);
     price.classList.add("pageview-price");
