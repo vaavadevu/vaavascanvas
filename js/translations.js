@@ -445,7 +445,7 @@ const keys = {
     en: "A little hedgehog lying among dandelions waiting for the first day of summer"
 },
  desc_koslapp: {
-    sv: "Glada kossar som njuter av friheten p[ sommarbete utan ett nummer på örat.",
+    sv: "Glada kossar som njuter av friheten på sommarbete utan ett nummer på örat.",
     en: "Happy cows enjoying the freedom of summer pasture without a number on their ear."
 },
   desc_sommarstuga: {

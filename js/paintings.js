@@ -91,7 +91,7 @@ const paintings = [
   },
   {
     id: "koslapp",
-    title: "Koslapp",
+    title: "Kosläpp",
     descKey: "desc_koslapp",
     width: 69,
     height: 58,

@@ -137,7 +137,9 @@ const Cart = (() => {
           <div class="cart-item-title">${item.title}</div>
           <div class="cart-item-meta">${item.type === 'print' ? 'Print · ' + (item.sizeLabel || item.size) : 'Original'}</div>
           <div class="cart-item-price">${(item.price * (item.qty || 1)).toLocaleString('sv-SE')} kr</div>
-          ${item.frameAvailable ? `
+          ${item.framedOnly ? `
+          <span class="cart-frame-fixed">${t('cart_frame_included')}</span>` :
+          item.frameAvailable ? `
           <label class="cart-frame-toggle">
             <input type="checkbox" ${item.withFrame ? 'checked' : ''} onchange="Cart.toggleFrame('${item.key}', this.checked)" />
             <span>${item.withFrame

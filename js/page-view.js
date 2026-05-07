@@ -131,6 +131,7 @@ function addPaintingToCart(painting, withFrame) {
     paintingBaseId: painting.id,
     paintingTitle: painting.title,
     frameAvailable: painting.frameAvailable || false,
+    framedOnly: painting.framedOnly || false,
     withFrame: withFrame || false,
     basePrice: painting.originalPrice,
     framedPrice: painting.framedPrice || null,
@@ -144,11 +145,7 @@ function renderPageViewButtons(painting) {
 
   if (painting.status === STATUS.FOR_SALE && (painting.originalPrice || painting.framedOnly)) {
     if (painting.framedOnly) {
-      // Frame-only painting: show a note instead of a radio selector
-      const frameNote = document.createElement("p");
-      frameNote.classList.add("frame-included-note");
-      frameNote.textContent = t("frame_included");
-      pageViewButtons.appendChild(frameNote);
+      // framedOnly: no selector needed, frame info shown in renderPageViewFrameInfo
     } else if (painting.frameAvailable) {
       // Frame selector (for desktop only, contains radio buttons)
       const frameContainer = document.createElement("div");
@@ -387,7 +384,7 @@ function renderPageViewFrameInfo(painting) {
   if (painting.frameAvailable) {
     const frameInfo = document.createElement("p");
     frameInfo.id = "pageview-frame-info";
-    frameInfo.textContent = t("frame_available");
+    frameInfo.textContent = painting.framedOnly ? t("frame_included") : t("frame_available");
     frameInfo.classList.add("pageview-frame-info");
     pageViewMedium.parentNode.insertBefore(frameInfo, pageViewMedium.nextSibling);
   }

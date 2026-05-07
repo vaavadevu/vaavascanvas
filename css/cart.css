@@ -256,6 +256,14 @@
   color: #4A8070;
 }
 
+.cart-frame-fixed {
+  display: inline-block;
+  font-size: 0.78rem;
+  color: #4A8070;
+  margin-top: 0.35rem;
+  letter-spacing: 0.03em;
+}
+
 .cart-item-remove {
   position: absolute;
   top: 0.8rem;
