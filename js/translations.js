@@ -615,9 +615,13 @@ const keys = {
     sv: "✓ Fri frakt uppnådd!",
     en: "✓ Free shipping unlocked!",
   },
-  cart_free_shipping_remaining: {
-    sv: (n) => `${n} kr kvar till fri frakt`,
-    en: (n) => `${n} kr left for free shipping`,
+  cart_free_shipping_remaining_pre: {
+    sv: "",
+    en: "",
+  },
+  cart_free_shipping_remaining_post: {
+    sv: " kr kvar till fri frakt",
+    en: " kr left for free shipping",
   },
   cart_country_label: {
     sv: "Leveransland",
