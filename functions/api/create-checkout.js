@@ -1,6 +1,7 @@
 import Stripe from 'stripe';
 
 export async function onRequestPost(context) {
+  try {
   const stripe = new Stripe(context.env.STRIPE_SECRET_KEY);
 
   let items, shipping;
@@ -69,5 +70,9 @@ export async function onRequestPost(context) {
   } catch (err) {
     console.error('Stripe error:', err);
     return Response.json({ error: err.message }, { status: 500 });
+  }
+  } catch (err) {
+    console.error('Function error:', err);
+    return Response.json({ error: err.message, stack: err.stack }, { status: 500 });
   }
 }
