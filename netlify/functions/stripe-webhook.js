@@ -2,9 +2,9 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 // Image URLs for each print - UPDATE THESE with your actual high-res image URLs
 const PRINT_IMAGES = {
-  'min-mamma': 'https://vaavascanvas.se/images/min-mamma-hires.jpg',
-  'efter-ide': 'https://vaavascanvas.se/images/efter-ide-hires.jpg',
-  'sommarvila': 'https://vaavascanvas.se/images/sommarvila-hires.jpg',
+  'min-mamma': 'https://vaavascanvas.se/images/hires/minmamma.jpg',
+  'efter-ide': 'https://vaavascanvas.se/images/hires/efteride.jpg',
+  'sommarvila': 'https://vaavascanvas.se/images/hires/sommarvila.jpg',
 };
 
 // Gelato product UIDs for fine art prints
