@@ -131,6 +131,8 @@ main {
   border-radius: 4px;
   overflow: hidden;
   transition: box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .print-card:hover {
@@ -183,6 +185,14 @@ main {
 
 .print-info {
   padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.print-info .btn-add-to-cart {
+  margin-top: auto;
+  justify-content: center;
 }
 
 .print-title {
@@ -196,8 +206,10 @@ main {
   font-size: 0.78rem;
   color: var(--muted);
   letter-spacing: 0.05em;
-  margin-bottom: 1.2rem;
+  margin: 0 0 1.2rem 0;
+  padding: 0;
   text-transform: uppercase;
+  text-align: left;
 }
 
 .size-selector {
@@ -221,27 +233,26 @@ main {
 
 .size-btn {
   padding: 0.4rem 0.9rem;
-  border: 1px solid var(--border);
+  border: 1.5px solid #c8bfb4;
   background: transparent;
   border-radius: 2px;
   font-family: 'Quicksand', sans-serif;
   font-size: 0.8rem;
   cursor: pointer;
   transition: all 0.2s;
-  color: var(--ink);
+  color: var(--text-dark);
 }
 
 .size-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: var(--accent-green);
+  color: var(--accent-green);
 }
 
 .size-btn.selected {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: var(--warm-white);
+  background: transparent;
+  border: 2px solid var(--accent-green);
+  color: var(--accent-green);
   font-weight: 600;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .size-btn.selected::after {
@@ -329,6 +340,19 @@ main {
   color: var(--muted);
   font-size: 0.88rem;
   line-height: 1.9;
+}
+
+@keyframes size-label-shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-6px); }
+  40%       { transform: translateX(6px); }
+  60%       { transform: translateX(-4px); }
+  80%       { transform: translateX(4px); }
+}
+
+.size-selector label.shake {
+  animation: size-label-shake 0.4s ease;
+  color: #c0392b;
 }
 
 .divider {

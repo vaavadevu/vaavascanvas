@@ -76,7 +76,7 @@
       <div class="size-selector">
         <label data-i18n="prints_size_label">Välj storlek</label>
         <div class="size-buttons">
-          <button class="size-btn selected" data-size="30x30" data-price="450">30×30 cm</button>
+          <button class="size-btn" data-size="30x30" data-price="450">30×30 cm</button>
           <button class="size-btn" data-size="40x40" data-price="550">40×40 cm</button>
           <button class="size-btn" data-size="50x50" data-price="650">50×50 cm</button>
         </div>
@@ -98,7 +98,7 @@
       <div class="size-selector">
         <label data-i18n="prints_size_label">Välj storlek</label>
         <div class="size-buttons">
-          <button class="size-btn selected" data-size="30x30" data-price="450">30×30 cm</button>
+          <button class="size-btn" data-size="30x30" data-price="450">30×30 cm</button>
           <button class="size-btn" data-size="40x40" data-price="550">40×40 cm</button>
           <button class="size-btn" data-size="50x50" data-price="650">50×50 cm</button>
         </div>
@@ -120,9 +120,9 @@
       <div class="size-selector">
         <label data-i18n="prints_size_label">Välj storlek</label>
         <div class="size-buttons">
-          <button class="size-btn selected" data-size="A4" data-price="450">A4</button>
-          <button class="size-btn" data-size="A3" data-price="550">A3</button>
-          <button class="size-btn" data-size="A2" data-price="650">A2</button>
+          <button class="size-btn" data-size="A4" data-price="450">21×29,7 cm (A4)</button>
+          <button class="size-btn" data-size="A3" data-price="550">29,7×42 cm (A3)</button>
+          <button class="size-btn" data-size="A2" data-price="650">42×59,4 cm (A2)</button>
         </div>
       </div>
       <div class="price-display">450 kr</div>
@@ -179,23 +179,30 @@
     const btns = card.querySelectorAll('.size-btn');
     const priceDisplay = card.querySelector('.price-display');
     const buyBtn = card.querySelector('.btn-add-to-cart');
+    const sizeLabel = card.querySelector('.size-selector label');
+
+    // Show "från X kr" initially (min price across all sizes)
+    const minPrice = Math.min(...[...btns].map(b => parseInt(b.dataset.price)));
+    priceDisplay.textContent = `${t('prints_price_from')} ${minPrice} kr`;
 
     btns.forEach(btn => {
       btn.addEventListener('click', () => {
         btns.forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
-        const price = btn.dataset.price;
-        priceDisplay.textContent = price + ' kr';
-        buyBtn.textContent = t('prints_add_to_cart');
-        buyBtn.dataset.price = price;
-        buyBtn.dataset.size = btn.dataset.size;
+        priceDisplay.textContent = btn.dataset.price + ' kr';
+        sizeLabel.classList.remove('shake');
       });
     });
 
     // Buy button click handler
     buyBtn.addEventListener('click', () => {
       const selectedSize = card.querySelector('.size-btn.selected');
-      if (!selectedSize) return;
+      if (!selectedSize) {
+        sizeLabel.classList.remove('shake');
+        void sizeLabel.offsetWidth;
+        sizeLabel.classList.add('shake');
+        return;
+      }
 
       const paintingId = card.dataset.print;
       const camelId = paintingId.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
@@ -210,7 +217,6 @@
         price: parseInt(price),
         image: `/images/paintings/${camelId}/desktop/01.jpg`,
       });
-      showToast(t('prints_toast_added'));
     });
   });
 

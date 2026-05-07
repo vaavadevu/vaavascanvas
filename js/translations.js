@@ -598,6 +598,11 @@ const keys = {
   },
 
   // ── Prints page ───────────────────────────────────────────────
+  prints_price_from: {
+    sv: "från",
+    en: "from",
+  },
+
   prints_hero_h1: {
     sv: "Fine art prints av mina målningar, tryckta på arkivkvalitetspapper.",
     en: "Fine art prints of my paintings, printed on archival quality paper.",
