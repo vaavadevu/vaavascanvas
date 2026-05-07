@@ -5,6 +5,9 @@
   "scripts": {
     "test": "node tests/validate.js && node tests/e2e.js"
   },
+  "dependencies": {
+    "stripe": "^17.7.0"
+  },
   "devDependencies": {
     "http-server": "^14.1.1",
     "playwright": "^1.40.0"
