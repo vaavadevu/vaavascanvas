@@ -45,6 +45,17 @@
   font-family: 'Quicksand', sans-serif;
 }
 
+@keyframes badge-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.5); }
+  70%  { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+#cart-badge.pop {
+  animation: badge-pop 0.35s ease;
+}
+
 /* OVERLAY */
 #cart-overlay {
   position: fixed;

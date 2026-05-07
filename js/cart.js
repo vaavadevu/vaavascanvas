@@ -98,6 +98,11 @@ const Cart = (() => {
     if (badge) {
       badge.textContent = n;
       badge.style.display = n > 0 ? 'flex' : 'none';
+      if (n > 0) {
+        badge.classList.remove('pop');
+        void badge.offsetWidth;
+        badge.classList.add('pop');
+      }
     }
   }
 
@@ -130,7 +135,7 @@ const Cart = (() => {
         </div>
         <div class="cart-item-info">
           <div class="cart-item-title">${item.title}</div>
-          <div class="cart-item-meta">${item.type === 'print' ? 'Print · ' + item.size : 'Original'}</div>
+          <div class="cart-item-meta">${item.type === 'print' ? 'Print · ' + (item.sizeLabel || item.size) : 'Original'}</div>
           <div class="cart-item-price">${(item.price * (item.qty || 1)).toLocaleString('sv-SE')} kr</div>
           ${item.frameAvailable ? `
           <label class="cart-frame-toggle">
@@ -245,14 +250,18 @@ const Cart = (() => {
       }
     });
 
+    function isShippingModalOpen() {
+      const m = document.getElementById('shippingModal');
+      return m && m.style.display !== 'none';
+    }
+
     // Close when clicking/tapping outside the drawer
     document.addEventListener('click', (e) => {
       if (justOpened) return;
       const drawer = document.getElementById('cart-drawer');
       if (!drawer?.classList.contains('open')) return;
+      if (isShippingModalOpen()) return;
       const cartBtn = document.querySelector('.cart-icon-btn');
-      const shippingModal = document.getElementById('shippingModal');
-      if (shippingModal?.contains(e.target) || e.target === shippingModal) return;
       if (!drawer.contains(e.target) && !cartBtn?.contains(e.target)) closeCart();
     });
 
@@ -261,6 +270,7 @@ const Cart = (() => {
       if (justOpened) return;
       const drawer = document.getElementById('cart-drawer');
       if (!drawer?.classList.contains('open')) return;
+      if (isShippingModalOpen()) return;
       const cartBtn = document.querySelector('.cart-icon-btn');
       if (!drawer.contains(e.target) && !cartBtn?.contains(e.target)) closeCart();
     }, { passive: true });
