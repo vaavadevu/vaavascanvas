@@ -1,0 +1,29 @@
+<!--
+  CART DRAWER + OVERLAY
+  Lägg till detta precis innan </body> på alla sidor.
+  Eller inkludera via JS om du har en header-container.
+-->
+
+<!-- Overlay -->
+<div id="cart-overlay"></div>
+
+<!-- Cart Drawer -->
+<div id="cart-drawer" role="dialog" aria-label="Varukorg">
+  <div class="cart-header">
+    <h2>Varukorg</h2>
+    <button class="cart-close-btn" onclick="Cart.closeCart()" aria-label="Stäng varukorg">×</button>
+  </div>
+
+  <div id="cart-items">
+    <div id="cart-empty">Din varukorg är tom</div>
+  </div>
+
+  <div id="cart-footer">
+    <div class="cart-total-row">
+      <span class="cart-total-label">Totalt</span>
+      <span id="cart-total">0 kr</span>
+    </div>
+    <p class="cart-note">Frakt beräknas i kassan. Leverans 3–7 arbetsdagar.</p>
+    <button id="checkout-btn" onclick="Cart.checkout()">Till betalning →</button>
+  </div>
+</div>

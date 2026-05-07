@@ -1,5 +1,6 @@
 // page-view.js — page view display, navigation, zoom, and swipe logic
 
+
 // ── DOM refs ──────────────────────────────────────────────────
 
 let pageViewImg, pageViewTitle, pageViewSize, pageViewDesc, pageViewButtons, pageViewPriceSection, pageViewMedium;
@@ -118,8 +119,28 @@ function configurePageViewArrows(imgs) {
   // Arrows are hidden in page view - no configuration needed
 }
 
+function addPaintingToCart(painting, withFrame) {
+  const price = withFrame ? painting.framedPrice : painting.originalPrice;
+  const title = painting.title;
+  Cart.add({
+    id: withFrame ? `${painting.id}-framed` : painting.id,
+    title,
+    type: 'original',
+    price,
+    image: getPaintingImagePaths(painting)[0],
+    paintingBaseId: painting.id,
+    paintingTitle: painting.title,
+    frameAvailable: painting.frameAvailable || false,
+    withFrame: withFrame || false,
+    basePrice: painting.originalPrice,
+    framedPrice: painting.framedPrice || null,
+  });
+}
+
 function renderPageViewButtons(painting) {
   pageViewButtons.innerHTML = "";
+  const printLinkContainer = document.getElementById("pageview-print-link");
+  if (printLinkContainer) printLinkContainer.innerHTML = "";
 
   if (painting.status === STATUS.FOR_SALE && painting.originalPrice) {
     if (painting.frameAvailable) {
@@ -176,23 +197,41 @@ function renderPageViewButtons(painting) {
     }
 
     const buyBtn = document.createElement("button");
-    buyBtn.textContent = t("modal_buy_btn");
-    buyBtn.addEventListener("click", () => {
-      if (painting.frameAvailable && window.innerWidth <= 768) {
-        // On mobile with frame available: show modal
-        showFrameSelectorModal(painting);
-      } else if (painting.frameAvailable) {
-        // On desktop with frame available: proceed with buy
-        const selectedRadio = pageViewButtons.querySelector('input[type="radio"]:checked');
-        const frameChoice = selectedRadio.value;
-        handleBuyClick(painting, frameChoice);
-      } else {
-        // No frame available: proceed directly
-        handleBuyClick(painting, null);
-      }
-    });
+    const inCart = Cart.hasOriginal(painting.id);
+
+    if (inCart) {
+      buyBtn.textContent = t("modal_in_cart_btn");
+      buyBtn.addEventListener("click", () => Cart.openCart());
+    } else {
+      buyBtn.textContent = t("modal_buy_btn");
+      buyBtn.addEventListener("click", () => {
+        if (painting.frameAvailable && window.innerWidth <= 768) {
+          showFrameSelectorModal(painting);
+        } else if (painting.frameAvailable) {
+          const selectedRadio = pageViewButtons.querySelector('input[type="radio"]:checked');
+          const withFrame = selectedRadio?.value === "with";
+          addPaintingToCart(painting, withFrame);
+        } else {
+          addPaintingToCart(painting, false);
+        }
+      });
+    }
     pageViewButtons.appendChild(buyBtn);
   }
+
+  if (PRINT_PAINTINGS.includes(painting.id)) {
+    const minPrice = Math.min(
+      ...PRINT_SIZES_SQUARE.map(s => s.price),
+      ...PRINT_SIZES_STANDARD.map(s => s.price)
+    );
+    const printLink = document.createElement("a");
+    printLink.href = "/pages/prints.html";
+    printLink.className = "btn-view-print";
+    printLink.textContent = `${t("pageview_print_available_btn")} ${minPrice} kr`;
+    const container = document.getElementById("pageview-print-link");
+    if (container) container.appendChild(printLink);
+  }
+
 }
 
 function showFrameSelectorModal(painting) {
@@ -228,9 +267,7 @@ function showFrameSelectorModal(painting) {
       <span class="btn-price">${formatPrice(painting.originalPrice)}</span>
     `;
     withoutBtn.addEventListener("click", () => {
-      hideFrameSelectorModal(() => {
-        handleBuyClick(painting, "without");
-      });
+      hideFrameSelectorModal(() => addPaintingToCart(painting, false));
     }, { once: true });
     btnContainer.appendChild(withoutBtn);
 
@@ -243,9 +280,7 @@ function showFrameSelectorModal(painting) {
       <span class="btn-price">${formatPrice(painting.framedPrice)}</span>
     `;
     withBtn.addEventListener("click", () => {
-      hideFrameSelectorModal(() => {
-        handleBuyClick(painting, "with");
-      });
+      hideFrameSelectorModal(() => addPaintingToCart(painting, true));
     }, { once: true });
     btnContainer.appendChild(withBtn);
 
@@ -685,7 +720,7 @@ function setupBackButtonPositioning() {
 // ── Language change handler ──────────────────────────────────
 
 function setupLanguageChangeListener() {
-  window.addEventListener("languagechange", () => {
+  const rerender = () => {
     if (State.currentPaintingIndex !== undefined && paintings[State.currentPaintingIndex]) {
       const painting = paintings[State.currentPaintingIndex];
       updatePageViewDescription(painting);
@@ -694,7 +729,9 @@ function setupLanguageChangeListener() {
       renderPageViewPrice(painting);
       renderPageViewButtons(painting);
     }
-  });
+  };
+  window.addEventListener("languagechange", rerender);
+  document.addEventListener("cartupdate", rerender);
 }
 
 // ── Listeners ─────────────────────────────────────────────────

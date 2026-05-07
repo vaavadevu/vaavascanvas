@@ -14,6 +14,7 @@
       <ul class="link-list">
         <li><a href="/#top" data-i18n="nav_home">Startsida</a></li>
         <li><a href="/pages/pictures.html" data-i18n="nav_gallery">Mina verk</a></li>
+        <li><a href="/pages/prints.html" data-i18n="nav_prints">Prints</a></li>
         <li><a href="/pages/blog.html" data-i18n="nav_blog">Blogg</a></li>
         <li><a href="/pages/commissions.html" data-i18n="nav_commissions">Beställningar</a></li>
         <li><a href="#footer" data-i18n="nav_contact">Kontakta mig</a></li>
@@ -27,13 +28,47 @@
         </button>
       </div>
     </nav>
-    <div class="lang-switcher lang-switcher-desktop">
-      <button class="lang-btn" data-lang="sv" onclick="setLanguage('sv')" title="Svenska">
-        <span class="fi fi-se"></span>
+
+    <!-- CART + LANGUAGE (desktop right side) -->
+    <div class="header-right">
+      <button class="cart-icon-btn" onclick="document.getElementById('cart-drawer')?.classList.contains('open') ? Cart.closeCart() : Cart.openCart()" aria-label="Varukorg">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007Z" />
+        </svg>
+        <span id="cart-badge">0</span>
       </button>
-      <button class="lang-btn" data-lang="en" onclick="setLanguage('en')" title="English">
-        <span class="fi fi-gb"></span>
-      </button>
+      <div class="lang-switcher lang-switcher-desktop">
+        <button class="lang-btn" data-lang="sv" onclick="setLanguage('sv')" title="Svenska">
+          <span class="fi fi-se"></span>
+        </button>
+        <button class="lang-btn" data-lang="en" onclick="setLanguage('en')" title="English">
+          <span class="fi fi-gb"></span>
+        </button>
+      </div>
     </div>
+
   </header>
+</div>
+
+<!-- CART DRAWER (lägg i slutet av body) -->
+<div id="cart-overlay"></div>
+<div id="cart-drawer" role="dialog" aria-label="Varukorg">
+  <div class="cart-header">
+    <h2 data-i18n="cart_heading">Varukorg</h2>
+    <button class="cart-close-btn" onclick="Cart.closeCart()" aria-label="Stäng">×</button>
+  </div>
+  <div id="cart-items">
+    <div id="cart-empty" data-i18n="cart_empty">Din varukorg är tom</div>
+  </div>
+  <div id="cart-footer">
+    <div class="cart-total-row">
+      <span class="cart-total-label" data-i18n="cart_total_label">Totalt</span>
+      <span id="cart-total">0 kr</span>
+    </div>
+    <label class="cart-terms-label">
+      <input type="checkbox" id="cart-terms-checkbox" />
+      <span><span data-i18n="cart_terms_text">Jag har läst och godkänner</span> <a href="#" id="shippingBtn" data-i18n="cart_terms_link">frakt &amp; leveransvillkor</a></span>
+    </label>
+    <button id="checkout-btn" onclick="Cart.checkout()" data-i18n="cart_checkout_btn">Till betalning →</button>
+  </div>
 </div>

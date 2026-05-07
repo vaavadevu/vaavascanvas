@@ -526,6 +526,60 @@ test('Paintings with frameAvailable have a valid framedPrice', () => {
 });
 
 // ─────────────────────────────────────────────────────────────
+// SUITE 7: Prints Page Validation
+// ─────────────────────────────────────────────────────────────
+
+console.log(colors.blue + '\n[7] PRINTS PAGE VALIDATION' + colors.reset);
+
+test('data-print values in prints.html reference valid painting IDs', () => {
+  const printsPath = path.join(__dirname, '../pages/prints.html');
+  assert(fs.existsSync(printsPath), 'prints.html not found');
+
+  const content = fs.readFileSync(printsPath, 'utf8');
+  const dataPrintRegex = /data-print="([^"]+)"/g;
+  const paintingIds = paintings.map(p => p.id);
+  const missing = [];
+
+  let match;
+  while ((match = dataPrintRegex.exec(content)) !== null) {
+    const kebabId = match[1];
+    // Convert kebab-case to camelCase — same logic used in prints.html cart add
+    const camelId = kebabId.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+    if (!paintingIds.includes(camelId)) {
+      missing.push(`"${kebabId}" (resolved to "${camelId}")`);
+    }
+  }
+
+  assert(missing.length === 0,
+    `data-print values have no matching painting ID:\n  ${missing.join('\n  ')}`);
+});
+
+test('Required cart translation keys exist', () => {
+  const requiredKeys = [
+    'cart_heading', 'cart_empty', 'cart_total_label', 'cart_terms_text',
+    'cart_terms_link', 'cart_checkout_btn', 'cart_processing', 'cart_error',
+    'cart_order_success', 'cart_toast_added', 'cart_toast_already',
+    'cart_frame_included', 'cart_frame_add',
+  ];
+  requiredKeys.forEach(key => {
+    assert(keys[key], `Required cart translation key missing: "${key}"`);
+  });
+});
+
+test('Required prints translation keys exist', () => {
+  const requiredKeys = [
+    'prints_price_from', 'prints_hero_h1', 'prints_hero_p',
+    'prints_medium_square', 'prints_medium_portrait', 'prints_size_label',
+    'prints_add_to_cart', 'prints_info_heading', 'prints_info_p',
+    'prints_request_heading', 'prints_request_p', 'prints_request_btn',
+    'prints_success_banner', 'prints_toast_added',
+  ];
+  requiredKeys.forEach(key => {
+    assert(keys[key], `Required prints translation key missing: "${key}"`);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────
 // Results Summary
 // ─────────────────────────────────────────────────────────────
 

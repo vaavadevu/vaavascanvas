@@ -9,14 +9,23 @@ async function buildComponents() {
       headerContainer.innerHTML = await res.text();
       headerContainer.classList.add("visible");
 
+      // Move cart drawer and overlay out of header-container so they
+      // aren't affected by the header's translateY transform
+      const cartDrawer = document.getElementById('cart-drawer');
+      const cartOverlay = document.getElementById('cart-overlay');
+      if (cartDrawer) document.body.appendChild(cartDrawer);
+      if (cartOverlay) document.body.appendChild(cartOverlay);
+
       const isIndex = window.location.pathname.includes("index") || window.location.pathname === "/";
       const isPictures = window.location.pathname.includes("pictures");
       const isCommissions = window.location.pathname.includes("commissions");
       const isBlog = window.location.pathname.includes("blog");
+      const isPrints = window.location.pathname.includes("prints");
       if (isIndex) document.querySelector('a[href="/#top"]')?.classList.add("active");
       if (isPictures) document.querySelector('a[href="/pages/pictures.html"]')?.classList.add("active");
       if (isCommissions) document.querySelector('a[href="/pages/commissions.html"]')?.classList.add("active");
       if (isBlog) document.querySelector('a[href="/pages/blog.html"]')?.classList.add("active");
+      if (isPrints) document.querySelector('a[href="/pages/prints.html"]')?.classList.add("active");
 
 
       setupMobileMenu();
@@ -63,6 +72,7 @@ function setupMobileMenu() {
     navMenu.classList.toggle("active", open);
     menuBtn.classList.toggle("open", open);
     if (open) {
+      if (typeof Cart !== "undefined") Cart.closeCart();
       document.body.style.overflow = "hidden";
       document.body.style.position = "fixed";
       document.body.style.width = "100%";
@@ -142,18 +152,21 @@ function setupScrollWatcher() {
     const footerInView = footer.getBoundingClientRect().top <= window.innerHeight / 2;
     const isViewPage = window.location.href.includes("/pages/view.html");
     const isPictures = window.location.href.includes("pictures.html");
-    const isCommissions = window.location.href.includes("commissions.html"); // ← ny rad
+    const isCommissions = window.location.href.includes("commissions.html");
+    const isPrints = window.location.href.includes("prints.html");
 
     // Determine which nav link to highlight
     let currentQuery;
     if (footerInView) {
-      currentQuery = "#footer"; // Highlight "kontakta mig" when footer is in view
+      currentQuery = "#footer";
     } else if (isViewPage) {
-      currentQuery = null; // Don't highlight anything on view page when footer not visible
+      currentQuery = null;
     } else if (isPictures) {
       currentQuery = "/pages/pictures.html";
-    }  else if (isCommissions) {                              // ← nytt block
-  currentQuery = "/pages/commissions.html";             // ← nytt block
+    } else if (isCommissions) {
+      currentQuery = "/pages/commissions.html";
+    } else if (isPrints) {
+      currentQuery = "/pages/prints.html";
     } else {
       currentQuery = "/#top";
     }
@@ -188,10 +201,10 @@ function setupModals() {
     // Shipping modal
     if (e.target.closest("#shippingBtn")) {
       e.preventDefault();
-      document.getElementById("shippingModal").style.display = "flex";
+      document.getElementById("shippingModal")?.style.setProperty("display", "flex");
     }
     if (e.target.closest("#shippingClose")) {
-      document.getElementById("shippingModal").style.display = "none";
+      document.getElementById("shippingModal")?.style.setProperty("display", "none");
     }
     if (e.target.id === "shippingModal") {
       e.target.style.display = "none";

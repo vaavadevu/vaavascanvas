@@ -159,8 +159,16 @@ const keys = {
     en: "Sold",
   },
   modal_buy_btn: {
-    sv: "✉ Skicka köpförfrågan",
-    en: "✉ Send purchase inquiry",
+    sv: "Lägg i varukorg",
+    en: "Add to cart",
+  },
+  modal_in_cart_btn: {
+    sv: "Gå till varukorg",
+    en: "Go to cart",
+  },
+  pageview_print_available_btn: {
+    sv: "Finns som print från",
+    en: "Available as a print from",
   },
   status_sold: {
     sv: "Den här tavlan är såld.",
@@ -313,14 +321,6 @@ const keys = {
   shipping_packaging_p: {
     sv: "Varje målning packas omsorgsfullt med skyddsmaterial och stabil kartong för att säkerställa att den anländer i perfekt skick.",
     en: "Each painting is carefully packed with protective material and sturdy cardboard to ensure it arrives in perfect condition.",
-  },
-  shipping_payment_h: {
-    sv: "Betalning",
-    en: "Payment",
-  },
-  shipping_payment_p: {
-    sv: "Betalning sker via Swish efter bekräftad order. Betalningsinformation skickas i samband med orderbekräftelsen.",
-    en: "Payment is made via Swish after confirmed order. Payment details are sent with the order confirmation.",
   },
   shipping_returns_h: {
     sv: "Retur & reklamation",
@@ -537,6 +537,124 @@ const keys = {
   sv: "Två glada lamm som hoppar och leker på en blommig äng en fin kväll, fyllda av bus och vårkänslor.",
   en: "Two happy lambs jumping and playing in a flowery meadow on a nice evening, full of mischief and spring feelings.",
 },
+
+  nav_prints: {
+    sv: "Prints",
+    en: "Prints",
+  },
+
+  // ── Cart ──────────────────────────────────────────────────────
+  cart_heading: {
+    sv: "Varukorg",
+    en: "Cart",
+  },
+  cart_empty: {
+    sv: "Din varukorg är tom",
+    en: "Your cart is empty",
+  },
+  cart_total_label: {
+    sv: "Totalt",
+    en: "Total",
+  },
+  cart_terms_text: {
+    sv: "Jag har läst och godkänner",
+    en: "I have read and accept the",
+  },
+  cart_terms_link: {
+    sv: "frakt & leveransvillkor",
+    en: "shipping & delivery terms",
+  },
+  cart_checkout_btn: {
+    sv: "Till betalning →",
+    en: "Proceed to payment →",
+  },
+  cart_processing: {
+    sv: "Bearbetar...",
+    en: "Processing...",
+  },
+  cart_error: {
+    sv: "Något gick fel. Försök igen.",
+    en: "Something went wrong. Please try again.",
+  },
+  cart_order_success: {
+    sv: "✓ Tack för din beställning! Bekräftelse skickas till din e-post.",
+    en: "✓ Thank you for your order! A confirmation will be sent to your email.",
+  },
+  cart_toast_added: {
+    sv: "lagd i varukorgen",
+    en: "added to cart",
+  },
+  cart_toast_already: {
+    sv: "finns redan i varukorgen",
+    en: "is already in your cart",
+  },
+  cart_frame_included: {
+    sv: "Ram ingår",
+    en: "Frame included",
+  },
+  cart_frame_add: {
+    sv: "Lägg till ram",
+    en: "Add frame",
+  },
+
+  // ── Prints page ───────────────────────────────────────────────
+  prints_price_from: {
+    sv: "från",
+    en: "from",
+  },
+
+  prints_hero_h1: {
+    sv: "Fine art prints av mina målningar, tryckta på arkivkvalitetspapper.",
+    en: "Fine art prints of my paintings, printed on archival quality paper.",
+  },
+  prints_hero_p: {
+    sv: "Varje print levereras direkt till din dörr.",
+    en: "Every print is delivered directly to your door.",
+  },
+  prints_medium_square: {
+    sv: "Akryl · Kvadratisk",
+    en: "Acrylic · Square",
+  },
+  prints_medium_portrait: {
+    sv: "Akryl · Stående",
+    en: "Acrylic · Portrait",
+  },
+  prints_size_label: {
+    sv: "Välj storlek",
+    en: "Choose size",
+  },
+  prints_add_to_cart: {
+    sv: "Lägg i varukorg",
+    en: "Add to cart",
+  },
+  prints_info_heading: {
+    sv: "Om prints",
+    en: "About prints",
+  },
+  prints_info_p: {
+    sv: "Alla prints trycks på beställning på arkivkvalitetspapper via Gelato och levereras inom 3–7 arbetsdagar. Printerna är osignerade, men varje tavla innehåller en signaturtext. Vill du ha en personligt signerad print? Skicka en förfrågan via formuläret nedan!",
+    en: "All prints are printed on demand on archival quality paper via Gelato and delivered within 3–7 business days. Prints are unsigned, but each painting includes a signature detail. Want a personally signed print? Send a request via the form below!",
+  },
+  prints_request_heading: {
+    sv: "Hittar du inte det du letar efter?",
+    en: "Can't find what you're looking for?",
+  },
+  prints_request_p: {
+    sv: "Har du sett en tavla på sidan som du gärna vill ha som print, men som inte finns tillgänglig just nu? Skicka gärna in en förfrågan så hör jag av mig så snart jag kan!",
+    en: "Have you seen a painting on the site that you'd love as a print, but it isn't available right now? Feel free to send a request and I'll get back to you as soon as I can!",
+  },
+  prints_request_btn: {
+    sv: "Skicka en förfrågan",
+    en: "Send a request",
+  },
+  prints_success_banner: {
+    sv: "✓ Tack för din beställning! Du får ett bekräftelsemail inom kort.",
+    en: "✓ Thank you for your order! You'll receive a confirmation email shortly.",
+  },
+  prints_toast_added: {
+    sv: "Print tillagd i varukorgen!",
+    en: "Print added to cart!",
+  },
 
   // ── Blog ───────────────────────────────────────────────────
   blog_title: {
