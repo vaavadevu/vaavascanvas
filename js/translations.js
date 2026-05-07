@@ -632,8 +632,8 @@ const keys = {
     en: "About prints",
   },
   prints_info_p: {
-    sv: "Alla prints trycks på beställning på arkivkvalitetspapper via Gelato och levereras inom 3–7 arbetsdagar. Varje print är signerad av mig. Har du frågor? Hör gärna av dig!",
-    en: "All prints are printed on demand on archival quality paper via Gelato and delivered within 3–7 business days. Every print is signed by me. Any questions? Feel free to get in touch!",
+    sv: "Alla prints trycks på beställning på arkivkvalitetspapper via Gelato och levereras inom 3–7 arbetsdagar. Har du frågor? Hör gärna av dig!",
+    en: "All prints are printed on demand on archival quality paper via Gelato and delivered within 3–7 business days. Any questions? Feel free to get in touch!",
   },
   prints_request_heading: {
     sv: "Hittar du inte det du letar efter?",
