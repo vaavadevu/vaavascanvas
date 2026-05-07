@@ -66,6 +66,14 @@ function createGalleryItem(painting, index) {
   item.appendChild(img);
   if (painting.status === STATUS.SOLD) addSoldBadge(item);
 
+  const infoBar = document.createElement("div");
+  infoBar.className = "gallery-item-info";
+
+  const sizeLabel = document.createElement("span");
+  sizeLabel.className = "gallery-item-size";
+  sizeLabel.textContent = formatDimensions(painting);
+  infoBar.appendChild(sizeLabel);
+
   if (painting.status === STATUS.FOR_SALE) {
     const priceLabel = document.createElement("span");
     priceLabel.className = "gallery-item-price";
@@ -76,13 +84,10 @@ function createGalleryItem(painting, index) {
     } else {
       priceLabel.textContent = painting.originalPrice.toLocaleString('sv-SE') + ' kr';
     }
-    item.appendChild(priceLabel);
+    infoBar.appendChild(priceLabel);
   }
 
-  const sizeLabel = document.createElement("span");
-  sizeLabel.className = "gallery-item-size";
-  sizeLabel.textContent = formatDimensions(painting);
-  item.appendChild(sizeLabel);
+  item.appendChild(infoBar);
 
   return item;
 }

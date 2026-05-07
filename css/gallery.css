@@ -85,44 +85,48 @@
   transform: scale(1.1);
 }
 
-.gallery-item-size {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  background: rgba(44, 36, 22, 0.72);
-  color: #fff;
-  font-size: 0.75rem;
-  font-family: 'Quicksand', sans-serif;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  padding: 3px 8px;
-  border-radius: 20px;
-  pointer-events: none;
-  backdrop-filter: blur(2px);
-}
-
-.gallery-item-price {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  background: rgba(44, 36, 22, 0.72);
-  color: #fff;
-  font-size: 0.75rem;
-  font-family: 'Quicksand', sans-serif;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  padding: 3px 8px;
-  border-radius: 20px;
-  pointer-events: none;
-  backdrop-filter: blur(2px);
-}
-
 .gallery-item--circle {
   aspect-ratio: 1 / 1;
 }
 
 .gallery-item--circle img {
   border-radius: 50%;
+}
+
+.gallery-item-info {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  pointer-events: none;
+  gap: 6px;
+}
+
+.gallery-item-size,
+.gallery-item-price {
+  background: rgba(44, 36, 22, 0.72);
+  color: #fff;
+  font-size: 0.75rem;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  border-radius: 20px;
+  backdrop-filter: blur(2px);
+  white-space: nowrap;
+  min-width: 0;
+}
+
+@media (max-width: 960px) {
+  .gallery-item-size,
+  .gallery-item-price {
+    font-size: 0.62rem;
+    padding: 2px 6px;
+    letter-spacing: 0.02em;
+  }
 }
 
 .sold-badge {
