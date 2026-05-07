@@ -144,7 +144,7 @@
 /* ─── Sticky filter bar (desktop) ─── */
 #gallery-filter-bar {
   display: none; /* visas bara på desktop via media query */
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 10px;
   justify-content: center;
   padding: 10px 20px;
@@ -154,13 +154,13 @@
   border-bottom: 1px solid var(--accent-green);
 }
 
-@media (min-width: 769px) {
+@media (min-width: 961px) {
   #gallery-filter-bar {
     display: flex;
     position: sticky;
     top: 0;
     z-index: 100;
-    gap: 70px;
+    gap: clamp(20px, 4.5vw, 70px);
   }
 }
 

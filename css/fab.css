@@ -123,7 +123,7 @@
 }
 
 /* Dölj FAB på desktop – filterbaren används istället */
-@media (min-width: 769px) {
+@media (min-width: 961px) {
   #filter-fab {
     display: none !important;
   }

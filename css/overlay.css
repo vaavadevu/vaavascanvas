@@ -17,7 +17,7 @@
 }
 
 /* Desktop zoom cursor states - only on image hover */
-@media (min-width: 769px) {
+@media (min-width: 961px) {
   #fullscreenImg {
     cursor: zoom-in;
   }
@@ -149,7 +149,7 @@
 }
 
 /* Mobile adjustments for frame selector modal */
-@media (max-width: 768px) {
+@media (max-width: 960px) {
   .frame-selector {
     display: none;
   }
