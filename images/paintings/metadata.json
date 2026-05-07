@@ -1,8 +1,6 @@
 {
   "aldrigEnsam": 0.7634,
-  "bonnie": 0.7094,
-  "brollopspresent": 1.4371,
-  "dagensFynd": 1.0152,
+"dagensFynd": 1.0152,
   "efterIde": 0.9968,
   "herrOchFruAndersson": 1.3962,
   "koslapp": 1.2313,
@@ -25,6 +23,5 @@
   "varkansla": 1.2619,
   "varlek": 0.9923,
   "vattenfall": 0.7558,
-  "vinterlek": 0.6972,
-  "womanInTheSea": 0.7259
+  "vinterlek": 0.6972
 }

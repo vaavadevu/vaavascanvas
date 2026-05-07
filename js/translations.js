@@ -94,11 +94,6 @@ const keys = {
     sv: "Sålda",
     en: "Sold",
   },
-  filter_personal: {
-    sv: "Personliga",
-    en: "Personal",
-  },
-
   // ── Size filters ───────────────────────────────────────────
   filter_status_label: {
     sv: "Status",
@@ -420,9 +415,9 @@ const keys = {
     sv: "Två gräsänder sedda uppifrån som visar ett stilla ögonblick av samhörighet på vattnet.",
     en: "Two mallards seen from above showing a quiet moment of togetherness on the water.",
   },
-  desc_womanInTheSea: {
-    sv: "Ett självporträtt i havet målat ur ett hopp om att hitta sig själv igen.",
-    en: "A self-portrait in the sea painted from hope of finding myself again.",
+desc_vinterlek: {
+    sv: "Hundarna Shiro och Otis som leker med varandra i snön.",
+    en: "Dogs Shiro and Otis playing together in the snow.",
   },
   desc_vattenfall: {
     sv: "Där vattnet möter klippan och tiden står stilla.",
@@ -488,19 +483,7 @@ const keys = {
     sv: "Två rävar som myser tryggt inne i en gammal trädöppning, en plats där de kan vila och känna sig säkra.",
     en: "Two foxes snuggled safely inside an old tree hollow, a place where they can rest and feel secure.",
   },
-  desc_brollopspresent: {
-    sv: "En handmålad present till Herr och Fru Elfqvist på deras stora dag.",
-    en: "A hand-painted gift for Mr. and Mrs. Elfqvist on their big day.",
-  },
-  desc_bonnie: {
-    sv: "En illustration målad med kärlek som var en present på ett litet livs första födelsedag.",
-    en: "An illustration painted with love as a gift on a little life's first birthday.",
-  },
-  desc_vinterlek: {
-    sv: "Hundarna Shiro och Otis som leker med varandra i snön.",
-    en: "Dogs Shiro and Otis playing together in the snow.",
-  },
-  desc_sommarvila: {
+desc_sommarvila: {
     sv: "En isbjörnsmamma och hennes ungar vilar mjukt i blomsterhaven vid Hudson Bay som visar en stund av absolut frid.",
     en: "A mother polar bear and her cubs resting gently in a flower garden by Hudson Bay showing a moment of absolute peace.",
   },

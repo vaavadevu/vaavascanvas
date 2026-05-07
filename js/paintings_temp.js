@@ -125,17 +125,6 @@ const paintings = [
     medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {
-    id: "womanInTheSea",
-    title: "Woman of the Sea",
-    descKey: "desc_womanInTheSea",
-    width: 60,
-    height: 90,
-    shape: SHAPE.RECTANGULAR,
-     "originalPrice: $([int]$args[0].Groups[1].Value + 100)," ,
-    status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
-  },
-  {
     id: "vattenfall",
     title: "Vattenfall",
     descKey: "desc_vattenfall",

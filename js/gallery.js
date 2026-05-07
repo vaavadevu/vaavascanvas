@@ -19,8 +19,7 @@ function getPaintingImagePaths(painting) {
 function sortPaintings() {
   const statusOrder = {
     [STATUS.FOR_SALE]: 0,
-    [STATUS.PERSONAL]: 1,
-    [STATUS.SOLD]: 2
+    [STATUS.SOLD]: 1,
   };
   paintings.sort((a, b) => {
     const statusDiff = statusOrder[a.status] - statusOrder[b.status];
@@ -78,9 +77,7 @@ function createGalleryItem(painting, index) {
 // ── Buy buttons ───────────────────────────────────────────────
 
 function createBuyActions(painting, imageUrl) {
-  if (painting.status === STATUS.PERSONAL) return null;
-
-  const wrapper = document.createElement('div');
+const wrapper = document.createElement('div');
   wrapper.className = 'gallery-item-actions';
 
   // Original buy button
@@ -180,7 +177,6 @@ const STATUS_LABEL_KEYS = {
   all:      "filter_status_label",
   for_sale: "filter_for_sale",
   sold:     "filter_sold",
-  personal: "filter_personal",
 };
 
 const SIZE_LABEL_KEYS = {
