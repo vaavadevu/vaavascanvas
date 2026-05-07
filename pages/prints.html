@@ -78,7 +78,6 @@
         <div class="size-buttons">
           <button class="size-btn" data-size="30x30" data-price="450">30×30 cm</button>
           <button class="size-btn" data-size="40x40" data-price="550">40×40 cm</button>
-          <button class="size-btn" data-size="50x50" data-price="650">50×50 cm</button>
         </div>
       </div>
       <div class="price-display">450 kr</div>
@@ -100,7 +99,6 @@
         <div class="size-buttons">
           <button class="size-btn" data-size="30x30" data-price="450">30×30 cm</button>
           <button class="size-btn" data-size="40x40" data-price="550">40×40 cm</button>
-          <button class="size-btn" data-size="50x50" data-price="650">50×50 cm</button>
         </div>
       </div>
       <div class="price-display">450 kr</div>
@@ -213,7 +211,7 @@
 
       Cart.add({
         id: `${paintingId}-print-${size}`,
-        title: `${card.querySelector('.print-title').textContent} (Print ${size})`,
+        title: card.querySelector('.print-title').textContent,
         type: 'print',
         size: size,
         price: parseInt(price),
