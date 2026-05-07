@@ -82,7 +82,10 @@ async function init() {
   // Calculate size scale factors based on physical dimensions
   calculateSizeScales();
 
-  sortPaintings();
+  for (let i = paintings.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [paintings[i], paintings[j]] = [paintings[j], paintings[i]];
+  }
   buildGallery();
 
   // Legacy: redirect old ?painting= URLs to view.html
