@@ -100,9 +100,13 @@ const keys = {
   },
 
   // ── Size filters ───────────────────────────────────────────
+  filter_status_label: {
+    sv: "Status",
+    en: "Status",
+  },
   filter_size_label: {
-    sv: "Storlek ▼",
-    en: "Size ▼",
+    sv: "Storlek",
+    en: "Size",
   },
   filter_size_all: {
     sv: "Alla storlekar",

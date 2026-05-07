@@ -93,15 +93,32 @@
   <div id="header-container"></div>
 
   <div id="gallery-filter-bar">
-    <button class="filter-btn active" data-filter="all" data-i18n="filter_all">Alla</button>
-    <button class="filter-btn" data-filter="for_sale" data-i18n="filter_for_sale">Till salu</button>
-    <button class="filter-btn" data-filter="sold" data-i18n="filter_sold">Sålda</button>
-    <button class="filter-btn" data-filter="personal" data-i18n="filter_personal">Personliga</button>
-    <div class="filter-divider"></div>
-    <button class="filter-btn size-filter active" data-filter="size_all" data-i18n="filter_size_all">Alla storlekar</button>
-    <button class="filter-btn size-filter" data-filter="size_small" data-i18n="filter_size_small">Små</button>
-    <button class="filter-btn size-filter" data-filter="size_medium" data-i18n="filter_size_medium">Medel</button>
-    <button class="filter-btn size-filter" data-filter="size_large" data-i18n="filter_size_large">Stora</button>
+    <div class="filter-dropdown" id="filter-status-dd">
+      <button class="filter-dropdown-trigger" onclick="toggleFilterDropdown('filter-status-dd')" aria-expanded="false">
+        <span class="filter-dropdown-label" id="filter-status-label">Status</span>
+        <svg class="filter-chevron" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg"><path d="M0 0l5 6 5-6z"/></svg>
+      </button>
+      <button class="filter-reset-btn" onclick="setActiveStatusFilter('all')" aria-label="Nollställ filter">×</button>
+      <div class="filter-dropdown-panel">
+        <button class="filter-option active" data-filter="all" data-i18n="filter_all" onclick="setActiveStatusFilter('all')">Alla</button>
+        <button class="filter-option" data-filter="for_sale" data-i18n="filter_for_sale" onclick="setActiveStatusFilter('for_sale')">Till salu</button>
+        <button class="filter-option" data-filter="sold" data-i18n="filter_sold" onclick="setActiveStatusFilter('sold')">Sålda</button>
+        <button class="filter-option" data-filter="personal" data-i18n="filter_personal" onclick="setActiveStatusFilter('personal')">Personliga</button>
+      </div>
+    </div>
+    <div class="filter-dropdown" id="filter-size-dd">
+      <button class="filter-dropdown-trigger" onclick="toggleFilterDropdown('filter-size-dd')" aria-expanded="false">
+        <span class="filter-dropdown-label" id="filter-size-label">Storlek</span>
+        <svg class="filter-chevron" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg"><path d="M0 0l5 6 5-6z"/></svg>
+      </button>
+      <button class="filter-reset-btn" onclick="setActiveSizeFilter('size_all')" aria-label="Nollställ filter">×</button>
+      <div class="filter-dropdown-panel">
+        <button class="filter-option active" data-filter="size_all" data-i18n="filter_size_all" onclick="setActiveSizeFilter('size_all')">Alla storlekar</button>
+        <button class="filter-option" data-filter="size_small" data-i18n="filter_size_small" onclick="setActiveSizeFilter('size_small')">Små</button>
+        <button class="filter-option" data-filter="size_medium" data-i18n="filter_size_medium" onclick="setActiveSizeFilter('size_medium')">Medel</button>
+        <button class="filter-option" data-filter="size_large" data-i18n="filter_size_large" onclick="setActiveSizeFilter('size_large')">Stora</button>
+      </div>
+    </div>
   </div>
 
   <main>

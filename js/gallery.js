@@ -176,8 +176,43 @@ function addSoldBadge(container) {
 let activeStatusFilter = "all";
 let activeSizeFilter = "size_all";
 
+const STATUS_LABEL_KEYS = {
+  all:      "filter_status_label",
+  for_sale: "filter_for_sale",
+  sold:     "filter_sold",
+  personal: "filter_personal",
+};
+
+const SIZE_LABEL_KEYS = {
+  size_all:    "filter_size_label",
+  size_small:  "filter_size_small",
+  size_medium: "filter_size_medium",
+  size_large:  "filter_size_large",
+};
+
+function updateFilterLabels() {
+  const statusLabel = document.getElementById("filter-status-label");
+  const sizeLabel   = document.getElementById("filter-size-label");
+  if (statusLabel) statusLabel.textContent = t(STATUS_LABEL_KEYS[activeStatusFilter]);
+  if (sizeLabel)   sizeLabel.textContent   = t(SIZE_LABEL_KEYS[activeSizeFilter]);
+}
+
+function toggleFilterDropdown(id) {
+  const dd = document.getElementById(id);
+  if (!dd) return;
+  const isOpen = dd.classList.contains("open");
+  document.querySelectorAll(".filter-dropdown.open").forEach(el => {
+    el.classList.remove("open");
+    el.querySelector(".filter-dropdown-trigger")?.setAttribute("aria-expanded", "false");
+  });
+  if (!isOpen) {
+    dd.classList.add("open");
+    dd.querySelector(".filter-dropdown-trigger")?.setAttribute("aria-expanded", "true");
+  }
+}
+
 function attachFilterListeners() {
-  document.querySelectorAll(".filter-btn, .fab-filter-btn").forEach(btn => {
+  document.querySelectorAll(".fab-filter-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       const filter = btn.dataset.filter;
       if (filter.startsWith("size_")) {
@@ -189,24 +224,65 @@ function attachFilterListeners() {
     });
   });
 
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".filter-dropdown")) {
+      document.querySelectorAll(".filter-dropdown.open").forEach(el => {
+        el.classList.remove("open");
+        el.querySelector(".filter-dropdown-trigger")?.setAttribute("aria-expanded", "false");
+      });
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      document.querySelectorAll(".filter-dropdown.open").forEach(el => {
+        el.classList.remove("open");
+        el.querySelector(".filter-dropdown-trigger")?.setAttribute("aria-expanded", "false");
+      });
+    }
+  });
+
+  window.addEventListener("languagechange", updateFilterLabels);
+  updateFilterLabels();
+
   setupFab();
   setupFilterBar();
 }
 
 function setActiveStatusFilter(filter) {
   activeStatusFilter = filter;
-  document.querySelectorAll(".filter-btn:not(.size-filter), .fab-filter-btn:not(.size-filter)").forEach(b => {
+  document.querySelectorAll("#filter-status-dd .filter-option").forEach(b => {
     b.classList.toggle("active", b.dataset.filter === filter);
   });
+  document.querySelectorAll(".fab-filter-btn:not(.size-filter)").forEach(b => {
+    b.classList.toggle("active", b.dataset.filter === filter);
+  });
+  const dd = document.getElementById("filter-status-dd");
+  if (dd) {
+    dd.classList.toggle("has-filter", filter !== "all");
+    dd.classList.remove("open");
+    dd.querySelector(".filter-dropdown-trigger")?.setAttribute("aria-expanded", "false");
+  }
+  updateFilterLabels();
   filterGallery();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function setActiveSizeFilter(filter) {
   activeSizeFilter = filter;
-  document.querySelectorAll(".size-filter").forEach(b => {
+  document.querySelectorAll("#filter-size-dd .filter-option").forEach(b => {
     b.classList.toggle("active", b.dataset.filter === filter);
   });
+  document.querySelectorAll(".fab-filter-btn.size-filter").forEach(b => {
+    b.classList.toggle("active", b.dataset.filter === filter);
+  });
+  const dd = document.getElementById("filter-size-dd");
+  if (dd) {
+    dd.classList.toggle("has-filter", filter !== "size_all");
+    dd.classList.remove("open");
+    dd.querySelector(".filter-dropdown-trigger")?.setAttribute("aria-expanded", "false");
+  }
+  updateFilterLabels();
   filterGallery();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
