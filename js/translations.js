@@ -11,8 +11,8 @@ const keys = {
     en: "Home",
   },
   nav_gallery: {
-    sv: "Mina verk",
-    en: "My works",
+    sv: "Original",
+    en: "Originals",
   },
   nav_contact: {
     sv: "Kontakta mig",
@@ -94,15 +94,14 @@ const keys = {
     sv: "Sålda",
     en: "Sold",
   },
-  filter_personal: {
-    sv: "Personliga",
-    en: "Personal",
-  },
-
   // ── Size filters ───────────────────────────────────────────
+  filter_status_label: {
+    sv: "Status",
+    en: "Status",
+  },
   filter_size_label: {
-    sv: "Storlek ▼",
-    en: "Size ▼",
+    sv: "Storlek",
+    en: "Size",
   },
   filter_size_all: {
     sv: "Alla storlekar",
@@ -303,16 +302,16 @@ const keys = {
     en: "Shipping within Sweden",
   },
   shipping_sweden_p: {
-    sv: "59 kr för frakt på alla beställningar under 999 kr. Fri frakt över 999 kr. Leveranstid 1–3 arbetsdagar via PostNord.",
-    en: "59 SEK shipping on all orders under 999 SEK. Free shipping over 999 SEK. Delivery time 1–3 business days via PostNord.",
+    sv: "59 kr för frakt på alla beställningar under 599 kr. Fri frakt över 599 kr. Leveranstid 1–3 arbetsdagar via PostNord.",
+    en: "59 SEK shipping on all orders under 599 SEK. Free shipping over 599 SEK. Delivery time 1–3 business days via PostNord.",
   },
   shipping_europe_h: {
-    sv: "Frakt inom Europa",
-    en: "Shipping within Europe",
+    sv: "Internationell frakt",
+    en: "International shipping",
   },
   shipping_europe_p: {
-    sv: "Leveranstid 3–7 arbetsdagar. Fraktkostnad varierar per destination och tavlans storlek. Kontakta mig för en offert innan köp.",
-    en: "Delivery time 3–7 business days. Shipping cost varies by destination and painting size. Contact me for a quote before purchasing.",
+    sv: "Prints kan beställas och levereras internationellt. Originalmålningar kan endast fraktas inom Sverige. Leveranstid ca 5–14 arbetsdagar.",
+    en: "Prints can be ordered and delivered internationally. Original paintings can only be shipped within Sweden. Delivery time approx. 5–14 business days.",
   },
   shipping_packaging_h: {
     sv: "Förpackning",
@@ -416,9 +415,9 @@ const keys = {
     sv: "Två gräsänder sedda uppifrån som visar ett stilla ögonblick av samhörighet på vattnet.",
     en: "Two mallards seen from above showing a quiet moment of togetherness on the water.",
   },
-  desc_womanInTheSea: {
-    sv: "Ett självporträtt i havet målat ur ett hopp om att hitta sig själv igen.",
-    en: "A self-portrait in the sea painted from hope of finding myself again.",
+desc_vinterlek: {
+    sv: "Hundarna Shiro och Otis som leker med varandra i snön.",
+    en: "Dogs Shiro and Otis playing together in the snow.",
   },
   desc_vattenfall: {
     sv: "Där vattnet möter klippan och tiden står stilla.",
@@ -484,19 +483,7 @@ const keys = {
     sv: "Två rävar som myser tryggt inne i en gammal trädöppning, en plats där de kan vila och känna sig säkra.",
     en: "Two foxes snuggled safely inside an old tree hollow, a place where they can rest and feel secure.",
   },
-  desc_brollopspresent: {
-    sv: "En handmålad present till Herr och Fru Elfqvist på deras stora dag.",
-    en: "A hand-painted gift for Mr. and Mrs. Elfqvist on their big day.",
-  },
-  desc_bonnie: {
-    sv: "En illustration målad med kärlek som var en present på ett litet livs första födelsedag.",
-    en: "An illustration painted with love as a gift on a little life's first birthday.",
-  },
-  desc_vinterlek: {
-    sv: "Hundarna Shiro och Otis som leker med varandra i snön.",
-    en: "Dogs Shiro and Otis playing together in the snow.",
-  },
-  desc_sommarvila: {
+desc_sommarvila: {
     sv: "En isbjörnsmamma och hennes ungar vilar mjukt i blomsterhaven vid Hudson Bay som visar en stund av absolut frid.",
     en: "A mother polar bear and her cubs resting gently in a flower garden by Hudson Bay showing a moment of absolute peace.",
   },
@@ -602,6 +589,42 @@ const keys = {
   cart_frame_add: {
     sv: "Lägg till ram",
     en: "Add frame",
+  },
+  cart_shipping_label: {
+    sv: "Frakt",
+    en: "Shipping",
+  },
+  cart_free_shipping: {
+    sv: "Fri frakt",
+    en: "Free shipping",
+  },
+  cart_free_shipping_achieved: {
+    sv: "✓ Fri frakt uppnådd!",
+    en: "✓ Free shipping unlocked!",
+  },
+  cart_free_shipping_remaining_post: {
+    sv: " kr kvar till fri frakt",
+    en: " kr left for free shipping",
+  },
+  cart_country_label: {
+    sv: "Leveransland",
+    en: "Delivery country",
+  },
+  cart_country_placeholder: {
+    sv: "Välj land",
+    en: "Select country",
+  },
+  cart_country_se: {
+    sv: "Sverige",
+    en: "Sweden",
+  },
+  cart_country_other: {
+    sv: "Annat land",
+    en: "Another country",
+  },
+  cart_intl_warning: {
+    sv: "OBS: Originalmålningar kan endast fraktas inom Sverige.",
+    en: "Note: Original paintings can only be shipped within Sweden.",
   },
 
   // ── Prints page ───────────────────────────────────────────────

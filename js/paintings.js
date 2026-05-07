@@ -2,14 +2,12 @@
 const STATUS = {
   SOLD: "sold",
   FOR_SALE: "for_sale",
-  PERSONAL: "personal"
 };
 
 // Status display text
 const STATUS_TEXT = {
   [STATUS.SOLD]: "Såld",
   [STATUS.FOR_SALE]: "TILL SALU",
-  [STATUS.PERSONAL]: "Personlig målning – ej till salu"
 };
 
 // Shape constants
@@ -74,7 +72,7 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 800,
+    originalPrice: 700,
     status: STATUS.FOR_SALE,
     medium: MEDIUM.ACRYLIC_CANVAS,
   },
@@ -85,7 +83,7 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 800,
+    originalPrice: 700,
     status: STATUS.FOR_SALE,
     medium: MEDIUM.ACRYLIC_CANVAS,
   },
@@ -109,7 +107,7 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 800,
+    originalPrice: 700,
     status: STATUS.FOR_SALE,
     medium: MEDIUM.ACRYLIC_CANVAS,
   },
@@ -120,18 +118,7 @@ const paintings = [
     width: 24,
     height: 18,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 800,
-    status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
-  },
-  {
-    id: "womanInTheSea",
-    title: "Woman of the Sea",
-    descKey: "desc_womanInTheSea",
-    width: 60,
-    height: 90,
-    shape: SHAPE.RECTANGULAR,
-    originalPrice: 2100,
+    originalPrice: 700,
     status: STATUS.FOR_SALE,
     medium: MEDIUM.ACRYLIC_CANVAS,
   },
@@ -293,33 +280,14 @@ const paintings = [
     medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {
-    id: "brollopspresent",
-    title: "Bröllop",
-    descKey: "desc_brollopspresent",
-    width: 59,
-    height: 42,
-    shape: SHAPE.RECTANGULAR,
-    status: STATUS.PERSONAL,
-    medium: MEDIUM.ACRYLIC_CANVAS,
-  },
-  {
-    id: "bonnie",
-    title: "Sovven och Bonnie",
-    descKey: "desc_bonnie",
-    width: 42,
-    height: 59,
-    shape: SHAPE.RECTANGULAR,
-    status: STATUS.PERSONAL,
-    medium: MEDIUM.ACRYLIC_CANVAS,
-  },
-  {
     id: "vinterlek",
     title: "Vinterlek",
     descKey: "desc_vinterlek",
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    status: STATUS.PERSONAL,
+    originalPrice: 1600,
+    status: STATUS.SOLD,
     medium: MEDIUM.ACRYLIC_CANVAS,
   },
   {

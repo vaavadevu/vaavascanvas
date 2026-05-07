@@ -4,6 +4,7 @@
 
 const Cart = (() => {
   let items = JSON.parse(localStorage.getItem('vc_cart') || '[]');
+  let selectedCountry = '';
 
   function save() {
     localStorage.setItem('vc_cart', JSON.stringify(items));
@@ -90,7 +91,7 @@ const Cart = (() => {
 
   function shipping() {
     const sub = subtotal();
-    return sub >= 999 ? 0 : 59;
+    return sub >= 599 ? 0 : 59;
   }
 
   function total() {
@@ -171,8 +172,52 @@ const Cart = (() => {
     });
 
     if (subtotalEl) subtotalEl.textContent = subtotal().toLocaleString('sv-SE') + ' kr';
-    if (shippingEl) shippingEl.textContent = shipping() === 0 ? 'Fri frakt' : shipping().toLocaleString('sv-SE') + ' kr';
+    if (shippingEl) shippingEl.textContent = shipping() === 0 ? t('cart_free_shipping') : shipping().toLocaleString('sv-SE') + ' kr';
     if (totalEl) totalEl.textContent = total().toLocaleString('sv-SE') + ' kr';
+
+    const shippingDisplayEl = document.getElementById('cart-shipping-display');
+    const FREE_SHIPPING = 599;
+    const sub = subtotal();
+
+    if (shippingDisplayEl) {
+      if (sub >= FREE_SHIPPING) {
+        shippingDisplayEl.innerHTML = `<s class="shipping-old-price">59 kr</s> <span class="shipping-free-label">${t('cart_free_shipping')}</span>`;
+      } else {
+        shippingDisplayEl.innerHTML = '<span class="shipping-cost">59 kr</span>';
+      }
+    }
+    const progressEl = document.getElementById('cart-shipping-progress');
+    const progressText = document.getElementById('cart-shipping-progress-text');
+    const progressFill = document.getElementById('cart-shipping-fill');
+    if (progressEl) {
+      if (sub >= FREE_SHIPPING) {
+        progressEl.classList.add('achieved');
+        if (progressText) progressText.textContent = t('cart_free_shipping_achieved');
+        if (progressFill) progressFill.style.width = '100%';
+      } else {
+        progressEl.classList.remove('achieved');
+        const remaining = FREE_SHIPPING - sub;
+        if (progressText) progressText.textContent = remaining.toLocaleString('sv-SE') + t('cart_free_shipping_remaining_post');
+        if (progressFill) progressFill.style.width = Math.round((sub / FREE_SHIPPING) * 100) + '%';
+      }
+    }
+
+    updateCountryWarning();
+  }
+
+  function updateCountryWarning() {
+    const select = document.getElementById('cart-country');
+    const warning = document.getElementById('cart-intl-warning');
+    const countryRow = document.getElementById('cart-country-row');
+    if (select) select.value = selectedCountry;
+    const hasOriginals = items.some(i => i.type === 'original');
+    if (warning) warning.style.display = (selectedCountry === 'OTHER' && hasOriginals) ? 'block' : 'none';
+    if (countryRow) countryRow.style.display = items.length > 0 ? 'flex' : 'none';
+  }
+
+  function onCountryChange(val) {
+    selectedCountry = val;
+    updateCountryWarning();
   }
 
   let justOpened = false;
@@ -203,6 +248,7 @@ const Cart = (() => {
     if (overlay) overlay.classList.remove('show');
     document.body.style.overflow = '';
     document.removeEventListener('touchmove', preventBodyScroll, { passive: false });
+    selectedCountry = '';
     const cb = document.getElementById('cart-terms-checkbox');
     if (cb) cb.checked = false;
     document.querySelector('.cart-terms-label')?.classList.remove('cart-terms-error');
@@ -211,16 +257,41 @@ const Cart = (() => {
   async function checkout() {
     if (items.length === 0) return;
 
+    const hasOriginals = items.some(i => i.type === 'original');
     const cb = document.getElementById('cart-terms-checkbox');
+    let blocked = false;
+
+    if (selectedCountry === '') {
+      const countryRow = document.getElementById('cart-country-row');
+      if (countryRow) {
+        countryRow.classList.remove('cart-terms-error');
+        void countryRow.offsetWidth;
+        countryRow.classList.add('cart-terms-error');
+      }
+      blocked = true;
+    }
+
+    if (selectedCountry === 'OTHER' && hasOriginals) {
+      const warning = document.getElementById('cart-intl-warning');
+      if (warning) {
+        warning.classList.remove('cart-intl-warning-shake');
+        void warning.offsetWidth;
+        warning.classList.add('cart-intl-warning-shake');
+      }
+      blocked = true;
+    }
+
     if (!cb?.checked) {
       const label = cb?.closest('.cart-terms-label');
       if (label) {
         label.classList.remove('cart-terms-error');
-        void label.offsetWidth; // force reflow to restart animation
+        void label.offsetWidth;
         label.classList.add('cart-terms-error');
       }
-      return;
+      blocked = true;
     }
+
+    if (blocked) return;
 
     const btn = document.getElementById('checkout-btn');
     if (btn) {
@@ -259,6 +330,8 @@ const Cart = (() => {
 
   function init() {
     updateBadge();
+
+    window.addEventListener('languagechange', () => render());
 
     // Terms checkbox — clear error state when checked
     document.addEventListener('change', (e) => {
@@ -302,7 +375,7 @@ const Cart = (() => {
     }
   }
 
-  return { add, remove, updateQty, toggleFrame, openCart, closeCart, checkout, init, count, updateBadge, hasOriginal };
+  return { add, remove, updateQty, toggleFrame, openCart, closeCart, checkout, init, count, updateBadge, hasOriginal, onCountryChange };
 })();
 
 // Toast notification

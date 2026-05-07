@@ -61,9 +61,30 @@
     <div id="cart-empty" data-i18n="cart_empty">Din varukorg är tom</div>
   </div>
   <div id="cart-footer">
-    <div class="cart-total-row">
+    <div id="cart-shipping-progress">
+      <p id="cart-shipping-progress-text"></p>
+      <div class="cart-shipping-track">
+        <div id="cart-shipping-fill"></div>
+      </div>
+    </div>
+    <div class="cart-total-row cart-shipping-row">
+      <span class="cart-total-label" data-i18n="cart_shipping_label">Frakt</span>
+      <span id="cart-shipping-display"></span>
+    </div>
+    <div class="cart-total-row cart-total-final">
       <span class="cart-total-label" data-i18n="cart_total_label">Totalt</span>
       <span id="cart-total">0 kr</span>
+    </div>
+    <div id="cart-country-row">
+      <label class="cart-country-label" for="cart-country" data-i18n="cart_country_label">Leveransland</label>
+      <select id="cart-country" onchange="Cart.onCountryChange(this.value)">
+        <option value="" disabled selected data-i18n="cart_country_placeholder">Välj land</option>
+        <option value="SE" data-i18n="cart_country_se">Sverige</option>
+        <option value="OTHER" data-i18n="cart_country_other">Annat land</option>
+      </select>
+    </div>
+    <div id="cart-intl-warning" data-i18n="cart_intl_warning">
+      OBS: Originalmålningar kan endast fraktas inom Sverige.
     </div>
     <label class="cart-terms-label">
       <input type="checkbox" id="cart-terms-checkbox" />
