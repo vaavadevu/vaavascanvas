@@ -636,8 +636,8 @@ const keys = {
     en: "About prints",
   },
   prints_info_p: {
-    sv: "Alla prints trycks på beställning på arkivkvalitetspapper via Gelato och levereras inom 3–7 arbetsdagar. Har du frågor? Hör gärna av dig!",
-    en: "All prints are printed on demand on archival quality paper via Gelato and delivered within 3–7 business days. Any questions? Feel free to get in touch!",
+    sv: "Alla prints trycks på beställning på arkivkvalitetspapper via Gelato och levereras inom 3–7 arbetsdagar. Printerna är osignerade, men varje tavla innehåller en signaturtext. Vill du ha en personligt signerad print? Skicka en förfrågan via formuläret nedan!",
+    en: "All prints are printed on demand on archival quality paper via Gelato and delivered within 3–7 business days. Prints are unsigned, but each painting includes a signature detail. Want a personally signed print? Send a request via the form below!",
   },
   prints_request_heading: {
     sv: "Hittar du inte det du letar efter?",
