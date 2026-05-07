@@ -166,6 +166,7 @@ const Cart = (() => {
 
   function preventBodyScroll(e) {
     if (e.target.closest('#cart-items')) return;
+    if (e.target.closest('.subscribe-modal-inner')) return;
     e.preventDefault();
   }
 
