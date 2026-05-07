@@ -252,7 +252,7 @@ const Cart = (() => {
 
     function isShippingModalOpen() {
       const m = document.getElementById('shippingModal');
-      return m && m.style.display !== 'none';
+      return m?.style.display === 'flex';
     }
 
     // Close when clicking/tapping outside the drawer
