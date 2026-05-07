@@ -139,6 +139,8 @@ function addPaintingToCart(painting, withFrame) {
 
 function renderPageViewButtons(painting) {
   pageViewButtons.innerHTML = "";
+  const printLinkContainer = document.getElementById("pageview-print-link");
+  if (printLinkContainer) printLinkContainer.innerHTML = "";
 
   if (painting.status === STATUS.FOR_SALE && painting.originalPrice) {
     if (painting.frameAvailable) {
@@ -208,6 +210,19 @@ function renderPageViewButtons(painting) {
       }
     });
     pageViewButtons.appendChild(buyBtn);
+  }
+
+  if (PRINT_PAINTINGS.includes(painting.id)) {
+    const minPrice = Math.min(
+      ...PRINT_SIZES_SQUARE.map(s => s.price),
+      ...PRINT_SIZES_STANDARD.map(s => s.price)
+    );
+    const printLink = document.createElement("a");
+    printLink.href = "/pages/prints.html";
+    printLink.className = "btn-view-print";
+    printLink.textContent = `${t("pageview_print_available_btn")} ${minPrice} kr`;
+    const container = document.getElementById("pageview-print-link");
+    if (container) container.appendChild(printLink);
   }
 
 }

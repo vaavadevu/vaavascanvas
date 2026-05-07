@@ -135,18 +135,20 @@
 
 <div class="divider"></div>
 
-<section class="info-section">
-  <h2 data-i18n="prints_info_heading">Om prints</h2>
-  <p data-i18n="prints_info_p">Alla prints trycks på beställning på arkivkvalitetspapper via Gelato och levereras inom 3–7 arbetsdagar. Har du frågor? Hör gärna av dig!</p>
-</section>
+<div class="prints-info-row">
+  <section class="info-section">
+    <h2 data-i18n="prints_info_heading">Om prints</h2>
+    <p data-i18n="prints_info_p">Alla prints trycks på beställning på arkivkvalitetspapper via Gelato och levereras inom 3–7 arbetsdagar. Har du frågor? Hör gärna av dig!</p>
+  </section>
 
-<div class="divider"></div>
+  <div class="prints-info-divider"></div>
 
-<section class="prints-request-section">
-  <h2 data-i18n="prints_request_heading">Hittar du inte det du letar efter?</h2>
-  <p data-i18n="prints_request_p">Har du sett en tavla på sidan som du gärna vill ha som print, men som inte finns tillgänglig just nu? Skicka gärna in en förfrågan så hör jag av mig så snart jag kan!</p>
-  <a href="#formContainer" class="btn-request-print" data-i18n="prints_request_btn" onclick="event.preventDefault(); const sel = document.getElementById('f-type'); if (sel) { sel.value = 'Prints'; sel.dispatchEvent(new Event('change')); } document.getElementById('formContainer').scrollIntoView({ behavior: 'smooth', block: 'center' });">Skicka en förfrågan</a>
-</section>
+  <section class="prints-request-section">
+    <h2 data-i18n="prints_request_heading">Hittar du inte det du letar efter?</h2>
+    <p data-i18n="prints_request_p">Har du sett en tavla på sidan som du gärna vill ha som print, men som inte finns tillgänglig just nu? Skicka gärna in en förfrågan så hör jag av mig så snart jag kan!</p>
+    <a href="#formContainer" class="btn-request-print" data-i18n="prints_request_btn" onclick="event.preventDefault(); const sel = document.getElementById('f-type'); if (sel) { sel.value = 'Prints'; sel.dispatchEvent(new Event('change')); } document.getElementById('formContainer').scrollIntoView({ behavior: 'smooth', block: 'center' });">Skicka en förfrågan</a>
+  </section>
+</div>
 
 </main>
 

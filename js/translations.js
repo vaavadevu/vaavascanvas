@@ -162,6 +162,10 @@ const keys = {
     sv: "Lägg i varukorg",
     en: "Add to cart",
   },
+  pageview_print_available_btn: {
+    sv: "Finns som print från",
+    en: "Available as a print from",
+  },
   status_sold: {
     sv: "Den här tavlan är såld.",
     en: "This painting has been sold.",
