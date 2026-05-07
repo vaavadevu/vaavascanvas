@@ -197,7 +197,7 @@ const Cart = (() => {
       } else {
         progressEl.classList.remove('achieved');
         const remaining = FREE_SHIPPING - sub;
-        if (progressText) progressText.textContent = t('cart_free_shipping_remaining_pre') + remaining.toLocaleString('sv-SE') + t('cart_free_shipping_remaining_post');
+        if (progressText) progressText.textContent = remaining.toLocaleString('sv-SE') + t('cart_free_shipping_remaining_post');
         if (progressFill) progressFill.style.width = Math.round((sub / FREE_SHIPPING) * 100) + '%';
       }
     }
