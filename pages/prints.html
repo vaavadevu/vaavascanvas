@@ -54,13 +54,13 @@
 
 <!-- MAIN CONTENT -->
 <main>
-  <div class="success-banner" id="successBanner">
+  <div class="success-banner" id="successBanner" data-i18n="prints_success_banner">
     ✓ Tack för din beställning! Du får ett bekräftelsemail inom kort.
   </div>
 
   <section class="prints-hero">
-    <h1>Fine art prints av mina målningar, tryckta på arkivkvalitetspapper.</h1>
-    <p>Varje print levereras direkt till din dörr.</p>
+    <h1 data-i18n="prints_hero_h1">Fine art prints av mina målningar, tryckta på arkivkvalitetspapper.</h1>
+    <p data-i18n="prints_hero_p">Varje print levereras direkt till din dörr.</p>
   </section>
 
   <div class="prints-grid" id="printsGrid">
@@ -72,9 +72,9 @@
     </div>
     <div class="print-info">
       <h2 class="print-title">Min mamma</h2>
-      <p class="print-medium">Akryl · Kvadratisk</p>
+      <p class="print-medium" data-i18n="prints_medium_square">Akryl · Kvadratisk</p>
       <div class="size-selector">
-        <label>Välj storlek</label>
+        <label data-i18n="prints_size_label">Välj storlek</label>
         <div class="size-buttons">
           <button class="size-btn selected" data-size="30x30" data-price="450">30×30 cm</button>
           <button class="size-btn" data-size="40x40" data-price="550">40×40 cm</button>
@@ -82,7 +82,7 @@
         </div>
       </div>
       <div class="price-display">450 kr</div>
-      <button class="btn-add-to-cart btn-print" id="buy-min-mamma">Lägg i varukorg</button>
+      <button class="btn-add-to-cart btn-print" id="buy-min-mamma" data-i18n="prints_add_to_cart">Lägg i varukorg</button>
       <div class="error-msg"></div>
     </div>
   </div>
@@ -94,9 +94,9 @@
     </div>
     <div class="print-info">
       <h2 class="print-title">Efter ide</h2>
-      <p class="print-medium">Akryl · Kvadratisk</p>
+      <p class="print-medium" data-i18n="prints_medium_square">Akryl · Kvadratisk</p>
       <div class="size-selector">
-        <label>Välj storlek</label>
+        <label data-i18n="prints_size_label">Välj storlek</label>
         <div class="size-buttons">
           <button class="size-btn selected" data-size="30x30" data-price="450">30×30 cm</button>
           <button class="size-btn" data-size="40x40" data-price="550">40×40 cm</button>
@@ -104,7 +104,7 @@
         </div>
       </div>
       <div class="price-display">450 kr</div>
-      <button class="btn-add-to-cart btn-print" id="buy-efter-ide">Lägg i varukorg</button>
+      <button class="btn-add-to-cart btn-print" id="buy-efter-ide" data-i18n="prints_add_to_cart">Lägg i varukorg</button>
       <div class="error-msg"></div>
     </div>
   </div>
@@ -116,9 +116,9 @@
     </div>
     <div class="print-info">
       <h2 class="print-title">Sommarvila</h2>
-      <p class="print-medium">Akryl · Stående</p>
+      <p class="print-medium" data-i18n="prints_medium_portrait">Akryl · Stående</p>
       <div class="size-selector">
-        <label>Välj storlek</label>
+        <label data-i18n="prints_size_label">Välj storlek</label>
         <div class="size-buttons">
           <button class="size-btn selected" data-size="A4" data-price="450">A4</button>
           <button class="size-btn" data-size="A3" data-price="550">A3</button>
@@ -126,7 +126,7 @@
         </div>
       </div>
       <div class="price-display">450 kr</div>
-      <button class="btn-add-to-cart btn-print" id="buy-sommarvila">Lägg i varukorg</button>
+      <button class="btn-add-to-cart btn-print" id="buy-sommarvila" data-i18n="prints_add_to_cart">Lägg i varukorg</button>
       <div class="error-msg"></div>
     </div>
   </div>
@@ -136,8 +136,16 @@
 <div class="divider"></div>
 
 <section class="info-section">
-  <h2>Om prints</h2>
-  <p>Alla prints trycks på beställning på arkivkvalitetspapper via Gelato och levereras inom 3–7 arbetsdagar. Varje print är signerad av mig. Har du frågor? Hör gärna av dig!</p>
+  <h2 data-i18n="prints_info_heading">Om prints</h2>
+  <p data-i18n="prints_info_p">Alla prints trycks på beställning på arkivkvalitetspapper via Gelato och levereras inom 3–7 arbetsdagar. Varje print är signerad av mig. Har du frågor? Hör gärna av dig!</p>
+</section>
+
+<div class="divider"></div>
+
+<section class="prints-request-section">
+  <h2 data-i18n="prints_request_heading">Hittar du inte det du letar efter?</h2>
+  <p data-i18n="prints_request_p">Har du sett en tavla på sidan som du gärna vill ha som print, men som inte finns tillgänglig just nu? Skicka gärna in en förfrågan så hör jag av mig så snart jag kan!</p>
+  <a href="#formContainer" class="btn-request-print" data-i18n="prints_request_btn" onclick="event.preventDefault(); const sel = document.getElementById('f-type'); if (sel) { sel.value = 'Prints'; sel.dispatchEvent(new Event('change')); } document.getElementById('formContainer').scrollIntoView({ behavior: 'smooth', block: 'center' });">Skicka en förfrågan</a>
 </section>
 
 </main>
@@ -178,7 +186,7 @@
         btn.classList.add('selected');
         const price = btn.dataset.price;
         priceDisplay.textContent = price + ' kr';
-        buyBtn.textContent = `Lägg i varukorg`;
+        buyBtn.textContent = t('prints_add_to_cart');
         buyBtn.dataset.price = price;
         buyBtn.dataset.size = btn.dataset.size;
       });
@@ -201,7 +209,7 @@
         price: parseInt(price),
         image: `/images/paintings/${paintingId}/desktop/01.jpg`,
       });
-      showToast('Print tillagd i varukorgen!');
+      showToast(t('prints_toast_added'));
     });
   });
 
