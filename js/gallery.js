@@ -66,6 +66,19 @@ function createGalleryItem(painting, index) {
   item.appendChild(img);
   if (painting.status === STATUS.SOLD) addSoldBadge(item);
 
+  if (painting.status === STATUS.FOR_SALE) {
+    const priceLabel = document.createElement("span");
+    priceLabel.className = "gallery-item-price";
+    if (painting.framedOnly) {
+      priceLabel.textContent = painting.framedPrice.toLocaleString('sv-SE') + ' kr';
+    } else if (painting.frameAvailable) {
+      priceLabel.textContent = t('prints_price_from') + ' ' + painting.originalPrice.toLocaleString('sv-SE') + ' kr';
+    } else {
+      priceLabel.textContent = painting.originalPrice.toLocaleString('sv-SE') + ' kr';
+    }
+    item.appendChild(priceLabel);
+  }
+
   const sizeLabel = document.createElement("span");
   sizeLabel.className = "gallery-item-size";
   sizeLabel.textContent = formatDimensions(painting);
