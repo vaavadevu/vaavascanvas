@@ -78,12 +78,13 @@
     <div id="cart-country-row">
       <label class="cart-country-label" for="cart-country" data-i18n="cart_country_label">Leveransland</label>
       <select id="cart-country" onchange="Cart.onCountryChange(this.value)">
+        <option value="" disabled selected data-i18n="cart_country_placeholder">Välj land</option>
         <option value="SE" data-i18n="cart_country_se">Sverige</option>
         <option value="OTHER" data-i18n="cart_country_other">Annat land</option>
       </select>
     </div>
     <div id="cart-intl-warning" data-i18n="cart_intl_warning">
-      OBS: Originalmålningar fraktas enbart inom Sverige. Din beställning innehåller original som återbetalas om leveransadressen är utanför Sverige.
+      OBS: Originalmålningar kan endast fraktas inom Sverige.
     </div>
     <label class="cart-terms-label">
       <input type="checkbox" id="cart-terms-checkbox" />

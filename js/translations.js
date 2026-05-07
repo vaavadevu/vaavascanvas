@@ -310,8 +310,8 @@ const keys = {
     en: "International shipping",
   },
   shipping_europe_p: {
-    sv: "Prints kan beställas och levereras internationellt. Originalmålningar fraktas enbart inom Sverige, beställningar med original och utländsk leveransadress återbetalas. Leveranstid ca 5–14 arbetsdagar.",
-    en: "Prints can be ordered and delivered internationally. Original paintings ship within Sweden only, orders with originals and a foreign delivery address will be refunded. Delivery time approx. 5–14 business days.",
+    sv: "Prints kan beställas och levereras internationellt. Originalmålningar kan endast fraktas inom Sverige. Leveranstid ca 5–14 arbetsdagar.",
+    en: "Prints can be ordered and delivered internationally. Original paintings can only be shipped within Sweden. Delivery time approx. 5–14 business days.",
   },
   shipping_packaging_h: {
     sv: "Förpackning",
@@ -610,6 +610,10 @@ desc_sommarvila: {
     sv: "Leveransland",
     en: "Delivery country",
   },
+  cart_country_placeholder: {
+    sv: "Välj land",
+    en: "Select country",
+  },
   cart_country_se: {
     sv: "Sverige",
     en: "Sweden",
@@ -619,8 +623,8 @@ desc_sommarvila: {
     en: "Another country",
   },
   cart_intl_warning: {
-    sv: "OBS: Originalmålningar fraktas enbart inom Sverige. Din beställning innehåller original som återbetalas om leveransadressen är utanför Sverige.",
-    en: "Note: Original paintings ship within Sweden only. Your order contains originals that will be refunded if the delivery address is outside Sweden.",
+    sv: "OBS: Originalmålningar kan endast fraktas inom Sverige.",
+    en: "Note: Original paintings can only be shipped within Sweden.",
   },
 
   // ── Prints page ───────────────────────────────────────────────
