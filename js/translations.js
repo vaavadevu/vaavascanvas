@@ -162,6 +162,10 @@ const keys = {
     sv: "Lägg i varukorg",
     en: "Add to cart",
   },
+  modal_in_cart_btn: {
+    sv: "Gå till varukorg",
+    en: "Go to cart",
+  },
   pageview_print_available_btn: {
     sv: "Finns som print från",
     en: "Available as a print from",
