@@ -95,6 +95,12 @@ function createBuyActions(painting, imageUrl) {
         type: 'original',
         price: painting.originalPrice,
         image: imageUrl,
+        paintingBaseId: painting.id,
+        paintingTitle: painting.title,
+        frameAvailable: painting.frameAvailable || false,
+        withFrame: false,
+        basePrice: painting.originalPrice,
+        framedPrice: painting.framedPrice || null,
       });
       showToast('Tillagd i varukorgen!');
     });

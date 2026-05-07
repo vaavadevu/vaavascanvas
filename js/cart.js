@@ -12,22 +12,50 @@ const Cart = (() => {
   }
 
   function add(item) {
-    // item: { id, title, type, size, price, image }
     const key = `${item.id}-${item.size || 'original'}`;
-    const existing = items.find(i => i.key === key);
-    if (existing) {
-      if (item.type === 'original') {
+
+    if (item.type === 'original') {
+      const existing = items.find(i => i.key === key);
+      if (existing) {
         openCart();
         showToast(`"${item.title}" finns redan i varukorgen`);
         return;
       }
-      existing.qty = (existing.qty || 1) + 1;
+      // Remove any other frame-variant of the same painting
+      const baseId = item.paintingBaseId || item.id.replace(/-framed$/, '');
+      items = items.filter(i => {
+        if (i.type !== 'original') return true;
+        const iBase = i.paintingBaseId || i.id.replace(/-framed$/, '');
+        return iBase !== baseId;
+      });
     } else {
-      items.push({ ...item, key, qty: 1 });
+      const existing = items.find(i => i.key === key);
+      if (existing) {
+        existing.qty = (existing.qty || 1) + 1;
+        save();
+        openCart();
+        showToast(`"${item.title}" lagd i varukorgen`);
+        return;
+      }
     }
+
+    items.push({ ...item, key, qty: 1 });
     save();
     openCart();
     showToast(`"${item.title}" lagd i varukorgen`);
+  }
+
+  function toggleFrame(key, withFrame) {
+    const item = items.find(i => i.key === key);
+    if (!item || !item.frameAvailable) return;
+    const baseId = item.paintingBaseId;
+    const newId = withFrame ? `${baseId}-framed` : baseId;
+    item.id = newId;
+    item.key = `${newId}-original`;
+    item.withFrame = withFrame;
+    item.price = withFrame ? item.framedPrice : item.basePrice;
+    item.title = item.paintingTitle;
+    save();
   }
 
   function remove(key) {
@@ -96,6 +124,14 @@ const Cart = (() => {
           <div class="cart-item-title">${item.title}</div>
           <div class="cart-item-meta">${item.type === 'print' ? 'Print · ' + item.size : 'Original'}</div>
           <div class="cart-item-price">${(item.price * (item.qty || 1)).toLocaleString('sv-SE')} kr</div>
+          ${item.frameAvailable ? `
+          <label class="cart-frame-toggle">
+            <input type="checkbox" ${item.withFrame ? 'checked' : ''} onchange="Cart.toggleFrame('${item.key}', this.checked)" />
+            <span>${item.withFrame
+              ? 'Ram ingår'
+              : `Lägg till ram <em>+${(item.framedPrice - item.basePrice).toLocaleString('sv-SE')} kr</em>`
+            }</span>
+          </label>` : ''}
           ${item.type === 'original' ? '' : `
           <div class="cart-item-qty">
             <button onclick="Cart.updateQty('${item.key}', -1)">−</button>
@@ -113,12 +149,19 @@ const Cart = (() => {
 
   let justOpened = false;
 
+  function preventBodyScroll(e) {
+    if (e.target.closest('#cart-items')) return;
+    e.preventDefault();
+  }
+
   function openCart() {
     const drawer = document.getElementById('cart-drawer');
     const overlay = document.getElementById('cart-overlay');
     if (drawer) drawer.classList.add('open');
     if (overlay) overlay.classList.add('show');
+    document.getElementById('header-container')?.classList.add('visible');
     document.body.style.overflow = 'hidden';
+    document.addEventListener('touchmove', preventBodyScroll, { passive: false });
     render();
     justOpened = true;
     setTimeout(() => { justOpened = false; }, 0);
@@ -130,8 +173,8 @@ const Cart = (() => {
     if (drawer) drawer.classList.remove('open');
     if (overlay) overlay.classList.remove('show');
     document.body.style.overflow = '';
+    document.removeEventListener('touchmove', preventBodyScroll, { passive: false });
     const cb = document.getElementById('cart-terms-checkbox');
-    const btn = document.getElementById('checkout-btn');
     if (cb) cb.checked = false;
     document.querySelector('.cart-terms-label')?.classList.remove('cart-terms-error');
   }
@@ -194,7 +237,7 @@ const Cart = (() => {
       }
     });
 
-    // Close when clicking outside the drawer
+    // Close when clicking/tapping outside the drawer
     document.addEventListener('click', (e) => {
       if (justOpened) return;
       const drawer = document.getElementById('cart-drawer');
@@ -205,6 +248,15 @@ const Cart = (() => {
       if (!drawer.contains(e.target) && !cartBtn?.contains(e.target)) closeCart();
     });
 
+    // Close on touch outside the drawer (overlay tap on mobile)
+    document.addEventListener('touchstart', (e) => {
+      if (justOpened) return;
+      const drawer = document.getElementById('cart-drawer');
+      if (!drawer?.classList.contains('open')) return;
+      const cartBtn = document.querySelector('.cart-icon-btn');
+      if (!drawer.contains(e.target) && !cartBtn?.contains(e.target)) closeCart();
+    }, { passive: true });
+
     // Check for success redirect
     const params = new URLSearchParams(window.location.search);
     if (params.get('order') === 'success') {
@@ -213,7 +265,7 @@ const Cart = (() => {
     }
   }
 
-  return { add, remove, updateQty, openCart, closeCart, checkout, init, count, updateBadge };
+  return { add, remove, updateQty, toggleFrame, openCart, closeCart, checkout, init, count, updateBadge };
 })();
 
 // Toast notification

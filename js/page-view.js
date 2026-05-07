@@ -121,13 +121,19 @@ function configurePageViewArrows(imgs) {
 
 function addPaintingToCart(painting, withFrame) {
   const price = withFrame ? painting.framedPrice : painting.originalPrice;
-  const title = withFrame ? `${painting.title} (${t("frame_price_with")})` : painting.title;
+  const title = painting.title;
   Cart.add({
     id: withFrame ? `${painting.id}-framed` : painting.id,
     title,
     type: 'original',
     price,
     image: getPaintingImagePaths(painting)[0],
+    paintingBaseId: painting.id,
+    paintingTitle: painting.title,
+    frameAvailable: painting.frameAvailable || false,
+    withFrame: withFrame || false,
+    basePrice: painting.originalPrice,
+    framedPrice: painting.framedPrice || null,
   });
 }
 

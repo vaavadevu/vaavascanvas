@@ -198,6 +198,7 @@
       if (!selectedSize) return;
 
       const paintingId = card.dataset.print;
+      const camelId = paintingId.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
       const size = selectedSize.dataset.size;
       const price = selectedSize.dataset.price;
 
@@ -207,7 +208,7 @@
         type: 'print',
         size: size,
         price: parseInt(price),
-        image: `/images/paintings/${paintingId}/desktop/01.jpg`,
+        image: `/images/paintings/${camelId}/desktop/01.jpg`,
       });
       showToast(t('prints_toast_added'));
     });
