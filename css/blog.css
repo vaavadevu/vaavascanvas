@@ -140,7 +140,7 @@
 /* ─── Kommentarer ─── */
 
 .blog-comments {
-  margin-top: 20px;
+  padding-top: 4rem;
   margin-bottom: 60px;
 }
 
@@ -371,13 +371,45 @@
 }
 
 .blog-back-link {
-  font-family: 'Quicksand', sans-serif;
+  display: none;
+}
+
+.blog-back-btn-side {
+  position: fixed;
+  left: 20px;
+  top: 140px;
+  z-index: 200;
+  background: transparent;
   color: var(--accent-green);
   text-decoration: none;
-  font-size: 0.95rem;
-  display: inline-block;
-  margin-bottom: 20px;
-  transition: color 0.3s ease;
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+.blog-back-btn-side:hover {
+  background: transparent;
+  transform: scale(1.1);
+  opacity: 0.7;
+}
+
+.blog-back-arrow {
+  font-size: 32px;
+  line-height: 1;
+  font-weight: bold;
+}
+
+.blog-back-text {
+  font-size: 0.9rem;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .blog-post-title {
@@ -395,12 +427,47 @@
   color: var(--text-dark);
 }
 
+/* ─── Post navigation ─── */
+
+.blog-navigation {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 0 0 8rem;
+}
+
+.blog-nav-link {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.9rem;
+  color: var(--accent-green);
+  text-decoration: none;
+  line-height: 1.4;
+  transition: color 0.2s;
+}
+
+.blog-nav-link:hover {
+  color: var(--text-dark);
+}
+
+.blog-nav-link.next-link {
+  text-align: right;
+}
+
+.nav-arrow {
+  margin-right: 4px;
+}
+
+.blog-nav-link.next-link .nav-arrow {
+  margin-right: 0;
+  margin-left: 4px;
+}
+
 /* ─── Likes ─── */
 
 .blog-likes {
   display: flex;
   justify-content: flex-start;
-  margin: 40px 0;
+  margin: 40px 0 20px;
 }
 
 .like-btn {
@@ -638,5 +705,23 @@
     float: none;
     margin-right: 0;
     margin-bottom: 24px;
+  }
+
+  .blog-back-btn-side {
+    display: none;
+  }
+
+  .blog-back-link {
+    display: inline-block;
+    font-family: 'Quicksand', sans-serif;
+    color: var(--accent-green);
+    text-decoration: none;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+    transition: color 0.3s ease;
+  }
+
+  .blog-back-link:hover {
+    color: var(--text-dark);
   }
 }

@@ -40,6 +40,11 @@
 
   <div id="header-container"></div>
 
+  <a href="blog.html" class="blog-back-btn-side">
+    <span class="blog-back-arrow">←</span>
+    <span class="blog-back-text" data-i18n="blog_back">Tillbaka till blogg</span>
+  </a>
+
   <main>
     <article class="blog-post-container">
         <div class="blog-post-header">
@@ -66,6 +71,14 @@
         </div>
       </footer>
 
+      <!-- Likes -->
+<div class="blog-likes">
+  <button class="like-btn" id="like-btn">
+    <span class="like-heart">♡</span>
+    <span class="like-count" id="like-count">0</span>
+  </button>
+</div>
+
       <nav class="blog-navigation">
         <a id="prev-post" href="#" class="blog-nav-link prev-link" style="display: none;">
           <span class="nav-arrow">←</span>
@@ -76,14 +89,6 @@
           <span class="nav-arrow">→</span>
         </a>
       </nav>
-      <!-- Likes -->
-<!-- Likes & Kommentarer -->
-<div class="blog-likes">
-  <button class="like-btn" id="like-btn">
-    <span class="like-heart">♡</span>
-    <span class="like-count" id="like-count">0</span>
-  </button>
-</div>
 
 <div class="blog-comments">
   <h3 class="comments-title" data-i18n="comments_title">Kommentarer</h3>

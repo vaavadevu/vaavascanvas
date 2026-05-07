@@ -89,6 +89,34 @@ function formatDateEnglish(dateStr) {
   return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
 }
 
+function setupBackButtonPositioning() {
+  const backBtn = document.querySelector('.blog-back-btn-side');
+  if (!backBtn) return;
+
+  const updateBackBtnPosition = () => {
+    const footer = document.getElementById('footer');
+    if (!footer) return;
+
+    const footerRect = footer.getBoundingClientRect();
+    const btnHeight = backBtn.offsetHeight;
+    const initialTop = 140;
+    const gap = 20;
+
+    if (footerRect.top > 0) {
+      if (footerRect.top < initialTop + btnHeight) {
+        const newTop = footerRect.top - btnHeight - gap;
+        backBtn.style.top = newTop + 'px';
+      } else {
+        backBtn.style.top = initialTop + 'px';
+      }
+    }
+  };
+
+  window.addEventListener('scroll', updateBackBtnPosition, { passive: true });
+  window.addEventListener('resize', updateBackBtnPosition);
+  updateBackBtnPosition();
+}
+
 // Initialize on page load
 document.addEventListener("DOMContentLoaded", async () => {
   // Setup header and modals first
@@ -96,6 +124,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupScrollWatcher();
   // Then render blog post
   renderBlogPost();
+  setupBackButtonPositioning();
 });
 
 // Re-render the blog post immediately when the language changes

@@ -154,6 +154,7 @@ function setupScrollWatcher() {
     const isPictures = window.location.href.includes("pictures.html");
     const isCommissions = window.location.href.includes("commissions.html");
     const isPrints = window.location.href.includes("prints.html");
+    const isBlog = window.location.href.includes("blog.html") || window.location.href.includes("blog-post.html");
 
     // Determine which nav link to highlight
     let currentQuery;
@@ -167,6 +168,8 @@ function setupScrollWatcher() {
       currentQuery = "/pages/commissions.html";
     } else if (isPrints) {
       currentQuery = "/pages/prints.html";
+    } else if (isBlog) {
+      currentQuery = "/pages/blog.html";
     } else {
       currentQuery = "/#top";
     }
