@@ -85,6 +85,27 @@
   transform: scale(1.1);
 }
 
+.gallery-item-size {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.5rem 0.75rem;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-size: 0.75rem;
+  font-family: 'Quicksand', sans-serif;
+  letter-spacing: 0.06em;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.gallery-item:hover .gallery-item-size {
+  opacity: 1;
+}
+
 .gallery-item--circle {
   aspect-ratio: 1 / 1;
 }
