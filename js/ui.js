@@ -72,6 +72,7 @@ function setupMobileMenu() {
     navMenu.classList.toggle("active", open);
     menuBtn.classList.toggle("open", open);
     if (open) {
+      if (typeof Cart !== "undefined") Cart.closeCart();
       document.body.style.overflow = "hidden";
       document.body.style.position = "fixed";
       document.body.style.width = "100%";
