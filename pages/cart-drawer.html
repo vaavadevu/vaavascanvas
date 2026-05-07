@@ -20,10 +20,18 @@
 
   <div id="cart-footer">
     <div class="cart-total-row">
+      <span class="cart-total-label">Delsumma</span>
+      <span id="cart-subtotal">0 kr</span>
+    </div>
+    <div class="cart-total-row">
+      <span class="cart-total-label">Frakt</span>
+      <span id="cart-shipping">0 kr</span>
+    </div>
+    <div class="cart-total-row cart-total-final">
       <span class="cart-total-label">Totalt</span>
       <span id="cart-total">0 kr</span>
     </div>
-    <p class="cart-note">Frakt beräknas i kassan. Leverans 3–7 arbetsdagar.</p>
+    <p class="cart-note">Leverans 3–7 arbetsdagar.</p>
     <button id="checkout-btn" onclick="Cart.checkout()">Till betalning →</button>
   </div>
 </div>

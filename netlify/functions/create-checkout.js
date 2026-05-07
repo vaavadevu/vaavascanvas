@@ -15,7 +15,7 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { items } = JSON.parse(event.body);
+    const { items, shipping } = JSON.parse(event.body);
 
     if (!items || items.length === 0) {
       return { statusCode: 400, body: JSON.stringify({ error: 'No items in cart' }) };
@@ -37,6 +37,21 @@ exports.handler = async (event) => {
       },
       quantity: item.qty || 1,
     }));
+
+    // Add shipping if applicable
+    if (shipping && shipping > 0) {
+      line_items.push({
+        price_data: {
+          currency: 'sek',
+          product_data: {
+            name: 'Frakt',
+            description: 'Leverans inom Sverige',
+          },
+          unit_amount: shipping * 100,
+        },
+        quantity: 1,
+      });
+    }
 
     const session = await stripe.checkout.sessions.create({
       line_items,

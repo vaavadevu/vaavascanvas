@@ -298,6 +298,13 @@
   font-size: 1.05rem;
 }
 
+.cart-total-final {
+  border-top: 1px solid #e8e3dd;
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+  font-weight: 600;
+}
+
 .cart-total-label {
   color: #7a6e62;
   font-size: 0.8rem;

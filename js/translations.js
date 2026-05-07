@@ -303,8 +303,8 @@ const keys = {
     en: "Shipping within Sweden",
   },
   shipping_sweden_p: {
-    sv: "Leveranstid 1–3 arbetsdagar via PostNord. Fraktkostnad beräknas per tavla beroende på storlek och vikt — exakt pris anges i din orderbekräftelse.",
-    en: "Delivery time 1–3 business days via PostNord. Shipping cost is calculated per painting based on size and weight — exact price is stated in your order confirmation.",
+    sv: "59 kr för frakt på alla beställningar under 999 kr. Fri frakt över 999 kr. Leveranstid 1–3 arbetsdagar via PostNord.",
+    en: "59 SEK shipping on all orders under 999 SEK. Free shipping over 999 SEK. Delivery time 1–3 business days via PostNord.",
   },
   shipping_europe_h: {
     sv: "Frakt inom Europa",

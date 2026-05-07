@@ -84,8 +84,17 @@ const Cart = (() => {
     else save();
   }
 
-  function total() {
+  function subtotal() {
     return items.reduce((sum, i) => sum + i.price * (i.qty || 1), 0);
+  }
+
+  function shipping() {
+    const sub = subtotal();
+    return sub >= 999 ? 0 : 59;
+  }
+
+  function total() {
+    return subtotal() + shipping();
   }
 
   function count() {
@@ -110,6 +119,8 @@ const Cart = (() => {
     const list = document.getElementById('cart-items');
     const emptyMsg = document.getElementById('cart-empty');
     const footer = document.getElementById('cart-footer');
+    const subtotalEl = document.getElementById('cart-subtotal');
+    const shippingEl = document.getElementById('cart-shipping');
     const totalEl = document.getElementById('cart-total');
     if (!list) return;
 
@@ -159,6 +170,8 @@ const Cart = (() => {
       list.appendChild(el);
     });
 
+    if (subtotalEl) subtotalEl.textContent = subtotal().toLocaleString('sv-SE') + ' kr';
+    if (shippingEl) shippingEl.textContent = shipping() === 0 ? 'Fri frakt' : shipping().toLocaleString('sv-SE') + ' kr';
     if (totalEl) totalEl.textContent = total().toLocaleString('sv-SE') + ' kr';
   }
 
@@ -219,7 +232,10 @@ const Cart = (() => {
       const response = await fetch('/.netlify/functions/create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items }),
+        body: JSON.stringify({ 
+          items,
+          shipping: shipping()
+        }),
       });
 
       const data = await response.json();
