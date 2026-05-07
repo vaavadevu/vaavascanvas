@@ -355,6 +355,53 @@ main {
   display: none;
 }
 
+.prints-request-section {
+  max-width: 600px;
+  margin: 0 auto 4rem;
+  padding: 0 2rem;
+  text-align: center;
+}
+
+.prints-request-section h2 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 400;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  letter-spacing: 0.05em;
+}
+
+.prints-request-section p {
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.9;
+  margin-bottom: 1.5rem;
+}
+
+.btn-request-print,
+.btn-request-print:visited {
+  display: inline-block;
+  padding: 10px 20px;
+  min-width: 200px;
+  border: 1.5px solid #4A8070;
+  border-radius: 8px;
+  background: #4A8070;
+  color: #FAF7F3;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-style: normal;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.btn-request-print:hover,
+.btn-request-print:focus {
+  background: transparent;
+  color: #4A8070;
+  outline: none;
+}
+
 /* RESPONSIVE */
 @media (max-width: 600px) {
   .prints-grid {

@@ -538,6 +538,60 @@ const keys = {
   en: "Two happy lambs jumping and playing in a flowery meadow on a nice evening, full of mischief and spring feelings.",
 },
 
+  // ── Prints page ───────────────────────────────────────────────
+  prints_hero_h1: {
+    sv: "Fine art prints av mina målningar, tryckta på arkivkvalitetspapper.",
+    en: "Fine art prints of my paintings, printed on archival quality paper.",
+  },
+  prints_hero_p: {
+    sv: "Varje print levereras direkt till din dörr.",
+    en: "Every print is delivered directly to your door.",
+  },
+  prints_medium_square: {
+    sv: "Akryl · Kvadratisk",
+    en: "Acrylic · Square",
+  },
+  prints_medium_portrait: {
+    sv: "Akryl · Stående",
+    en: "Acrylic · Portrait",
+  },
+  prints_size_label: {
+    sv: "Välj storlek",
+    en: "Choose size",
+  },
+  prints_add_to_cart: {
+    sv: "Lägg i varukorg",
+    en: "Add to cart",
+  },
+  prints_info_heading: {
+    sv: "Om prints",
+    en: "About prints",
+  },
+  prints_info_p: {
+    sv: "Alla prints trycks på beställning på arkivkvalitetspapper via Gelato och levereras inom 3–7 arbetsdagar. Varje print är signerad av mig. Har du frågor? Hör gärna av dig!",
+    en: "All prints are printed on demand on archival quality paper via Gelato and delivered within 3–7 business days. Every print is signed by me. Any questions? Feel free to get in touch!",
+  },
+  prints_request_heading: {
+    sv: "Hittar du inte det du letar efter?",
+    en: "Can't find what you're looking for?",
+  },
+  prints_request_p: {
+    sv: "Har du sett en tavla på sidan som du gärna vill ha som print, men som inte finns tillgänglig just nu? Skicka gärna in en förfrågan så hör jag av mig så snart jag kan!",
+    en: "Have you seen a painting on the site that you'd love as a print, but it isn't available right now? Feel free to send a request and I'll get back to you as soon as I can!",
+  },
+  prints_request_btn: {
+    sv: "Skicka en förfrågan",
+    en: "Send a request",
+  },
+  prints_success_banner: {
+    sv: "✓ Tack för din beställning! Du får ett bekräftelsemail inom kort.",
+    en: "✓ Thank you for your order! You'll receive a confirmation email shortly.",
+  },
+  prints_toast_added: {
+    sv: "Print tillagd i varukorgen!",
+    en: "Print added to cart!",
+  },
+
   // ── Blog ───────────────────────────────────────────────────
   blog_title: {
     sv: "Mellan penseldrag och tankar",
