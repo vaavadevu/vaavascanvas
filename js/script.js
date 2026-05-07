@@ -114,6 +114,6 @@ if (!isBlogPage) {
 }
 
 // Only initialize page view on view.html
-if (window.location.pathname.includes("view.html")) {
+if (window.location.pathname.includes("view")) {
   initPageView();
 }

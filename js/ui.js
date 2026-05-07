@@ -150,11 +150,11 @@ function setupScrollWatcher() {
     if (!footer) return;
 
     const footerInView = footer.getBoundingClientRect().top <= window.innerHeight / 2;
-    const isViewPage = window.location.href.includes("/pages/view.html");
-    const isPictures = window.location.href.includes("pictures.html");
-    const isCommissions = window.location.href.includes("commissions.html");
-    const isPrints = window.location.href.includes("prints.html");
-    const isBlog = window.location.href.includes("blog.html") || window.location.href.includes("blog-post.html");
+    const isViewPage = window.location.pathname.includes("/view");
+    const isPictures = window.location.pathname.includes("pictures");
+    const isCommissions = window.location.pathname.includes("commissions");
+    const isPrints = window.location.pathname.includes("prints");
+    const isBlog = window.location.pathname.includes("blog");
 
     // Determine which nav link to highlight
     let currentQuery;
