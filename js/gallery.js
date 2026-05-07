@@ -67,9 +67,10 @@ function createGalleryItem(painting, index) {
   item.appendChild(img);
   if (painting.status === STATUS.SOLD) addSoldBadge(item);
 
-  // Remove buy actions from masonry view - details shown in view.html instead
-  // const actions = createBuyActions(painting, paths[0]);
-  // if (actions) item.appendChild(actions);
+  const sizeLabel = document.createElement("span");
+  sizeLabel.className = "gallery-item-size";
+  sizeLabel.textContent = formatDimensions(painting);
+  item.appendChild(sizeLabel);
 
   return item;
 }
