@@ -322,14 +322,6 @@ const keys = {
     sv: "Varje målning packas omsorgsfullt med skyddsmaterial och stabil kartong för att säkerställa att den anländer i perfekt skick.",
     en: "Each painting is carefully packed with protective material and sturdy cardboard to ensure it arrives in perfect condition.",
   },
-  shipping_payment_h: {
-    sv: "Betalning",
-    en: "Payment",
-  },
-  shipping_payment_p: {
-    sv: "Betalning sker via Swish efter bekräftad order. Betalningsinformation skickas i samband med orderbekräftelsen.",
-    en: "Payment is made via Swish after confirmed order. Payment details are sent with the order confirmation.",
-  },
   shipping_returns_h: {
     sv: "Retur & reklamation",
     en: "Returns & complaints",
