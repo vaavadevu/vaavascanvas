@@ -618,9 +618,9 @@ desc_sommarvila: {
     sv: "Sverige",
     en: "Sweden",
   },
-  cart_country_other: {
-    sv: "Annat land",
-    en: "Another country",
+  cart_country_eu: {
+    sv: "Annat EU-land",
+    en: "Other EU country",
   },
   cart_intl_warning: {
     sv: "OBS: Originalmålningar kan endast fraktas inom Sverige.",

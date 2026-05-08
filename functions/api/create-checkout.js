@@ -37,7 +37,10 @@ const PRINT_PRICES = {
 const PRINT_PAINTINGS = new Set(['minMamma', 'efterIde', 'sommarvila']);
 
 const FREE_SHIPPING_THRESHOLD = 599;
-const SHIPPING_COST = 59;
+const SHIPPING_COST_SE = 59;
+const SHIPPING_COST_EU = 149;
+
+const EU_COUNTRIES = ['AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','HU','IE','IT','LT','LU','LV','MT','NL','PL','PT','RO','SE','SI','SK'];
 
 function resolvePrice(item) {
   if (item.type === 'print') {
@@ -64,9 +67,9 @@ export async function onRequestPost(context) {
   try {
     const stripe = new Stripe(context.env.STRIPE_SECRET_KEY);
 
-    let items;
+    let items, country;
     try {
-      ({ items } = await context.request.json());
+      ({ items, country } = await context.request.json());
     } catch {
       return Response.json({ error: 'Invalid request body' }, { status: 400 });
     }
@@ -107,7 +110,8 @@ export async function onRequestPost(context) {
       });
     }
 
-    const shippingCost = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
+    const isEU = country === 'EU';
+    const shippingCost = isEU ? SHIPPING_COST_EU : (subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST_SE);
     if (shippingCost > 0) {
       line_items.push({
         price_data: {
@@ -128,7 +132,7 @@ export async function onRequestPost(context) {
         success_url: `${origin}/?order=success`,
         cancel_url: `${origin}/pages/pictures.html`,
         shipping_address_collection: {
-          allowed_countries: ['SE', 'NO', 'DK', 'FI', 'DE', 'NL', 'GB'],
+          allowed_countries: EU_COUNTRIES,
         },
         metadata: {
           items: JSON.stringify(items.map(i => ({

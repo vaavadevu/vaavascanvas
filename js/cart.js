@@ -92,6 +92,7 @@ const Cart = (() => {
   }
 
   function shipping() {
+    if (selectedCountry === 'EU') return 149;
     const sub = subtotal();
     return sub >= 599 ? 0 : 59;
   }
@@ -180,9 +181,12 @@ const Cart = (() => {
     const shippingDisplayEl = document.getElementById('cart-shipping-display');
     const FREE_SHIPPING = 599;
     const sub = subtotal();
+    const isEU = selectedCountry === 'EU';
 
     if (shippingDisplayEl) {
-      if (sub >= FREE_SHIPPING) {
+      if (isEU) {
+        shippingDisplayEl.innerHTML = '<span class="shipping-cost">149 kr</span>';
+      } else if (sub >= FREE_SHIPPING) {
         shippingDisplayEl.innerHTML = `<s class="shipping-old-price">59 kr</s> <span class="shipping-free-label">${t('cart_free_shipping')}</span>`;
       } else {
         shippingDisplayEl.innerHTML = '<span class="shipping-cost">59 kr</span>';
@@ -192,15 +196,20 @@ const Cart = (() => {
     const progressText = document.getElementById('cart-shipping-progress-text');
     const progressFill = document.getElementById('cart-shipping-fill');
     if (progressEl) {
-      if (sub >= FREE_SHIPPING) {
-        progressEl.classList.add('achieved');
-        if (progressText) progressText.textContent = t('cart_free_shipping_achieved');
-        if (progressFill) progressFill.style.width = '100%';
+      if (isEU) {
+        progressEl.style.display = 'none';
       } else {
-        progressEl.classList.remove('achieved');
-        const remaining = FREE_SHIPPING - sub;
-        if (progressText) progressText.textContent = remaining.toLocaleString('sv-SE') + t('cart_free_shipping_remaining_post');
-        if (progressFill) progressFill.style.width = Math.round((sub / FREE_SHIPPING) * 100) + '%';
+        progressEl.style.display = '';
+        if (sub >= FREE_SHIPPING) {
+          progressEl.classList.add('achieved');
+          if (progressText) progressText.textContent = t('cart_free_shipping_achieved');
+          if (progressFill) progressFill.style.width = '100%';
+        } else {
+          progressEl.classList.remove('achieved');
+          const remaining = FREE_SHIPPING - sub;
+          if (progressText) progressText.textContent = remaining.toLocaleString('sv-SE') + t('cart_free_shipping_remaining_post');
+          if (progressFill) progressFill.style.width = Math.round((sub / FREE_SHIPPING) * 100) + '%';
+        }
       }
     }
 
@@ -209,17 +218,14 @@ const Cart = (() => {
 
   function updateCountryWarning() {
     const select = document.getElementById('cart-country');
-    const warning = document.getElementById('cart-intl-warning');
     const countryRow = document.getElementById('cart-country-row');
     if (select) select.value = selectedCountry;
-    const hasOriginals = items.some(i => i.type === 'original');
-    if (warning) warning.style.display = (selectedCountry === 'OTHER' && hasOriginals) ? 'block' : 'none';
     if (countryRow) countryRow.style.display = items.length > 0 ? 'flex' : 'none';
   }
 
   function onCountryChange(val) {
     selectedCountry = val;
-    updateCountryWarning();
+    render();
   }
 
   let justOpened = false;
@@ -273,16 +279,6 @@ const Cart = (() => {
       blocked = true;
     }
 
-    if (selectedCountry === 'OTHER' && hasOriginals) {
-      const warning = document.getElementById('cart-intl-warning');
-      if (warning) {
-        warning.classList.remove('cart-intl-warning-shake');
-        void warning.offsetWidth;
-        warning.classList.add('cart-intl-warning-shake');
-      }
-      blocked = true;
-    }
-
     if (!cb?.checked) {
       const label = cb?.closest('.cart-terms-label');
       if (label) {
@@ -309,10 +305,7 @@ const Cart = (() => {
       const response = await fetch('/api/create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          items,
-          shipping: shipping()
-        }),
+        body: JSON.stringify({ items, country: selectedCountry }),
       });
 
       const data = await response.json();
