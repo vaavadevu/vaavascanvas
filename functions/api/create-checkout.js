@@ -41,7 +41,9 @@ const SHIPPING_COST = 59;
 
 function resolvePrice(item) {
   if (item.type === 'print') {
-    if (!PRINT_PAINTINGS.has(item.id)) return null;
+    const paintingPart = item.id.split('-print-')[0];
+    const paintingCamel = paintingPart.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+    if (!PRINT_PAINTINGS.has(paintingCamel)) return null;
     return PRINT_PRICES[item.size] ?? null;
   }
 
