@@ -49,17 +49,18 @@
 
 .prints-lightbox-main {
   width: 100%;
-  flex: 1;
+  height: calc(90vh - 220px);
+  min-height: 200px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  min-height: 0;
 }
 
 #prints-lightbox-img {
   max-width: 100%;
-  max-height: calc(90vh - 140px);
+  max-height: 100%;
   object-fit: contain;
   border-radius: 3px;
 }
@@ -494,15 +495,25 @@ main {
     display: none;
   }
 
-  .prints-lightbox-body {
+  .prints-lightbox {
+    top: 1rem;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 6rem;
+    transform: none;
+    width: auto;
+    max-height: none;
+    border-radius: 8px;
+    padding: 1rem;
+    padding-top: 2.75rem;
     flex-direction: column;
   }
 
   .prints-lightbox-right {
-    width: 100%;
+    display: none;
   }
 
   #prints-lightbox-img {
-    max-height: 50vh;
+    max-height: 65vh;
   }
 }

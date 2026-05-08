@@ -292,7 +292,7 @@
     sizesContainer.innerHTML = '';
     sizeLabel.classList.remove('shake');
     const minPrice = Math.min(...sizes.map(s => s.price));
-    trackEvent('view_item', { currency: 'SEK', value: minPrice, items: [{ item_id: painting.id, item_name: painting.title, item_category: 'print', price: minPrice }] });
+    if (typeof gtag === 'function') gtag('event', 'view_item', { currency: 'SEK', value: minPrice, items: [{ item_id: painting.id, item_name: painting.title, item_category: 'print', price: minPrice }] });
     priceDisplay.textContent = `${t('prints_price_from')} ${minPrice} kr`;
 
     sizes.forEach(sizeOpt => {
@@ -328,6 +328,25 @@
     });
   }
 
+  let mobileOverlay = null;
+  function openMobileFullscreen(src) {
+    if (!mobileOverlay) {
+      mobileOverlay = document.createElement('div');
+      mobileOverlay.style.cssText = 'position:fixed;inset:0;background:#000;z-index:1200;display:flex;align-items:center;justify-content:center;';
+      const mobileImg = document.createElement('img');
+      mobileImg.style.cssText = 'max-width:100%;max-height:100%;object-fit:contain;';
+      mobileOverlay.appendChild(mobileImg);
+      mobileOverlay.addEventListener('click', () => {
+        mobileOverlay.style.display = 'none';
+        document.body.style.overflow = '';
+      });
+      document.body.appendChild(mobileOverlay);
+    }
+    mobileOverlay.querySelector('img').src = src;
+    mobileOverlay.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
   async function initPrintsLightbox() {
     try {
       const res = await fetch('/images/paintings/counts.json');
@@ -346,6 +365,10 @@
 
       img.style.cursor = 'pointer';
       img.addEventListener('click', () => {
+        if (window.innerWidth <= 600) {
+          openMobileFullscreen(img.src);
+          return;
+        }
         const sizes = [...card.querySelectorAll('.size-btn')].map(btn => ({
           label: btn.textContent,
           size: btn.dataset.size,
