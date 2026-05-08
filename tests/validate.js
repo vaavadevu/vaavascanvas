@@ -596,6 +596,172 @@ test('Required prints translation keys exist', () => {
 });
 
 // ─────────────────────────────────────────────────────────────
+// SUITE 8: Checkout Price Catalog Validation
+// ─────────────────────────────────────────────────────────────
+
+console.log(colors.blue + '\n[8] CHECKOUT PRICE CATALOG VALIDATION' + colors.reset);
+
+function loadCheckoutCatalog() {
+  const filePath = path.join(__dirname, '../functions/api/create-checkout.js');
+  const content = fs.readFileSync(filePath, 'utf8');
+
+  // Extract PAINTINGS array
+  const paintingsMatch = content.match(/const PAINTINGS = \[([\s\S]+?)\];/);
+  if (!paintingsMatch) throw new Error('Could not find PAINTINGS in create-checkout.js');
+  let str = `[${paintingsMatch[1]}]`;
+  str = str.replace(/'([^']*)'/g, '"$1"');
+  str = str.replace(/(\{|,)\s*([\w]+):/g, '$1"$2":');
+  str = str.replace(/,(\s*[}\]])/g, '$1');
+  const serverPaintings = JSON.parse(str);
+
+  // Extract PRINT_PRICES
+  const printPricesMatch = content.match(/const PRINT_PRICES = \{([^}]+)\}/);
+  if (!printPricesMatch) throw new Error('Could not find PRINT_PRICES in create-checkout.js');
+  let ppStr = `{${printPricesMatch[1]}}`;
+  ppStr = ppStr.replace(/'([^']+)':/g, '"$1":');
+  ppStr = ppStr.replace(/,(\s*[}\]])/g, '$1');
+  const printPrices = JSON.parse(ppStr);
+
+  // Extract PRINT_PAINTINGS set
+  const printPaintingsMatch = content.match(/const PRINT_PAINTINGS = new Set\(\[([^\]]+)\]\)/);
+  const printPaintings = new Set();
+  if (printPaintingsMatch) {
+    const matches = printPaintingsMatch[1].match(/'([^']+)'/g);
+    if (matches) matches.forEach(s => printPaintings.add(s.replace(/'/g, '')));
+  }
+
+  // Extract shipping constants
+  const freeShippingMatch = content.match(/const FREE_SHIPPING_THRESHOLD = (\d+)/);
+  const shippingCostMatch = content.match(/const SHIPPING_COST = (\d+)/);
+
+  return {
+    paintings: serverPaintings,
+    printPrices,
+    printPaintings,
+    freeShippingThreshold: freeShippingMatch ? parseInt(freeShippingMatch[1]) : null,
+    shippingCost: shippingCostMatch ? parseInt(shippingCostMatch[1]) : null,
+  };
+}
+
+let catalog;
+try {
+  catalog = loadCheckoutCatalog();
+} catch (err) {
+  log.error('Failed to load checkout catalog: ' + err.message);
+  process.exit(1);
+}
+
+test('Checkout catalog covers all for-sale paintings', () => {
+  const catalogIds = catalog.paintings.map(p => p.id);
+  paintings.filter(p => p.status === 'for_sale').forEach(p => {
+    assertIncludes(catalogIds, p.id,
+      `For-sale painting "${p.id}" is missing from the checkout price catalog in create-checkout.js`);
+  });
+});
+
+test('Checkout catalog prices match paintings.js', () => {
+  catalog.paintings.forEach(cp => {
+    const p = paintings.find(x => x.id === cp.id);
+    assert(p, `Checkout catalog contains unknown painting ID: "${cp.id}" — remove it or add it to paintings.js`);
+    if (cp.originalPrice !== undefined) {
+      assertEqual(cp.originalPrice, p.originalPrice,
+        `Painting "${cp.id}" originalPrice mismatch: catalog=${cp.originalPrice}, paintings.js=${p.originalPrice}`);
+    }
+    if (cp.framedPrice !== undefined) {
+      assertEqual(cp.framedPrice, p.framedPrice,
+        `Painting "${cp.id}" framedPrice mismatch: catalog=${cp.framedPrice}, paintings.js=${p.framedPrice}`);
+    }
+    if (cp.framedOnly !== undefined) {
+      assertEqual(!!cp.framedOnly, !!p.framedOnly,
+        `Painting "${cp.id}" framedOnly mismatch: catalog=${cp.framedOnly}, paintings.js=${p.framedOnly}`);
+    }
+  });
+});
+
+test('Checkout catalog sold statuses match paintings.js', () => {
+  paintings.forEach(p => {
+    const cp = catalog.paintings.find(x => x.id === p.id);
+    if (!cp) return;
+    if (p.status === 'sold') {
+      assertEqual(cp.status, 'sold',
+        `Painting "${p.id}" is sold in paintings.js but catalog still has it for_sale — update create-checkout.js`);
+    }
+    if (cp.status === 'sold') {
+      assertEqual(p.status, 'sold',
+        `Painting "${p.id}" is sold in checkout catalog but paintings.js says ${p.status}`);
+    }
+  });
+});
+
+test('Checkout PRINT_PAINTINGS matches paintings.js', () => {
+  const paintingsContent = fs.readFileSync(path.join(__dirname, '../js/paintings.js'), 'utf8');
+  const match = paintingsContent.match(/const PRINT_PAINTINGS = \[([^\]]+)\]/);
+  const jsPrintPaintings = new Set();
+  if (match) {
+    const found = match[1].match(/'([^']+)'/g);
+    if (found) found.forEach(s => jsPrintPaintings.add(s.replace(/'/g, '')));
+  }
+
+  catalog.printPaintings.forEach(id => {
+    assert(jsPrintPaintings.has(id),
+      `Checkout catalog PRINT_PAINTINGS includes "${id}" which is not in paintings.js`);
+  });
+  jsPrintPaintings.forEach(id => {
+    assert(catalog.printPaintings.has(id),
+      `paintings.js PRINT_PAINTINGS includes "${id}" but it is missing from the checkout catalog`);
+  });
+});
+
+test('Checkout print prices match paintings.js PRINT_SIZES constants', () => {
+  const paintingsContent = fs.readFileSync(path.join(__dirname, '../js/paintings.js'), 'utf8');
+
+  // Extract PRINT_SIZES_SQUARE and PRINT_SIZES_STANDARD
+  function extractSizes(name) {
+    const match = paintingsContent.match(new RegExp(`const ${name} = \\[([\\s\\S]+?)\\];`));
+    if (!match) throw new Error(`Could not find ${name} in paintings.js`);
+    let str = `[${match[1]}]`;
+    str = str.replace(/'([^']*)'/g, '"$1"');
+    str = str.replace(/(\{|,)\s*([\w]+):/g, '$1"$2":');
+    str = str.replace(/,(\s*[}\]])/g, '$1');
+    return JSON.parse(str);
+  }
+
+  const squareSizes = extractSizes('PRINT_SIZES_SQUARE');
+  const standardSizes = extractSizes('PRINT_SIZES_STANDARD');
+  const allSizes = [...squareSizes, ...standardSizes];
+
+  allSizes.forEach(({ size, price }) => {
+    assert(catalog.printPrices[size] !== undefined,
+      `Print size "${size}" from paintings.js is missing from PRINT_PRICES in create-checkout.js`);
+    assertEqual(catalog.printPrices[size], price,
+      `Print size "${size}" price mismatch: catalog=${catalog.printPrices[size]}, paintings.js=${price}`);
+  });
+
+  Object.keys(catalog.printPrices).forEach(size => {
+    const known = allSizes.find(s => s.size === size);
+    assert(known,
+      `PRINT_PRICES in create-checkout.js contains unknown size "${size}" not in paintings.js`);
+  });
+});
+
+test('Checkout shipping constants match cart.js', () => {
+  const cartContent = fs.readFileSync(path.join(__dirname, '../js/cart.js'), 'utf8');
+  const freeMatch = cartContent.match(/const FREE_SHIPPING = (\d+)/);
+  const cartFreeShipping = freeMatch ? parseInt(freeMatch[1]) : null;
+
+  assert(catalog.freeShippingThreshold !== null,
+    'FREE_SHIPPING_THRESHOLD not found in create-checkout.js');
+  assert(catalog.shippingCost !== null,
+    'SHIPPING_COST not found in create-checkout.js');
+
+  if (cartFreeShipping !== null) {
+    assertEqual(catalog.freeShippingThreshold, cartFreeShipping,
+      `Free shipping threshold mismatch: checkout=${catalog.freeShippingThreshold}, cart.js=${cartFreeShipping}`);
+  }
+  assertEqual(catalog.shippingCost, 59, 'SHIPPING_COST in create-checkout.js should be 59 kr');
+});
+
+// ─────────────────────────────────────────────────────────────
 // Results Summary
 // ─────────────────────────────────────────────────────────────
 
