@@ -267,8 +267,6 @@
     lbImages = images;
     lbIndex = startIndex;
     lbSelectedSize = null;
-    const minPrice = sizes.length ? Math.min(...sizes.map(s => s.price)) : 0;
-    trackEvent('view_item', { currency: 'SEK', value: minPrice, items: [{ item_id: painting.id, item_name: painting.title, item_category: 'print', price: minPrice }] });
 
     const mainImg = document.getElementById('prints-lightbox-img');
     const thumbs = document.getElementById('prints-lightbox-thumbs');
@@ -294,6 +292,7 @@
     sizesContainer.innerHTML = '';
     sizeLabel.classList.remove('shake');
     const minPrice = Math.min(...sizes.map(s => s.price));
+    trackEvent('view_item', { currency: 'SEK', value: minPrice, items: [{ item_id: painting.id, item_name: painting.title, item_category: 'print', price: minPrice }] });
     priceDisplay.textContent = `${t('prints_price_from')} ${minPrice} kr`;
 
     sizes.forEach(sizeOpt => {
