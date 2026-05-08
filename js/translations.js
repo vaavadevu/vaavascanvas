@@ -306,12 +306,12 @@ const keys = {
     en: "59 SEK shipping on all orders under 599 SEK. Free shipping over 599 SEK. Delivery time 1–3 business days via PostNord.",
   },
   shipping_europe_h: {
-    sv: "Internationell frakt",
-    en: "International shipping",
+    sv: "Frakt inom EU",
+    en: "Shipping within the EU",
   },
   shipping_europe_p: {
-    sv: "Prints kan beställas och levereras internationellt. Originalmålningar kan endast fraktas inom Sverige. Leveranstid ca 5–14 arbetsdagar.",
-    en: "Prints can be ordered and delivered internationally. Original paintings can only be shipped within Sweden. Delivery time approx. 5–14 business days.",
+    sv: "Både prints och originalmålningar kan skickas till alla EU-länder. Frakt 149 kr, leveranstid ca 5–10 arbetsdagar via PostNord.",
+    en: "Both prints and original paintings can be shipped to all EU countries. Shipping 149 SEK, delivery time approx. 5–10 business days via PostNord.",
   },
   shipping_packaging_h: {
     sv: "Förpackning",
