@@ -76,11 +76,14 @@ function openPageView(index) {
   if (!resolvePageViewRefs()) return;
   State.currentPaintingIndex = index;
   State.currentImageIndex = 0;
-  populatePageView(paintings[index]);
-  renderPageViewFrameInfo(paintings[index]);
-  renderPageViewButtons(paintings[index]);
+  const painting = paintings[index];
+  populatePageView(painting);
+  renderPageViewFrameInfo(painting);
+  renderPageViewButtons(painting);
   preloadAdjacentImages();
-  setUrlParam("painting", paintings[index].id);
+  setUrlParam("painting", painting.id);
+  const price = painting.framedOnly ? painting.framedPrice : (painting.originalPrice || 0);
+  trackEvent('view_item', { currency: 'SEK', value: price, items: [{ item_id: painting.id, item_name: painting.title, item_category: 'original', price }] });
 }
 
 // ── Populate helpers ──────────────────────────────────────────

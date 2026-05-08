@@ -1,5 +1,11 @@
 // utilities.js — shared utility functions for painting display and interactions
 
+// ── Analytics ─────────────────────────────────────────────────
+
+function trackEvent(name, params) {
+  if (typeof gtag === 'function') gtag('event', name, params);
+}
+
 // ── Price formatting ──────────────────────────────────────────
 
 const SEK_TO_EUR = 0.088;

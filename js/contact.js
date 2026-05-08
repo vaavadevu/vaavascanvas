@@ -65,6 +65,7 @@ if (type) {
     });
 
     if (response.ok) {
+      trackEvent('contact_form_submit', { form_type: typeSelect.value || 'General' });
       form.reset();
       applyTypeVisibility("");
       showSuccessPopup();

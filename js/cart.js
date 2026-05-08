@@ -2,10 +2,6 @@
 // VAAVASCANVAS – CART & CHECKOUT
 // ============================================================
 
-function trackEvent(name, params) {
-  if (typeof gtag === 'function') gtag('event', name, params);
-}
-
 const Cart = (() => {
   let items = JSON.parse(localStorage.getItem('vc_cart') || '[]');
   let selectedCountry = '';
