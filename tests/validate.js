@@ -632,7 +632,7 @@ function loadCheckoutCatalog() {
 
   // Extract shipping constants
   const freeShippingMatch = content.match(/const FREE_SHIPPING_THRESHOLD = (\d+)/);
-  const shippingCostMatch = content.match(/const SHIPPING_COST = (\d+)/);
+  const shippingCostMatch = content.match(/const SHIPPING_COST_SE = (\d+)/);
 
   return {
     paintings: serverPaintings,
@@ -758,7 +758,7 @@ test('Checkout shipping constants match cart.js', () => {
     assertEqual(catalog.freeShippingThreshold, cartFreeShipping,
       `Free shipping threshold mismatch: checkout=${catalog.freeShippingThreshold}, cart.js=${cartFreeShipping}`);
   }
-  assertEqual(catalog.shippingCost, 59, 'SHIPPING_COST in create-checkout.js should be 59 kr');
+  assertEqual(catalog.shippingCost, 59, 'SHIPPING_COST_SE in create-checkout.js should be 59 kr');
 });
 
 // ─────────────────────────────────────────────────────────────
