@@ -3,9 +3,9 @@
 
 <head>
   <meta charset="UTF-8" />
-  <!-- COOKIEBOT: uncomment to re-enable cookie consent banner
-  <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="0dfc90a6-3ccc-439a-94af-be29eeceedf6" type="text/javascript"></script>
-  -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.css">
+  <script src="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.umd.js"></script>
+  <script defer src="/js/cookie-consent-init.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Prints – Akrylmålningar till salu | Vaavascanvas</title>
   <meta name="description" content="Fine art prints av Devikas akrylmålningar, tryckta på arkivkvalitetspapper. Köp prints online och få dem levererade direkt till din dörr." />
@@ -155,10 +155,23 @@
 <div id="prints-lightbox-bg" class="prints-lightbox-bg"></div>
 <div id="prints-lightbox" class="prints-lightbox" role="dialog" aria-modal="true">
   <button class="prints-lightbox-close" id="prints-lightbox-close">&times;</button>
-  <div class="prints-lightbox-main">
-    <img id="prints-lightbox-img" src="" alt="" />
+  <div class="prints-lightbox-body">
+    <div class="prints-lightbox-left">
+      <div class="prints-lightbox-main">
+        <img id="prints-lightbox-img" src="" alt="" />
+      </div>
+      <div class="prints-lightbox-thumbs" id="prints-lightbox-thumbs"></div>
+    </div>
+    <div class="prints-lightbox-right">
+      <h2 id="prints-lightbox-title" class="prints-lightbox-title"></h2>
+      <div class="size-selector">
+        <label id="prints-lightbox-size-label" data-i18n="prints_size_label">Välj storlek</label>
+        <div class="size-buttons" id="prints-lightbox-sizes"></div>
+      </div>
+      <div class="price-display" id="prints-lightbox-price"></div>
+      <button class="btn-add-to-cart" id="prints-lightbox-add-btn" data-i18n="prints_add_to_cart">Lägg i varukorg</button>
+    </div>
   </div>
-  <div class="prints-lightbox-thumbs" id="prints-lightbox-thumbs"></div>
 </div>
 
 <div id="modals-container"></div>
@@ -246,12 +259,15 @@
   // Lightbox for print images
   let lbImages = [];
   let lbIndex = 0;
+  let lbPainting = null;
+  let lbSelectedSize = null;
 
-  function openPrintsLightbox(images, startIndex = 0) {
+  function openPrintsLightbox(painting, images, sizes, startIndex = 0) {
+    lbPainting = painting;
     lbImages = images;
     lbIndex = startIndex;
-    const lb = document.getElementById('prints-lightbox');
-    const bg = document.getElementById('prints-lightbox-bg');
+    lbSelectedSize = null;
+
     const mainImg = document.getElementById('prints-lightbox-img');
     const thumbs = document.getElementById('prints-lightbox-thumbs');
 
@@ -259,15 +275,41 @@
 
     thumbs.innerHTML = '';
     images.forEach((src, i) => {
-      const t = document.createElement('img');
-      t.src = src;
-      t.className = 'prints-lightbox-thumb' + (i === lbIndex ? ' active' : '');
-      t.addEventListener('click', () => setLbImage(i));
-      thumbs.appendChild(t);
+      const thumb = document.createElement('img');
+      thumb.src = src;
+      thumb.className = 'prints-lightbox-thumb' + (i === lbIndex ? ' active' : '');
+      thumb.addEventListener('click', () => setLbImage(i));
+      thumbs.appendChild(thumb);
     });
 
-    lb.classList.add('open');
-    bg.classList.add('open');
+    // Right panel
+    document.getElementById('prints-lightbox-title').textContent = painting.title;
+
+    const sizesContainer = document.getElementById('prints-lightbox-sizes');
+    const priceDisplay = document.getElementById('prints-lightbox-price');
+    const sizeLabel = document.getElementById('prints-lightbox-size-label');
+
+    sizesContainer.innerHTML = '';
+    sizeLabel.classList.remove('shake');
+    const minPrice = Math.min(...sizes.map(s => s.price));
+    priceDisplay.textContent = `${t('prints_price_from')} ${minPrice} kr`;
+
+    sizes.forEach(sizeOpt => {
+      const btn = document.createElement('button');
+      btn.className = 'size-btn';
+      btn.textContent = sizeOpt.label;
+      btn.addEventListener('click', () => {
+        sizesContainer.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        lbSelectedSize = sizeOpt;
+        priceDisplay.textContent = `${sizeOpt.price} kr`;
+        sizeLabel.classList.remove('shake');
+      });
+      sizesContainer.appendChild(btn);
+    });
+
+    document.getElementById('prints-lightbox').classList.add('open');
+    document.getElementById('prints-lightbox-bg').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
 
@@ -280,8 +322,8 @@
   function setLbImage(i) {
     lbIndex = i;
     document.getElementById('prints-lightbox-img').src = lbImages[i];
-    document.querySelectorAll('.prints-lightbox-thumb').forEach((t, idx) => {
-      t.classList.toggle('active', idx === i);
+    document.querySelectorAll('.prints-lightbox-thumb').forEach((thumb, idx) => {
+      thumb.classList.toggle('active', idx === i);
     });
   }
 
@@ -303,12 +345,37 @@
 
       img.style.cursor = 'pointer';
       img.addEventListener('click', () => {
-        openPrintsLightbox(getPaintingImagePaths(painting), 0);
+        const sizes = [...card.querySelectorAll('.size-btn')].map(btn => ({
+          label: btn.textContent,
+          size: btn.dataset.size,
+          price: parseInt(btn.dataset.price),
+        }));
+        openPrintsLightbox(painting, getPaintingImagePaths(painting), sizes, 0);
       });
     });
 
     document.getElementById('prints-lightbox-close').addEventListener('click', closePrintsLightbox);
     document.getElementById('prints-lightbox-bg').addEventListener('click', closePrintsLightbox);
+
+    document.getElementById('prints-lightbox-add-btn').addEventListener('click', () => {
+      const sizeLabel = document.getElementById('prints-lightbox-size-label');
+      if (!lbSelectedSize) {
+        sizeLabel.classList.remove('shake');
+        void sizeLabel.offsetWidth;
+        sizeLabel.classList.add('shake');
+        return;
+      }
+      Cart.add({
+        id: `${lbPainting.id}-print-${lbSelectedSize.size}`,
+        title: lbPainting.title,
+        type: 'print',
+        size: lbSelectedSize.size,
+        sizeLabel: lbSelectedSize.label,
+        price: lbSelectedSize.price,
+        image: lbImages[0],
+      });
+    });
+
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') closePrintsLightbox();
       if (e.key === 'ArrowRight') setLbImage((lbIndex + 1) % lbImages.length);
@@ -346,10 +413,7 @@
   <div class="footerBottom">
     <p class="footerCopy" data-i18n="footer_copy">© 2026 Devika – All rights reserved</p>
     <div class="footerCopyLinks">
-      <!-- COOKIEBOT FOOTER LINKS: uncomment when Cookiebot is re-enabled
-      <a href="https://www.cookiebot.com/goto/privacy-policy/?cbid=0dfc90a6-3ccc-439a-94af-be29eeceedf6" target="_blank" rel="noopener" data-i18n="cookie_policy_link">Cookiepolicy</a>
-      <a href="javascript:void(0)" onclick="Cookiebot.renew()" data-i18n="cookie_settings_link">Cookieinställningar</a>
-      -->
+      <a href="javascript:void(0)" onclick="CookieConsent.showPreferences()" data-i18n="cookie_settings_link">Cookieinställningar</a>
     </div>
   </div>
 </footer>

@@ -2,9 +2,9 @@
 <html lang="sv">
 <head>
   <meta charset="UTF-8" />
-  <!-- COOKIEBOT: uncomment to re-enable cookie consent banner
-  <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="0dfc90a6-3ccc-439a-94af-be29eeceedf6" type="text/javascript"></script>
-  -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.css">
+  <script src="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.umd.js"></script>
+  <script defer src="/js/cookie-consent-init.js"></script>
   <style>
     body { margin: 0; background: transparent; }
     #mc_embed_signup { background: transparent !important; width: 100% !important; font-family: 'Quicksand', sans-serif; }
@@ -17,15 +17,13 @@
     .optionalParent p { display: none; } 
   </style>
 </head>
-<!-- GOOGLE ANALYTICS: uncomment to re-enable (also re-enable Cookiebot above)
-<script type="text/plain" data-cookieconsent="statistics" async src="https://www.googletagmanager.com/gtag/js?id=G-S29QRW63JX"></script>
-<script type="text/plain" data-cookieconsent="statistics">
+<script type="text/plain" data-category="analytics" async src="https://www.googletagmanager.com/gtag/js?id=G-S29QRW63JX"></script>
+<script type="text/plain" data-category="analytics">
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-S29QRW63JX');
 </script>
--->
 <body>
     <div id="mc_embed_shell">
         <link href="//cdn-images.mailchimp.com/embedcode/classic-061523.css" rel="stylesheet" type="text/css">
@@ -77,9 +75,8 @@
                 </div>
             </form>
         </div>
-        <!-- MAILCHIMP SCRIPTS: uncomment when Cookiebot is re-enabled
-        <script type="text/plain" data-cookieconsent="marketing" src="//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js"></script>
-        <script type="text/plain" data-cookieconsent="marketing">(function ($) { window.fnames = new Array(); window.ftypes = new Array(); fnames[0] = 'EMAIL'; ftypes[0] = 'email'; fnames[1] = 'FNAME'; ftypes[1] = 'text'; fnames[2] = 'LNAME'; ftypes[2] = 'text'; fnames[3] = 'ADDRESS'; ftypes[3] = 'address'; fnames[4] = 'PHONE'; ftypes[4] = 'phone'; fnames[5] = 'BIRTHDAY'; ftypes[5] = 'birthday'; fnames[6] = 'COMPANY'; ftypes[6] = 'text'; }(jQuery)); var $mcj = jQuery.noConflict(true);
+        <script src="//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js"></script>
+        <script>(function ($) { window.fnames = new Array(); window.ftypes = new Array(); fnames[0] = 'EMAIL'; ftypes[0] = 'email'; fnames[1] = 'FNAME'; ftypes[1] = 'text'; fnames[2] = 'LNAME'; ftypes[2] = 'text'; fnames[3] = 'ADDRESS'; ftypes[3] = 'address'; fnames[4] = 'PHONE'; ftypes[4] = 'phone'; fnames[5] = 'BIRTHDAY'; ftypes[5] = 'birthday'; fnames[6] = 'COMPANY'; ftypes[6] = 'text'; }(jQuery)); var $mcj = jQuery.noConflict(true);
             // SMS Phone Multi-Country Functionality
             if (!window.MC) {
                 window.MC = {};
@@ -820,7 +817,6 @@
                 });
             });
         </script>
-        -->
     </div>
 </body>
 

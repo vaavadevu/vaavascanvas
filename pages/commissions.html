@@ -3,9 +3,9 @@
 
 <head>
   <meta charset="UTF-8" />
-  <!-- COOKIEBOT: uncomment to re-enable cookie consent banner
-  <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="0dfc90a6-3ccc-439a-94af-be29eeceedf6" type="text/javascript"></script>
-  -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.css">
+  <script src="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.umd.js"></script>
+  <script defer src="/js/cookie-consent-init.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Beställningar – Personliga målningar | Vaavascanvas</title>
   <meta name="description"
@@ -31,15 +31,13 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css" />
 </head>
 
-<!-- GOOGLE ANALYTICS: uncomment to re-enable (also re-enable Cookiebot above)
-<script type="text/plain" data-cookieconsent="statistics" async src="https://www.googletagmanager.com/gtag/js?id=G-S29QRW63JX"></script>
-<script type="text/plain" data-cookieconsent="statistics">
+<script type="text/plain" data-category="analytics" async src="https://www.googletagmanager.com/gtag/js?id=G-S29QRW63JX"></script>
+<script type="text/plain" data-category="analytics">
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-S29QRW63JX');
 </script>
--->
 
 <body id="top">
   <div id="header-container"></div>
@@ -203,10 +201,7 @@
     <div class="footerBottom">
       <p class="footerCopy" data-i18n="footer_copy">© 2026 Devika – All rights reserved</p>
       <div class="footerCopyLinks">
-        <!-- COOKIEBOT FOOTER LINKS: uncomment when Cookiebot is re-enabled
-        <a href="https://www.cookiebot.com/goto/privacy-policy/?cbid=0dfc90a6-3ccc-439a-94af-be29eeceedf6" target="_blank" rel="noopener" data-i18n="cookie_policy_link">Cookiepolicy</a>
-        <a href="javascript:void(0)" onclick="Cookiebot.renew()" data-i18n="cookie_settings_link">Cookieinställningar</a>
-        -->
+        <a href="javascript:void(0)" onclick="CookieConsent.showPreferences()" data-i18n="cookie_settings_link">Cookieinställningar</a>
       </div>
     </div>
   </footer>

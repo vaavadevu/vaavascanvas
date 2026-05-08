@@ -2,6 +2,10 @@
 // VAAVASCANVAS – CART & CHECKOUT
 // ============================================================
 
+function trackEvent(name, params) {
+  if (typeof gtag === 'function') gtag('event', name, params);
+}
+
 const Cart = (() => {
   let items = JSON.parse(localStorage.getItem('vc_cart') || '[]');
   let selectedCountry = '';
@@ -41,6 +45,7 @@ const Cart = (() => {
       const existing = items.find(i => i.key === key);
       if (existing) {
         existing.qty = (existing.qty || 1) + 1;
+        trackEvent('add_to_cart', { currency: 'SEK', value: item.price, items: [{ item_id: item.id, item_name: item.title, item_category: item.type, price: item.price, quantity: 1 }] });
         save();
         openCart();
         showToast(`"${item.title}" ${t('cart_toast_added')}`);
@@ -49,6 +54,7 @@ const Cart = (() => {
     }
 
     items.push({ ...item, key, qty: 1 });
+    trackEvent('add_to_cart', { currency: 'SEK', value: item.price, items: [{ item_id: item.id, item_name: item.title, item_category: item.type, price: item.price, quantity: 1 }] });
     save();
     openCart();
     showToast(`"${item.title}" lagd i varukorgen`);
@@ -293,6 +299,10 @@ const Cart = (() => {
 
     if (blocked) return;
 
+    const orderItems = items.map(i => ({ item_id: i.id, item_name: i.title, item_category: i.type, price: i.price, quantity: i.qty || 1 }));
+    trackEvent('begin_checkout', { currency: 'SEK', value: total(), items: orderItems });
+    sessionStorage.setItem('vc_last_order', JSON.stringify({ value: total(), items: orderItems }));
+
     const btn = document.getElementById('checkout-btn');
     if (btn) {
       btn.disabled = true;
@@ -370,6 +380,14 @@ const Cart = (() => {
     // Check for success redirect
     const params = new URLSearchParams(window.location.search);
     if (params.get('order') === 'success') {
+      const raw = sessionStorage.getItem('vc_last_order');
+      if (raw) {
+        try {
+          const order = JSON.parse(raw);
+          trackEvent('purchase', { currency: 'SEK', value: order.value, transaction_id: 'order_' + Date.now(), items: order.items });
+        } catch (_) {}
+        sessionStorage.removeItem('vc_last_order');
+      }
       showToast(t('cart_order_success'));
       window.history.replaceState({}, '', window.location.pathname);
     }

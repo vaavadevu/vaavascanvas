@@ -356,8 +356,8 @@ async function runTests() {
       const page = await browser.newPage();
       await page.goto(`${baseUrl}/pages/prints.html`, { waitUntil: 'networkidle' });
 
-      const priceDisplays = await page.locator('.price-display').all();
-      assert(priceDisplays.length > 0, 'No .price-display elements found');
+      const priceDisplays = await page.locator('.print-card .price-display').all();
+      assert(priceDisplays.length > 0, 'No .print-card .price-display elements found');
 
       for (const display of priceDisplays) {
         const text = await display.textContent();
