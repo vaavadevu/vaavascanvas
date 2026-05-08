@@ -8,12 +8,7 @@ function trackEvent(name, params) {
 
 // ── Price formatting ──────────────────────────────────────────
 
-const SEK_TO_EUR = 0.088;
-
 function formatPrice(sek) {
-  if ((window.currentLang || "sv") === "en") {
-    return `€${Math.round(sek * SEK_TO_EUR)}`;
-  }
   return `${sek} kr`;
 }
 
