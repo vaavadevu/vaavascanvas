@@ -282,6 +282,17 @@ test('SOLD paintings have originalPrice', () => {
   });
 });
 
+test('Paintings with discountPercent have valid originalPrice and percentage', () => {
+  paintings.forEach(p => {
+    if (p.discountPercent !== undefined) {
+      assert(p.originalPrice !== undefined && p.originalPrice !== null,
+        `Painting ${p.id} has discountPercent but missing originalPrice`);
+      assert(typeof p.discountPercent === 'number' && p.discountPercent > 0 && p.discountPercent < 100,
+        `Painting ${p.id} has invalid discountPercent: ${p.discountPercent}`);
+    }
+  });
+});
+
 test('Painting descKeys reference existing translations', () => {
   paintings.forEach(p => {
     assert(keys[p.descKey], `Painting ${p.id} descKey "${p.descKey}" not found in translations`);
@@ -667,9 +678,17 @@ test('Checkout catalog prices match paintings.js', () => {
       assertEqual(cp.originalPrice, p.originalPrice,
         `Painting "${cp.id}" originalPrice mismatch: catalog=${cp.originalPrice}, paintings.js=${p.originalPrice}`);
     }
+    if (cp.originalPrice !== undefined) {
+      assertEqual(cp.originalPrice, p.originalPrice,
+        `Painting "${cp.id}" originalPrice mismatch: catalog=${cp.originalPrice}, paintings.js=${p.originalPrice}`);
+    }
     if (cp.framedPrice !== undefined) {
       assertEqual(cp.framedPrice, p.framedPrice,
         `Painting "${cp.id}" framedPrice mismatch: catalog=${cp.framedPrice}, paintings.js=${p.framedPrice}`);
+    }
+    if (cp.discountPercent !== undefined) {
+      assertEqual(cp.discountPercent, p.discountPercent,
+        `Painting "${cp.id}" discountPercent mismatch: catalog=${cp.discountPercent}, paintings.js=${p.discountPercent}`);
     }
     if (cp.framedOnly !== undefined) {
       assertEqual(!!cp.framedOnly, !!p.framedOnly,

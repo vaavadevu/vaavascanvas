@@ -86,6 +86,12 @@ async function init() {
     const j = Math.floor(Math.random() * (i + 1));
     [paintings[i], paintings[j]] = [paintings[j], paintings[i]];
   }
+
+  paintings.forEach((painting, index) => {
+    painting._randomGalleryOrder = index;
+  });
+
+  sortPaintings();
   buildGallery();
 
   // Legacy: redirect old ?painting= URLs to view.html

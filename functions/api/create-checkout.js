@@ -36,6 +36,32 @@ const PRINT_PRICES = {
 
 const PRINT_PAINTINGS = new Set(['minMamma', 'efterIde', 'sommarvila']);
 
+function hasPaintingDiscount(painting) {
+  return typeof painting.discountPercent === 'number' && painting.discountPercent > 0 && painting.discountPercent < 100;
+}
+
+function getPaintingDiscountedPrice(painting) {
+  if (!painting.originalPrice || !hasPaintingDiscount(painting)) return painting.originalPrice;
+  return Math.round(painting.originalPrice * (100 - painting.discountPercent) / 100);
+}
+
+function getPaintingFramedSalePrice(painting) {
+  if (!painting.framedPrice) return null;
+  if (!hasPaintingDiscount(painting) || !painting.originalPrice) return painting.framedPrice;
+  const frameExtra = painting.framedPrice - painting.originalPrice;
+  return Math.round(getPaintingDiscountedPrice(painting) + frameExtra);
+}
+
+function getPaintingEffectivePrice(painting, withFrame = false) {
+  if (painting.framedOnly) {
+    return getPaintingFramedSalePrice(painting) ?? painting.framedPrice;
+  }
+  if (withFrame) {
+    return getPaintingFramedSalePrice(painting) ?? getPaintingDiscountedPrice(painting);
+  }
+  return getPaintingDiscountedPrice(painting);
+}
+
 const FREE_SHIPPING_THRESHOLD = 599;
 const SHIPPING_COST_SE = 59;
 const SHIPPING_COST_EU = 149;
@@ -55,9 +81,7 @@ function resolvePrice(item) {
     const baseId = isFramed ? item.id.slice(0, -7) : item.id;
     const painting = PAINTINGS.find(p => p.id === baseId);
     if (!painting || painting.status === 'sold') return null;
-    if (isFramed) return painting.framedPrice ?? null;
-    if (painting.framedOnly) return painting.framedPrice ?? null;
-    return painting.originalPrice ?? null;
+    return getPaintingEffectivePrice(painting, isFramed || painting.framedOnly) ?? null;
   }
 
   return null;

@@ -82,7 +82,7 @@ function openPageView(index) {
   renderPageViewButtons(painting);
   preloadAdjacentImages();
   setUrlParam("painting", painting.id);
-  const price = painting.framedOnly ? painting.framedPrice : (painting.originalPrice || 0);
+  const price = getPaintingEffectivePrice(painting, painting.framedOnly);
   trackEvent('view_item', { currency: 'SEK', value: price, items: [{ item_id: painting.id, item_name: painting.title, item_category: 'original', price }] });
 }
 
@@ -123,7 +123,7 @@ function configurePageViewArrows(imgs) {
 }
 
 function addPaintingToCart(painting, withFrame) {
-  const price = withFrame ? painting.framedPrice : painting.originalPrice;
+  const price = getPaintingEffectivePrice(painting, withFrame);
   const title = painting.title;
   Cart.add({
     id: withFrame ? `${painting.id}-framed` : painting.id,
@@ -136,8 +136,10 @@ function addPaintingToCart(painting, withFrame) {
     frameAvailable: painting.frameAvailable || false,
     framedOnly: painting.framedOnly || false,
     withFrame: withFrame || false,
-    basePrice: painting.originalPrice,
-    framedPrice: painting.framedPrice || null,
+    basePrice: getPaintingDiscountedPrice(painting) || painting.originalPrice || painting.framedPrice,
+    framedPrice: painting.framedPrice ? getPaintingFramedSalePrice(painting) : null,
+    originalBasePrice: painting.originalPrice,
+    originalFramedPrice: painting.framedPrice,
   });
 }
 
@@ -150,6 +152,9 @@ function renderPageViewButtons(painting) {
     if (painting.framedOnly) {
       // framedOnly: no selector needed, frame info shown in renderPageViewFrameInfo
     } else if (painting.frameAvailable) {
+      const saleBasePrice = getPaintingDiscountedPrice(painting) || painting.originalPrice;
+      const saleFramedPrice = getPaintingFramedSalePrice(painting) || painting.framedPrice;
+
       // Frame selector (for desktop only, contains radio buttons)
       const frameContainer = document.createElement("div");
       frameContainer.classList.add("frame-selector");
@@ -175,7 +180,8 @@ function renderPageViewButtons(painting) {
       withoutLabelText.classList.add("radio-label-text");
       withoutLabelText.innerHTML = `
         <span class="option-title">${t("frame_price_without")}</span>
-        <span class="option-price">${formatPrice(painting.originalPrice)}</span>
+        <span class="option-price">${formatPrice(saleBasePrice)}</span>
+        ${hasPaintingDiscount(painting) ? `<span class="option-price-old">${formatPrice(painting.originalPrice)}</span>` : ''}
       `;
       withoutLabel.appendChild(withoutLabelText);
       optionsWrapper.appendChild(withoutLabel);
@@ -193,7 +199,8 @@ function renderPageViewButtons(painting) {
       withLabelText.classList.add("radio-label-text");
       withLabelText.innerHTML = `
         <span class="option-title">${t("frame_price_with")}</span>
-        <span class="option-price">${formatPrice(painting.framedPrice)}</span>
+        <span class="option-price">${formatPrice(saleFramedPrice)}</span>
+        ${hasPaintingDiscount(painting) ? `<span class="option-price-old">${formatPrice(painting.framedPrice)}</span>` : ''}
       `;
       withLabel.appendChild(withLabelText);
       optionsWrapper.appendChild(withLabel);
@@ -203,13 +210,20 @@ function renderPageViewButtons(painting) {
     }
 
     const buyBtn = document.createElement("button");
+    buyBtn.classList.add("pageview-buy-btn");
     const inCart = Cart.hasOriginal(painting.id);
+
+    function updateBuyButtonLabel() {
+      buyBtn.textContent = t("modal_buy_btn");
+    }
 
     if (inCart) {
       buyBtn.textContent = t("modal_in_cart_btn");
       buyBtn.addEventListener("click", () => Cart.openCart());
     } else {
-      buyBtn.textContent = t("modal_buy_btn");
+      updateBuyButtonLabel();
+      const frameRadios = pageViewButtons.querySelectorAll('input[type="radio"]');
+      frameRadios.forEach(radio => radio.addEventListener('change', updateBuyButtonLabel));
       buyBtn.addEventListener("click", () => {
         if (painting.framedOnly) {
           addPaintingToCart(painting, true);
@@ -243,6 +257,9 @@ function renderPageViewButtons(painting) {
 }
 
 function showFrameSelectorModal(painting) {
+  const saleBasePrice = getPaintingDiscountedPrice(painting) || painting.originalPrice;
+  const saleFramedPrice = getPaintingFramedSalePrice(painting) || painting.framedPrice;
+
   // Check if we already have a cloned modal in the body
   let frameSelector = document.querySelector("body > .frame-selector");
 
@@ -273,7 +290,8 @@ function showFrameSelectorModal(painting) {
       withoutBtn.classList.add("frame-action-btn", "frame-action-without");
       withoutBtn.innerHTML = `
         <span class="btn-title">${t("frame_price_without")}</span>
-        <span class="btn-price">${formatPrice(painting.originalPrice)}</span>
+        <span class="btn-price">${formatPrice(saleBasePrice)}</span>
+        ${hasPaintingDiscount(painting) ? `<span class="btn-price-old">${formatPrice(painting.originalPrice)}</span>` : ''}
       `;
       withoutBtn.addEventListener("click", () => {
         hideFrameSelectorModal(() => addPaintingToCart(painting, false));
@@ -287,7 +305,8 @@ function showFrameSelectorModal(painting) {
     withBtn.classList.add("frame-action-btn", "frame-action-with");
     withBtn.innerHTML = `
       <span class="btn-title">${t("frame_price_with")}</span>
-      <span class="btn-price">${formatPrice(painting.framedPrice)}</span>
+      <span class="btn-price">${formatPrice(saleFramedPrice)}</span>
+      ${hasPaintingDiscount(painting) ? `<span class="btn-price-old">${formatPrice(painting.framedPrice)}</span>` : ''}
     `;
     withBtn.addEventListener("click", () => {
       hideFrameSelectorModal(() => addPaintingToCart(painting, true));
@@ -412,15 +431,41 @@ function renderPageViewPrice(painting) {
   }
 
   if (painting.framedOnly && painting.framedPrice) {
+    const salePrice = getPaintingFramedSalePrice(painting) || painting.framedPrice;
     const price = document.createElement("p");
-    price.textContent = formatPrice(painting.framedPrice);
+    price.textContent = formatPrice(salePrice);
     price.classList.add("pageview-price");
     pageViewPriceSection.appendChild(price);
+
+    if (hasPaintingDiscount(painting) && painting.originalPrice) {
+      const oldPrice = document.createElement("p");
+      oldPrice.textContent = formatPrice(painting.framedPrice);
+      oldPrice.classList.add("pageview-old-price");
+      pageViewPriceSection.appendChild(oldPrice);
+
+      const discountNote = document.createElement("p");
+      discountNote.textContent = `-${painting.discountPercent}% ${t('pageview_discount_text')}`;
+      discountNote.classList.add("pageview-discount-note");
+      pageViewPriceSection.appendChild(discountNote);
+    }
   } else if (painting.originalPrice) {
+    const salePrice = getPaintingDiscountedPrice(painting);
     const price = document.createElement("p");
-    price.textContent = formatPrice(painting.originalPrice);
+    price.textContent = formatPrice(salePrice);
     price.classList.add("pageview-price");
     pageViewPriceSection.appendChild(price);
+
+    if (hasPaintingDiscount(painting)) {
+      const oldPrice = document.createElement("p");
+      oldPrice.textContent = formatPrice(painting.originalPrice);
+      oldPrice.classList.add("pageview-old-price");
+      pageViewPriceSection.appendChild(oldPrice);
+
+      const discountNote = document.createElement("p");
+      discountNote.textContent = `-${painting.discountPercent}% ${t('pageview_discount_text')}`;
+      discountNote.classList.add("pageview-discount-note");
+      pageViewPriceSection.appendChild(discountNote);
+    }
   }
 }
 

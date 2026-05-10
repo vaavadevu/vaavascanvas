@@ -16,6 +16,27 @@ function getPaintingImagePaths(painting) {
   });
 }
 
+function getGalleryPriceHtml(painting) {
+  const salePrice = painting.framedOnly
+    ? getPaintingEffectivePrice(painting, true)
+    : getPaintingDiscountedPrice(painting);
+  const hasDiscount = hasPaintingDiscount(painting);
+  const oldPrice = painting.framedOnly ? painting.framedPrice : painting.originalPrice;
+
+  if (hasDiscount && oldPrice) {
+    return `
+      <span class="gallery-item-price-current">${salePrice.toLocaleString('sv-SE')} kr</span>
+      <span class="gallery-item-price-old">${oldPrice.toLocaleString('sv-SE')} kr</span>
+    `;
+  }
+
+  if (painting.frameAvailable && !painting.framedOnly) {
+    return `${t('prints_price_from')} ${salePrice.toLocaleString('sv-SE')} kr`;
+  }
+
+  return `${salePrice.toLocaleString('sv-SE')} kr`;
+}
+
 function sortPaintings() {
   const statusOrder = {
     [STATUS.FOR_SALE]: 0,
@@ -24,7 +45,16 @@ function sortPaintings() {
   paintings.sort((a, b) => {
     const statusDiff = statusOrder[a.status] - statusOrder[b.status];
     if (statusDiff !== 0) return statusDiff;
-    return (b.originalPrice || 0) - (a.originalPrice || 0);
+
+    const discountA = hasPaintingDiscount(a) ? 1 : 0;
+    const discountB = hasPaintingDiscount(b) ? 1 : 0;
+    if (discountA !== discountB) return discountB - discountA;
+
+    if (discountA && discountB) {
+      return (b.discountPercent || 0) - (a.discountPercent || 0);
+    }
+
+    return (a._randomGalleryOrder || 0) - (b._randomGalleryOrder || 0);
   });
 }
 
@@ -65,6 +95,7 @@ function createGalleryItem(painting, index) {
 
   item.appendChild(img);
   if (painting.status === STATUS.SOLD) addSoldBadge(item);
+  else if (painting.status === STATUS.FOR_SALE && hasPaintingDiscount(painting)) addDiscountBadge(item, painting);
 
   const infoBar = document.createElement("div");
   infoBar.className = "gallery-item-info";
@@ -77,13 +108,7 @@ function createGalleryItem(painting, index) {
   if (painting.status === STATUS.FOR_SALE) {
     const priceLabel = document.createElement("span");
     priceLabel.className = "gallery-item-price";
-    if (painting.framedOnly) {
-      priceLabel.textContent = painting.framedPrice.toLocaleString('sv-SE') + ' kr';
-    } else if (painting.frameAvailable) {
-      priceLabel.textContent = t('prints_price_from') + ' ' + painting.originalPrice.toLocaleString('sv-SE') + ' kr';
-    } else {
-      priceLabel.textContent = painting.originalPrice.toLocaleString('sv-SE') + ' kr';
-    }
+    priceLabel.innerHTML = getGalleryPriceHtml(painting);
     infoBar.appendChild(priceLabel);
   }
 
@@ -99,24 +124,27 @@ const wrapper = document.createElement('div');
   wrapper.className = 'gallery-item-actions';
 
   // Original buy button
-  if (painting.status === STATUS.FOR_SALE && painting.originalPrice) {
+  if (painting.status === STATUS.FOR_SALE && (painting.originalPrice || painting.framedOnly)) {
+    const currentPrice = painting.framedOnly
+      ? getPaintingEffectivePrice(painting, true)
+      : getPaintingDiscountedPrice(painting);
     const buyBtn = document.createElement('button');
     buyBtn.className = 'btn-add-to-cart';
-    buyBtn.textContent = `Köp ${painting.originalPrice.toLocaleString('sv-SE')} kr`;
+    buyBtn.textContent = `Köp ${currentPrice.toLocaleString('sv-SE')} kr`;
     buyBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       Cart.add({
-        id: painting.id,
+        id: painting.framedOnly ? `${painting.id}-framed` : painting.id,
         title: painting.title,
         type: 'original',
-        price: painting.originalPrice,
+        price: currentPrice,
         image: imageUrl,
         paintingBaseId: painting.id,
         paintingTitle: painting.title,
         frameAvailable: painting.frameAvailable || false,
-        withFrame: false,
-        basePrice: painting.originalPrice,
-        framedPrice: painting.framedPrice || null,
+        withFrame: painting.framedOnly || false,
+        basePrice: getPaintingDiscountedPrice(painting) || painting.originalPrice || painting.framedPrice,
+        framedPrice: painting.framedPrice ? getPaintingFramedSalePrice(painting) : null,
       });
       showToast('Tillagd i varukorgen!');
     });
@@ -183,6 +211,13 @@ function addSoldBadge(container) {
   badge.textContent = t("modal_sold");
   badge.dataset.i18n = "modal_sold";
   badge.classList.add("sold-badge");
+  container.appendChild(badge);
+}
+
+function addDiscountBadge(container, painting) {
+  const badge = document.createElement("div");
+  badge.textContent = `-${painting.discountPercent}%`;
+  badge.classList.add("discount-badge");
   container.appendChild(badge);
 }
 

@@ -203,6 +203,13 @@
   margin-bottom: 0.4rem;
 }
 
+.cart-item-price-old {
+  font-size: 0.8rem;
+  color: #666;
+  text-decoration: line-through;
+  margin-left: 0.5rem;
+}
+
 .cart-item-qty {
   display: flex;
   align-items: center;
@@ -504,8 +511,10 @@
 
 /* BUY BUTTONS on paintings/prints */
 .btn-add-to-cart {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
+  width: 100%;
   gap: 0.5rem;
   padding: 0.6rem 1.2rem;
   background: #2c2416;
@@ -515,6 +524,7 @@
   font-family: 'Quicksand', sans-serif;
   font-size: 0.8rem;
   letter-spacing: 0.08em;
+  text-align: center;
   text-transform: uppercase;
   cursor: pointer;
   transition: background 0.2s;

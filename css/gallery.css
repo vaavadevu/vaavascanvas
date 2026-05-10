@@ -2,6 +2,7 @@
 #gallery {
   columns: 4;
   column-gap: 15px;
+  column-fill: balance;
   padding: 20px;
   width: 100%;
   /* Frame style variables */
@@ -116,8 +117,35 @@
   padding: 3px 8px;
   border-radius: 20px;
   backdrop-filter: blur(2px);
-  white-space: nowrap;
   min-width: 0;
+}
+
+.gallery-item-price {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.gallery-item-price-current,
+.gallery-item-price-old,
+.gallery-item-discount {
+  display: block;
+}
+
+.gallery-item-price-old {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.65rem;
+  text-decoration: line-through;
+}
+
+.gallery-item-discount {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 12px;
 }
 
 @media (max-width: 960px) {
@@ -127,6 +155,28 @@
     padding: 2px 6px;
     letter-spacing: 0.02em;
   }
+
+  .gallery-item-price-old,
+  .gallery-item-discount {
+    font-size: 0.6rem;
+  }
+}
+
+.discount-badge {
+  position: absolute;
+  top: 18px;
+  left: -45px;
+  padding: 8px 60px;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 600;
+  transform: rotate(-45deg);
+  text-align: center;
+  box-shadow: 0 4px 10px var(--shadow-dark);
+  pointer-events: none;
+  background: #d21f3a;
+  color: #fff;
 }
 
 .sold-badge {
@@ -144,6 +194,15 @@
   text-align: center;
   box-shadow: 0 4px 10px var(--shadow-dark);
   pointer-events: none;
+}
+
+@media (max-width: 960px) {
+  .discount-badge {
+    padding: 6px 40px;
+    font-size: 0.65rem;
+    letter-spacing: 1.5px;
+    left: -35px;
+  }
 }
 
 /* ─── Filter knappar ─── */

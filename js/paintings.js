@@ -53,6 +53,32 @@ function getPaintingSize(painting) {
   return SIZE.LARGE;
 }
 
+function hasPaintingDiscount(painting) {
+  return typeof painting.discountPercent === 'number' && painting.discountPercent > 0 && painting.discountPercent < 100;
+}
+
+function getPaintingDiscountedPrice(painting) {
+  if (!painting.originalPrice || !hasPaintingDiscount(painting)) return painting.originalPrice;
+  return Math.round(painting.originalPrice * (100 - painting.discountPercent) / 100);
+}
+
+function getPaintingFramedSalePrice(painting) {
+  if (!painting.framedPrice) return null;
+  if (!hasPaintingDiscount(painting) || !painting.originalPrice) return painting.framedPrice;
+  const frameExtra = painting.framedPrice - painting.originalPrice;
+  return Math.round(getPaintingDiscountedPrice(painting) + frameExtra);
+}
+
+function getPaintingEffectivePrice(painting, withFrame = false) {
+  if (painting.framedOnly) {
+    return getPaintingFramedSalePrice(painting) ?? painting.framedPrice;
+  }
+  if (withFrame) {
+    return getPaintingFramedSalePrice(painting) ?? getPaintingDiscountedPrice(painting);
+  }
+  return getPaintingDiscountedPrice(painting);
+}
+
 const paintings = [
   {
     id: "herrOchFruAndersson",

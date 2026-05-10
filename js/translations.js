@@ -169,6 +169,10 @@ const keys = {
     sv: "Finns som print från",
     en: "Available as a print from",
   },
+  pageview_discount_text: {
+    sv: "rabatt på ordinarie pris",
+    en: "discount on list price",
+  },
   status_sold: {
     sv: "Den här tavlan är såld.",
     en: "This painting has been sold.",
