@@ -539,6 +539,14 @@ desc_sommarvila: {
   sv: "Två glada lamm som hoppar och leker på en blommig äng en fin kväll, fyllda av bus och vårkänslor.",
   en: "Two happy lambs jumping and playing in a flowery meadow on a nice evening, full of mischief and spring feelings.",
 },
+  desc_bonnie: {
+  sv: "Personlig målning - ej till salu.",
+  en: "Personal painting - not for sale.",
+},
+  desc_brollopspresent: {
+  sv: "Personlig målning - ej till salu.",
+  en: "Personal painting - not for sale.",
+},
 
   nav_prints: {
     sv: "Prints",

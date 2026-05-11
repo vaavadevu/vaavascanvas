@@ -71,5 +71,9 @@ echo Bearbetar bilder...
 python -u "scripts\generate_mobile_images.py"
 
 echo.
+echo Genererar data for client och server...
+call npm run build
+
+echo.
 echo Allt klart!
 pause

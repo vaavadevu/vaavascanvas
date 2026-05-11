@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Devika's Art Gallery Website",
   "scripts": {
+    "build": "node scripts/build-paintings.js",
     "test": "node tests/validate.js && node tests/e2e.js"
   },
   "dependencies": {
