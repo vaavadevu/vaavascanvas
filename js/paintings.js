@@ -102,6 +102,7 @@ const paintings = [
     status: STATUS.FOR_SALE,
     medium: MEDIUM.ACRYLIC_CANVAS,
   },
+
   {
     id: "operationBaver",
     title: "Operation bäver",
@@ -121,6 +122,19 @@ const paintings = [
     height: 58,
     shape: SHAPE.RECTANGULAR,
     framedPrice: 3600,
+    framedOnly: true,
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    frameAvailable: true,
+  },
+  {
+    id: "narhet",
+    title: "Närhet",
+    descKey: "desc_narhet",
+    width: 22,
+    height: 16,
+    shape: SHAPE.RECTANGULAR,
+    framedPrice: 2600,
     framedOnly: true,
     status: STATUS.FOR_SALE,
     medium: MEDIUM.ACRYLIC_CANVAS,

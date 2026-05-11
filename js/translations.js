@@ -451,6 +451,10 @@ desc_vinterlek: {
     sv: "Glada kossar som njuter av friheten på sommarbete utan ett nummer på örat.",
     en: "Happy cows enjoying the freedom of summer pasture without a number on their ear."
 },
+desc_narhet: {
+  sv: "Två gräsänder som simmar nära varandra och visar en känsla av trygghet och samhörighet.",
+  en: "Two mallards swimming close to each other showing a feeling of security and togetherness.",
+},
   desc_sommarstuga: {
     sv: "En varm sommardag i Småland och det doftar nästan nyklippt gräs.",
     en: "A warm summer day in Småland and it smells almost like freshly mowed grass.",
