@@ -127,6 +127,17 @@
     "medium": "medium_acrylic_canvas"
   },
   {
+    "id": "enLerigDrom",
+    "title": "En lerig dröm",
+    "descKey": "desc_enLerigDrom",
+    "width": 59,
+    "height": 42,
+    "shape": "rectangular",
+    "originalPrice": 2000,
+    "status": "for_sale",
+    "medium": "medium_acrylic_canvas"
+  },
+  {
     "id": "efterIde",
     "title": "Efter Ide",
     "descKey": "desc_efterIde",

@@ -189,6 +189,10 @@ function activateNavQuery(queryName) {
 }
 
 function setupModals() {
+  const dismissSubscribeModal = () => {
+    localStorage.setItem("subscribeModal_dismissed", String(Date.now()));
+  };
+
   document.addEventListener("click", (e) => {
     // Subscribe modal
     if (e.target.closest("#subscribeBtn")) {
@@ -196,9 +200,11 @@ function setupModals() {
     }
     if (e.target.closest("#subscribeClose")) {
       document.getElementById("subscribeModal").style.display = "none";
+      dismissSubscribeModal();
     }
     if (e.target.id === "subscribeModal") {
       e.target.style.display = "none";
+      dismissSubscribeModal();
     }
 
     // Shipping modal
@@ -218,7 +224,7 @@ function setupModals() {
       document.getElementById("successPopup").style.display = "none";
     }
     if (e.target.id === "successPopup") {
-      e.target.style.display = "none";
+      document.getElementById("successPopup").style.display = "none";
     }
 
     // Success → Shipping
@@ -228,6 +234,16 @@ function setupModals() {
       document.getElementById("shippingModal").style.display = "flex";
     }
   });
+
+  document.addEventListener("change", (e) => {
+    if (e.target.id === "subscribeAlreadyCheckbox") {
+      const modal = document.getElementById("subscribeModal");
+      if (e.target.checked && modal) {
+        modal.style.display = "none";
+        dismissSubscribeModal();
+      }
+    }
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -235,3 +251,48 @@ document.addEventListener('DOMContentLoaded', () => {
     attachFilterListeners();
   }
 });
+
+// Auto-show subscribe modal on index page
+function setupAutoShowSubscribeModal() {
+  // Only show on index/home page
+  const isIndex = window.location.pathname.includes("index") || window.location.pathname === "/";
+  if (!isIndex) return;
+
+  const modal = document.getElementById("subscribeModal");
+  if (!modal) return;
+
+  const dismissed = localStorage.getItem("subscribeModal_dismissed");
+  if (dismissed) return;
+
+  const lastShownKey = "subscribeModal_lastShown";
+  const lastShown = localStorage.getItem(lastShownKey);
+  const now = Date.now();
+  const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+
+  // If shown recently, don't show again
+  if (lastShown && (now - parseInt(lastShown)) < sevenDaysMs) {
+    return;
+  }
+
+  // Show modal after 4 seconds
+  const showTimer = setTimeout(() => {
+    modal.style.display = "flex";
+    localStorage.setItem(lastShownKey, String(now));
+  }, 4000);
+
+  // Exit-intent detection: if mouse leaves top of viewport, show modal earlier
+  const exitIntentHandler = (e) => {
+    if (e.clientY <= 0) {
+      clearTimeout(showTimer);
+      modal.style.display = "flex";
+      localStorage.setItem(lastShownKey, String(now));
+      document.removeEventListener("mouseleave", exitIntentHandler);
+    }
+  };
+
+  document.addEventListener("mouseleave", exitIntentHandler);
+
+  modal.addEventListener("click", () => {
+    document.removeEventListener("mouseleave", exitIntentHandler);
+  }, { once: true });
+}

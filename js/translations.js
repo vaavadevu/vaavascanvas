@@ -274,12 +274,16 @@ const keys = {
 
   // ── Subscribe modal ────────────────────────────────────────
   subscribe_heading: {
-    sv: "Håll dig uppdaterad",
-    en: "Stay updated",
+    sv: "Prenumerera på nyheter",
+    en: "Subscribe to my newsletter",
   },
   subscribe_sub: {
-    sv: "Få ett mail när nya målningar läggs upp.",
-    en: "Get an email when new paintings are added.",
+    sv: "Få uppdateringar på din email när jag lägger upp nya målningar, blogg eller försäljningar.",
+    en: "Get email updates when I post new paintings, blog posts or sales.",
+  },
+  subscribe_already_subscribed: {
+    sv: "Jag är redan prenumererad",
+    en: "I already subscribed",
   },
 
   // ── Success popup ──────────────────────────────────────────
@@ -458,6 +462,10 @@ desc_narhet: {
   desc_sommarstuga: {
     sv: "En varm sommardag i Småland och det doftar nästan nyklippt gräs.",
     en: "A warm summer day in Småland and it smells almost like freshly mowed grass.",
+  },
+  desc_enLerigDrom: {
+    sv: "En lerig dröm som visar grisar som njuter av gyttjabadet på en sommar kväll.",
+    en: "A dream showing pigs enjoying the mud bath on a summer evening.",
   },
   desc_sommarPaStranden: {
     sv: "Sand, sol och den där semesterkänslan som man aldrig vill ska ta slut.",

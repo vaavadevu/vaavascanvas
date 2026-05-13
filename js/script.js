@@ -108,6 +108,7 @@ async function setup() {
   await buildContactForm(); // form in DOM
   initLanguage();           // now everything exists, apply saved language
   Cart.updateBadge();       // badge is now in DOM, update with stored cart count
+  setupAutoShowSubscribeModal(); // show subscribe modal on first visit
 }
 
 // Skip setup and init on blog pages - they handle it themselves
