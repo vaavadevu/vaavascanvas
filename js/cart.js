@@ -128,14 +128,17 @@ const Cart = (() => {
     const totalEl = document.getElementById('cart-total');
     if (!list) return;
 
-    list.innerHTML = '';
-
     if (items.length === 0) {
-      if (emptyMsg) emptyMsg.style.display = 'block';
+      list.innerHTML = '';
+      if (emptyMsg) {
+        list.appendChild(emptyMsg);
+        emptyMsg.style.display = 'block';
+      }
       if (footer) footer.style.display = 'none';
       return;
     }
 
+    list.innerHTML = '';
     if (emptyMsg) emptyMsg.style.display = 'none';
     if (footer) footer.style.display = 'block';
 

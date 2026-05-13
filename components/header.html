@@ -58,7 +58,11 @@
     <button class="cart-close-btn" onclick="Cart.closeCart()" aria-label="Stäng">×</button>
   </div>
   <div id="cart-items">
-    <div id="cart-empty" data-i18n="cart_empty">Din varukorg är tom</div>
+    <div id="cart-empty">
+      <div class="cart-empty-heading" data-i18n="cart_empty">Din varukorg är tom</div>
+      <div class="cart-empty-copy" data-i18n="cart_empty_copy">Lägg till dina favoritmålningar eller något spännande från galleriet.</div>
+      <a href="/pages/pictures.html" class="cart-empty-link" data-i18n="cart_empty_link">Till galleriet</a>
+    </div>
   </div>
   <div id="cart-footer">
     <div id="cart-shipping-progress">

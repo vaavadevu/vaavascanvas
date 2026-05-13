@@ -570,6 +570,14 @@ desc_sommarvila: {
     sv: "Din varukorg är tom",
     en: "Your cart is empty",
   },
+  cart_empty_copy: {
+    sv: "Lägg till dina favoritmålningar eller något spännande från galleriet.",
+    en: "Add your favorite paintings or something exciting from the gallery.",
+  },
+  cart_empty_link: {
+    sv: "Till galleriet",
+    en: "Go to gallery",
+  },
   cart_total_label: {
     sv: "Totalt",
     en: "Total",

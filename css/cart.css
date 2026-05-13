@@ -149,6 +149,39 @@
   margin-bottom: 1rem;
 }
 
+.cart-empty-heading {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--text-dark);
+}
+
+.cart-empty-copy {
+  margin: 0 auto 1rem;
+  max-width: 220px;
+  line-height: 1.5;
+  opacity: 0.9;
+}
+
+.cart-empty-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  border-radius: 20px;
+  border: 1.5px solid var(--accent-green);
+  background: transparent;
+  color: var(--accent-green);
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.2s, color 0.2s;
+}
+
+.cart-empty-link:hover {
+  background: var(--accent-green);
+  color: var(--text-light);
+}
+
 .cart-item {
   display: flex;
   gap: 1rem;
