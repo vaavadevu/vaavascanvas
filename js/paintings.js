@@ -210,6 +210,17 @@ const paintings = [
     originalPrice: 1900
   },
   {
+    id: "enLerigDrom",
+    title: "En lerig dröm",
+    descKey: "desc_enLerigDrom",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    width: 59,
+    height: 42,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 2000
+  },
+  {
     id: "efterIde",
     title: "Efter Ide",
     descKey: "desc_efterIde",
