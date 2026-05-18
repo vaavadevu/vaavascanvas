@@ -81,6 +81,17 @@
     "medium": "medium_acrylic_canvas"
   },
   {
+    "id": "breadwinner",
+    "title": "Breadwinner",
+    "descKey": "desc_breadwinner",
+    "width": 18,
+    "height": 24,
+    "shape": "rectangular",
+    "originalPrice": 700,
+    "status": "for_sale",
+    "medium": "medium_acrylic_canvas"
+  },
+  {
     "id": "vattenfall",
     "title": "Vattenfall",
     "descKey": "desc_vattenfall",

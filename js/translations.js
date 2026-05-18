@@ -519,6 +519,10 @@ desc_sommarvila: {
     sv: "En nyfiken dovhjort som sträcker sig efter ett litet rött äpple som hänger från en gren.",
     en: "A curious deer stretching after a small red apple hanging from a branch.",
   },
+  desc_breadwinner: {
+    sv: "En duva som stolt bär på sig en bröd-dräkt",
+    en: "A pigeon proudly wearing a bread costume",
+  },
   frame_available: {
     sv: "Finns med eller utan ram",
     en: "Available with or without frame",
