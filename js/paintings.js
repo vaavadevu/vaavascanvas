@@ -164,6 +164,17 @@ const paintings = [
     originalPrice: 700
   },
   {
+    id: "breadwinner",
+    title: "Breadwinner",
+    descKey: "desc_breadwinner",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    width: 18,
+    height: 24,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 700
+  },
+  {
     id: "vattenfall",
     title: "Vattenfall",
     descKey: "desc_vattenfall",

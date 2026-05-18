@@ -9,6 +9,7 @@ const PAINTINGS = [
   { id: 'narhet', framedPrice: 2600, framedOnly: true, frameAvailable: true, status: 'for_sale' },
   { id: 'tjuvsmak', originalPrice: 700, status: 'for_sale' },
   { id: 'maskrosdrom', originalPrice: 700, status: 'for_sale' },
+  { id: 'breadwinner', originalPrice: 700, status: 'for_sale' },
   { id: 'vattenfall', originalPrice: 1100, status: 'sold' },
   { id: 'minMamma', originalPrice: 1600, framedPrice: 1900, frameAvailable: true, status: 'for_sale' },
   { id: 'solnedgang', originalPrice: 1100, status: 'for_sale' },

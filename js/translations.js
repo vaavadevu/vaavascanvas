@@ -281,6 +281,14 @@ const keys = {
     sv: "Få uppdateringar på din email när jag lägger upp nya målningar, blogg eller försäljningar.",
     en: "Get email updates when I post new paintings, blog posts or sales.",
   },
+  subscribe_email_label: {
+    sv: "Din email",
+    en: "Your email",
+  },
+  subscribe_submit_btn: {
+    sv: "Prenumerera",
+    en: "Subscribe",
+  },
   subscribe_already_subscribed: {
     sv: "Jag är redan prenumererad",
     en: "I already subscribed",
