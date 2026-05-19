@@ -38,23 +38,37 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
+  position: relative;
 }
-.site-banner-text { font-size: 0.95rem; }
+.site-banner-text { 
+  font-size: 0.95rem;
+  flex-shrink: 1;
+  min-width: 0;
+}
 .site-banner-close {
   background: none;
   border: none;
   font-size: 1.1rem;
   line-height: 1;
   cursor: pointer;
-  position: absolute;
-  right: 16px;
-  top: 8px;
+  flex-shrink: 0;
+  padding: 2px 4px;
 }
 
 @media (max-width: 600px) {
-  .site-banner-inner { padding: 8px; }
-  .site-banner-text { font-size: 0.9rem; }
-  .site-banner-close { right: 8px; top: 6px; }
+  .site-banner-inner { 
+    padding: 8px 40px 8px 12px;
+    justify-content: flex-start;
+  }
+  .site-banner-text { 
+    font-size: 0.85rem;
+  }
+  .site-banner-close { 
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
 }
 
 /* ─── Header ─── */
