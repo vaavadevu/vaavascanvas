@@ -60,7 +60,8 @@ const blogPosts = [
 
       <p>Men själva manuset började jag skriva först efter att Shiro korsade regnbågsbron. 🌈</p>
 
-      <p>Det känns nästan konstigt att tänka på nu. Som att en del av mig fortfarande försökte hålla honom kvar lite genom berättelsen.</p>
+      <p>Det känns nästan konstigt att tänka på nu.
+Men kanske var skrivandet bara mitt sätt att försöka hålla honom kvar lite längre, eftersom sorgen fortfarande känns lika tung.</p>
 
       <p>Det är väldigt svårt att sätta ord på exakt vad som ledde till att jag bestämde mig för att djur är min grej.
       Men oavsett hur mycket jag tänker på det leder det alltid tillbaka till de djur jag har mött genom livet.</p>
@@ -95,7 +96,8 @@ const blogPosts = [
 
       <p>But I only started writing the actual manuscript after Shiro crossed the rainbow bridge. 🌈</p>
 
-      <p>It feels strange to think about now. Like a part of me was still trying to hold onto him through the story.</p>
+      <p>It feels strange to think about now.
+But maybe writing it was just my way of trying to hold onto him a little longer, because the grief still feels just as heavy.</p>
 
       <p>It is very difficult to put into words exactly what made me realize that animals are my thing.
       But no matter how much I think about it, it always leads me back to the animals I have met throughout my life.</p>
