@@ -42,12 +42,12 @@
     "width": 69,
     "height": 58,
     "shape": "rectangular",
-    "framedPrice": 3600,
     "framedOnly": true,
     "discountPercent": 5,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas",
-    "frameAvailable": true
+    "frameAvailable": true,
+    "framedPrice": 3600
   },
   {
     "id": "narhet",

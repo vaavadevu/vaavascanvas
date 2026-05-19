@@ -282,11 +282,14 @@ test('SOLD paintings have originalPrice', () => {
   });
 });
 
-test('Paintings with discountPercent have valid originalPrice and percentage', () => {
+test('Paintings with discountPercent have valid base price and percentage', () => {
   paintings.forEach(p => {
     if (p.discountPercent !== undefined) {
-      assert(p.originalPrice !== undefined && p.originalPrice !== null,
-        `Painting ${p.id} has discountPercent but missing originalPrice`);
+      assert(
+        (p.originalPrice !== undefined && p.originalPrice !== null) ||
+        (p.framedOnly && p.framedPrice !== undefined && p.framedPrice !== null),
+        `Painting ${p.id} has discountPercent but missing price basis (originalPrice or framedPrice)`
+      );
       assert(typeof p.discountPercent === 'number' && p.discountPercent > 0 && p.discountPercent < 100,
         `Painting ${p.id} has invalid discountPercent: ${p.discountPercent}`);
     }
@@ -361,7 +364,7 @@ test('All original images have been synced to desktop and mobile', () => {
 
   assert(
     unsynced.length === 0,
-    'Some paintings have unsynced images (run sync_paintings.bat):\n  ' + unsynced.join('\n  ')
+    'Some paintings have unsynced images (run sync_paintings_images.bat):\n  ' + unsynced.join('\n  ')
   );
 });
 

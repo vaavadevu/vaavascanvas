@@ -33,6 +33,10 @@ const serverPaintings = paintingsData.filter(painting => {
     serverPainting.frameAvailable = true;
   }
 
+  if (typeof painting.discountPercent === 'number') {
+    serverPainting.discountPercent = painting.discountPercent;
+  }
+
   return serverPainting;
 });
 
@@ -46,6 +50,10 @@ const formattedPaintings = serverPaintings.map(painting => {
 
   if (painting.framedPrice) {
     parts.push(`framedPrice: ${painting.framedPrice}`);
+  }
+
+  if (typeof painting.discountPercent === 'number') {
+    parts.push(`discountPercent: ${painting.discountPercent}`);
   }
 
   if (painting.framedOnly) {
@@ -100,6 +108,7 @@ const clientPaintings = paintingsData.map(painting => {
   }
   if (painting.originalPrice) clientPainting.originalPrice = painting.originalPrice;
   if (painting.framedPrice) clientPainting.framedPrice = painting.framedPrice;
+  if (typeof painting.discountPercent === 'number') clientPainting.discountPercent = painting.discountPercent;
   if (painting.framedOnly) clientPainting.framedOnly = true;
   if (painting.frameAvailable) clientPainting.frameAvailable = true;
 

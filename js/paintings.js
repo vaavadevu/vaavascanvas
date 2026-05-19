@@ -60,15 +60,19 @@ function hasPaintingDiscount(painting) {
 }
 
 function getPaintingDiscountedPrice(painting) {
-  if (!painting.originalPrice || !hasPaintingDiscount(painting)) return painting.originalPrice;
-  return Math.round(painting.originalPrice * (100 - painting.discountPercent) / 100);
+  const basePrice = painting.originalPrice ?? painting.framedPrice;
+  if (!basePrice || !hasPaintingDiscount(painting)) return painting.originalPrice ?? painting.framedPrice;
+  return Math.round(basePrice * (100 - painting.discountPercent) / 100);
 }
 
 function getPaintingFramedSalePrice(painting) {
   if (!painting.framedPrice) return null;
-  if (!hasPaintingDiscount(painting) || !painting.originalPrice) return painting.framedPrice;
-  const frameExtra = painting.framedPrice - painting.originalPrice;
-  return Math.round(getPaintingDiscountedPrice(painting) + frameExtra);
+  if (!hasPaintingDiscount(painting)) return painting.framedPrice;
+  if (painting.originalPrice) {
+    const frameExtra = painting.framedPrice - painting.originalPrice;
+    return Math.round(getPaintingDiscountedPrice(painting) + frameExtra);
+  }
+  return getPaintingDiscountedPrice(painting);
 }
 
 function getPaintingEffectivePrice(painting, withFrame = false) {
@@ -128,9 +132,9 @@ const paintings = [
     height: 58,
     shape: SHAPE.RECTANGULAR,
     framedPrice: 3600,
+    discountPercent: 5,
     framedOnly: true,
-    frameAvailable: true,
-    discountPercent: 5
+    frameAvailable: true
   },
   {
     id: "narhet",
@@ -142,9 +146,9 @@ const paintings = [
     height: 16,
     shape: SHAPE.RECTANGULAR,
     framedPrice: 2600,
+    discountPercent: 5,
     framedOnly: true,
-    frameAvailable: true,
-    discountPercent: 5
+    frameAvailable: true
   },
   {
     id: "tjuvsmak",
@@ -204,8 +208,8 @@ const paintings = [
     height: 34,
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1600,
-    discountPercent: 10,
     framedPrice: 1900,
+    discountPercent: 10,
     frameAvailable: true
   },
   {
@@ -254,8 +258,8 @@ const paintings = [
     height: 40,
     shape: SHAPE.RECTANGULAR,
     originalPrice: 2300,
-    discountPercent: 15,
     framedPrice: 2600,
+    discountPercent: 15,
     frameAvailable: true
   },
   {
@@ -315,7 +319,8 @@ const paintings = [
     width: 59,
     height: 42,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600
+    originalPrice: 1600,
+    discountPercent: 5
   },
   {
     id: "norrsken",
@@ -386,8 +391,8 @@ const paintings = [
     height: 34,
     shape: SHAPE.RECTANGULAR,
     originalPrice: 2000,
-    discountPercent: 5,
     framedPrice: 2300,
+    discountPercent: 5,
     frameAvailable: true
   },
   {
@@ -400,8 +405,8 @@ const paintings = [
     height: 30,
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1900,
-    discountPercent: 5,
     framedPrice: 2200,
+    discountPercent: 5,
     frameAvailable: true
   },
   {
@@ -434,8 +439,8 @@ const paintings = [
     height: 40,
     shape: SHAPE.RECTANGULAR,
     originalPrice: 2300,
-    discountPercent: 5,
     framedPrice: 2600,
+    discountPercent: 5,
     frameAvailable: true
   },
 ];
