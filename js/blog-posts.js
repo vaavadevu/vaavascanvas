@@ -11,6 +11,113 @@ function formatDate(date, locale = "sv-SE") {
 
 const blogPosts = [
   {
+    id: "why-animals-shiro",
+
+    // Titles
+    title: "Varför just djur?",
+    titleEn: "Why Animals?",
+
+    // SEO
+    seoTitle: "Varför just djur? | Vaavas Canvas",
+    seoTitleEn: "Why Animals? | Vaavas Canvas",
+
+    seoDescription:
+      "En personlig berättelse om Shiro och varför djur blev mitt centrala motiv.",
+    seoDescriptionEn:
+      "A personal story about Shiro and why animals became my central subject.",
+
+    // Date
+    date: "2026-05-19",
+
+    // Author
+    author: "Devika",
+
+    // Excerpt
+    excerpt:
+      "En berättelse om Shiro, saknad och varför djur tog plats i mina målningar.",
+    excerptEn:
+      "A story about Shiro, grief and why animals took center stage in my paintings.",
+
+    // Content (SWEDISH)
+    content: `
+      <p>💔 PS. Den här kommer bli en riktig snyftare.</p>
+
+      <p>På bilden ser ni mig och Shiro, vår hund som jag och min sambo adopterade från Rumänien. 🐶
+      Han var vår solstråle, men framför allt drog han mig ut från några av de mörkaste perioderna i mitt liv.</p>
+
+      <p>Aldrig hade vi kunnat tänka oss att vi bara tio månader senare skulle stå och gråta på djursjukhuset när hans livlösa kropp låg framför oss. 😢
+      Ännu mindre att vi skulle behöva ta beslutet att låta honom somna in.</p>
+
+      <p>Så... vad har allt det här att göra med varför jag målar djur?</p>
+
+      <p>Jo, det är faktiskt Shiro som inspirerade mig att börja skapa djur som centrala motiv i mina målningar.</p>
+
+      <p>Jag har alltid vetat att jag älskar djur. Det påverkar även hur jag lever mitt liv, bland annat genom att jag är vegan. 🌱
+      Tidigare målade jag mest natur och landskap, men efter att Shiro gick bort började jag hitta glädje i att måla andra djur. Andra söta små varelser som påminde mig om min bästa vän.</p>
+
+      <p>När Shiro fortfarande levde började jag fundera på att skapa en barnbok där han skulle vara en central karaktär.
+      Jag gjorde massor av snabba skisser av honom, och idéerna till berättelsen fanns redan i mitt huvud då.</p>
+
+      <p>Men själva manuset började jag skriva först efter att Shiro korsade regnbågsbron. 🌈</p>
+
+      <p>Det känns nästan konstigt att tänka på nu. Som att en del av mig fortfarande försökte hålla honom kvar lite genom berättelsen.</p>
+
+      <p>Det är väldigt svårt att sätta ord på exakt vad som ledde till att jag bestämde mig för att djur är min grej.
+      Men oavsett hur mycket jag tänker på det leder det alltid tillbaka till de djur jag har mött genom livet.</p>
+
+      <p>Och mest av allt tillbaka till Shiro.</p>
+
+      <p>Han tog så enormt mycket plats i mitt liv.
+      Och kanske var det enda sättet för mig att fylla det tomma rummet att skapa levande varelser i mina målningar.</p>
+
+      <p>– Devika ❤️</p>
+    `,
+
+    // Content (ENGLISH)
+    contentEn: `
+      <p>PS. This one might make you cry a little. 😢</p>
+
+      <p>In the picture, you can see me and Shiro, the dog that my partner and I adopted from Romania. 🐶
+      He was our little sunshine, but more than anything, he pulled me out of some of the darkest periods of my life.</p>
+
+      <p>We could never have imagined that only ten months later we would be standing at the animal hospital, crying while his lifeless body lay in front of us.
+      Even less that we would have to make the decision to let him go.</p>
+
+      <p>So... what does all of this have to do with why I paint animals?</p>
+
+      <p>Well, Shiro is actually the reason I started creating animals as central subjects in my paintings.</p>
+
+      <p>I have always known that I love animals. It also affects the way I live my life, including being vegan. 🌱
+      Before, I mostly painted nature and landscapes, but after Shiro passed away, I started finding joy in painting other animals. Other sweet little creatures that reminded me of my best friend.</p>
+
+      <p>While Shiro was still alive, I started thinking about creating a children's book where he would be one of the main characters.
+      I made lots of quick sketches of him, and the ideas for the story were already living in my head back then.</p>
+
+      <p>But I only started writing the actual manuscript after Shiro crossed the rainbow bridge. 🌈</p>
+
+      <p>It feels strange to think about now. Like a part of me was still trying to hold onto him through the story.</p>
+
+      <p>It is very difficult to put into words exactly what made me realize that animals are my thing.
+      But no matter how much I think about it, it always leads me back to the animals I have met throughout my life.</p>
+
+      <p>And most of all, back to Shiro.</p>
+
+      <p>He took up such an enormous place in my life.
+      And maybe the only way for me to fill that empty space was by creating living creatures in my paintings.</p>
+
+      <p>– Devika ❤️</p>
+    `,
+
+    // Image
+    image: "/images/blogg/5.JPG",
+    alt: "Devika och Shiro",
+    imageCaption: "Jag och Shiro",
+    imageCaptionEn: "Me and Shiro",
+
+    // Tags
+    tags: ["shiro", "djur", "personligt"],
+  },
+  {
     id: "from-geology-to-painting",
 
     // Titles
