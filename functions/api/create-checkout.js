@@ -23,8 +23,6 @@ const PAINTINGS = [
   { id: 'varkansla', originalPrice: 1600, discountPercent: 5, status: 'sold' },
   { id: 'norrsken', originalPrice: 1100, discountPercent: 5, status: 'for_sale' },
   { id: 'vargen', originalPrice: 1600, discountPercent: 5, status: 'for_sale' },
-  { id: 'radjur', originalPrice: 1600, discountPercent: 5, status: 'for_sale' },
-  { id: 'skogsvila', originalPrice: 3100, discountPercent: 5, status: 'for_sale' },
   { id: 'skogsvila', originalPrice: 3100, discountPercent: 5, status: 'for_sale' },
   { id: 'vinterlek', originalPrice: 1600, discountPercent: 5, status: 'sold' },
   { id: 'sommarvila', originalPrice: 2100, discountPercent: 20, status: 'for_sale' },

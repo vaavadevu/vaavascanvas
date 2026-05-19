@@ -44,6 +44,7 @@
     "shape": "rectangular",
     "framedPrice": 3600,
     "framedOnly": true,
+    "discountPercent": 5,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas",
     "frameAvailable": true
@@ -57,6 +58,7 @@
     "shape": "rectangular",
     "framedPrice": 2600,
     "framedOnly": true,
+    "discountPercent": 5,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas",
     "frameAvailable": true

@@ -129,7 +129,8 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     framedPrice: 3600,
     framedOnly: true,
-    frameAvailable: true
+    frameAvailable: true,
+    discountPercent: 5
   },
   {
     id: "narhet",
@@ -142,7 +143,8 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     framedPrice: 2600,
     framedOnly: true,
-    frameAvailable: true
+    frameAvailable: true,
+    discountPercent: 5
   },
   {
     id: "tjuvsmak",
