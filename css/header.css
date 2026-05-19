@@ -21,6 +21,42 @@
   position: static;
 }
 
+/* Site-wide promotional banner */
+.site-banner {
+  display: none;
+  width: 100%;
+  background: linear-gradient(90deg, #fff7e6, #fff3d1);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  font-weight: 600;
+  color: #333;
+}
+.site-banner-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.site-banner-text { font-size: 0.95rem; }
+.site-banner-close {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  position: absolute;
+  right: 16px;
+  top: 8px;
+}
+
+@media (max-width: 600px) {
+  .site-banner-inner { padding: 8px; }
+  .site-banner-text { font-size: 0.9rem; }
+  .site-banner-close { right: 8px; top: 6px; }
+}
+
 /* ─── Header ─── */
 header {
   height: 100px;

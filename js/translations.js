@@ -5,6 +5,12 @@
 
 const keys = {
 
+  // ── Banner ──────────────────────────────────────────────────
+  banner_mothers_day: {
+    sv: "Morsdagsrabatt — upp till 20% t.o.m. 24 maj 2026",
+    en: "Mother's Day sale — up to 20% until May 24, 2026",
+  },
+
   // ── Nav ────────────────────────────────────────────────────
   nav_home: {
     sv: "Startsida",
@@ -499,10 +505,7 @@ desc_narhet: {
     sv: "Vargen både vild och sårbar på en gång. En påminnelse om att styrka och mjukhet kan leva sida vid sida.",
     en: "The wolf both wild and vulnerable at once. A reminder that strength and softness can live side by side.",
   },
-  desc_radjur: {
-    sv: "Antiloper i lugnt bete som visar livet på savannen i sin enklaste, vackraste form.",
-    en: "Antelopes peacefully grazing showing life on the savanna in its simplest, most beautiful form.",
-  },
+
   desc_skogsvila: {
     sv: "Två rävar som myser tryggt inne i en gammal trädöppning, en plats där de kan vila och känna sig säkra.",
     en: "Two foxes snuggled safely inside an old tree hollow, a place where they can rest and feel secure.",

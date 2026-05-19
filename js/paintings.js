@@ -91,7 +91,8 @@ const paintings = [
     width: 90,
     height: 60,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 3200
+    originalPrice: 3200,
+    discountPercent: 5
   },
   {
     id: "aldrigEnsam",
@@ -102,7 +103,8 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 700
+    originalPrice: 700,
+    discountPercent: 5
   },
   {
     id: "operationBaver",
@@ -113,7 +115,8 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 700
+    originalPrice: 700,
+    discountPercent: 5
   },
   {
     id: "koslapp",
@@ -150,7 +153,8 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 700
+    originalPrice: 700,
+    discountPercent: 5
   },
   {
     id: "maskrosdrom",
@@ -161,7 +165,8 @@ const paintings = [
     width: 24,
     height: 18,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 700
+    originalPrice: 700,
+    discountPercent: 5
   },
   {
     id: "breadwinner",
@@ -172,7 +177,8 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 700
+    originalPrice: 700,
+    discountPercent: 5
   },
   {
     id: "vattenfall",
@@ -183,7 +189,8 @@ const paintings = [
     width: 33,
     height: 41,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1100
+    originalPrice: 1100,
+    discountPercent: 5
   },
   {
     id: "minMamma",
@@ -195,6 +202,7 @@ const paintings = [
     height: 34,
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1600,
+    discountPercent: 10,
     framedPrice: 1900,
     frameAvailable: true
   },
@@ -207,7 +215,8 @@ const paintings = [
     width: 41,
     height: 33,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1100
+    originalPrice: 1100,
+    discountPercent: 5
   },
   {
     id: "solvarmeISkogen",
@@ -218,7 +227,8 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1900
+    originalPrice: 1900,
+    discountPercent: 5
   },
   {
     id: "enLerigDrom",
@@ -229,7 +239,8 @@ const paintings = [
     width: 59,
     height: 42,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 2000
+    originalPrice: 2000,
+    discountPercent: 5
   },
   {
     id: "efterIde",
@@ -241,6 +252,7 @@ const paintings = [
     height: 40,
     shape: SHAPE.RECTANGULAR,
     originalPrice: 2300,
+    discountPercent: 15,
     framedPrice: 2600,
     frameAvailable: true
   },
@@ -253,7 +265,8 @@ const paintings = [
     width: 59,
     height: 42,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600
+    originalPrice: 1600,
+    discountPercent: 5
   },
   {
     id: "sommarPaStranden",
@@ -264,7 +277,8 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1900
+    originalPrice: 1900,
+    discountPercent: 5
   },
   {
     id: "skaViPlockaBlommor",
@@ -275,7 +289,8 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600
+    originalPrice: 1600,
+    discountPercent: 5
   },
   {
     id: "savannan",
@@ -286,7 +301,8 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600
+    originalPrice: 1600,
+    discountPercent: 5
   },
   {
     id: "varkansla",
@@ -308,7 +324,8 @@ const paintings = [
     width: 41,
     height: 33,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1100
+    originalPrice: 1100,
+    discountPercent: 5
   },
   {
     id: "vargen",
@@ -319,18 +336,8 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600
-  },
-  {
-    id: "radjur",
-    title: "Savannan",
-    descKey: "desc_radjur",
-    status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
-    width: 90,
-    height: 30,
-    shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600
+    originalPrice: 1600,
+    discountPercent: 5
   },
   {
     id: "skogsvila",
@@ -340,7 +347,8 @@ const paintings = [
     medium: MEDIUM.ACRYLIC_CANVAS,
     diameter: 90,
     shape: SHAPE.CIRCLE,
-    originalPrice: 3100
+    originalPrice: 3100,
+    discountPercent: 5
   },
   {
     id: "vinterlek",
@@ -351,7 +359,8 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600
+    originalPrice: 1600,
+    discountPercent: 5
   },
   {
     id: "sommarvila",
@@ -362,7 +371,8 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 2100
+    originalPrice: 2100,
+    discountPercent: 20
   },
   {
     id: "dagensFynd",
@@ -374,6 +384,7 @@ const paintings = [
     height: 34,
     shape: SHAPE.RECTANGULAR,
     originalPrice: 2000,
+    discountPercent: 5,
     framedPrice: 2300,
     frameAvailable: true
   },
@@ -387,6 +398,7 @@ const paintings = [
     height: 30,
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1900,
+    discountPercent: 5,
     framedPrice: 2200,
     frameAvailable: true
   },
@@ -420,6 +432,7 @@ const paintings = [
     height: 40,
     shape: SHAPE.RECTANGULAR,
     originalPrice: 2300,
+    discountPercent: 5,
     framedPrice: 2600,
     frameAvailable: true
   },

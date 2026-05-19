@@ -30,6 +30,29 @@ async function buildComponents() {
 
       setupMobileMenu();
 
+      // Initialize site banner (dismissible, date-limited)
+      try {
+        const banner = document.getElementById('site-banner');
+        if (banner) {
+          const endDate = new Date('2026-05-24T23:59:59Z');
+          const now = new Date();
+          const dismissed = localStorage.getItem('site_banner_dismissed');
+          if (now <= endDate && !dismissed) {
+            banner.style.display = 'block';
+          } else {
+            banner.style.display = 'none';
+          }
+          const closeBtn = document.getElementById('site-banner-close');
+          if (closeBtn) closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            banner.style.display = 'none';
+            localStorage.setItem('site_banner_dismissed', '1');
+          });
+        }
+      } catch (err) {
+        console.warn('Banner init failed', err);
+      }
+
       requestAnimationFrame(() => {
         document.body.style.paddingTop = "0";
         document.documentElement.style.paddingTop = "0";
