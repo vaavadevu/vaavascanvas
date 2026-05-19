@@ -50,7 +50,7 @@ const blogPosts = [
 
       <p>Så... vad har allt det här att göra med varför jag målar djur?</p>
 
-      <p>Jo, det är faktiskt Shiro som inspirerade mig att börja skapa djur som centrala motiv i mina målningar.</p>
+      <p>Jo, det är faktiskt Shiro som inspirerade mig att börja skapa djur som centrala motiv i mina målningar ❤️.</p>
 
       <p>Jag har alltid vetat att jag älskar djur. Det påverkar även hur jag lever mitt liv, bland annat genom att jag är vegan. 🌱
       Tidigare målade jag mest natur och landskap, men efter att Shiro gick bort började jag hitta glädje i att måla andra djur. Andra söta små varelser som påminde mig om min bästa vän.</p>
@@ -71,7 +71,7 @@ Men kanske var skrivandet bara mitt sätt att försöka hålla honom kvar lite l
       <p>Han tog så enormt mycket plats i mitt liv.
       Och kanske var det enda sättet för mig att fylla det tomma rummet att skapa levande varelser i mina målningar.</p>
 
-      <p>– Devika ❤️</p>
+      <p>– Devika </p>
     `,
 
     // Content (ENGLISH)
@@ -86,7 +86,7 @@ Men kanske var skrivandet bara mitt sätt att försöka hålla honom kvar lite l
 
       <p>So... what does all of this have to do with why I paint animals?</p>
 
-      <p>Well, Shiro is actually the reason I started creating animals as central subjects in my paintings.</p>
+      <p>Well, Shiro is actually the reason I started creating animals as central subjects in my paintings ❤️.</p>
 
       <p>I have always known that I love animals. It also affects the way I live my life, including being vegan. 🌱
       Before, I mostly painted nature and landscapes, but after Shiro passed away, I started finding joy in painting other animals. Other sweet little creatures that reminded me of my best friend.</p>
@@ -107,7 +107,7 @@ But maybe writing it was just my way of trying to hold onto him a little longer,
       <p>He took up such an enormous place in my life.
       And maybe the only way for me to fill that empty space was by creating living creatures in my paintings.</p>
 
-      <p>– Devika ❤️</p>
+      <p>– Devika </p>
     `,
 
     // Image
