@@ -1,3 +1,6 @@
+:root {
+  --header-height: 100px;
+}
 #header-container {
   position: fixed;
   top: 0;
@@ -26,7 +29,7 @@
 
 .site-banner {
   position: fixed;
-  top: var(--header-height, 60px);
+  top: 100px;
   left: 0;
   right: 0;
   z-index: 999;
