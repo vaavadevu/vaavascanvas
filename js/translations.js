@@ -522,6 +522,11 @@ desc_sommarvila: {
   sv: "En ko och hennes kalv som möts i ett stilla och kärleksfullt ögonblick på sommarbetet.",
   en: "A cow and her calf meeting in a quiet and loving moment on the summer pasture.",
 },
+  desc_skymningsDrom: {
+  sv: "En drömlik skymning med en flamingo som vilar på ett ben i det lugna vattnet, omgiven av mjuka pastellfärger och en känsla av stillhet.",
+  en: "A dreamy dusk with a flamingo resting on one leg in the calm water, surrounded by soft pastel colors and a sense of tranquility.",
+},
+
   desc_dagensFynd: {
     sv: "En liten ekorre som har hittat en skatt i naturen.",
     en: "A little squirrel that has found a treasure in nature.",

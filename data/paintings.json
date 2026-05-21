@@ -36,6 +36,18 @@
     "medium": "medium_acrylic_canvas"
   },
   {
+    "id": "skymningsDrom",
+    "title": "Skymningsdröm",
+    "descKey": "desc_skymningsDrom",
+    "width": 30,
+    "height": 90,
+    "shape": "rectangular",
+    "originalPrice": 2000,
+    "discountPercent": 5,
+    "status": "for_sale",
+    "medium": "medium_acrylic_canvas"
+  },
+  {
     "id": "koslapp",
     "title": "Kosläpp",
     "descKey": "desc_koslapp",
