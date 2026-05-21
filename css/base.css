@@ -20,7 +20,9 @@ html,
 body {
   max-width: 100%;
   overflow-x: clip;
-  padding-top: 100px;
+  /* top padding is controlled dynamically by `js/ui.js` to account for
+     the fixed header and any visible banner */
+  padding-top: 0;
 }
 
 html {
@@ -49,6 +51,7 @@ main {
   grid-area: main;
   display: flex;
   flex-direction: column;
+  padding-top: var(--header-height);
 }
 
 /* ─── Main (index.html) fullbredd ─── */

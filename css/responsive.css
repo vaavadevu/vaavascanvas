@@ -20,7 +20,8 @@
   /* On mobile, header is sticky so keep padding-top for spacing */
   html,
   body {
-    padding-top: 100px;
+    /* Let JS calculate top padding (header + banner) for consistent behavior */
+    padding-top: 0;
   }
 
   .stickyHeader {

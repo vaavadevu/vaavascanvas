@@ -30,6 +30,26 @@ async function buildComponents() {
 
       setupMobileMenu();
 
+      const adjustHeaderPadding = () => {
+        const headerContainer = document.getElementById('header-container');
+        const mainContent = document.querySelector('main');
+        const banner = document.getElementById('site-banner');
+        if (!headerContainer || !mainContent) return;
+        const headerH = headerContainer.offsetHeight || 0;
+        const bannerH = banner && banner.classList.contains('visible') ? banner.offsetHeight : 0;
+        const total = headerH + bannerH;
+        mainContent.style.paddingTop = `${total}px`;
+      };
+
+      const removeFirstMainTopMargin = () => {
+        const first = document.querySelector('main > *');
+        if (!first) return;
+        const mt = parseFloat(getComputedStyle(first).marginTop || '0');
+        if (mt > 0) {
+          first.style.marginTop = '0px';
+        }
+      };
+
       // Initialize site banner (dismissible, date-limited)
       try {
         const banner = document.getElementById('site-banner');
@@ -37,16 +57,40 @@ async function buildComponents() {
           const endDate = new Date('2026-05-24T23:59:59Z');
           const now = new Date();
           const dismissed = localStorage.getItem('site_banner_dismissed');
-          if (now <= endDate && !dismissed) {
-            banner.style.display = 'block';
-          } else {
-            banner.style.display = 'none';
-          }
+          const shouldShow = now <= endDate && !dismissed;
+          banner.classList.toggle('visible', shouldShow);
+
           const closeBtn = document.getElementById('site-banner-close');
           if (closeBtn) closeBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            banner.style.display = 'none';
+            // remove visible class to start CSS collapse
+            banner.classList.remove('visible');
             localStorage.setItem('site_banner_dismissed', '1');
+
+            // Immediately set main padding to header height so content moves up
+            const headerNow = document.getElementById('header-container');
+            const mainContent = document.querySelector('main');
+            const headerHNow = headerNow ? headerNow.getBoundingClientRect().height : 100;
+            if (mainContent) mainContent.style.paddingTop = headerHNow + 'px';
+
+            // After the banner transition ends, recompute final values
+            const onTransitionEnd = (ev) => {
+              // only react to max-height or opacity transition end
+              if (ev.propertyName && !/max-height|opacity/.test(ev.propertyName)) return;
+              try { adjustHeaderPadding(); } catch (err) {}
+              banner.removeEventListener('transitionend', onTransitionEnd);
+            };
+            banner.addEventListener('transitionend', onTransitionEnd);
+          });
+
+          // Recalculate immediately and remove any top margin on the first main child
+          adjustHeaderPadding();
+          removeFirstMainTopMargin();
+
+          // Recalc on resize
+          window.addEventListener('resize', () => {
+            adjustHeaderPadding();
+            removeFirstMainTopMargin();
           });
         }
       } catch (err) {
@@ -54,8 +98,7 @@ async function buildComponents() {
       }
 
       requestAnimationFrame(() => {
-        document.body.style.paddingTop = "0";
-        document.documentElement.style.paddingTop = "0";
+        adjustHeaderPadding();
         window.scrollTo(0, 0);
       });
     } catch (err) {
