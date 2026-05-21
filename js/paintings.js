@@ -123,6 +123,18 @@ const paintings = [
     discountPercent: 5
   },
   {
+    id: "skymningsDrom",
+    title: "Skymningsdröm",
+    descKey: "desc_skymningsDrom",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    width: 30,
+    height: 90,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 2000,
+    discountPercent: 5
+  },
+  {
     id: "koslapp",
     title: "Kosläpp",
     descKey: "desc_koslapp",
