@@ -336,7 +336,6 @@
     "height": 40,
     "shape": "square",
     "originalPrice": 2300,
-    "discountPercent": 5,
     "framedPrice": 2600,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas",
