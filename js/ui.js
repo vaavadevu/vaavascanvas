@@ -30,16 +30,7 @@ async function buildComponents() {
 
       setupMobileMenu();
 
-      const adjustHeaderPadding = () => {
-        const headerContainer = document.getElementById('header-container');
-        const mainContent = document.querySelector('main');
-        const banner = document.getElementById('site-banner');
-        if (!headerContainer || !mainContent) return;
-        const headerH = headerContainer.offsetHeight || 0;
-        const bannerH = banner && banner.classList.contains('visible') ? banner.offsetHeight : 0;
-        const total = headerH + bannerH;
-        mainContent.style.paddingTop = `${total}px`;
-      };
+  
 
       const removeFirstMainTopMargin = () => {
         const first = document.querySelector('main > *');
