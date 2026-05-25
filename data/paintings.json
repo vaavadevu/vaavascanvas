@@ -7,7 +7,6 @@
     "height": 60,
     "shape": "rectangular",
     "originalPrice": 3200,
-    "discountPercent": 5,
     "status": "sold",
     "medium": "medium_acrylic_canvas"
   },
@@ -19,7 +18,6 @@
     "height": 24,
     "shape": "rectangular",
     "originalPrice": 700,
-    "discountPercent": 5,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas"
   },
@@ -31,7 +29,6 @@
     "height": 24,
     "shape": "rectangular",
     "originalPrice": 700,
-    "discountPercent": 5,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas"
   },
@@ -43,7 +40,7 @@
     "height": 90,
     "shape": "rectangular",
     "originalPrice": 2000,
-    "discountPercent": 5,
+
     "status": "for_sale",
     "medium": "medium_acrylic_canvas"
   },
@@ -55,7 +52,6 @@
     "height": 58,
     "shape": "rectangular",
     "framedOnly": true,
-    "discountPercent": 5,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas",
     "frameAvailable": true,
@@ -70,7 +66,6 @@
     "shape": "rectangular",
     "framedPrice": 2600,
     "framedOnly": true,
-    "discountPercent": 5,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas",
     "frameAvailable": true
@@ -83,7 +78,6 @@
     "height": 24,
     "shape": "rectangular",
     "originalPrice": 700,
-    "discountPercent": 5,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas"
   },
@@ -95,7 +89,6 @@
     "height": 18,
     "shape": "rectangular",
     "originalPrice": 700,
-    "discountPercent": 5,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas"
   },
@@ -107,7 +100,6 @@
     "height": 24,
     "shape": "rectangular",
     "originalPrice": 700,
-    "discountPercent": 5,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas"
   },
@@ -119,7 +111,6 @@
     "height": 41,
     "shape": "rectangular",
     "originalPrice": 1100,
-    "discountPercent": 5,
     "status": "sold",
     "medium": "medium_acrylic_canvas"
   },
@@ -131,7 +122,6 @@
     "height": 34,
     "shape": "square",
     "originalPrice": 1600,
-    "discountPercent": 10,
     "framedPrice": 1900,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas",
@@ -145,7 +135,6 @@
     "height": 33,
     "shape": "rectangular",
     "originalPrice": 1100,
-    "discountPercent": 5,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas"
   },
@@ -157,7 +146,6 @@
     "height": 59,
     "shape": "rectangular",
     "originalPrice": 1900,
-    "discountPercent": 5,
     "status": "sold",
     "medium": "medium_acrylic_canvas"
   },
@@ -169,7 +157,6 @@
     "height": 42,
     "shape": "rectangular",
     "originalPrice": 2000,
-    "discountPercent": 5,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas"
   },
@@ -181,7 +168,6 @@
     "height": 40,
     "shape": "square",
     "originalPrice": 2300,
-    "discountPercent": 15,
     "framedPrice": 2600,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas",
@@ -195,7 +181,6 @@
     "height": 42,
     "shape": "rectangular",
     "originalPrice": 1600,
-    "discountPercent": 5,
     "status": "sold",
     "medium": "medium_acrylic_canvas"
   },
@@ -207,7 +192,6 @@
     "height": 59,
     "shape": "rectangular",
     "originalPrice": 1900,
-    "discountPercent": 5,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas"
   },
@@ -219,7 +203,6 @@
     "height": 59,
     "shape": "rectangular",
     "originalPrice": 1600,
-    "discountPercent": 5,
     "status": "sold",
     "medium": "medium_acrylic_canvas"
   },
@@ -231,7 +214,6 @@
     "height": 59,
     "shape": "rectangular",
     "originalPrice": 1600,
-    "discountPercent": 5,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas"
   },
@@ -243,7 +225,6 @@
     "height": 42,
     "shape": "rectangular",
     "originalPrice": 1600,
-    "discountPercent": 5,
     "status": "sold",
     "medium": "medium_acrylic_canvas"
   },
@@ -255,7 +236,6 @@
     "height": 33,
     "shape": "rectangular",
     "originalPrice": 1100,
-    "discountPercent": 5,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas"
   },
@@ -267,7 +247,6 @@
     "height": 59,
     "shape": "rectangular",
     "originalPrice": 1600,
-    "discountPercent": 5,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas"
   },
@@ -278,7 +257,6 @@
     "diameter": 90,
     "shape": "circle",
     "originalPrice": 3100,
-    "discountPercent": 5,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas"
   },
@@ -290,7 +268,6 @@
     "height": 59,
     "shape": "rectangular",
     "originalPrice": 1600,
-    "discountPercent": 5,
     "status": "sold",
     "medium": "medium_acrylic_canvas"
   },
@@ -302,7 +279,6 @@
     "height": 59,
     "shape": "rectangular",
     "originalPrice": 2100,
-    "discountPercent": 20,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas"
   },
@@ -314,7 +290,6 @@
     "height": 34,
     "shape": "square",
     "originalPrice": 2000,
-    "discountPercent": 5,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas",
     "frameAvailable": true,
@@ -328,7 +303,6 @@
     "height": 30,
     "shape": "square",
     "originalPrice": 1900,
-    "discountPercent": 5,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas",
     "frameAvailable": true,

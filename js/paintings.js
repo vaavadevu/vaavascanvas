@@ -95,8 +95,7 @@ const paintings = [
     width: 90,
     height: 60,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 3200,
-    discountPercent: 5
+    originalPrice: 3200
   },
   {
     id: "aldrigEnsam",
@@ -107,8 +106,7 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 700,
-    discountPercent: 5
+    originalPrice: 700
   },
   {
     id: "operationBaver",
@@ -119,8 +117,7 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 700,
-    discountPercent: 5
+    originalPrice: 700
   },
   {
     id: "skymningsDrom",
@@ -131,8 +128,7 @@ const paintings = [
     width: 30,
     height: 90,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 2000,
-    discountPercent: 5
+    originalPrice: 2000
   },
   {
     id: "koslapp",
@@ -144,7 +140,6 @@ const paintings = [
     height: 58,
     shape: SHAPE.RECTANGULAR,
     framedPrice: 3600,
-    discountPercent: 5,
     framedOnly: true,
     frameAvailable: true
   },
@@ -158,7 +153,6 @@ const paintings = [
     height: 16,
     shape: SHAPE.RECTANGULAR,
     framedPrice: 2600,
-    discountPercent: 5,
     framedOnly: true,
     frameAvailable: true
   },
@@ -171,8 +165,7 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 700,
-    discountPercent: 5
+    originalPrice: 700
   },
   {
     id: "maskrosdrom",
@@ -183,8 +176,7 @@ const paintings = [
     width: 24,
     height: 18,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 700,
-    discountPercent: 5
+    originalPrice: 700
   },
   {
     id: "breadwinner",
@@ -195,8 +187,7 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 700,
-    discountPercent: 5
+    originalPrice: 700
   },
   {
     id: "vattenfall",
@@ -207,8 +198,7 @@ const paintings = [
     width: 33,
     height: 41,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1100,
-    discountPercent: 5
+    originalPrice: 1100
   },
   {
     id: "minMamma",
@@ -221,7 +211,6 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1600,
     framedPrice: 1900,
-    discountPercent: 10,
     frameAvailable: true
   },
   {
@@ -233,8 +222,7 @@ const paintings = [
     width: 41,
     height: 33,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1100,
-    discountPercent: 5
+    originalPrice: 1100
   },
   {
     id: "solvarmeISkogen",
@@ -245,8 +233,7 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1900,
-    discountPercent: 5
+    originalPrice: 1900
   },
   {
     id: "enLerigDrom",
@@ -257,8 +244,7 @@ const paintings = [
     width: 59,
     height: 42,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 2000,
-    discountPercent: 5
+    originalPrice: 2000
   },
   {
     id: "efterIde",
@@ -271,7 +257,6 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 2300,
     framedPrice: 2600,
-    discountPercent: 15,
     frameAvailable: true
   },
   {
@@ -283,8 +268,7 @@ const paintings = [
     width: 59,
     height: 42,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600,
-    discountPercent: 5
+    originalPrice: 1600
   },
   {
     id: "sommarPaStranden",
@@ -295,8 +279,7 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1900,
-    discountPercent: 5
+    originalPrice: 1900
   },
   {
     id: "skaViPlockaBlommor",
@@ -307,8 +290,7 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600,
-    discountPercent: 5
+    originalPrice: 1600
   },
   {
     id: "savannan",
@@ -319,8 +301,7 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600,
-    discountPercent: 5
+    originalPrice: 1600
   },
   {
     id: "varkansla",
@@ -331,8 +312,7 @@ const paintings = [
     width: 59,
     height: 42,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600,
-    discountPercent: 5
+    originalPrice: 1600
   },
   {
     id: "norrsken",
@@ -343,8 +323,7 @@ const paintings = [
     width: 41,
     height: 33,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1100,
-    discountPercent: 5
+    originalPrice: 1100
   },
   {
     id: "vargen",
@@ -355,8 +334,7 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600,
-    discountPercent: 5
+    originalPrice: 1600
   },
   {
     id: "skogsvila",
@@ -366,8 +344,7 @@ const paintings = [
     medium: MEDIUM.ACRYLIC_CANVAS,
     diameter: 90,
     shape: SHAPE.CIRCLE,
-    originalPrice: 3100,
-    discountPercent: 5
+    originalPrice: 3100
   },
   {
     id: "vinterlek",
@@ -378,8 +355,7 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600,
-    discountPercent: 5
+    originalPrice: 1600
   },
   {
     id: "sommarvila",
@@ -390,8 +366,7 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 2100,
-    discountPercent: 20
+    originalPrice: 2100
   },
   {
     id: "dagensFynd",
@@ -404,7 +379,6 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 2000,
     framedPrice: 2300,
-    discountPercent: 5,
     frameAvailable: true
   },
   {
@@ -418,7 +392,6 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1900,
     framedPrice: 2200,
-    discountPercent: 5,
     frameAvailable: true
   },
   {
