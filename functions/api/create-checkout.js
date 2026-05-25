@@ -29,7 +29,7 @@ const PAINTINGS = [
   { id: 'sommarvila', originalPrice: 2100, status: 'for_sale' },
   { id: 'dagensFynd', originalPrice: 2000, framedPrice: 2300, frameAvailable: true, status: 'for_sale' },
   { id: 'sugenPaEttApple', originalPrice: 1900, framedPrice: 2200, frameAvailable: true, status: 'for_sale' },
-  { id: 'varlek', originalPrice: 2300, framedPrice: 2600, discountPercent: 5, frameAvailable: true, status: 'for_sale' },
+  { id: 'varlek', originalPrice: 2300, framedPrice: 2600, frameAvailable: true, status: 'for_sale' },
 ];
 
 const PRINT_PRICES = {

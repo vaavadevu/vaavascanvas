@@ -425,7 +425,6 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 2300,
     framedPrice: 2600,
-    discountPercent: 5,
     frameAvailable: true
   },
 ];
