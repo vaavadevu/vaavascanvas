@@ -10,7 +10,7 @@ const PAINTINGS = [
   { id: 'narhet', framedPrice: 2500, framedOnly: true, frameAvailable: true, status: 'for_sale' },
   { id: 'tjuvsmak', originalPrice: 500, status: 'for_sale' },
   { id: 'maskrosdrom', originalPrice: 500, status: 'for_sale' },
-  { id: 'Frihet', originalPrice: 500, status: 'for_sale' },
+  { id: 'frihet', originalPrice: 500, status: 'for_sale' },
   { id: 'tropisktBad', originalPrice: 500, status: 'for_sale' },
   { id: 'busungen', originalPrice: 500, status: 'for_sale' },
   { id: 'breadwinner', originalPrice: 500, status: 'for_sale' },

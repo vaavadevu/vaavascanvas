@@ -179,7 +179,7 @@ const paintings = [
     originalPrice: 500
   },
   {
-    id: "Frihet",
+    id: "frihet",
     title: "Frihet",
     descKey: "desc_frihet",
     status: STATUS.FOR_SALE,
