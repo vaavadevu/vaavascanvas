@@ -6,10 +6,10 @@
 const keys = {
 
   // ── Banner ──────────────────────────────────────────────────
-  banner_mothers_day: {
-    sv: "Morsdagsrabatt — upp till 20% t.o.m. 24 maj 2026",
-    en: "Mother's Day sale — up to 20% until May 24, 2026",
-  },
+ // banner_mothers_day: {
+   // sv: "Morsdagsrabatt — upp till 20% t.o.m. 24 maj 2026",
+    //en: "Mother's Day sale — up to 20% until May 24, 2026",
+  //},
 
   // ── Nav ────────────────────────────────────────────────────
   nav_home: {
@@ -538,6 +538,18 @@ desc_sommarvila: {
   desc_breadwinner: {
     sv: "En duva som stolt bär på sig en bröd-dräkt",
     en: "A pigeon proudly wearing a bread costume",
+  },
+  desc_frihet: {
+    sv: "En gräsand som öppnar sina vingar över en spegelblank sjö under solen.",
+    en: "A mallard duck opening its wings over a mirror-like lake under the sun.",
+  },
+  desc_busungen: {
+    sv: "En busig och rar rävunge.",
+    en: "A naughty and cute fox cub.",
+  },
+  desc_tropisktBad: {
+    sv: "En tiger som tar ett bad i en varm solig dag.",
+    en: "A tiger taking a bath on a warm sunny day.",
   },
   frame_available: {
     sv: "Finns med eller utan ram",

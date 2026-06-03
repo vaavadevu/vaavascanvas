@@ -106,7 +106,7 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 700
+    originalPrice: 500
   },
   {
     id: "operationBaver",
@@ -117,7 +117,7 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 700
+    originalPrice: 500
   },
   {
     id: "skymningsDrom",
@@ -139,7 +139,7 @@ const paintings = [
     width: 69,
     height: 58,
     shape: SHAPE.RECTANGULAR,
-    framedPrice: 3600,
+    framedPrice: 3500,
     framedOnly: true,
     frameAvailable: true
   },
@@ -152,7 +152,7 @@ const paintings = [
     width: 22,
     height: 16,
     shape: SHAPE.RECTANGULAR,
-    framedPrice: 2600,
+    framedPrice: 2500,
     framedOnly: true,
     frameAvailable: true
   },
@@ -165,7 +165,7 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 700
+    originalPrice: 500
   },
   {
     id: "maskrosdrom",
@@ -176,7 +176,40 @@ const paintings = [
     width: 24,
     height: 18,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 700
+    originalPrice: 500
+  },
+  {
+    id: "Frihet",
+    title: "Frihet",
+    descKey: "desc_frihet",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    width: 18,
+    height: 24,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 500
+  },
+  {
+    id: "tropisktBad",
+    title: "Tropiskt bad",
+    descKey: "desc_tropisktBad",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    width: 18,
+    height: 24,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 500
+  },
+  {
+    id: "busungen",
+    title: "Busungen",
+    descKey: "desc_busungen",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    width: 18,
+    height: 24,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 500
   },
   {
     id: "breadwinner",
@@ -187,7 +220,7 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 700
+    originalPrice: 500
   },
   {
     id: "vattenfall",
@@ -209,20 +242,9 @@ const paintings = [
     width: 34,
     height: 34,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600,
-    framedPrice: 1900,
+    originalPrice: 1500,
+    framedPrice: 1800,
     frameAvailable: true
-  },
-  {
-    id: "solnedgang",
-    title: "Havet",
-    descKey: "desc_solnedgang",
-    status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
-    width: 41,
-    height: 33,
-    shape: SHAPE.RECTANGULAR,
-    originalPrice: 1100
   },
   {
     id: "solvarmeISkogen",
@@ -233,7 +255,7 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1900
+    originalPrice: 1500
   },
   {
     id: "enLerigDrom",
@@ -244,7 +266,7 @@ const paintings = [
     width: 59,
     height: 42,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 2000
+    originalPrice: 1800
   },
   {
     id: "efterIde",
@@ -255,8 +277,8 @@ const paintings = [
     width: 40,
     height: 40,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 2300,
-    framedPrice: 2600,
+    originalPrice: 1500,
+    framedPrice: 1800,
     frameAvailable: true
   },
   {
@@ -268,7 +290,7 @@ const paintings = [
     width: 59,
     height: 42,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600
+    originalPrice: 1500
   },
   {
     id: "sommarPaStranden",
@@ -279,7 +301,7 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1900
+    originalPrice: 1500
   },
   {
     id: "skaViPlockaBlommor",
@@ -290,7 +312,7 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600
+    originalPrice: 1500
   },
   {
     id: "savannan",
@@ -301,7 +323,7 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600
+    originalPrice: 1500
   },
   {
     id: "varkansla",
@@ -312,18 +334,7 @@ const paintings = [
     width: 59,
     height: 42,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600
-  },
-  {
-    id: "norrsken",
-    title: "Norrsken",
-    descKey: "desc_norrsken",
-    status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
-    width: 41,
-    height: 33,
-    shape: SHAPE.RECTANGULAR,
-    originalPrice: 1100
+    originalPrice: 1500
   },
   {
     id: "vargen",
@@ -344,7 +355,7 @@ const paintings = [
     medium: MEDIUM.ACRYLIC_CANVAS,
     diameter: 90,
     shape: SHAPE.CIRCLE,
-    originalPrice: 3100
+    originalPrice: 2500
   },
   {
     id: "vinterlek",
@@ -366,7 +377,7 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 2100
+    originalPrice: 1500
   },
   {
     id: "dagensFynd",
@@ -377,8 +388,8 @@ const paintings = [
     width: 34,
     height: 34,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 2000,
-    framedPrice: 2300,
+    originalPrice: 1800,
+    framedPrice: 2100,
     frameAvailable: true
   },
   {
@@ -390,8 +401,8 @@ const paintings = [
     width: 30,
     height: 30,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1900,
-    framedPrice: 2200,
+    originalPrice: 1800,
+    framedPrice: 2000,
     frameAvailable: true
   },
   {
@@ -423,8 +434,8 @@ const paintings = [
     width: 40,
     height: 40,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 2300,
-    framedPrice: 2600,
+    originalPrice: 1500,
+    framedPrice: 1900,
     frameAvailable: true
   },
 ];
