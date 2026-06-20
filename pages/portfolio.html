@@ -42,92 +42,67 @@
   <link rel="stylesheet" href="../css/header.css" />
   <link rel="stylesheet" href="../css/footer.css" />
   <link rel="stylesheet" href="../css/gallery.css" />
+  <link rel="stylesheet" href="../css/portfolio-simple.css" />
   <link rel="stylesheet" href="../css/fab.css" />
   <link rel="stylesheet" href="../css/overlay.css" />
   <link rel="stylesheet" href="../css/form.css" />
   <link rel="stylesheet" href="../css/responsive.css" />
   <link rel="stylesheet" href="../css/cart.css" />
-  <link rel="stylesheet" href="../css/portfolio.css" />
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css" />
 </head>
 
-<body id="main">
+<body id="top">
 
   <div id="header-container"></div>
 
-  <header class="page-head">
-    <p class="eyebrow">Portfolio</p>
-    <h1>Illustrationer &amp; verk</h1>
-    <p class="lede">Ett urval av mitt arbete genom olika medium — akryl, oljepastell och digitalt. Vissa går att köpa, andra finns bara här.</p>
-  </header>
+  <main>
+    <div class="page-head">
+      <h1>Illustrationer &amp; verk</h1>
+      <p>Ett urval av mitt arbete genom olika medium — akryl, oljepastell och digitalt. Vissa går att köpa, andra finns bara här.</p>
+    </div>
 
-  <nav class="medium-nav">
-    <div class="medium-nav-inner">
-      <button class="medium-tab active" data-target="all">Alla<span class="count">24</span></button>
-      <button class="medium-tab" data-target="acrylic">Akryl<span class="count">9</span></button>
-      <button class="medium-tab" data-target="oilpastel">Oljepastell<span class="count">7</span></button>
-      <button class="medium-tab" data-target="digital">Digitalt<span class="count">8</span></button>
-      <button class="medium-tab" data-target="watercolor">Akvarell<span class="count">0</span></button>
-    </div>
-  </nav>
+    <section class="medium-section">
+      <div class="medium-section-head">
+        <h2>Oljepastell</h2>
+      </div>
+      <div class="masonry" id="oilpastel-masonry">
+        <!-- Images loaded dynamically -->
+      </div>
+    </section>
 
-  <!-- Sections copied from illustrationer (masonry layout) -->
+    <section class="medium-section">
+      <div class="medium-section-head">
+        <h2>Akryl</h2>
+      </div>
+      <div class="masonry" id="akryl-masonry">
+        <!-- Images loaded dynamically -->
+      </div>
+    </section>
 
-  <section class="medium-section" id="acrylic">
-    <div class="medium-section-head">
-      <h2>Akryl</h2>
-      <span class="tally">9 studier</span>
-    </div>
-    <p class="medium-note">Målningar och studier i akryl på duk — varierande storlek och uttryck.</p>
-    <div class="masonry" id="acrylic-masonry">
-      <!-- Images loaded dynamically -->
-    </div>
-  </section>
+    <section class="medium-section">
+      <div class="medium-section-head">
+        <h2>Akvarell</h2>
+      </div>
+      <div class="masonry" id="akvarell-masonry">
+        <!-- Images loaded dynamically -->
+      </div>
+    </section>
 
-  <section class="medium-section" id="oilpastel">
-    <div class="medium-section-head">
-      <h2>Oljepastell</h2>
-      <span class="tally">7 studier</span>
-    </div>
-    <p class="medium-note">Varmare och mer direkt — oljepastell ger en annan textur och energi.</p>
-    <div class="masonry" id="oilpastel-masonry">
-      <!-- Images loaded dynamically -->
-    </div>
-  </section>
+    <section class="medium-section">
+      <div class="medium-section-head">
+        <h2>Digitalt</h2>
+      </div>
+      <div class="masonry" id="digital-masonry">
+        <!-- Images loaded dynamically -->
+      </div>
+    </section>
 
-  <section class="medium-section" id="digital">
-    <div class="medium-section-head">
-      <h2>Digitalt</h2>
-      <span class="tally">8 studier</span>
+    <div class="section-copy">
+      <p>Gillar du något du ser? En del av verken ovan går att köpa. <a href="/pages/pictures.html">Se hela galleriet</a> eller <a href="/pages/commissions.html">beställ en commission</a>.</p>
     </div>
-    <p class="medium-note">Procreate-arbeten — koncept, karaktärsstudier och färdiga illustrationer.</p>
-    <div class="masonry" id="digital-masonry">
-      <!-- Images loaded dynamically -->
-    </div>
-  </section>
-
-  <section class="medium-section" id="watercolor">
-    <div class="medium-section-head">
-      <h2>Akvarell</h2>
-      <span class="tally">0 verk</span>
-    </div>
-    <p class="medium-note">Akvarell-arbeten — experiment med vätskor och färger.</p>
-    <div class="masonry" id="watercolor-masonry">
-      <!-- Images loaded dynamically -->
-    </div>
-  </section>
-
-  <div class="lightbox" id="lightbox">
-    <button class="lightbox-close" id="lightboxClose" aria-label="Stäng">&times;</button>
-    <div class="lightbox-content">
-      <img id="lightboxImg" src="" alt="">
-      <p class="lightbox-caption" id="lightboxTitle"></p>
-      <p class="lightbox-meta" id="lightboxMeta"></p>
-      <a class="lightbox-link" id="lightboxLink" href="" style="display:none;"></a>
-    </div>
-  </div>
+  </main>
 
   <footer id="footer">
     <div class="footerContent">
@@ -162,6 +137,15 @@
 
   <div id="modals-container"></div>
 
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose" aria-label="Stäng">&times;</button>
+    <div class="lightbox-content">
+      <img id="lightboxImg" src="" alt="">
+      <p class="lightbox-caption" id="lightboxTitle"></p>
+      <p class="lightbox-meta" id="lightboxMeta"></p>
+    </div>
+  </div>
+
   <script src="../js/translations.js"></script>
   <script src="../js/i18n.js"></script>
   <script src="../js/paintings.js"></script>
@@ -173,7 +157,6 @@
   <script src="../js/script.js"></script>
   <script src="../js/cart.js"></script>
   <script src="../js/portfolio-loader.js"></script>
-  <script src="../js/portfolio.js"></script>
 
 </body>
 

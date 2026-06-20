@@ -1,9 +1,9 @@
 // Portfolio Dynamic Loader
 const portfolioMediums = {
-  akryl: { id: 'acrylic', label: 'Akryl', folder: 'akryl' },
+  akryl: { id: 'akryl', label: 'Akryl', folder: 'akryl' },
   oljapastell: { id: 'oilpastel', label: 'Oljepastell', folder: 'oljapastell' },
-  digitalt: { id: 'digital', label: 'Digitalt', folder: 'digitalt' },
-  akvarell: { id: 'watercolor', label: 'Akvarell', folder: 'akvarell' }
+  akvarell: { id: 'akvarell', label: 'Akvarell', folder: 'akvarell' },
+  digitalt: { id: 'digital', label: 'Digitalt', folder: 'digitalt' }
 };
 
 const emptyMessage = 'Just nu är det tomt här, men det kommer mer snart!';
@@ -21,87 +21,122 @@ async function getImagesFromFolder(folderName) {
   }
 }
 
-// Create a figure element for an image
+// Create an item with just an image preview, fixed size in the grid
 function createPieceFigure(imagePath, title, medium) {
-  const figure = document.createElement('figure');
-  figure.className = 'piece';
-  figure.tabIndex = 0;
-  figure.dataset.title = title;
-  figure.dataset.medium = medium;
-  figure.dataset.date = new Date().getFullYear();
+  const item = document.createElement('button');
+  item.type = 'button';
+  item.className = 'piece';
+  item.dataset.title = title;
+  item.dataset.medium = medium;
+  item.dataset.date = new Date().getFullYear();
   
-  const frameDiv = document.createElement('div');
-  frameDiv.className = 'piece-frame';
+  const frame = document.createElement('div');
+  frame.className = 'piece-frame';
   
   const img = document.createElement('img');
   img.src = imagePath;
   img.alt = title;
   img.loading = 'lazy';
   
-  frameDiv.appendChild(img);
+  frame.appendChild(img);
+  item.appendChild(frame);
   
-  const figcaption = document.createElement('figcaption');
-  figcaption.className = 'piece-caption';
-  
-  const titleSpan = document.createElement('span');
-  titleSpan.className = 'piece-title';
-  titleSpan.textContent = title;
-  
-  const metaSpan = document.createElement('span');
-  metaSpan.className = 'piece-meta';
-  metaSpan.textContent = medium;
-  
-  figcaption.appendChild(titleSpan);
-  figcaption.appendChild(metaSpan);
-  
-  figure.appendChild(frameDiv);
-  figure.appendChild(figcaption);
-  
-  return figure;
+  return item;
 }
+
 
 // Load portfolio sections
 async function loadPortfolioSections() {
   let totalImages = 0;
   
   for (const [key, medium] of Object.entries(portfolioMediums)) {
-    const section = document.getElementById(medium.id);
-    if (!section) continue;
-    
-    const masonry = section.querySelector('.masonry');
-    if (!masonry) continue;
+    const gridId = medium.id + '-masonry';
+    const grid = document.getElementById(gridId);
+    if (!grid) continue;
     
     const images = await getImagesFromFolder(medium.folder);
     
     if (images.length === 0) {
-      masonry.innerHTML = `<p class="portfolio-empty">${emptyMessage}</p>`;
+      // Hide empty sections completely
+      const section = grid.closest('section');
+      if (section) section.style.display = 'none';
     } else {
-      masonry.innerHTML = '';
-      images.forEach((imagePath, index) => {
+      grid.innerHTML = '';
+      images.forEach((imagePath) => {
         const fileName = imagePath.split('/').pop().split('.')[0];
         const figure = createPieceFigure(
           imagePath,
           fileName.charAt(0).toUpperCase() + fileName.slice(1),
           medium.label
         );
-        masonry.appendChild(figure);
+        grid.appendChild(figure);
       });
       totalImages += images.length;
     }
-    
-    // Update count
-    const tallySpan = section.querySelector('.tally');
-    if (tallySpan) {
-      tallySpan.textContent = `${images.length} ${images.length === 1 ? 'verk' : 'verk'}`;
+  }
+
+  // Setup lightbox
+  setupLightbox();
+}
+
+// Setup lightbox functionality
+function setupLightbox() {
+  const lightbox = document.getElementById('lightbox');
+  if (!lightbox) return;
+
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxTitle = document.getElementById('lightboxTitle');
+  const lightboxMeta = document.getElementById('lightboxMeta');
+  const lightboxClose = document.getElementById('lightboxClose');
+
+  function openLightbox(item) {
+    const img = item.querySelector('img');
+    if (lightboxImg) lightboxImg.src = img.src;
+    if (lightboxImg) lightboxImg.alt = img.alt;
+    if (lightboxTitle) lightboxTitle.textContent = item.dataset.title || '';
+    if (lightboxMeta) {
+      const meta = [item.dataset.medium, item.dataset.date]
+        .filter(Boolean)
+        .join(' · ');
+      lightboxMeta.textContent = meta;
     }
+    lightbox.classList.add('open');
+    if (lightboxClose) lightboxClose.focus();
   }
-  
-  // Update total count in nav
-  const allTab = document.querySelector('[data-target="all"]');
-  if (allTab) {
-    const countSpan = allTab.querySelector('.count');
-    if (countSpan) countSpan.textContent = totalImages;
+
+  function closeLightbox() {
+    lightbox.classList.remove('open');
   }
+
+  document.addEventListener('click', (e) => {
+    const item = e.target.closest('.piece');
+    if (item) {
+      e.preventDefault();
+      openLightbox(item);
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      const item = e.target.closest('.piece');
+      if (item) {
+        e.preventDefault();
+        openLightbox(item);
+      }
+    }
+  });
+
+  if (lightboxClose) {
+    lightboxClose.addEventListener('click', closeLightbox);
+  }
+
+  lightbox.addEventListener('click', e => {
+    if (e.target === lightbox) closeLightbox();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeLightbox();
+  });
 }
 
 // Load on page load
