@@ -1,5 +1,15 @@
 // ui.js — header, mobile menu, scroll watcher, misc modals
 
+// Helper function to adjust header padding
+function adjustHeaderPadding() {
+  const headerContainer = document.getElementById('header-container');
+  const mainContent = document.querySelector('main');
+  if (headerContainer && mainContent) {
+    const headerHeight = headerContainer.getBoundingClientRect().height;
+    mainContent.style.paddingTop = headerHeight + 'px';
+  }
+}
+
 async function buildComponents() {
   const headerContainer = document.getElementById("header-container");
   if (headerContainer) {

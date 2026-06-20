@@ -69,6 +69,7 @@
       <button class="medium-tab" data-target="acrylic">Akryl<span class="count">9</span></button>
       <button class="medium-tab" data-target="oilpastel">Oljepastell<span class="count">7</span></button>
       <button class="medium-tab" data-target="digital">Digitalt<span class="count">8</span></button>
+      <button class="medium-tab" data-target="watercolor">Akvarell<span class="count">0</span></button>
     </div>
   </nav>
 
@@ -80,16 +81,8 @@
       <span class="tally">9 studier</span>
     </div>
     <p class="medium-note">Målningar och studier i akryl på duk — varierande storlek och uttryck.</p>
-    <div class="masonry">
-      <!-- pieces... (kept same as before) -->
-      <figure class="piece" tabindex="0" data-title="Aldrig ensam" data-medium="Akryl på duk" data-date="2026" data-link="/gallery.html#aldrigEnsam" data-link-label="Se i galleriet — 500 kr">
-        <div class="piece-frame"><img src="https://placehold.co/400x520/d8cbb0/2b2620?text=" alt="Aldrig ensam"></div>
-        <figcaption class="piece-caption">
-          <span class="piece-title">Aldrig ensam</span>
-          <span class="piece-meta">Akryl</span>
-        </figcaption>
-      </figure>
-      <!-- (truncated for brevity in editor) -->
+    <div class="masonry" id="acrylic-masonry">
+      <!-- Images loaded dynamically -->
     </div>
   </section>
 
@@ -99,8 +92,8 @@
       <span class="tally">7 studier</span>
     </div>
     <p class="medium-note">Varmare och mer direkt — oljepastell ger en annan textur och energi.</p>
-    <div class="masonry">
-      <!-- pieces... -->
+    <div class="masonry" id="oilpastel-masonry">
+      <!-- Images loaded dynamically -->
     </div>
   </section>
 
@@ -110,12 +103,21 @@
       <span class="tally">8 studier</span>
     </div>
     <p class="medium-note">Procreate-arbeten — koncept, karaktärsstudier och färdiga illustrationer.</p>
-    <div class="masonry">
-      <!-- pieces... -->
+    <div class="masonry" id="digital-masonry">
+      <!-- Images loaded dynamically -->
     </div>
   </section>
 
-  <p class="foot-note">Gillar du något du ser? En del av verken ovan går att köpa. <a href="/pages/gallery.html" style="color: var(--clay);">Se hela galleriet</a> eller <a href="/pages/commissions.html" style="color: var(--clay);">beställ en commission</a>.</p>
+  <section class="medium-section" id="watercolor">
+    <div class="medium-section-head">
+      <h2>Akvarell</h2>
+      <span class="tally">0 verk</span>
+    </div>
+    <p class="medium-note">Akvarell-arbeten — experiment med vätskor och färger.</p>
+    <div class="masonry" id="watercolor-masonry">
+      <!-- Images loaded dynamically -->
+    </div>
+  </section>
 
   <div class="lightbox" id="lightbox">
     <button class="lightbox-close" id="lightboxClose" aria-label="Stäng">&times;</button>
@@ -170,6 +172,7 @@
   <script src="../js/ui.js"></script>
   <script src="../js/script.js"></script>
   <script src="../js/cart.js"></script>
+  <script src="../js/portfolio-loader.js"></script>
   <script src="../js/portfolio.js"></script>
 
 </body>
