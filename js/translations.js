@@ -36,6 +36,14 @@ const keys = {
     sv: "Tillbaka",
     en: "Back",
   },
+  nav_portfolio: {
+    sv: "Portfolio",  
+    en: "Portfolio",
+  },
+  nav_cart: { 
+    sv: "Varukorg",
+    en: "Cart",
+  },
 
   // ── Hero ───────────────────────────────────────────────────
   hero_title: {
