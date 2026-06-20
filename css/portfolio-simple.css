@@ -40,6 +40,12 @@
   text-align: center;
 }
 
+@media (max-width: 960px) {
+  .page-head {
+    padding-top: 130px;
+  }
+}
+
 .page-head h1 {
   font-size: 2.2rem;
   margin: 0 0 20px;

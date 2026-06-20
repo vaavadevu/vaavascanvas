@@ -191,7 +191,7 @@ const paintings = [
   },
   {
     id: "lodjur",
-    title: "Lödjur",
+    title: "Lodjur",
     descKey: "desc_lodjur",
     status: STATUS.FOR_SALE,
     medium: MEDIUM.ACRYLIC_CANVAS,

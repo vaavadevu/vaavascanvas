@@ -241,6 +241,10 @@ const keys = {
     sv: "Commission (beställd målning)",
     en: "Commission (custom painting)",
   },
+  form_type_collaboration: {
+    sv: "Samarbete",
+    en: "Collaboration",
+  },
   form_type_general: {
     sv: "Allmän fråga",
     en: "General question",
