@@ -505,6 +505,15 @@ desc_narhet: {
     sv: "Vargen både vild och sårbar på en gång. En påminnelse om att styrka och mjukhet kan leva sida vid sida.",
     en: "The wolf both wild and vulnerable at once. A reminder that strength and softness can live side by side.",
   },
+  desc_lodjur: {
+    sv: "En liten lodjurunge som njuter av solsken.",
+    en: "A little lynx cub enjoying the sunshine.",
+  },
+
+  desc_kattuggla: {
+    sv: "En liten kattuggla som vrider sitt huvud för att titta på observatören.",
+    en: "A little owl turning its head to take a peculiar look at the observer.",
+  },
 
   desc_skogsvila: {
     sv: "Två rävar som myser tryggt inne i en gammal trädöppning, en plats där de kan vila och känna sig säkra.",

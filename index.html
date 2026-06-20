@@ -190,23 +190,6 @@
   <script src="js/ui.js"></script>
   <script src="js/script.js"></script>
   <script src="js/cart.js"></script>
-  <script>
-    // Fallback: ensure page has top padding equal to header + banner
-    (function(){
-      try {
-        var header = document.getElementById('header-container');
-        var banner = document.getElementById('site-banner');
-        var headerH = header ? header.offsetHeight : parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 100;
-        var bannerH = banner && banner.classList.contains('visible') ? banner.offsetHeight : 0;
-        if (!document.body.style.paddingTop || document.body.style.paddingTop === '0px') {
-          document.body.style.paddingTop = (headerH + bannerH) + 'px';
-          document.documentElement.style.paddingTop = (headerH + bannerH) + 'px';
-        }
-      } catch (e) {
-        // ignore
-      }
-    })();
-  </script>
 </body>
 
 </html>

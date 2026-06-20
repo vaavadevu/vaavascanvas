@@ -104,6 +104,28 @@
     "medium": "medium_acrylic_canvas"
   },
   {
+    "id": "lodjur",
+    "title": "Lödjur",
+    "descKey": "desc_lodjur",
+    "width": 18,
+    "height": 24,
+    "shape": "rectangular",
+    "originalPrice": 500,
+    "status": "for_sale",
+    "medium": "medium_acrylic_canvas"
+  },
+  {
+    "id": "kattuggla",
+    "title": "Kattuggla",
+    "descKey": "desc_kattuggla",
+    "width": 18,
+    "height": 24,
+    "shape": "rectangular",
+    "originalPrice": 500,
+    "status": "for_sale",
+    "medium": "medium_acrylic_canvas"
+  },
+  {
     "id": "tropisktBad",
     "title": "Tropiskt bad",
     "descKey": "desc_tropisktBad",
@@ -226,17 +248,6 @@
     "shape": "rectangular",
     "originalPrice": 1500,
     "status": "sold",
-    "medium": "medium_acrylic_canvas"
-  },
-  {
-    "id": "savannan",
-    "title": "Dags att gå hem",
-    "descKey": "desc_savannan",
-    "width": 42,
-    "height": 59,
-    "shape": "rectangular",
-    "originalPrice": 1500,
-    "status": "for_sale",
     "medium": "medium_acrylic_canvas"
   },
   {

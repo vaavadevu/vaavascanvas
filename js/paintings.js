@@ -190,6 +190,28 @@ const paintings = [
     originalPrice: 500
   },
   {
+    id: "lodjur",
+    title: "Lödjur",
+    descKey: "desc_lodjur",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    width: 18,
+    height: 24,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 500
+  },
+  {
+    id: "kattuggla",
+    title: "Kattuggla",
+    descKey: "desc_kattuggla",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    width: 18,
+    height: 24,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 500
+  },
+  {
     id: "tropisktBad",
     title: "Tropiskt bad",
     descKey: "desc_tropisktBad",
@@ -308,17 +330,6 @@ const paintings = [
     title: "Näckrosor",
     descKey: "desc_skaViPlockaBlommor",
     status: STATUS.SOLD,
-    medium: MEDIUM.ACRYLIC_CANVAS,
-    width: 42,
-    height: 59,
-    shape: SHAPE.RECTANGULAR,
-    originalPrice: 1500
-  },
-  {
-    id: "savannan",
-    title: "Dags att gå hem",
-    descKey: "desc_savannan",
-    status: STATUS.FOR_SALE,
     medium: MEDIUM.ACRYLIC_CANVAS,
     width: 42,
     height: 59,
