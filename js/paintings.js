@@ -417,26 +417,6 @@ const paintings = [
     frameAvailable: true
   },
   {
-    id: "bonnie",
-    title: "Bonnie",
-    descKey: "desc_bonnie",
-    status: STATUS.PERSONAL,
-    medium: MEDIUM.ACRYLIC_CANVAS,
-    width: 30,
-    height: 40,
-    shape: SHAPE.RECTANGULAR
-  },
-  {
-    id: "brollopspresent",
-    title: "Bröllopspresent",
-    descKey: "desc_brollopspresent",
-    status: STATUS.PERSONAL,
-    medium: MEDIUM.ACRYLIC_CANVAS,
-    width: 43,
-    height: 30,
-    shape: SHAPE.RECTANGULAR
-  },
-  {
     id: "varlek",
     title: "Vårlek",
     descKey: "desc_varlek",

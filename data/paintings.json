@@ -331,26 +331,6 @@
     "framedPrice": 2000
   },
   {
-    "id": "bonnie",
-    "title": "Bonnie",
-    "descKey": "desc_bonnie",
-    "width": 30,
-    "height": 40,
-    "shape": "rectangular",
-    "status": "personal",
-    "medium": "medium_acrylic_canvas"
-  },
-  {
-    "id": "brollopspresent",
-    "title": "Bröllopspresent",
-    "descKey": "desc_brollopspresent",
-    "width": 43,
-    "height": 30,
-    "shape": "rectangular",
-    "status": "personal",
-    "medium": "medium_acrylic_canvas"
-  },
-  {
     "id": "varlek",
     "title": "Vårlek",
     "descKey": "desc_varlek",
