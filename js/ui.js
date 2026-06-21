@@ -224,6 +224,7 @@ function setupScrollWatcher() {
     const isCommissions = window.location.pathname.includes("commissions");
     const isPrints = window.location.pathname.includes("prints");
     const isBlog = window.location.pathname.includes("blog");
+    const isPortfolio = window.location.pathname.includes("portfolio");
 
     // Determine which nav link to highlight
     let currentQuery;
@@ -239,7 +240,11 @@ function setupScrollWatcher() {
       currentQuery = "/pages/prints.html";
     } else if (isBlog) {
       currentQuery = "/pages/blog.html";
-    } else {
+    } 
+    else if (isPortfolio) {
+      currentQuery = "/pages/portfolio.html";
+    }
+    else {
       currentQuery = "/#top";
     }
 
