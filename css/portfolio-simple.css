@@ -209,6 +209,7 @@
   max-height: 80vh;
   border-radius: 4px;
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+  padding-top: 100px;
 }
 
 .lightbox-caption {
