@@ -205,14 +205,14 @@
     "medium": "medium_acrylic_canvas"
   },
   {
-    "id": "solvarmeISkogen",
-    "title": "Solvärme i skogen",
-    "descKey": "desc_solvarmeISkogen",
+    "id": "vidAn",
+    "title": "Vid ån",
+    "descKey": "desc_vidAn",
     "width": 42,
     "height": 59,
     "shape": "rectangular",
     "originalPrice": 1500,
-    "status": "sold",
+    "status": "for_sale",
     "medium": "medium_acrylic_canvas"
   },
   {
