@@ -179,9 +179,9 @@ const keys = {
     sv: "Gå till varukorg",
     en: "Go to cart",
   },
-  pageview_print_available_btn: {
-    sv: "Finns som print från",
-    en: "Available as a print from",
+  price_from: {
+    sv: "från",
+    en: "from",
   },
   pageview_discount_text: {
     sv: "rabatt på ordinarie pris",
@@ -344,8 +344,8 @@ const keys = {
     en: "Shipping within the EU",
   },
   shipping_europe_p: {
-    sv: "Både prints och originalmålningar kan skickas till alla EU-länder. Frakt 149 kr, leveranstid ca 5–10 arbetsdagar via PostNord.",
-    en: "Both prints and original paintings can be shipped to all EU countries. Shipping 149 SEK, delivery time approx. 5–10 business days via PostNord.",
+    sv: "Originalmålningar kan endast fraktas inom Sverige. Leveranstid ca 5–14 arbetsdagar.",
+    en: "Original paintings can only be shipped within Sweden. Delivery time approx. 5–14 business days.",
   },
   shipping_packaging_h: {
     sv: "Förpackning",
@@ -513,6 +513,15 @@ desc_narhet: {
     sv: "Ljuset dansar bakom bergen i en natt som känns som ett under.",
     en: "The light dances behind the mountains on a night that feels like a miracle.",
   },
+  desc_vidAn: {
+    sv: "En dovhjortsfamilj som tar en paus i skogen",
+    en: "A deer family taking a break in the forest.",
+  },
+  desc_underHennesVingar: {
+    sv: "En hönsmamma som skyddar sina ungar under hennes vingar",
+    en: "A hen protecting her chicks under her wings.",
+  },
+
   desc_vargen: {
     sv: "Vargen både vild och sårbar på en gång. En påminnelse om att styrka och mjukhet kan leva sida vid sida.",
     en: "The wolf both wild and vulnerable at once. A reminder that strength and softness can live side by side.",
@@ -608,11 +617,6 @@ desc_sommarvila: {
   sv: "Personlig målning - ej till salu.",
   en: "Personal painting - not for sale.",
 },
-
-  nav_prints: {
-    sv: "Prints",
-    en: "Prints",
-  },
 
   // ── Cart ──────────────────────────────────────────────────────
   cart_heading: {
@@ -710,65 +714,6 @@ desc_sommarvila: {
   cart_intl_warning: {
     sv: "OBS: Originalmålningar kan endast fraktas inom Sverige.",
     en: "Note: Original paintings can only be shipped within Sweden.",
-  },
-
-  // ── Prints page ───────────────────────────────────────────────
-  prints_price_from: {
-    sv: "från",
-    en: "from",
-  },
-
-  prints_hero_h1: {
-    sv: "Fine art prints av mina målningar, tryckta på arkivkvalitetspapper.",
-    en: "Fine art prints of my paintings, printed on archival quality paper.",
-  },
-  prints_hero_p: {
-    sv: "Varje print levereras direkt till din dörr.",
-    en: "Every print is delivered directly to your door.",
-  },
-  prints_medium_square: {
-    sv: "Akryl · Kvadratisk",
-    en: "Acrylic · Square",
-  },
-  prints_medium_portrait: {
-    sv: "Akryl · Stående",
-    en: "Acrylic · Portrait",
-  },
-  prints_size_label: {
-    sv: "Välj storlek",
-    en: "Choose size",
-  },
-  prints_add_to_cart: {
-    sv: "Lägg i varukorg",
-    en: "Add to cart",
-  },
-  prints_info_heading: {
-    sv: "Om prints",
-    en: "About prints",
-  },
-  prints_info_p: {
-    sv: "Alla prints trycks på beställning på arkivkvalitetspapper via Gelato och levereras inom 3–7 arbetsdagar. Printerna är osignerade, men varje tavla innehåller en signaturtext. Vill du ha en personligt signerad print? Skicka en förfrågan via formuläret nedan!",
-    en: "All prints are printed on demand on archival quality paper via Gelato and delivered within 3–7 business days. Prints are unsigned, but each painting includes a signature detail. Want a personally signed print? Send a request via the form below!",
-  },
-  prints_request_heading: {
-    sv: "Hittar du inte det du letar efter?",
-    en: "Can't find what you're looking for?",
-  },
-  prints_request_p: {
-    sv: "Har du sett en tavla på sidan som du gärna vill ha som print, men som inte finns tillgänglig just nu? Skicka gärna in en förfrågan så hör jag av mig så snart jag kan!",
-    en: "Have you seen a painting on the site that you'd love as a print, but it isn't available right now? Feel free to send a request and I'll get back to you as soon as I can!",
-  },
-  prints_request_btn: {
-    sv: "Skicka en förfrågan",
-    en: "Send a request",
-  },
-  prints_success_banner: {
-    sv: "✓ Tack för din beställning! Du får ett bekräftelsemail inom kort.",
-    en: "✓ Thank you for your order! You'll receive a confirmation email shortly.",
-  },
-  prints_toast_added: {
-    sv: "Print tillagd i varukorgen!",
-    en: "Print added to cart!",
   },
 
   // ── Blog ───────────────────────────────────────────────────

@@ -153,7 +153,7 @@ const Cart = (() => {
         </div>
         <div class="cart-item-info">
           <div class="cart-item-title">${item.title}</div>
-          <div class="cart-item-meta">${item.type === 'print' ? 'Print · ' + (item.sizeLabel || item.size) : 'Original'}</div>
+          <div class="cart-item-meta">${item.type === 'original' ? 'Original' : ''}</div>
           <div class="cart-item-price">
             ${(item.price * (item.qty || 1)).toLocaleString('sv-SE')} kr
             ${item.type === 'original' && ((item.withFrame && item.originalFramedPrice && item.originalFramedPrice !== item.framedPrice) || (!item.withFrame && item.originalBasePrice && item.originalBasePrice !== item.basePrice)) ? `<span class="cart-item-price-old">${((item.withFrame ? item.originalFramedPrice : item.originalBasePrice) * (item.qty || 1)).toLocaleString('sv-SE')} kr</span>` : ''}

@@ -16,12 +16,8 @@ exports.handler = async (event) => {
       price_data: {
         currency: 'sek',
         product_data: {
-          name: item.type === 'print'
-            ? `${item.title} – Fine Art Print (${item.size})`
-            : `${item.title} – Original målning`,
-          description: item.type === 'print'
-            ? 'Trycks på beställning, arkivkvalitetspapper. Leverans 3–7 arbetsdagar.'
-            : 'Signerat original på duk. Leverans inom Sverige.',
+          name: `${item.title} – Original målning`,
+          description: 'Signerat original på duk. Leverans inom Sverige.',
           ...(item.image ? { images: [item.image] } : {}),
         },
         unit_amount: item.price * 100,

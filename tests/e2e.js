@@ -181,7 +181,6 @@ async function runTests() {
       { label: 'Gallery page',     url: `${baseUrl}/pages/pictures.html` },
       { label: 'View page',        url: `${baseUrl}/pages/view.html` },
       { label: 'Commissions page', url: `${baseUrl}/pages/commissions.html` },
-      { label: 'Prints page',      url: `${baseUrl}/pages/prints.html` },
     ];
 
     for (const { label, url } of allPages) {
@@ -329,89 +328,6 @@ async function runTests() {
     });
 
 
-    console.log(colors.blue + '\n[7] PRINTS PAGE TESTS' + colors.reset);
-
-    await test('Print cards render on prints page', async () => {
-      const page = await browser.newPage();
-      await page.goto(`${baseUrl}/pages/prints.html`, { waitUntil: 'networkidle' });
-
-      await page.waitForSelector('.print-card', { timeout: 10000 });
-      const cardCount = await page.locator('.print-card').count();
-      assert(cardCount >= 1, `Expected at least 1 print card, got ${cardCount}`);
-
-      await page.close();
-    });
-
-    await test('No size button is pre-selected on prints page load', async () => {
-      const page = await browser.newPage();
-      await page.goto(`${baseUrl}/pages/prints.html`, { waitUntil: 'networkidle' });
-
-      const selectedCount = await page.locator('.size-btn.selected').count();
-      assertEqual(selectedCount, 0, `Expected 0 selected size buttons on load, found ${selectedCount}`);
-
-      await page.close();
-    });
-
-    await test('Price displays show "från/from" before a size is selected', async () => {
-      const page = await browser.newPage();
-      await page.goto(`${baseUrl}/pages/prints.html`, { waitUntil: 'networkidle' });
-
-      const priceDisplays = await page.locator('.print-card .price-display').all();
-      assert(priceDisplays.length > 0, 'No .print-card .price-display elements found');
-
-      for (const display of priceDisplays) {
-        const text = await display.textContent();
-        assert(
-          text.includes('från') || text.includes('from'),
-          `Price display should show "från/from" before size selected, got: "${text}"`
-        );
-      }
-
-      await page.close();
-    });
-
-    await test('Size label gets shake class when buying without selecting a size', async () => {
-      const page = await browser.newPage();
-      await page.goto(`${baseUrl}/pages/prints.html`, { waitUntil: 'networkidle' });
-
-      await page.locator('.btn-add-to-cart').first().click();
-
-      const hasShake = await page.locator('.size-selector label.shake').count();
-      assert(hasShake > 0, 'Expected shake class on size label when buying without size selected');
-
-      await page.close();
-    });
-
-    await test('Selecting size and adding to cart opens cart with item', async () => {
-      const page = await browser.newPage();
-      await page.goto(`${baseUrl}/pages/prints.html`, { waitUntil: 'networkidle' });
-
-      await page.locator('.print-card').first().locator('.size-btn').first().click();
-      await page.locator('.print-card').first().locator('.btn-add-to-cart').click();
-
-      await page.waitForSelector('#cart-drawer.open', { timeout: 5000 });
-
-      const itemCount = await page.locator('.cart-item').count();
-      assert(itemCount >= 1, `Expected at least 1 item in cart, found ${itemCount}`);
-
-      await page.close();
-    });
-
-    await test('Cart badge shows count > 0 after adding a print', async () => {
-      const page = await browser.newPage();
-      await page.goto(`${baseUrl}/pages/prints.html`, { waitUntil: 'networkidle' });
-
-      await page.locator('.print-card').first().locator('.size-btn').first().click();
-      await page.locator('.print-card').first().locator('.btn-add-to-cart').click();
-
-      await page.waitForSelector('#cart-drawer.open', { timeout: 5000 });
-
-      const badgeText = await page.locator('#cart-badge').textContent();
-      assert(parseInt(badgeText) >= 1, `Expected cart badge > 0, got: "${badgeText}"`);
-
-      await page.close();
-    });
-
     console.log(colors.blue + '\n[8] CART TESTS' + colors.reset);
 
     await test('Cart drawer opens when clicking the cart icon', async () => {
@@ -429,11 +345,11 @@ async function runTests() {
 
     await test('Checkout is blocked and terms error shown when terms not accepted', async () => {
       const page = await browser.newPage();
-      await page.goto(`${baseUrl}/pages/prints.html`, { waitUntil: 'networkidle' });
+      await page.goto(`${baseUrl}/pages/pictures.html`, { waitUntil: 'networkidle' });
 
       // Add an item so the cart footer (with checkout button) is visible
-      await page.locator('.print-card').first().locator('.size-btn').first().click();
-      await page.locator('.print-card').first().locator('.btn-add-to-cart').click();
+      await page.waitForSelector('button.btn-add-to-cart:not([disabled])', { timeout: 10000 });
+      await page.locator('button.btn-add-to-cart:not([disabled])').first().click();
       await page.waitForSelector('#cart-drawer.open', { timeout: 5000 });
 
       // Ensure terms checkbox is unchecked

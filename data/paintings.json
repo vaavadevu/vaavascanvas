@@ -194,6 +194,28 @@
     "medium": "medium_acrylic_canvas"
   },
   {
+    "id": "underHennesVingar",
+    "title": "Under hennes vingar",
+    "descKey": "desc_underHennesVingar",
+    "width": 59,
+    "height": 42,
+    "shape": "rectangular",
+    "originalPrice": 1600,
+    "status": "for_sale",
+    "medium": "medium_acrylic_canvas"
+  },
+  {
+    "id": "solvarmeISkogen",
+    "title": "Solvärme i skogen",
+    "descKey": "desc_solvarmeISkogen",
+    "width": 42,
+    "height": 59,
+    "shape": "rectangular",
+    "originalPrice": 1500,
+    "status": "sold",
+    "medium": "medium_acrylic_canvas"
+  },
+  {
     "id": "enLerigDrom",
     "title": "En lerig dröm",
     "descKey": "desc_enLerigDrom",

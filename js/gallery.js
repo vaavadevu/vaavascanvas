@@ -31,7 +31,7 @@ function getGalleryPriceHtml(painting) {
   }
 
   if (painting.frameAvailable && !painting.framedOnly) {
-    return `${t('prints_price_from')} ${salePrice.toLocaleString('sv-SE')} kr`;
+    return `${t('price_from')} ${salePrice.toLocaleString('sv-SE')} kr`;
   }
 
   return `${salePrice.toLocaleString('sv-SE')} kr`;
@@ -154,53 +154,6 @@ const wrapper = document.createElement('div');
     sold.className = 'btn-sold-label';
     sold.textContent = 'Såld';
     wrapper.appendChild(sold);
-  }
-
-  // Print buy button (only for selected paintings)
-  if (PRINT_PAINTINGS.includes(painting.id)) {
-    const printWrap = document.createElement('div');
-    printWrap.className = 'print-option';
-
-    const isSquare = painting.shape === SHAPE.SQUARE || painting.shape === 'square';
-    const sizes = isSquare ? PRINT_SIZES_SQUARE : PRINT_SIZES_STANDARD;
-
-    const select = document.createElement('select');
-    select.className = 'print-size-select';
-    select.id = `print-size-${painting.id}`;
-    sizes.forEach(s => {
-      const opt = document.createElement('option');
-      opt.value = s.size;
-      opt.dataset.price = s.price;
-      opt.textContent = `${s.label} – ${s.price} kr`;
-      select.appendChild(opt);
-    });
-
-    const printBtn = document.createElement('button');
-    printBtn.className = 'btn-add-to-cart btn-print';
-    printBtn.textContent = `Lägg i varukorg – ${sizes[0].price} kr`;
-    printBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const opt = select.options[select.selectedIndex];
-      Cart.add({
-        id: `${painting.id}-print-${opt.value}`,
-        title: `${painting.title} (Print ${opt.value})`,
-        type: 'print',
-        size: opt.value,
-        price: parseInt(opt.dataset.price),
-        image: imageUrl,
-      });
-      showToast('Print tillagd i varukorgen!');
-    });
-
-    // Update button text when size changes
-    select.addEventListener('change', () => {
-      const opt = select.options[select.selectedIndex];
-      printBtn.textContent = `Lägg i varukorg – ${opt.dataset.price} kr`;
-    });
-
-    printWrap.appendChild(select);
-    printWrap.appendChild(printBtn);
-    wrapper.appendChild(printWrap);
   }
 
   return wrapper;

@@ -19,6 +19,8 @@ const PAINTINGS = [
   { id: 'vattenfall', originalPrice: 1100, status: 'sold' },
   { id: 'minMamma', originalPrice: 1500, framedPrice: 1800, frameAvailable: true, status: 'for_sale' },
   { id: 'solvarmeISkogen', originalPrice: 1500, status: 'sold' },
+  { id: 'underHennesVingar', originalPrice: 1600, status: 'for_sale' },
+  { id: 'solvarmeISkogen', originalPrice: 1500, status: 'sold' },
   { id: 'enLerigDrom', originalPrice: 1800, status: 'for_sale' },
   { id: 'efterIde', originalPrice: 1500, framedPrice: 1800, frameAvailable: true, status: 'for_sale' },
   { id: 'sommarstuga', originalPrice: 1500, status: 'sold' },
@@ -33,13 +35,6 @@ const PAINTINGS = [
   { id: 'sugenPaEttApple', originalPrice: 1800, framedPrice: 2000, frameAvailable: true, status: 'for_sale' },
   { id: 'varlek', originalPrice: 1500, framedPrice: 1900, frameAvailable: true, status: 'for_sale' },
 ];
-
-const PRINT_PRICES = {
-  'A4': 450, 'A3': 550, 'A2': 650,
-  '30x30': 450, '40x40': 550, '50x50': 650,
-};
-
-const PRINT_PAINTINGS = new Set(['minMamma', 'efterIde', 'sommarvila']);
 
 function hasPaintingDiscount(painting) {
   return typeof painting.discountPercent === 'number' && painting.discountPercent > 0 && painting.discountPercent < 100;
@@ -78,22 +73,15 @@ const SHIPPING_COST_EU = 149;
 const EU_COUNTRIES = ['AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','HU','IE','IT','LT','LU','LV','MT','NL','PL','PT','RO','SE','SI','SK'];
 
 function resolvePrice(item) {
-  if (item.type === 'print') {
-    const paintingPart = item.id.split('-print-')[0];
-    const paintingCamel = paintingPart.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
-    if (!PRINT_PAINTINGS.has(paintingCamel)) return null;
-    return PRINT_PRICES[item.size] ?? null;
+  if (item.type !== 'original') {
+    return null;
   }
 
-  if (item.type === 'original') {
-    const isFramed = typeof item.id === 'string' && item.id.endsWith('-framed');
-    const baseId = isFramed ? item.id.slice(0, -7) : item.id;
-    const painting = PAINTINGS.find(p => p.id === baseId);
-    if (!painting || painting.status === 'sold') return null;
-    return getPaintingEffectivePrice(painting, isFramed || painting.framedOnly) ?? null;
-  }
-
-  return null;
+  const isFramed = typeof item.id === 'string' && item.id.endsWith('-framed');
+  const baseId = isFramed ? item.id.slice(0, -7) : item.id;
+  const painting = PAINTINGS.find(p => p.id === baseId);
+  if (!painting || painting.status === 'sold') return null;
+  return getPaintingEffectivePrice(painting, isFramed || painting.framedOnly) ?? null;
 }
 
 export async function onRequestPost(context) {
@@ -129,12 +117,8 @@ export async function onRequestPost(context) {
         price_data: {
           currency: 'sek',
           product_data: {
-            name: item.type === 'print'
-              ? `${item.title} – Fine Art Print (${item.size})`
-              : `${item.title} – Original målning`,
-            description: item.type === 'print'
-              ? 'Trycks på beställning, arkivkvalitetspapper. Leverans 3–7 arbetsdagar.'
-              : 'Signerat original på duk. Leverans inom Sverige.',
+            name: `${item.title} – Original målning`,
+            description: 'Signerat original på duk. Leverans inom Sverige.',
             ...(item.image ? { images: [item.image] } : {}),
           },
           unit_amount: price * 100,

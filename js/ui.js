@@ -31,13 +31,11 @@ async function buildComponents() {
       const isPortfolio = window.location.pathname.includes("portfolio");
       const isCommissions = window.location.pathname.includes("commissions");
       const isBlog = window.location.pathname.includes("blog");
-      const isPrints = window.location.pathname.includes("prints");
       if (isIndex) document.querySelector('a[href="/##top"]')?.classList.add("active");
       if (isPictures) document.querySelector('a[href="/pages/pictures.html"]')?.classList.add("active");
       if (isPortfolio) document.querySelector('a[href="/pages/portfolio.html"]')?.classList.add("active");
       if (isCommissions) document.querySelector('a[href="/pages/commissions.html"]')?.classList.add("active");
       if (isBlog) document.querySelector('a[href="/pages/blog.html"]')?.classList.add("active");
-      if (isPrints) document.querySelector('a[href="/pages/prints.html"]')?.classList.add("active");
 
 
       setupMobileMenu();
@@ -222,7 +220,6 @@ function setupScrollWatcher() {
     const isViewPage = window.location.pathname.includes("/view");
     const isPictures = window.location.pathname.includes("pictures");
     const isCommissions = window.location.pathname.includes("commissions");
-    const isPrints = window.location.pathname.includes("prints");
     const isBlog = window.location.pathname.includes("blog");
     const isPortfolio = window.location.pathname.includes("portfolio");
 
@@ -236,8 +233,6 @@ function setupScrollWatcher() {
       currentQuery = "/pages/pictures.html";
     } else if (isCommissions) {
       currentQuery = "/pages/commissions.html";
-    } else if (isPrints) {
-      currentQuery = "/pages/prints.html";
     } else if (isBlog) {
       currentQuery = "/pages/blog.html";
     } 

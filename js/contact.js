@@ -26,7 +26,6 @@ function setupContactForm() {
   const subjectInput   = document.getElementById("f-subject");
   const printField     = document.getElementById("f-printField");
   const commissionFields = document.getElementById("f-commissionFields");
-  const printInfo      = document.getElementById("f-printInfo");
   const messageField   = document.getElementById("f-message");
 
   if (!form || !typeSelect) return;
@@ -41,7 +40,6 @@ if (type) {
   function applyTypeVisibility(val) {
   if (printField)       printField.style.display       = val === "Prints"       ? "block" : "none";
   if (commissionFields) commissionFields.style.display = val === "Commissions"  ? "block" : "none";
-  if (printInfo)        printInfo.style.display        = val === "Prints"       ? "block" : "none";
   if (subjectInput)     subjectInput.value = val ? `New Inquiry - ${val}` : "New Inquiry";
 }
 
