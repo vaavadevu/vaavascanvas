@@ -277,10 +277,10 @@ const paintings = [
     originalPrice: 1600
   },
   {
-    id: "solvarmeISkogen",
-    title: "Solvärme i skogen",
-    descKey: "desc_solvarmeISkogen",
-    status: STATUS.SOLD,
+    id: "vidAn",
+    title: "Vid ån",
+    descKey: "desc_vidAn",
+    status: STATUS.FOR_SALE,
     medium: MEDIUM.ACRYLIC_CANVAS,
     width: 42,
     height: 59,

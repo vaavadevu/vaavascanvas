@@ -345,11 +345,16 @@ async function runTests() {
 
     await test('Checkout is blocked and terms error shown when terms not accepted', async () => {
       const page = await browser.newPage();
-      await page.goto(`${baseUrl}/pages/pictures.html`, { waitUntil: 'networkidle' });
+
+      // Buy buttons only exist on the painting detail page (gallery grid links out
+      // to view.html for purchasing). Pick a plain for-sale painting with no frame
+      // options so a single click adds it to the cart without opening a modal.
+      const simplePainting = paintings.find(p => p.status === 'for_sale' && !p.framedOnly && !p.frameAvailable);
+      await page.goto(`${baseUrl}/pages/view.html?painting=${simplePainting.id}`, { waitUntil: 'networkidle' });
 
       // Add an item so the cart footer (with checkout button) is visible
-      await page.waitForSelector('button.btn-add-to-cart:not([disabled])', { timeout: 10000 });
-      await page.locator('button.btn-add-to-cart:not([disabled])').first().click();
+      await page.waitForSelector('button.pageview-buy-btn', { timeout: 10000 });
+      await page.locator('button.pageview-buy-btn').click();
       await page.waitForSelector('#cart-drawer.open', { timeout: 5000 });
 
       // Ensure terms checkbox is unchecked

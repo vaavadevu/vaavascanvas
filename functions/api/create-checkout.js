@@ -20,7 +20,7 @@ const PAINTINGS = [
   { id: 'minMamma', originalPrice: 1500, framedPrice: 1800, frameAvailable: true, status: 'for_sale' },
   { id: 'solvarmeISkogen', originalPrice: 1500, status: 'sold' },
   { id: 'underHennesVingar', originalPrice: 1600, status: 'for_sale' },
-  { id: 'solvarmeISkogen', originalPrice: 1500, status: 'sold' },
+  { id: 'vidAn', originalPrice: 1500, status: 'for_sale' },
   { id: 'enLerigDrom', originalPrice: 1800, status: 'for_sale' },
   { id: 'efterIde', originalPrice: 1500, framedPrice: 1800, frameAvailable: true, status: 'for_sale' },
   { id: 'sommarstuga', originalPrice: 1500, status: 'sold' },
