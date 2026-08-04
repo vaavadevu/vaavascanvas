@@ -271,13 +271,18 @@ test('FOR_SALE paintings have originalPrice (or framedOnly with framedPrice)', (
   });
 });
 
-test('SOLD paintings have originalPrice', () => {
+test('SOLD paintings have originalPrice (or framedOnly with framedPrice)', () => {
   paintings.forEach(p => {
     if (p.status === statuses.SOLD) {
-      assert(p.originalPrice !== undefined && p.originalPrice !== null,
-        `SOLD painting ${p.id} missing originalPrice`);
-      assert(typeof p.originalPrice === 'number' && p.originalPrice > 0,
-        `SOLD painting ${p.id} has invalid price: ${p.originalPrice}`);
+      if (p.framedOnly) {
+        assert(typeof p.framedPrice === 'number' && p.framedPrice > 0,
+          `SOLD framedOnly painting ${p.id} missing valid framedPrice`);
+      } else {
+        assert(p.originalPrice !== undefined && p.originalPrice !== null,
+          `SOLD painting ${p.id} missing originalPrice`);
+        assert(typeof p.originalPrice === 'number' && p.originalPrice > 0,
+          `SOLD painting ${p.id} has invalid price: ${p.originalPrice}`);
+      }
     }
   });
 });
