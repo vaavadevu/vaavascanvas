@@ -52,7 +52,7 @@
     "height": 58,
     "shape": "rectangular",
     "framedOnly": true,
-    "status": "for_sale",
+    "status": "sold",
     "medium": "medium_acrylic_canvas",
     "frameAvailable": true,
     "framedPrice": 3500
@@ -206,7 +206,7 @@
   },
   {
     "id": "vidAn",
-    "title": "Vid ån",
+    "title": "Vid Ån",
     "descKey": "desc_vidAn",
     "width": 42,
     "height": 59,

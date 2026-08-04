@@ -120,7 +120,7 @@ const paintings = [
     id: "koslapp",
     title: "Kosläpp",
     descKey: "desc_koslapp",
-    status: STATUS.FOR_SALE,
+    status: STATUS.SOLD,
     medium: MEDIUM.ACRYLIC_CANVAS,
     width: 69,
     height: 58,
@@ -278,7 +278,7 @@ const paintings = [
   },
   {
     id: "vidAn",
-    title: "Vid ån",
+    title: "Vid Ån",
     descKey: "desc_vidAn",
     status: STATUS.FOR_SALE,
     medium: MEDIUM.ACRYLIC_CANVAS,

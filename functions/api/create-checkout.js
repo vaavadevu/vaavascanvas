@@ -6,7 +6,7 @@ const PAINTINGS = [
   { id: 'aldrigEnsam', originalPrice: 500, status: 'for_sale' },
   { id: 'operationBaver', originalPrice: 500, status: 'for_sale' },
   { id: 'skymningsDrom', originalPrice: 2000, status: 'for_sale' },
-  { id: 'koslapp', framedPrice: 3500, framedOnly: true, frameAvailable: true, status: 'for_sale' },
+  { id: 'koslapp', framedPrice: 3500, framedOnly: true, frameAvailable: true, status: 'sold' },
   { id: 'narhet', framedPrice: 2500, framedOnly: true, frameAvailable: true, status: 'for_sale' },
   { id: 'tjuvsmak', originalPrice: 500, status: 'for_sale' },
   { id: 'maskrosdrom', originalPrice: 500, status: 'for_sale' },
