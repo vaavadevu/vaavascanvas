@@ -83,7 +83,9 @@ function openPageView(index) {
   preloadAdjacentImages();
   setUrlParam("painting", painting.id);
   const price = getPaintingEffectivePrice(painting, painting.framedOnly);
-  trackEvent('view_item', { currency: 'SEK', value: price, items: [{ item_id: painting.id, item_name: painting.title, item_category: 'original', price }] });
+  const paintingType = painting.type || TYPE.PAINTING;
+  const category = paintingType === TYPE.PAINTING ? 'original' : paintingType;
+  trackEvent('view_item', { currency: 'SEK', value: price, items: [{ item_id: painting.id, item_name: painting.title, item_category: category, price }] });
 }
 
 // ── Populate helpers ──────────────────────────────────────────
@@ -125,22 +127,31 @@ function configurePageViewArrows(imgs) {
 function addPaintingToCart(painting, withFrame) {
   const price = getPaintingEffectivePrice(painting, withFrame);
   const title = painting.title;
-  Cart.add({
+  const paintingType = painting.type || TYPE.PAINTING;
+  const itemType = paintingType === TYPE.PAINTING ? 'original' : paintingType;
+  const cartItem = {
     id: withFrame ? `${painting.id}-framed` : painting.id,
     title,
-    type: 'original',
+    type: itemType,
     price,
     image: getPaintingImagePaths(painting)[0],
-    paintingBaseId: painting.id,
-    paintingTitle: painting.title,
-    frameAvailable: painting.frameAvailable || false,
-    framedOnly: painting.framedOnly || false,
-    withFrame: withFrame || false,
-    basePrice: getPaintingDiscountedPrice(painting) || painting.originalPrice || painting.framedPrice,
-    framedPrice: painting.framedPrice ? getPaintingFramedSalePrice(painting) : null,
-    originalBasePrice: painting.originalPrice,
-    originalFramedPrice: painting.framedPrice,
-  });
+  };
+
+  if (itemType === 'original') {
+    Object.assign(cartItem, {
+      paintingBaseId: painting.id,
+      paintingTitle: painting.title,
+      frameAvailable: painting.frameAvailable || false,
+      framedOnly: painting.framedOnly || false,
+      withFrame: withFrame || false,
+      basePrice: getPaintingDiscountedPrice(painting) || painting.originalPrice || painting.framedPrice,
+      framedPrice: painting.framedPrice ? getPaintingFramedSalePrice(painting) : null,
+      originalBasePrice: painting.originalPrice,
+      originalFramedPrice: painting.framedPrice,
+    });
+  }
+
+  Cart.add(cartItem);
 }
 
 function renderPageViewButtons(painting) {

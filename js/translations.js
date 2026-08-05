@@ -17,8 +17,8 @@ const keys = {
     en: "Home",
   },
   nav_gallery: {
-    sv: "Original",
-    en: "Originals",
+    sv: "Butik",
+    en: "Shop",
   },
   nav_contact: {
     sv: "Kontakta mig",
@@ -43,6 +43,22 @@ const keys = {
   nav_cart: { 
     sv: "Varukorg",
     en: "Cart",
+  },
+  item_type_original: {
+    sv: "Original",
+    en: "Original",
+  },
+  item_type_clay: {
+    sv: "Keramik",
+    en: "Ceramic",
+  },
+  item_type_bookmark: {
+    sv: "Bokmärke",
+    en: "Bookmark",
+  },
+  item_type_shop: {
+    sv: "Butik",
+    en: "Shop",
   },
 
   // ── Hero ───────────────────────────────────────────────────
@@ -132,6 +148,22 @@ const keys = {
   filter_size_large: {
     sv: "Stora",
     en: "Large",
+  },
+  filter_type_label: {
+    sv: "Typ",
+    en: "Type",
+  },
+  filter_type_painting: {
+    sv: "Målning",
+    en: "Painting",
+  },
+  filter_type_clay: {
+    sv: "Lera",
+    en: "Clay",
+  },
+  filter_type_bookmark: {
+    sv: "Bokmärke",
+    en: "Bookmark",
   },
 
   // ── Cookie policy ──────────────────────────────────────────
@@ -556,6 +588,14 @@ desc_sommarvila: {
   sv: "En drömlik skymning med en flamingo som vilar på ett ben i det lugna vattnet, omgiven av mjuka pastellfärger och en känsla av stillhet.",
   en: "A dreamy dusk with a flamingo resting on one leg in the calm water, surrounded by soft pastel colors and a sense of tranquility.",
 },
+  desc_handgjordKeramik: {
+    sv: "Handgjord keramik med naturinspirerade detaljer och tidlös känsla.",
+    en: "Handmade ceramics with nature-inspired details and timeless charm.",
+  },
+  desc_blommigtBokmarke: {
+    sv: "Ett handgjort bokmärke dekorerat med blomsterdetaljer för en mötesplats mellan konst och läsning.",
+    en: "A handcrafted bookmark decorated with floral details, blending art and reading.",
+  },
 
   desc_dagensFynd: {
     sv: "En liten ekorre som har hittat en skatt i naturen.",

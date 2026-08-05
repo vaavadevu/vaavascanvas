@@ -30,6 +30,12 @@ const SIZE = {
   LARGE: "large"
 };
 
+const TYPE = {
+  PAINTING: "painting",
+  CLAY: "clay",
+  BOOKMARK: "bookmark"
+};
+
 // Helper function to get painting size category based on max dimension
 function getPaintingSize(painting) {
   const maxDim = Math.max(

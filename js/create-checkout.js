@@ -12,18 +12,35 @@ exports.handler = async (event) => {
       return { statusCode: 400, body: JSON.stringify({ error: 'No items in cart' }) };
     }
 
-    const line_items = items.map(item => ({
-      price_data: {
-        currency: 'sek',
-        product_data: {
-          name: `${item.title} – Original målning`,
-          description: 'Signerat original på duk. Leverans inom Sverige.',
-          ...(item.image ? { images: [item.image] } : {}),
+    const line_items = items.map(item => {
+      const typeLabel = item.type === 'original'
+        ? 'Original målning'
+        : item.type === 'clay'
+          ? 'Handgjord keramik'
+          : item.type === 'bookmark'
+            ? 'Bokmärke'
+            : 'Produkt';
+      const description = item.type === 'original'
+        ? 'Signerat original på duk. Leverans inom Sverige.'
+        : item.type === 'clay'
+          ? 'Handgjord keramik. Leverans inom Sverige.'
+          : item.type === 'bookmark'
+            ? 'Handgjort bokmärke. Leverans inom Sverige.'
+            : 'Produkt från Vaavascanvas.';
+
+      return {
+        price_data: {
+          currency: 'sek',
+          product_data: {
+            name: `${item.title} – ${typeLabel}`,
+            description,
+            ...(item.image ? { images: [item.image] } : {}),
+          },
+          unit_amount: item.price * 100,
         },
-        unit_amount: item.price * 100,
-      },
-      quantity: item.qty || 1,
-    }));
+        quantity: item.qty || 1,
+      };
+    });
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
