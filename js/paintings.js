@@ -98,7 +98,7 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 500
+    originalPrice: 600
   },
   {
     id: "operationBaver",
@@ -109,7 +109,7 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 500
+    originalPrice: 600
   },
   {
     id: "skymningsDrom",
@@ -131,6 +131,7 @@ const paintings = [
     width: 69,
     height: 58,
     shape: SHAPE.RECTANGULAR,
+    originalPrice: 3500,
     framedPrice: 3500,
     framedOnly: true,
     frameAvailable: true
@@ -157,7 +158,7 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 500
+    originalPrice: 600
   },
   {
     id: "maskrosdrom",
@@ -168,7 +169,7 @@ const paintings = [
     width: 24,
     height: 18,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 500
+    originalPrice: 600
   },
   {
     id: "frihet",
@@ -179,7 +180,7 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 500
+    originalPrice: 600
   },
   {
     id: "lodjur",
@@ -190,7 +191,7 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 500
+    originalPrice: 600
   },
   {
     id: "kattuggla",
@@ -201,7 +202,7 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 500
+    originalPrice: 600
   },
   {
     id: "tropisktBad",
@@ -212,7 +213,7 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 500
+    originalPrice: 600
   },
   {
     id: "busungen",
@@ -223,7 +224,7 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 500
+    originalPrice: 600
   },
   {
     id: "breadwinner",
@@ -234,18 +235,7 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 500
-  },
-  {
-    id: "vattenfall",
-    title: "Vattenfall",
-    descKey: "desc_vattenfall",
-    status: STATUS.SOLD,
-    medium: MEDIUM.ACRYLIC_CANVAS,
-    width: 33,
-    height: 41,
-    shape: SHAPE.RECTANGULAR,
-    originalPrice: 1100
+    originalPrice: 600
   },
   {
     id: "minMamma",
@@ -280,7 +270,7 @@ const paintings = [
     width: 59,
     height: 42,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600
+    originalPrice: 1800
   },
   {
     id: "vidAn",
@@ -370,7 +360,7 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600
+    originalPrice: 1800
   },
   {
     id: "skogsvila",
@@ -391,7 +381,7 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600
+    originalPrice: 1800
   },
   {
     id: "sommarvila",
@@ -402,7 +392,7 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1500
+    originalPrice: 1800
   },
   {
     id: "dagensFynd",
@@ -413,7 +403,7 @@ const paintings = [
     width: 34,
     height: 34,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1800,
+    originalPrice: 1200,
     framedPrice: 2100,
     frameAvailable: true
   },
@@ -439,7 +429,7 @@ const paintings = [
     width: 40,
     height: 40,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1500,
+    originalPrice: 1600,
     framedPrice: 1900,
     frameAvailable: true
   },
@@ -481,5 +471,25 @@ const paintings = [
         "/images/bookmarks/rabbit.jpg"
       ]
     }
+    id: "foreStormen",
+    title: "Före stormen",
+    descKey: "desc_foreStormen",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    width: 42,
+    height: 59,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 1600
+  },
+  {
+    id: "photobomb",
+    title: "Photobomb",
+    descKey: "desc_photobomb",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    width: 59,
+    height: 42,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 1600
   },
 ];
