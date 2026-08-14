@@ -131,7 +131,6 @@ const paintings = [
     width: 69,
     height: 58,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 3500,
     framedPrice: 3500,
     framedOnly: true,
     frameAvailable: true
@@ -471,6 +470,8 @@ const paintings = [
         "/images/bookmarks/rabbit.jpg"
       ]
     }
+  },
+  {
     id: "foreStormen",
     title: "Före stormen",
     descKey: "desc_foreStormen",

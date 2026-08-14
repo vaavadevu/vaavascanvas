@@ -639,6 +639,15 @@ desc_sommarvila: {
     sv: "En busig och rar rävunge.",
     en: "A naughty and cute fox cub.",
   },
+  desc_foreStormen: {
+    sv: "En giraffe under en stormig savannah.",
+    en: "A giraffe under a stormy savannah.",
+  },
+  desc_photobomb: {
+    sv: "Galna kossor som tar en gruppselfie.",
+    en: "A group selfie of a bunch of crazy cows.",
+  },
+
   desc_tropisktBad: {
     sv: "En tiger som tar ett bad i en varm solig dag.",
     en: "A tiger taking a bath on a warm sunny day.",
