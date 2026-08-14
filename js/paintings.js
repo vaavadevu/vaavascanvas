@@ -30,6 +30,12 @@ const SIZE = {
   LARGE: "large"
 };
 
+const TYPE = {
+  PAINTING: "painting",
+  CLAY: "clay",
+  BOOKMARK: "bookmark"
+};
+
 // Helper function to get painting size category based on max dimension
 function getPaintingSize(painting) {
   const maxDim = Math.max(
@@ -125,7 +131,6 @@ const paintings = [
     width: 69,
     height: 58,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 3500,
     framedPrice: 3500,
     framedOnly: true,
     frameAvailable: true
@@ -426,6 +431,45 @@ const paintings = [
     originalPrice: 1600,
     framedPrice: 1900,
     frameAvailable: true
+  },
+  {
+    id: "bookmarks",
+    title: "Bokmärken",
+    descKey: "desc_bookmarks",
+    status: STATUS.FOR_SALE,
+    type: "bookmark",
+    width: 5,
+    height: 15,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 120,
+    images: {
+      desktop: [
+        "/images/bookmarks/cover.jpg",
+        "/images/bookmarks/cheetah.jpg",
+        "/images/bookmarks/giraffe.jpg",
+        "/images/bookmarks/mallard.jpg",
+        "/images/bookmarks/piggy.jpg",
+        "/images/bookmarks/wilddog.jpg",
+        "/images/bookmarks/chicken1.jpg",
+        "/images/bookmarks/chicken2.jpg",
+        "/images/bookmarks/pigeon.jpg",
+        "/images/bookmarks/pingvin.jpg",
+        "/images/bookmarks/rabbit.jpg"
+      ],
+      mobile: [
+        "/images/bookmarks/cover.jpg",
+        "/images/bookmarks/cheetah.jpg",
+        "/images/bookmarks/giraffe.jpg",
+        "/images/bookmarks/mallard.jpg",
+        "/images/bookmarks/piggy.jpg",
+        "/images/bookmarks/wilddog.jpg",
+        "/images/bookmarks/chicken1.jpg",
+        "/images/bookmarks/chicken2.jpg",
+        "/images/bookmarks/pigeon.jpg",
+        "/images/bookmarks/pingvin.jpg",
+        "/images/bookmarks/rabbit.jpg"
+      ]
+    }
   },
   {
     id: "foreStormen",

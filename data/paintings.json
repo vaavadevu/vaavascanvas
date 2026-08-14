@@ -55,8 +55,7 @@
     "status": "sold",
     "medium": "medium_acrylic_canvas",
     "frameAvailable": true,
-    "framedPrice": 3500,
-    "originalPrice": 3500
+    "framedPrice": 3500
   },
   {
     "id": "narhet",
@@ -354,6 +353,46 @@
     "status": "for_sale",
     "medium": "medium_acrylic_canvas",
     "frameAvailable": true
+  },
+  {
+    "id": "bookmarks",
+    "title": "Bokmärken",
+    "descKey": "desc_bookmarks",
+    "width": 5,
+    "height": 15,
+    "shape": "rectangular",
+    "originalPrice": 120,
+    "status": "for_sale",
+    "medium": "medium_acrylic_canvas",
+    "type": "bookmark",
+    "images": {
+      "desktop": [
+        "/images/bookmarks/cover.jpg",
+        "/images/bookmarks/cheetah.jpg",
+        "/images/bookmarks/giraffe.jpg",
+        "/images/bookmarks/mallard.jpg",
+        "/images/bookmarks/piggy.jpg",
+        "/images/bookmarks/wilddog.jpg",
+        "/images/bookmarks/chicken1.jpg",
+        "/images/bookmarks/chicken2.jpg",
+        "/images/bookmarks/pigeon.jpg",
+        "/images/bookmarks/pingvin.jpg",
+        "/images/bookmarks/rabbit.jpg"
+      ],
+      "mobile": [
+        "/images/bookmarks/cover.jpg",
+        "/images/bookmarks/cheetah.jpg",
+        "/images/bookmarks/giraffe.jpg",
+        "/images/bookmarks/mallard.jpg",
+        "/images/bookmarks/piggy.jpg",
+        "/images/bookmarks/wilddog.jpg",
+        "/images/bookmarks/chicken1.jpg",
+        "/images/bookmarks/chicken2.jpg",
+        "/images/bookmarks/pigeon.jpg",
+        "/images/bookmarks/pingvin.jpg",
+        "/images/bookmarks/rabbit.jpg"
+      ]
+    }
   },
   {
     "id": "foreStormen",

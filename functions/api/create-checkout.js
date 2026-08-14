@@ -6,7 +6,7 @@ const PAINTINGS = [
   { id: 'aldrigEnsam', originalPrice: 600, status: 'for_sale' },
   { id: 'operationBaver', originalPrice: 600, status: 'for_sale' },
   { id: 'skymningsDrom', originalPrice: 2000, status: 'for_sale' },
-  { id: 'koslapp', originalPrice: 3500, framedPrice: 3500, framedOnly: true, frameAvailable: true, status: 'sold' },
+  { id: 'koslapp', framedPrice: 3500, framedOnly: true, frameAvailable: true, status: 'sold' },
   { id: 'narhet', framedPrice: 2500, framedOnly: true, frameAvailable: true, status: 'for_sale' },
   { id: 'tjuvsmak', originalPrice: 600, status: 'for_sale' },
   { id: 'maskrosdrom', originalPrice: 600, status: 'for_sale' },
@@ -33,6 +33,7 @@ const PAINTINGS = [
   { id: 'dagensFynd', originalPrice: 1200, framedPrice: 2100, frameAvailable: true, status: 'for_sale' },
   { id: 'sugenPaEttApple', originalPrice: 1800, framedPrice: 2000, frameAvailable: true, status: 'for_sale' },
   { id: 'varlek', originalPrice: 1600, framedPrice: 1900, frameAvailable: true, status: 'for_sale' },
+  { id: 'bookmarks', originalPrice: 120, status: 'for_sale' },
   { id: 'foreStormen', originalPrice: 1600, status: 'for_sale' },
   { id: 'photobomb', originalPrice: 1600, status: 'for_sale' },
 ];

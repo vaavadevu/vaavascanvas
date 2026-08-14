@@ -57,6 +57,17 @@ function showGalleryLoadError() {
   gallery.parentNode.insertBefore(banner, gallery);
 }
 
+function mergeShopItems() {
+  if (typeof SHOP_ITEMS === 'undefined' || !Array.isArray(SHOP_ITEMS)) return;
+  SHOP_ITEMS.forEach(item => {
+    if (!item.type) item.type = TYPE.PAINTING;
+    paintings.push(item);
+  });
+  paintings.forEach(painting => {
+    if (!painting.type) painting.type = TYPE.PAINTING;
+  });
+}
+
 async function init() {
   if (!document.getElementById("gallery")) return;
 
@@ -78,6 +89,8 @@ async function init() {
   } catch (err) {
     showGalleryLoadError();
   }
+
+  mergeShopItems();
 
   // Calculate size scale factors based on physical dimensions
   calculateSizeScales();

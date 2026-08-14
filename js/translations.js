@@ -17,8 +17,8 @@ const keys = {
     en: "Home",
   },
   nav_gallery: {
-    sv: "Original",
-    en: "Originals",
+    sv: "Butik",
+    en: "Shop",
   },
   nav_contact: {
     sv: "Kontakta mig",
@@ -43,6 +43,22 @@ const keys = {
   nav_cart: { 
     sv: "Varukorg",
     en: "Cart",
+  },
+  item_type_original: {
+    sv: "Original",
+    en: "Original",
+  },
+  item_type_clay: {
+    sv: "Keramik",
+    en: "Ceramic",
+  },
+  item_type_bookmark: {
+    sv: "Bokmärke",
+    en: "Bookmark",
+  },
+  item_type_shop: {
+    sv: "Butik",
+    en: "Shop",
   },
 
   // ── Hero ───────────────────────────────────────────────────
@@ -132,6 +148,22 @@ const keys = {
   filter_size_large: {
     sv: "Stora",
     en: "Large",
+  },
+  filter_type_label: {
+    sv: "Typ",
+    en: "Type",
+  },
+  filter_type_painting: {
+    sv: "Målning",
+    en: "Painting",
+  },
+  filter_type_clay: {
+    sv: "Lera",
+    en: "Clay",
+  },
+  filter_type_bookmark: {
+    sv: "Bokmärke",
+    en: "Bookmark",
   },
 
   // ── Cookie policy ──────────────────────────────────────────
@@ -501,10 +533,7 @@ desc_narhet: {
     sv: "En stilla sjö omgiven av vackra näckrosor som en inbjudan att stanna upp lite längre.",
     en: "A quiet lake surrounded by beautiful water lilies like an invitation to linger a little longer.",
   },
-  desc_savannan: {
-    sv: "Savannens varma ljus i skymningen när dagen är slut och det är dags att vandra hem.",
-    en: "The warm light of the savanna at dusk when the day is done and it's time to head home.",
-  },
+
   desc_varkansla: {
     sv: "En trött blåmes som vilar bland körsbärsblommor – våren är här, äntligen.",
     en: "A tired blue tit resting among cherry blossoms, spring is here, finally.",
@@ -556,6 +585,39 @@ desc_sommarvila: {
   sv: "En drömlik skymning med en flamingo som vilar på ett ben i det lugna vattnet, omgiven av mjuka pastellfärger och en känsla av stillhet.",
   en: "A dreamy dusk with a flamingo resting on one leg in the calm water, surrounded by soft pastel colors and a sense of tranquility.",
 },
+  
+  desc_bookmarks: {
+    sv: "En samling handmålade bokmärken. För närvarande finns få varianter – snart kommer fler! Klicka för att se varianter och välj det du vill köpa.",
+    en: "A collection of hand-painted bookmarks. Currently only a few variants are available — more designs coming soon! Click to view variants and choose the one to buy.",
+  },
+  modal_no_variants: {
+    sv: "Inga bokmärken tillgängliga just nu.",
+    en: "No bookmarks available right now.",
+  },
+  clay_empty_notice: {
+    sv: "Den här sidan är tom just nu — fler keramikprodukter kommer snart!",
+    en: "This page is empty right now — more ceramic products will be added soon!",
+  },
+  modal_select_bookmarks_title: {
+    sv: "Välj bokmärken",
+    en: "Select bookmarks",
+  },
+  modal_add_selected_to_cart: {
+    sv: "Lägg till valda i varukorgen",
+    en: "Add selected to cart",
+  },
+  modal_select_all: {
+    sv: "Markera alla",
+    en: "Select all",
+  },
+  modal_cancel: {
+    sv: "Avbryt",
+    en: "Cancel",
+  },
+  modal_select_at_least_one: {
+    sv: "Vänligen välj minst ett bokmärke",
+    en: "Please select at least one bookmark",
+  },
 
   desc_dagensFynd: {
     sv: "En liten ekorre som har hittat en skatt i naturen.",
@@ -577,6 +639,15 @@ desc_sommarvila: {
     sv: "En busig och rar rävunge.",
     en: "A naughty and cute fox cub.",
   },
+  desc_foreStormen: {
+    sv: "En giraffe under en stormig savannah.",
+    en: "A giraffe under a stormy savannah.",
+  },
+  desc_photobomb: {
+    sv: "Galna kossor som tar en gruppselfie.",
+    en: "A group selfie of a bunch of crazy cows.",
+  },
+
   desc_tropisktBad: {
     sv: "En tiger som tar ett bad i en varm solig dag.",
     en: "A tiger taking a bath on a warm sunny day.",

@@ -7,23 +7,23 @@
   <script src="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.umd.js"></script>
   <script defer src="/js/cookie-consent-init.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Målningsgalleri – Akrylmålningar till salu | Vaavascanvas</title>
-  <meta name="description" content="Bläddra bland Devikas akrylmålningar – naturscener, djur och känslosamma motiv. Köp original, beställ print eller ett eget uppdrag. Baserad i Sverige." />
+  <title>Köp mina original konst och hantverk | Vaavascanvas</title>
+  <meta name="description" content="Köp mina original konst och hantverk från Vaavascanvas. Filtrera målningar, keramik och bokmärken och hitta unika favoriter att beställa." />
   <link rel="canonical" href="https://vaavascanvas.se/pages/pictures.html" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://vaavascanvas.se/pages/pictures.html" />
-  <meta property="og:title" content="Målningsgalleri – Akrylmålningar till salu | Vaavascanvas" />
-  <meta property="og:description" content="Bläddra bland Devikas akrylmålningar – naturscener, djur och känslosamma motiv. Köp original, beställ print eller ett eget uppdrag." />
+  <meta property="og:title" content="Köp mina original konst och hantverk | Vaavascanvas" />
+  <meta property="og:description" content="Köp mina original konst och hantverk från Vaavascanvas. Hitta målningar, keramik och bokmärken att ge bort eller behålla." />
   <meta property="og:image" content="https://vaavascanvas.se/images/paintings/skogsvila/desktop/01.jpg" />
   <meta property="og:locale" content="sv_SE" />
   <meta property="og:site_name" content="Vaavascanvas" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Målningsgalleri – Akrylmålningar till salu | Vaavascanvas" />
-  <meta name="twitter:description" content="Bläddra bland Devikas akrylmålningar – naturscener, djur och känslosamma motiv." />
+  <meta name="twitter:title" content="Köp mina original konst och hantverk | Vaavascanvas" />
+  <meta name="twitter:description" content="Köp mina original konst och hantverk från Vaavascanvas. Upptäck målningar, keramik och bokmärken till salu." />
   <meta name="twitter:image" content="https://vaavascanvas.se/images/paintings/skogsvila/desktop/01.jpg" />
 
   <!-- hreflang -->
@@ -57,8 +57,9 @@
   "@context": "https://schema.org",
   "@type": "CollectionPage",
   "@id": "https://vaavascanvas.se/pages/pictures.html",
-  "name": "Målningsgalleri – Akrylmålningar till salu | Vaavascanvas",
-  "description": "Galleri med akrylmålningar av Devika – naturscener, djur och känslosamma motiv till salu.",
+  "name": "Butik – konst och hantverk | Vaavascanvas",
+  "description": "Butikssida med målningar, keramik och bokmärken från Vaavascanvas. Filtrera produkter och beställ unika konst- och hantverksobjekt.",
+
   "url": "https://vaavascanvas.se/pages/pictures.html",
   "author": {
     "@type": "Person",
@@ -66,8 +67,9 @@
     "url": "https://vaavascanvas.se/"
   },
   "hasPart": [
-    { "@type": "VisualArtwork", "name": "Herr och Fru Andersson", "artMedium": "Akryl på duk" },
-{ "@type": "VisualArtwork", "name": "Havet", "artMedium": "Akryl på duk", "offers": { "@type": "Offer", "price": "1000", "priceCurrency": "SEK", "availability": "https://schema.org/InStock" } },
+    { "@type": "Product", "name": "Herr och Fru Andersson", "artMedium": "Akryl på duk" },
+    { "@type": "Product", "name": "Havet", "artMedium": "Akryl på duk", "offers": { "@type": "Offer", "price": "1000", "priceCurrency": "SEK", "availability": "https://schema.org/InStock" } },
+
     { "@type": "VisualArtwork", "name": "Sommarstuga", "artMedium": "Akryl på duk", "offers": { "@type": "Offer", "price": "1500", "priceCurrency": "SEK", "availability": "https://schema.org/InStock" } },
     { "@type": "VisualArtwork", "name": "Beach day", "artMedium": "Akryl på duk", "offers": { "@type": "Offer", "price": "1800", "priceCurrency": "SEK", "availability": "https://schema.org/InStock" } },
     { "@type": "VisualArtwork", "name": "Dags att gå hem", "artMedium": "Akryl på duk", "offers": { "@type": "Offer", "price": "1500", "priceCurrency": "SEK", "availability": "https://schema.org/InStock" } },
@@ -104,6 +106,12 @@
         <button class="filter-option" data-filter="sold" data-i18n="filter_sold" onclick="setActiveStatusFilter('sold')">Sålda</button>
       </div>
     </div>
+    <div class="filter-button-group" id="filter-type-buttons">
+      <button class="filter-button filter-type-button active" data-filter="all" data-i18n="filter_all" onclick="setActiveTypeFilter('all')">Alla</button>
+      <button class="filter-button filter-type-button" data-filter="painting" data-i18n="filter_type_painting" onclick="setActiveTypeFilter('painting')">Målning</button>
+      <button class="filter-button filter-type-button" data-filter="clay" data-i18n="filter_type_clay" onclick="setActiveTypeFilter('clay')">Lera</button>
+      <button class="filter-button filter-type-button" data-filter="bookmark" data-i18n="filter_type_bookmark" onclick="setActiveTypeFilter('bookmark')">Bokmärke</button>
+    </div>
     <div class="filter-dropdown" id="filter-size-dd">
       <button class="filter-dropdown-trigger" onclick="toggleFilterDropdown('filter-size-dd')" aria-expanded="false">
         <span class="filter-dropdown-label" id="filter-size-label">Storlek</span>
@@ -120,6 +128,7 @@
   </div>
 
   <main>
+    <h1 class="page-title">Köp mina original konst och hantverk</h1>
     <div id="gallery-wrapper" style="position:relative;">
       <div class="gallery" id="gallery"></div>
     </div>
@@ -163,9 +172,14 @@
 
   <div id="filter-fab">
     <div class="fab-popup">
-      <button class="fab-filter-btn active" data-filter="all" data-i18n="filter_all">Alla</button>
-      <button class="fab-filter-btn" data-filter="for_sale" data-i18n="filter_for_sale">Till salu</button>
-      <button class="fab-filter-btn" data-filter="sold" data-i18n="filter_sold">Sålda</button>
+      <button class="fab-filter-btn status-filter active" data-filter="all" data-i18n="filter_all">Alla</button>
+      <button class="fab-filter-btn status-filter" data-filter="for_sale" data-i18n="filter_for_sale">Till salu</button>
+      <button class="fab-filter-btn status-filter" data-filter="sold" data-i18n="filter_sold">Sålda</button>
+      <div class="fab-divider"></div>
+      <button class="fab-filter-btn type-filter active" data-filter="all" data-i18n="filter_all">Alla</button>
+      <button class="fab-filter-btn type-filter" data-filter="painting" data-i18n="filter_type_painting">Målning</button>
+      <button class="fab-filter-btn type-filter" data-filter="clay" data-i18n="filter_type_clay">Lera</button>
+      <button class="fab-filter-btn type-filter" data-filter="bookmark" data-i18n="filter_type_bookmark">Bokmärke</button>
       <div class="fab-divider"></div>
       <button class="fab-filter-btn size-filter active" data-filter="size_all" data-i18n="filter_size_all">Alla storlekar</button>
       <button class="fab-filter-btn size-filter" data-filter="size_small" data-i18n="filter_size_small">Små</button>
@@ -190,6 +204,7 @@
   <script src="../js/translations.js"></script>
   <script src="../js/i18n.js"></script>
   <script src="../js/paintings.js"></script>
+  <script src="../js/shop-data.js"></script>
   <script src="../js/state.js"></script>
   <script src="../js/gallery.js"></script>
   <script src="../js/utilities.js"></script>

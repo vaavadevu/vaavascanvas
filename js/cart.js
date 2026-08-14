@@ -20,6 +20,15 @@ const Cart = (() => {
     );
   }
 
+  function formatCartItemType(type) {
+    switch (type) {
+      case 'original': return t('item_type_original');
+      case 'clay': return t('item_type_clay');
+      case 'bookmark': return t('item_type_bookmark');
+      default: return t('item_type_shop');
+    }
+  }
+
   function add(item) {
     const key = `${item.id}-${item.size || 'original'}`;
 
@@ -153,7 +162,7 @@ const Cart = (() => {
         </div>
         <div class="cart-item-info">
           <div class="cart-item-title">${item.title}</div>
-          <div class="cart-item-meta">${item.type === 'original' ? 'Original' : ''}</div>
+          <div class="cart-item-meta">${formatCartItemType(item.type)}</div>
           <div class="cart-item-price">
             ${(item.price * (item.qty || 1)).toLocaleString('sv-SE')} kr
             ${item.type === 'original' && ((item.withFrame && item.originalFramedPrice && item.originalFramedPrice !== item.framedPrice) || (!item.withFrame && item.originalBasePrice && item.originalBasePrice !== item.basePrice)) ? `<span class="cart-item-price-old">${((item.withFrame ? item.originalFramedPrice : item.originalBasePrice) * (item.qty || 1)).toLocaleString('sv-SE')} kr</span>` : ''}

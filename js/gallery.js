@@ -3,6 +3,11 @@
 // ── Configuration ──────────────────────────────────────────────
 
 function getPaintingImagePaths(painting) {
+  if (painting.images && Array.isArray(painting.images.desktop) && Array.isArray(painting.images.mobile)) {
+    const isMobile = window.innerWidth <= 960;
+    return isMobile ? painting.images.mobile : painting.images.desktop;
+  }
+
   const folderId = painting.id;
   const count = painting.imageCount || 1;
   const isViewPage = window.location.pathname.includes('/view');
@@ -133,19 +138,28 @@ const wrapper = document.createElement('div');
     buyBtn.textContent = `Köp ${currentPrice.toLocaleString('sv-SE')} kr`;
     buyBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      Cart.add({
+      const paintingType = painting.type || TYPE.PAINTING;
+      const itemType = paintingType === TYPE.PAINTING ? 'original' : paintingType;
+      const cartItem = {
         id: painting.framedOnly ? `${painting.id}-framed` : painting.id,
         title: painting.title,
-        type: 'original',
+        type: itemType,
         price: currentPrice,
         image: imageUrl,
-        paintingBaseId: painting.id,
-        paintingTitle: painting.title,
-        frameAvailable: painting.frameAvailable || false,
-        withFrame: painting.framedOnly || false,
-        basePrice: getPaintingDiscountedPrice(painting) || painting.originalPrice || painting.framedPrice,
-        framedPrice: painting.framedPrice ? getPaintingFramedSalePrice(painting) : null,
-      });
+      };
+
+      if (itemType === 'original') {
+        Object.assign(cartItem, {
+          paintingBaseId: painting.id,
+          paintingTitle: painting.title,
+          frameAvailable: painting.frameAvailable || false,
+          withFrame: painting.framedOnly || false,
+          basePrice: getPaintingDiscountedPrice(painting) || painting.originalPrice || painting.framedPrice,
+          framedPrice: painting.framedPrice ? getPaintingFramedSalePrice(painting) : null,
+        });
+      }
+
+      Cart.add(cartItem);
       showToast('Tillagd i varukorgen!');
     });
     wrapper.appendChild(buyBtn);
@@ -178,6 +192,7 @@ function addDiscountBadge(container, painting) {
 
 let activeStatusFilter = "all";
 let activeSizeFilter = "size_all";
+let activeTypeFilter = "all";
 
 const STATUS_LABEL_KEYS = {
   all:      "filter_status_label",
@@ -192,11 +207,20 @@ const SIZE_LABEL_KEYS = {
   size_large:  "filter_size_large",
 };
 
+const TYPE_LABEL_KEYS = {
+  all:       "filter_type_label",
+  painting:  "filter_type_painting",
+  clay:      "filter_type_clay",
+  bookmark:  "filter_type_bookmark",
+};
+
 function updateFilterLabels() {
   const statusLabel = document.getElementById("filter-status-label");
   const sizeLabel   = document.getElementById("filter-size-label");
+  const typeLabel   = document.getElementById("filter-type-label");
   if (statusLabel) statusLabel.textContent = t(STATUS_LABEL_KEYS[activeStatusFilter]);
   if (sizeLabel)   sizeLabel.textContent   = t(SIZE_LABEL_KEYS[activeSizeFilter]);
+  if (typeLabel)   typeLabel.textContent   = t(TYPE_LABEL_KEYS[activeTypeFilter]);
 }
 
 function toggleFilterDropdown(id) {
@@ -217,9 +241,11 @@ function attachFilterListeners() {
   document.querySelectorAll(".fab-filter-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       const filter = btn.dataset.filter;
-      if (filter.startsWith("size_")) {
+      if (btn.classList.contains("size-filter")) {
         setActiveSizeFilter(filter);
-      } else {
+      } else if (btn.classList.contains("type-filter")) {
+        setActiveTypeFilter(filter);
+      } else if (btn.classList.contains("status-filter")) {
         setActiveStatusFilter(filter);
       }
       closeFab();
@@ -256,7 +282,7 @@ function setActiveStatusFilter(filter) {
   document.querySelectorAll("#filter-status-dd .filter-option").forEach(b => {
     b.classList.toggle("active", b.dataset.filter === filter);
   });
-  document.querySelectorAll(".fab-filter-btn:not(.size-filter)").forEach(b => {
+  document.querySelectorAll(".fab-filter-btn.status-filter").forEach(b => {
     b.classList.toggle("active", b.dataset.filter === filter);
   });
   const dd = document.getElementById("filter-status-dd");
@@ -289,15 +315,64 @@ function setActiveSizeFilter(filter) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+function setActiveTypeFilter(filter) {
+  activeTypeFilter = filter;
+  document.querySelectorAll(".fab-filter-btn.type-filter, .filter-type-button").forEach(b => {
+    b.classList.toggle("active", b.dataset.filter === filter);
+  });
+
+  const showSizeFilter = filter === "all" || filter === "painting";
+  updateSizeFilterVisibility(showSizeFilter);
+  if (!showSizeFilter) {
+    setActiveSizeFilter("size_all");
+  }
+
+  updateFilterLabels();
+  filterGallery();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function updateSizeFilterVisibility(show) {
+  const sizeFilterDd = document.getElementById("filter-size-dd");
+  const sizeFilterButtons = document.querySelectorAll(".fab-filter-btn.size-filter");
+  if (sizeFilterDd) {
+    sizeFilterDd.style.display = show ? "" : "none";
+  }
+  sizeFilterButtons.forEach(btn => {
+    btn.style.display = show ? "inline-flex" : "none";
+  });
+}
+
 function filterGallery() {
   document.querySelectorAll(".gallery-item").forEach((item, idx) => {
     const painting = paintings[idx];
     const status = painting.status;
     const size = getPaintingSize(painting);
+    const type = painting.type || TYPE.PAINTING;
     const statusMatch = activeStatusFilter === "all" || status === activeStatusFilter;
+    const typeMatch = activeTypeFilter === "all" || type === activeTypeFilter;
     const sizeMatch = activeSizeFilter === "size_all" || size === activeSizeFilter.replace("size_", "");
-    item.style.display = (statusMatch && sizeMatch) ? "" : "none";
+    item.style.display = (statusMatch && typeMatch && sizeMatch) ? "" : "none";
   });
+  // Show clay-empty notice when clay filter selected and no items are visible
+  const galleryWrapper = document.getElementById('gallery-wrapper');
+  if (!galleryWrapper) return;
+  const existingNotice = document.getElementById('clay-empty-notice');
+  const itemsVisible = Array.from(document.querySelectorAll('.gallery-item')).some(i => i.style.display !== 'none');
+  if (activeTypeFilter === 'clay' && !itemsVisible) {
+    if (!existingNotice) {
+      const notice = document.createElement('div');
+      notice.id = 'clay-empty-notice';
+      notice.className = 'gallery-empty-notice';
+      notice.textContent = t('clay_empty_notice');
+      galleryWrapper.insertBefore(notice, galleryWrapper.firstChild);
+    } else {
+      existingNotice.style.display = '';
+      existingNotice.textContent = t('clay_empty_notice');
+    }
+  } else if (existingNotice) {
+    existingNotice.style.display = 'none';
+  }
 }
 
 // ── FAB ───────────────────────────────────────────────────────
