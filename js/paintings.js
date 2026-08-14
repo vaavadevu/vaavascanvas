@@ -125,6 +125,7 @@ const paintings = [
     width: 69,
     height: 58,
     shape: SHAPE.RECTANGULAR,
+    originalPrice: 3500,
     framedPrice: 3500,
     framedOnly: true,
     frameAvailable: true
