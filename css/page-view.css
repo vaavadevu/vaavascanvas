@@ -460,3 +460,79 @@
     pointer-events: none;
   }
 }
+
+/* Bookmark selector modal */
+.bookmark-selector-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10002;
+  background: rgba(0,0,0,0.5);
+}
+.bookmark-selector-modal.active { display: flex; }
+.bookmark-selector-modal .bookmark-selector-inner {
+  background: var(--bg-warm);
+  padding: 18px;
+  border-radius: 12px;
+  max-width: 920px;
+  width: 94%;
+  box-sizing: border-box;
+}
+.bookmark-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  margin: 12px 0;
+  max-height: 60vh;
+  overflow: auto;
+}
+.bookmark-variant {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  cursor: pointer;
+}
+.bookmark-variant img { width: 100%; height: 120px; object-fit: cover; border-radius: 6px; }
+.bookmark-variant input { display: block; }
+.bookmark-selector-actions { display:flex; gap:12px; align-items:center; justify-content:flex-end; }
+.bookmark-selector-title { margin:0 0 6px 0; }
+.bookmark-selector-inner { position: relative; }
+.modal-back-btn {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent-green);
+  background: transparent;
+  border: none;
+  font-weight: 700;
+  text-decoration: none;
+}
+.modal-back-btn:hover { opacity: 0.9; }
+
+/* Make modal action buttons use page view button styles */
+.bookmark-selector-inner .btn {
+  padding: 10px 20px;
+  border: 1.5px solid var(--accent-green);
+  background: var(--accent-green);
+  color: var(--text-light);
+  border-radius: 8px;
+  cursor: pointer !important;
+  font-size: 0.95rem;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
+  transition: 0.2s;
+}
+.bookmark-selector-inner .btn.btn-secondary {
+  background: var(--bg-warm);
+  color: var(--accent-green);
+}
+.bookmark-selector-inner .btn:hover { background: var(--bg-warm); color: var(--accent-green); }

@@ -134,7 +134,7 @@ function addPaintingToCart(painting, withFrame) {
     title,
     type: itemType,
     price,
-    image: getPaintingImagePaths(painting)[0],
+    image: (typeof State.currentImageIndex === 'number') ? getPaintingImagePaths(painting)[State.currentImageIndex] : getPaintingImagePaths(painting)[0],
   };
 
   if (itemType === 'original') {
@@ -233,23 +233,126 @@ function renderPageViewButtons(painting) {
       updateBuyButtonLabel();
       const frameRadios = pageViewButtons.querySelectorAll('input[type="radio"]');
       frameRadios.forEach(radio => radio.addEventListener('change', updateBuyButtonLabel));
-      buyBtn.addEventListener("click", () => {
-        if (painting.framedOnly) {
-          addPaintingToCart(painting, true);
-        } else if (painting.frameAvailable && window.innerWidth <= 960) {
-          showFrameSelectorModal(painting);
-        } else if (painting.frameAvailable) {
-          const selectedRadio = pageViewButtons.querySelector('input[type="radio"]:checked');
-          const withFrame = selectedRadio?.value === "with";
-          addPaintingToCart(painting, withFrame);
-        } else {
-          addPaintingToCart(painting, false);
-        }
-      });
+
+      // Special handling for bookmarks: open variant selector allowing multiple picks
+      if (painting.type === TYPE.BOOKMARK) {
+        buyBtn.addEventListener('click', () => showBookmarkSelectorModal(painting));
+      } else {
+        buyBtn.addEventListener("click", () => {
+          if (painting.framedOnly) {
+            addPaintingToCart(painting, true);
+          } else if (painting.frameAvailable && window.innerWidth <= 960) {
+            showFrameSelectorModal(painting);
+          } else if (painting.frameAvailable) {
+            const selectedRadio = pageViewButtons.querySelector('input[type="radio"]:checked');
+            const withFrame = selectedRadio?.value === "with";
+            addPaintingToCart(painting, withFrame);
+          } else {
+            addPaintingToCart(painting, false);
+          }
+        });
+      }
     }
     pageViewButtons.appendChild(buyBtn);
   }
 
+}
+
+// ── Bookmark selector modal ───────────────────────────────────
+function showBookmarkSelectorModal(painting) {
+  const imgs = getPaintingImagePaths(painting);
+  const variants = imgs.slice(1); // skip cover (index 0)
+  const containerId = `bookmark-selector-${painting.id}`;
+
+  if (!variants || variants.length === 0) {
+    showToast(t('modal_no_variants'));
+    return;
+  }
+  let modal = document.getElementById(containerId);
+
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = containerId;
+    modal.className = 'bookmark-selector-modal';
+    modal.innerHTML = `
+      <div class="bookmark-selector-inner">
+        <button type="button" class="modal-back-btn" id="bookmark-modal-back">${t('nav_back')}</button>
+        <h3 class="bookmark-selector-title">${t('modal_select_bookmarks_title')}</h3>
+        <div class="bookmark-selector-grid"></div>
+        <div class="bookmark-selector-actions">
+          <label><input type="checkbox" id="bookmark-select-all" /> ${t('modal_select_all')}</label>
+          <button class="btn btn-primary" id="bookmark-add-btn">${t('modal_add_selected_to_cart')}</button>
+          <button class="btn btn-secondary" id="bookmark-cancel-btn">${t('modal_cancel')}</button>
+        </div>
+      </div>
+    `;
+    document.getElementById('modals-container')?.appendChild(modal);
+
+    const grid = modal.querySelector('.bookmark-selector-grid');
+    // Use variants (skip cover at index 0)
+    variants.forEach((src, idx) => {
+      const filename = src.split('/').pop();
+      const cell = document.createElement('label');
+      cell.className = 'bookmark-variant';
+      cell.innerHTML = `
+        <input type="checkbox" data-idx="${idx}" />
+        <img src="${src}" loading="lazy" alt="${filename}" />
+        <div class="variant-label">${filename}</div>
+      `;
+      grid.appendChild(cell);
+    });
+
+    modal.querySelector('#bookmark-select-all').addEventListener('change', (e) => {
+      modal.querySelectorAll('.bookmark-variant input[type="checkbox"]').forEach(cb => cb.checked = e.target.checked);
+    });
+
+    modal.querySelector('#bookmark-cancel-btn').addEventListener('click', () => hideBookmarkSelectorModal(modal));
+
+    // Back button should go to the previous history entry (exact back)
+    const backBtn = modal.querySelector('#bookmark-modal-back');
+    if (backBtn) {
+      backBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        // Close modal first
+        hideBookmarkSelectorModal(modal);
+        // Then navigate back in history
+        try { history.back(); } catch (_) {}
+      });
+    }
+
+    modal.querySelector('#bookmark-add-btn').addEventListener('click', () => {
+      const checked = Array.from(modal.querySelectorAll('.bookmark-variant input[type="checkbox"]:checked')).map(cb => parseInt(cb.dataset.idx));
+      if (checked.length === 0) {
+        showToast(t('modal_select_at_least_one'));
+        return;
+      }
+
+      // Pricing: first selected at full price, extras at 10% off each
+      const basePrice = painting.originalPrice || painting.framedPrice || 0;
+      checked.forEach((variantIdx, pos) => {
+        const imgSrc = variants[variantIdx]; // use variants array (cover skipped)
+        const filename = imgSrc.split('/').pop().replace(/\.[^/.]+$/, '');
+        const price = pos === 0 ? basePrice : Math.round(basePrice * 0.9);
+        const cartItem = {
+          id: `${painting.id}::${filename}`,
+          title: `${painting.title} — ${filename}`,
+          type: TYPE.BOOKMARK,
+          price,
+          image: imgSrc,
+        };
+        Cart.add(cartItem);
+      });
+
+      hideBookmarkSelectorModal(modal);
+    });
+  }
+
+  modal.classList.add('active');
+}
+
+function hideBookmarkSelectorModal(modal) {
+  if (!modal) return;
+  modal.classList.remove('active');
 }
 
 function showFrameSelectorModal(painting) {

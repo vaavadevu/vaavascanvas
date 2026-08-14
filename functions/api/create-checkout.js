@@ -34,6 +34,7 @@ const PAINTINGS = [
   { id: 'dagensFynd', originalPrice: 1800, framedPrice: 2100, frameAvailable: true, status: 'for_sale' },
   { id: 'sugenPaEttApple', originalPrice: 1800, framedPrice: 2000, frameAvailable: true, status: 'for_sale' },
   { id: 'varlek', originalPrice: 1500, framedPrice: 1900, frameAvailable: true, status: 'for_sale' },
+  { id: 'bookmarks', originalPrice: 120, status: 'for_sale' },
 ];
 
 function hasPaintingDiscount(painting) {

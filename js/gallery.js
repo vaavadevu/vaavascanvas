@@ -354,6 +354,25 @@ function filterGallery() {
     const sizeMatch = activeSizeFilter === "size_all" || size === activeSizeFilter.replace("size_", "");
     item.style.display = (statusMatch && typeMatch && sizeMatch) ? "" : "none";
   });
+  // Show clay-empty notice when clay filter selected and no items are visible
+  const galleryWrapper = document.getElementById('gallery-wrapper');
+  if (!galleryWrapper) return;
+  const existingNotice = document.getElementById('clay-empty-notice');
+  const itemsVisible = Array.from(document.querySelectorAll('.gallery-item')).some(i => i.style.display !== 'none');
+  if (activeTypeFilter === 'clay' && !itemsVisible) {
+    if (!existingNotice) {
+      const notice = document.createElement('div');
+      notice.id = 'clay-empty-notice';
+      notice.className = 'gallery-empty-notice';
+      notice.textContent = t('clay_empty_notice');
+      galleryWrapper.insertBefore(notice, galleryWrapper.firstChild);
+    } else {
+      existingNotice.style.display = '';
+      existingNotice.textContent = t('clay_empty_notice');
+    }
+  } else if (existingNotice) {
+    existingNotice.style.display = 'none';
+  }
 }
 
 // ── FAB ───────────────────────────────────────────────────────
