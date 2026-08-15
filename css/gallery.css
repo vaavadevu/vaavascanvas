@@ -258,6 +258,38 @@
   }
 }
 
+@media (max-width: 960px) {
+  #gallery-filter-bar {
+    display: flex;
+    position: static;
+    top: auto;
+    z-index: auto;
+    gap: 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 12px 10px 8px;
+  }
+
+  .filter-button-group {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+
+  .filter-button-group::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-button {
+    white-space: nowrap;
+  }
+
+  #filter-fab {
+    display: none !important;
+  }
+}
+
 .filter-dropdown {
   position: relative;
   display: inline-flex;

@@ -100,7 +100,7 @@
     "height": 24,
     "shape": "rectangular",
     "originalPrice": 600,
-    "status": "for_sale",
+    "status": "sold",
     "medium": "medium_acrylic_canvas"
   },
   {
@@ -111,7 +111,7 @@
     "height": 24,
     "shape": "rectangular",
     "originalPrice": 600,
-    "status": "for_sale",
+    "status": "sold",
     "medium": "medium_acrylic_canvas"
   },
   {
@@ -133,7 +133,7 @@
     "height": 24,
     "shape": "rectangular",
     "originalPrice": 600,
-    "status": "for_sale",
+    "status": "sold",
     "medium": "medium_acrylic_canvas"
   },
   {
@@ -224,7 +224,7 @@
     "shape": "square",
     "originalPrice": 1500,
     "framedPrice": 1800,
-    "status": "for_sale",
+    "status": "sold",
     "medium": "medium_acrylic_canvas",
     "frameAvailable": true
   },
@@ -289,7 +289,7 @@
     "descKey": "desc_skogsvila",
     "diameter": 90,
     "shape": "circle",
-    "originalPrice": 2500,
+    "originalPrice": 3000,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas"
   },
@@ -369,28 +369,28 @@
       "desktop": [
         "/images/bookmarks/cover.jpg",
         "/images/bookmarks/cheetah.jpg",
-        "/images/bookmarks/giraffe.jpg",
-        "/images/bookmarks/mallard.jpg",
-        "/images/bookmarks/piggy.jpg",
-        "/images/bookmarks/wilddog.jpg",
         "/images/bookmarks/chicken1.jpg",
         "/images/bookmarks/chicken2.jpg",
+        "/images/bookmarks/giraffe.jpg",
+        "/images/bookmarks/mallard.jpg",
         "/images/bookmarks/pigeon.jpg",
+        "/images/bookmarks/piggy.jpg",
         "/images/bookmarks/pingvin.jpg",
-        "/images/bookmarks/rabbit.jpg"
+        "/images/bookmarks/rabbit.jpg",
+        "/images/bookmarks/wilddog.jpg"
       ],
       "mobile": [
         "/images/bookmarks/cover.jpg",
         "/images/bookmarks/cheetah.jpg",
-        "/images/bookmarks/giraffe.jpg",
-        "/images/bookmarks/mallard.jpg",
-        "/images/bookmarks/piggy.jpg",
-        "/images/bookmarks/wilddog.jpg",
         "/images/bookmarks/chicken1.jpg",
         "/images/bookmarks/chicken2.jpg",
+        "/images/bookmarks/giraffe.jpg",
+        "/images/bookmarks/mallard.jpg",
         "/images/bookmarks/pigeon.jpg",
+        "/images/bookmarks/piggy.jpg",
         "/images/bookmarks/pingvin.jpg",
-        "/images/bookmarks/rabbit.jpg"
+        "/images/bookmarks/rabbit.jpg",
+        "/images/bookmarks/wilddog.jpg"
       ]
     }
   },

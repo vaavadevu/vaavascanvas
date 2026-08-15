@@ -174,7 +174,7 @@ const paintings = [
     id: "frihet",
     title: "Frihet",
     descKey: "desc_frihet",
-    status: STATUS.FOR_SALE,
+    status: STATUS.SOLD,
     medium: MEDIUM.ACRYLIC_CANVAS,
     width: 18,
     height: 24,
@@ -185,7 +185,7 @@ const paintings = [
     id: "lodjur",
     title: "Lodjur",
     descKey: "desc_lodjur",
-    status: STATUS.FOR_SALE,
+    status: STATUS.SOLD,
     medium: MEDIUM.ACRYLIC_CANVAS,
     width: 18,
     height: 24,
@@ -207,7 +207,7 @@ const paintings = [
     id: "tropisktBad",
     title: "Tropiskt bad",
     descKey: "desc_tropisktBad",
-    status: STATUS.FOR_SALE,
+    status: STATUS.SOLD,
     medium: MEDIUM.ACRYLIC_CANVAS,
     width: 18,
     height: 24,
@@ -297,7 +297,7 @@ const paintings = [
     id: "efterIde",
     title: "Efter Ide",
     descKey: "desc_efterIde",
-    status: STATUS.FOR_SALE,
+    status: STATUS.SOLD,
     medium: MEDIUM.ACRYLIC_CANVAS,
     width: 40,
     height: 40,
@@ -369,7 +369,7 @@ const paintings = [
     medium: MEDIUM.ACRYLIC_CANVAS,
     diameter: 90,
     shape: SHAPE.CIRCLE,
-    originalPrice: 2500
+    originalPrice: 3000
   },
   {
     id: "vinterlek",
@@ -437,7 +437,8 @@ const paintings = [
     title: "Bokmärken",
     descKey: "desc_bookmarks",
     status: STATUS.FOR_SALE,
-    type: "bookmark",
+    type: TYPE.BOOKMARK,
+    medium: MEDIUM.ACRYLIC_CANVAS,
     width: 5,
     height: 15,
     shape: SHAPE.RECTANGULAR,
@@ -446,28 +447,28 @@ const paintings = [
       desktop: [
         "/images/bookmarks/cover.jpg",
         "/images/bookmarks/cheetah.jpg",
-        "/images/bookmarks/giraffe.jpg",
-        "/images/bookmarks/mallard.jpg",
-        "/images/bookmarks/piggy.jpg",
-        "/images/bookmarks/wilddog.jpg",
         "/images/bookmarks/chicken1.jpg",
         "/images/bookmarks/chicken2.jpg",
+        "/images/bookmarks/giraffe.jpg",
+        "/images/bookmarks/mallard.jpg",
         "/images/bookmarks/pigeon.jpg",
+        "/images/bookmarks/piggy.jpg",
         "/images/bookmarks/pingvin.jpg",
-        "/images/bookmarks/rabbit.jpg"
+        "/images/bookmarks/rabbit.jpg",
+        "/images/bookmarks/wilddog.jpg"
       ],
       mobile: [
         "/images/bookmarks/cover.jpg",
         "/images/bookmarks/cheetah.jpg",
-        "/images/bookmarks/giraffe.jpg",
-        "/images/bookmarks/mallard.jpg",
-        "/images/bookmarks/piggy.jpg",
-        "/images/bookmarks/wilddog.jpg",
         "/images/bookmarks/chicken1.jpg",
         "/images/bookmarks/chicken2.jpg",
+        "/images/bookmarks/giraffe.jpg",
+        "/images/bookmarks/mallard.jpg",
         "/images/bookmarks/pigeon.jpg",
+        "/images/bookmarks/piggy.jpg",
         "/images/bookmarks/pingvin.jpg",
-        "/images/bookmarks/rabbit.jpg"
+        "/images/bookmarks/rabbit.jpg",
+        "/images/bookmarks/wilddog.jpg"
       ]
     }
   },

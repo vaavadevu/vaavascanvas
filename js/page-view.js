@@ -259,12 +259,28 @@ function renderPageViewButtons(painting) {
 }
 
 // ── Bookmark selector modal ───────────────────────────────────
-function showBookmarkSelectorModal(painting) {
+async function imageExists(src) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = src;
+  });
+}
+
+async function showBookmarkSelectorModal(painting) {
   const imgs = getPaintingImagePaths(painting);
   const variants = imgs.slice(1); // skip cover (index 0)
   const containerId = `bookmark-selector-${painting.id}`;
 
-  if (!variants || variants.length === 0) {
+  const validVariants = [];
+  for (const src of variants) {
+    if (await imageExists(src)) {
+      validVariants.push(src);
+    }
+  }
+
+  if (!validVariants || validVariants.length === 0) {
     showToast(t('modal_no_variants'));
     return;
   }
@@ -289,8 +305,8 @@ function showBookmarkSelectorModal(painting) {
     document.getElementById('modals-container')?.appendChild(modal);
 
     const grid = modal.querySelector('.bookmark-selector-grid');
-    // Use variants (skip cover at index 0)
-    variants.forEach((src, idx) => {
+    // Use valid variants only; files deleted from the folder are not rendered.
+    validVariants.forEach((src, idx) => {
       const filename = src.split('/').pop();
       const cell = document.createElement('label');
       cell.className = 'bookmark-variant';
@@ -330,7 +346,7 @@ function showBookmarkSelectorModal(painting) {
       // Pricing: first selected at full price, extras at 10% off each
       const basePrice = painting.originalPrice || painting.framedPrice || 0;
       checked.forEach((variantIdx, pos) => {
-        const imgSrc = variants[variantIdx]; // use variants array (cover skipped)
+        const imgSrc = validVariants[variantIdx];
         const filename = imgSrc.split('/').pop().replace(/\.[^/.]+$/, '');
         const price = pos === 0 ? basePrice : Math.round(basePrice * 0.9);
         const cartItem = {
