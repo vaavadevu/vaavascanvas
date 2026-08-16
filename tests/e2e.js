@@ -135,11 +135,22 @@ function loadPaintings() {
     });
   }
 
+  const typeMatch = content.match(/const TYPE = \{([^}]+)\}/s);
+  const types = {};
+  if (typeMatch) {
+    const typeStr = typeMatch[1];
+    typeStr.match(/(\w+):\s*"([^"]+)"/g)?.forEach(str => {
+      const [key, val] = str.match(/(\w+):\s*"([^"]+)"/).slice(1);
+      types[key] = val;
+    });
+  }
+
   const paintingsMatch = content.match(/const paintings = \[([\s\S]+?)\];/);
   let paintingsStr = `[${paintingsMatch[1]}]`;
   paintingsStr = paintingsStr.replace(/STATUS\.(\w+)/g, (match, key) => `"${statuses[key]}"`);
   paintingsStr = paintingsStr.replace(/SHAPE\.(\w+)/g, (match, key) => `"${shapes[key]}"`);
   paintingsStr = paintingsStr.replace(/MEDIUM\.(\w+)/g, (match, key) => `"${mediums[key]}"`);
+  paintingsStr = paintingsStr.replace(/TYPE\.(\w+)/g, (match, key) => `"${types[key]}"`);
   paintingsStr = paintingsStr.replace(/(\{|,)\s*(\w+):/g, '$1"$2":');
   paintingsStr = paintingsStr.replace(/,(\s*[}\]])/g, '$1');
 

@@ -91,6 +91,17 @@ function loadPaintingsData() {
     });
   }
 
+  // Extract TYPE constants
+  const typeMatch = content.match(/const TYPE = \{([^}]+)\}/s);
+  const types = {};
+  if (typeMatch) {
+    const typeStr = typeMatch[1];
+    typeStr.match(/(\w+):\s*"([^"]+)"/g)?.forEach(str => {
+      const [key, val] = str.match(/(\w+):\s*"([^"]+)"/).slice(1);
+      types[key] = val;
+    });
+  }
+
   // Extract paintings array
   const paintingsMatch = content.match(/const paintings = \[([\s\S]+?)\];/);
   if (!paintingsMatch) throw new Error('Could not find paintings array in paintings.js');
@@ -111,6 +122,11 @@ function loadPaintingsData() {
   // Replace MEDIUM references with actual values
   paintingsStr = paintingsStr.replace(/MEDIUM\.(\w+)/g, (match, key) => {
     return `"${mediums[key]}"`;
+  });
+
+  // Replace TYPE references with actual values
+  paintingsStr = paintingsStr.replace(/TYPE\.(\w+)/g, (match, key) => {
+    return `"${types[key]}"`;
   });
 
   // Convert unquoted keys to quoted keys (including keys with non-ASCII chars like å, ä, ö)
