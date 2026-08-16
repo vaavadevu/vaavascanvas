@@ -323,6 +323,26 @@ test('Painting descKeys reference existing translations', () => {
   });
 });
 
+test('Bookmark soldVariants only reference existing bookmark files', () => {
+  paintings.forEach(p => {
+    if (!p.soldVariants) return;
+    assert(Array.isArray(p.soldVariants), `Painting ${p.id} soldVariants must be an array`);
+
+    const imageNames = new Set();
+    if (p.images && Array.isArray(p.images.desktop)) {
+      p.images.desktop.forEach(src => {
+        const file = src.split('/').pop();
+        if (file) imageNames.add(file);
+      });
+    }
+
+    p.soldVariants.forEach(variant => {
+      const file = variant.split('/').pop();
+      assert(imageNames.has(file), `Painting ${p.id} sold variant "${variant}" does not exist in bookmark images`);
+    });
+  });
+});
+
 // ─────────────────────────────────────────────────────────────
 // SUITE 2: Image Inventory Validation
 // ─────────────────────────────────────────────────────────────

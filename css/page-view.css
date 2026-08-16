@@ -492,14 +492,35 @@
   overflow: auto;
 }
 .bookmark-variant {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 6px;
   align-items: center;
   cursor: pointer;
 }
+.bookmark-variant.sold {
+  opacity: 0.6;
+  filter: grayscale(0.3);
+  cursor: default;
+}
+.bookmark-variant.sold .bookmark-sold-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(56, 58, 52, 0.9);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  letter-spacing: 0.04em;
+}
 .bookmark-variant img { width: 100%; height: 120px; object-fit: cover; border-radius: 6px; }
 .bookmark-variant input { display: block; }
+.bookmark-variant.sold input {
+  display: none;
+}
 .bookmark-selector-actions { display:flex; gap:12px; align-items:center; justify-content:flex-end; }
 .bookmark-selector-title { margin:0 0 6px 0; }
 .bookmark-selector-inner { position: relative; }

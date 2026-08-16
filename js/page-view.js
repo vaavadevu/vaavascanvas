@@ -284,6 +284,8 @@ async function showBookmarkSelectorModal(painting) {
     showToast(t('modal_no_variants'));
     return;
   }
+
+  const soldVariantNames = new Set((painting.soldVariants || []).map((value) => String(value).split('/').pop()));
   let modal = document.getElementById(containerId);
 
   if (!modal) {
@@ -305,13 +307,16 @@ async function showBookmarkSelectorModal(painting) {
     document.getElementById('modals-container')?.appendChild(modal);
 
     const grid = modal.querySelector('.bookmark-selector-grid');
-    // Use valid variants only; files deleted from the folder are not rendered.
+    const sellableVariants = validVariants.filter((src) => !soldVariantNames.has(src.split('/').pop()));
+
     validVariants.forEach((src, idx) => {
       const filename = src.split('/').pop();
+      const sold = soldVariantNames.has(filename);
       const cell = document.createElement('label');
-      cell.className = 'bookmark-variant';
+      cell.className = `bookmark-variant${sold ? ' sold' : ''}`;
       cell.innerHTML = `
-        <input type="checkbox" data-idx="${idx}" />
+        <input type="checkbox" data-idx="${idx}" ${sold ? 'disabled' : ''} />
+        ${sold ? `<span class="bookmark-sold-badge">${t('modal_sold')}</span>` : ''}
         <img src="${src}" loading="lazy" alt="${filename}" />
         <div class="variant-label">${filename}</div>
       `;
@@ -319,19 +324,18 @@ async function showBookmarkSelectorModal(painting) {
     });
 
     modal.querySelector('#bookmark-select-all').addEventListener('change', (e) => {
-      modal.querySelectorAll('.bookmark-variant input[type="checkbox"]').forEach(cb => cb.checked = e.target.checked);
+      modal.querySelectorAll('.bookmark-variant input[type="checkbox"]').forEach(cb => {
+        if (!cb.disabled) cb.checked = e.target.checked;
+      });
     });
 
     modal.querySelector('#bookmark-cancel-btn').addEventListener('click', () => hideBookmarkSelectorModal(modal));
 
-    // Back button should go to the previous history entry (exact back)
     const backBtn = modal.querySelector('#bookmark-modal-back');
     if (backBtn) {
       backBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        // Close modal first
         hideBookmarkSelectorModal(modal);
-        // Then navigate back in history
         try { history.back(); } catch (_) {}
       });
     }
@@ -343,7 +347,6 @@ async function showBookmarkSelectorModal(painting) {
         return;
       }
 
-      // Pricing: first selected at full price, extras at 10% off each
       const basePrice = painting.originalPrice || painting.framedPrice || 0;
       checked.forEach((variantIdx, pos) => {
         const imgSrc = validVariants[variantIdx];
@@ -361,6 +364,12 @@ async function showBookmarkSelectorModal(painting) {
 
       hideBookmarkSelectorModal(modal);
     });
+
+    if (sellableVariants.length === 0) {
+      modal.querySelector('#bookmark-add-btn').disabled = true;
+      modal.querySelector('#bookmark-select-all').disabled = true;
+      showToast(t('modal_no_variants'));
+    }
   }
 
   modal.classList.add('active');

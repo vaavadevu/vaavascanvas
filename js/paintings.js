@@ -437,40 +437,11 @@ const paintings = [
     title: "Bokmärken",
     descKey: "desc_bookmarks",
     status: STATUS.FOR_SALE,
-    type: TYPE.BOOKMARK,
     medium: MEDIUM.ACRYLIC_CANVAS,
     width: 5,
     height: 15,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 120,
-    images: {
-      desktop: [
-        "/images/bookmarks/cover.jpg",
-        "/images/bookmarks/cheetah.jpg",
-        "/images/bookmarks/chicken1.jpg",
-        "/images/bookmarks/chicken2.jpg",
-        "/images/bookmarks/giraffe.jpg",
-        "/images/bookmarks/mallard.jpg",
-        "/images/bookmarks/pigeon.jpg",
-        "/images/bookmarks/piggy.jpg",
-        "/images/bookmarks/pingvin.jpg",
-        "/images/bookmarks/rabbit.jpg",
-        "/images/bookmarks/wilddog.jpg"
-      ],
-      mobile: [
-        "/images/bookmarks/cover.jpg",
-        "/images/bookmarks/cheetah.jpg",
-        "/images/bookmarks/chicken1.jpg",
-        "/images/bookmarks/chicken2.jpg",
-        "/images/bookmarks/giraffe.jpg",
-        "/images/bookmarks/mallard.jpg",
-        "/images/bookmarks/pigeon.jpg",
-        "/images/bookmarks/piggy.jpg",
-        "/images/bookmarks/pingvin.jpg",
-        "/images/bookmarks/rabbit.jpg",
-        "/images/bookmarks/wilddog.jpg"
-      ]
-    }
+    originalPrice: 120
   },
   {
     id: "foreStormen",
