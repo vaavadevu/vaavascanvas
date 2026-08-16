@@ -946,6 +946,37 @@ test('Checkout catalog sold statuses match paintings.js', () => {
   });
 });
 
+test('_headers keeps code assets revalidating', () => {
+  const headersPath = path.join(__dirname, '../_headers');
+  assert(fs.existsSync(headersPath),
+    'The _headers file is missing — without it Cloudflare caches CSS and JS for 4 hours, ' +
+    'so visitors can run new HTML against stale code after a deploy');
+
+  const content = fs.readFileSync(headersPath, 'utf8');
+
+  // Every path that must not lag behind a deploy
+  const mustRevalidate = ['/css/*', '/js/*', '/components/*'];
+
+  // Anything the site fetches at runtime has to agree with the code that reads it
+  const runtimeFetched = new Set();
+  fs.readdirSync(path.join(__dirname, '../js'))
+    .filter(f => f.endsWith('.js'))
+    .forEach(f => {
+      const js = fs.readFileSync(path.join(__dirname, '../js', f), 'utf8');
+      for (const m of js.matchAll(/fetch\(\s*["'`]([^"'`]+)["'`]/g)) {
+        const url = m[1].replace(/^\.\./, '');
+        if (/\.json$/.test(url)) runtimeFetched.add(url.startsWith('/') ? url : '/' + url);
+      }
+    });
+
+  [...mustRevalidate, ...runtimeFetched].forEach(rule => {
+    const block = content.split(/\n(?=\S)/).find(b => b.trimStart().startsWith(rule));
+    assert(block, `_headers has no rule for "${rule}" — it would keep Cloudflare's 4 hour default`);
+    assert(/max-age=0/.test(block) && /must-revalidate/.test(block),
+      `_headers rule for "${rule}" must use "max-age=0, must-revalidate"`);
+  });
+});
+
 test('Checkout shipping constants match cart.js', () => {
   const cartContent = fs.readFileSync(path.join(__dirname, '../js/cart.js'), 'utf8');
 
