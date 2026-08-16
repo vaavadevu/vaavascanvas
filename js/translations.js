@@ -40,9 +40,44 @@ const keys = {
     sv: "Portfolio",  
     en: "Portfolio",
   },
-  nav_cart: { 
+  nav_cart: {
     sv: "Varukorg",
     en: "Cart",
+  },
+
+  pictures_title: {
+    sv: "Köp mina original och hantverk",
+    en: "Buy my originals and handcrafts",
+  },
+
+  // ── Portfolio ──────────────────────────────────────────────────
+  portfolio_title: {
+    sv: "Illustrationer &amp; verk",
+    en: "Illustrations &amp; works",
+  },
+  portfolio_intro: {
+    sv: "Ett urval av mitt arbete genom olika medium — akryl, oljepastell och digitalt. Vissa går att köpa, andra finns bara här.",
+    en: "A selection of my work across different mediums — acrylic, oil pastel and digital. Some are for sale, others live only here.",
+  },
+  portfolio_outro: {
+    sv: "Gillar du något du ser? En del av verken ovan går att köpa. <a href='/pages/pictures.html'>Se hela galleriet</a> eller <a href='/pages/commissions.html'>beställ en commission</a>.",
+    en: "Like something you see? Some of the works above are for sale. <a href='/pages/pictures.html'>See the full gallery</a> or <a href='/pages/commissions.html'>order a commission</a>.",
+  },
+  medium_oilpastel: {
+    sv: "Oljepastell",
+    en: "Oil pastel",
+  },
+  medium_acrylic: {
+    sv: "Akryl",
+    en: "Acrylic",
+  },
+  medium_watercolor: {
+    sv: "Akvarell",
+    en: "Watercolor",
+  },
+  medium_digital: {
+    sv: "Digitalt",
+    en: "Digital",
   },
   item_type_original: {
     sv: "Original",

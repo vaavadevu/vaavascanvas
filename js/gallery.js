@@ -278,7 +278,13 @@ function attachFilterListeners() {
     }
   });
 
-  window.addEventListener("languagechange", updateFilterLabels);
+  window.addEventListener("languagechange", () => {
+    updateFilterLabels();
+    // Tile prices and badges are built with t() at render time, so they keep
+    // the old language until the grid is rebuilt
+    buildGallery();
+    filterGallery();
+  });
   updateFilterLabels();
 
   setupFab();

@@ -347,6 +347,105 @@ async function runTests() {
     });
 
 
+    console.log(colors.blue + '\n[7] LANGUAGE COVERAGE TESTS' + colors.reset);
+
+    // Text that is legitimately identical in both languages. Anything not
+    // listed here that survives a switch to English is untranslated copy.
+    const SAME_IN_BOTH_LANGUAGES = [
+      /^[\s\d.,:·×–—@/()+-]*$/,          // numbers, symbols, separators
+      /^\d+\s*(kr|cm|%)/i,                // prices and measurements
+      /^\d+\s*[x×]\s*\d+/i,               // dimensions
+      /^(Portfolio|Vaavascanvas|Devika|Instagram|Mailchimp|Stripe|Swish|Klarna)$/i,
+      /@vaavascanvas/i,                   // social handle
+      /vaavascanvas\.se/i,                // domain and e-mail
+      /^©/,                               // copyright line
+      /^(Alla|Status)$/,                  // filter words that are the same word
+      /diameter/i,                        // same word in both languages
+    ];
+
+    // Painting and product names are proper nouns and stay as they are
+    const PROPER_NOUNS = new Set(paintings.map(p => p.title));
+
+    // Elements holding artwork names rather than interface copy. Portfolio
+    // titles come from image file names, so they have no translation.
+    const CONTENT_SELECTORS = '#lightboxTitle, .featured-card-label, #pageview-title';
+
+    // `reveal` runs before each snapshot to bring text that is hidden behind an
+    // interaction into view — otherwise captions and modals are never compared
+    const languagePages = [
+      { label: 'Main page',        url: `${baseUrl}/` },
+      { label: 'Gallery page',     url: `${baseUrl}/pages/pictures.html` },
+      {
+        label: 'Portfolio page',
+        url: `${baseUrl}/pages/portfolio.html`,
+        reveal: async (page) => {
+          // The medium caption only exists once a piece is opened
+          const opened = await page.evaluate(() => {
+            const piece = document.querySelector('.medium-section:not([style*="none"]) .piece');
+            if (!piece) return false;
+            piece.click();
+            return true;
+          });
+          assert(opened, 'No portfolio pieces rendered, so the lightbox caption cannot be checked');
+          await new Promise(resolve => setTimeout(resolve, 300));
+        },
+      },
+      { label: 'Commissions page', url: `${baseUrl}/pages/commissions.html` },
+      { label: 'View page',        url: `${baseUrl}/pages/view.html?painting=${paintings[0].id}` },
+    ];
+
+    for (const { label, url, reveal } of languagePages) {
+      await test(`${label} translates fully to English`, async () => {
+        const page = await browser.newPage();
+
+        const readVisibleText = () => page.evaluate((contentSelectors) => {
+          const out = [];
+          const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+          let node;
+          while ((node = walk.nextNode())) {
+            const el = node.parentElement;
+            if (!el || ['SCRIPT', 'STYLE', 'NOSCRIPT'].includes(el.tagName)) continue;
+            if (!el.offsetParent && el.tagName !== 'BODY') continue;
+            if (el.closest(contentSelectors)) continue;
+            const text = node.textContent.replace(/\s+/g, ' ').trim();
+            if (text) out.push(text);
+          }
+          return out;
+        }, CONTENT_SELECTORS);
+
+        await page.goto(url, { waitUntil: 'networkidle' });
+        await page.waitForFunction(() => typeof setLanguage === 'function', { timeout: 10000 });
+        await page.evaluate(() => setLanguage('sv'));
+        await new Promise(resolve => setTimeout(resolve, 600));
+        if (reveal) await reveal(page);
+        const swedish = await readVisibleText();
+
+        await page.evaluate(() => setLanguage('en'));
+        await new Promise(resolve => setTimeout(resolve, 600));
+        if (reveal) await reveal(page);
+        const english = await readVisibleText();
+
+        const untranslated = [];
+        const shared = Math.min(swedish.length, english.length);
+        for (let i = 0; i < shared; i++) {
+          if (swedish[i] !== english[i]) continue;
+          const text = swedish[i];
+          if (PROPER_NOUNS.has(text)) continue;
+          if (SAME_IN_BOTH_LANGUAGES.some(rule => rule.test(text))) continue;
+          // Needs at least one word to be prose rather than a stray glyph
+          if (!/[a-zåäö]{3}/i.test(text)) continue;
+          if (!untranslated.includes(text)) untranslated.push(text);
+        }
+
+        assert(untranslated.length === 0,
+          `Text did not change when switching to English — it is missing a data-i18n ` +
+          `attribute, or is rendered by JS that does not re-run on languagechange:\n  ` +
+          untranslated.map(t => `"${t.slice(0, 80)}"`).join('\n  '));
+
+        await page.close();
+      });
+    }
+
     console.log(colors.blue + '\n[8] CART TESTS' + colors.reset);
 
     await test('Cart drawer opens when clicking the cart icon', async () => {

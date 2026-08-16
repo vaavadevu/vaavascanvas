@@ -326,6 +326,30 @@ test('Painting descKeys reference existing translations', () => {
   });
 });
 
+test('Portfolio medium labels are translated', () => {
+  const source = fs.readFileSync(path.join(__dirname, '../js/portfolio-loader.js'), 'utf8');
+  const block = source.match(/const portfolioMediums = \{([\s\S]*?)\n\};/);
+  assert(block, 'Could not find portfolioMediums in js/portfolio-loader.js');
+
+  // Commented-out lines start with "/" after the indent, so they never match
+  const entries = [...block[1].matchAll(/^[ \t]*(\w+)\s*:\s*\{([^}]*)\}/gm)];
+  assert(entries.length > 0, 'portfolioMediums has no entries');
+
+  entries.forEach(([, name, body]) => {
+    assert(!/\blabel\s*:/.test(body),
+      `Portfolio medium "${name}" still has a "label" property — nothing reads it, ` +
+      'the lightbox uses t(labelKey), so a hardcoded label silently shows "undefined"');
+
+    const labelKey = body.match(/labelKey\s*:\s*['"]([^'"]+)['"]/);
+    assert(labelKey,
+      `Portfolio medium "${name}" has no labelKey — t(undefined) returns undefined and ` +
+      'the lightbox caption reads "undefined"');
+
+    assert(keys[labelKey[1]],
+      `Portfolio medium "${name}" uses labelKey "${labelKey[1]}", which is not in translations.js`);
+  });
+});
+
 test('Painting mediums are declared and translated', () => {
   const validMediums = Object.values(mediums);
 
