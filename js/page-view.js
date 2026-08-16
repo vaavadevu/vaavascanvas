@@ -348,15 +348,16 @@ async function showBookmarkSelectorModal(painting) {
       }
 
       const basePrice = painting.originalPrice || painting.framedPrice || 0;
-      checked.forEach((variantIdx, pos) => {
+      checked.forEach((variantIdx) => {
         const imgSrc = validVariants[variantIdx];
         const filename = imgSrc.split('/').pop().replace(/\.[^/.]+$/, '');
-        const price = pos === 0 ? basePrice : Math.round(basePrice * 0.9);
         const cartItem = {
           id: `${painting.id}::${filename}`,
           title: `${painting.title} — ${filename}`,
           type: TYPE.BOOKMARK,
-          price,
+          price: basePrice,
+          basePrice,
+          multiBuyDiscountPercent: painting.multiBuyDiscountPercent || 0,
           image: imgSrc,
         };
         Cart.add(cartItem);

@@ -222,7 +222,7 @@ console.log(colors.blue + 'VAAVASCANVAS PRE-DEPLOYMENT VALIDATION TESTS' + color
 console.log(colors.blue + '═══════════════════════════════════════════════════════════' + colors.reset + '\n');
 
 // Load data once
-let paintings, statuses, keys, counts, htmlFiles;
+let paintings, statuses, keys, counts, htmlFiles, bookmarksData;
 
 try {
   paintings = loadPaintingsData().paintings;
@@ -230,6 +230,7 @@ try {
   keys = loadTranslationsData();
   counts = loadCountsData();
   htmlFiles = loadHtmlFiles();
+  bookmarksData = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/bookmarks.json'), 'utf8'));
 } catch (err) {
   log.error('Failed to load data files: ' + err.message);
   process.exit(1);
@@ -323,6 +324,86 @@ test('Painting descKeys reference existing translations', () => {
   });
 });
 
+// Bookmark ids carry no extension — the image path is imageDir + id + imageExtension
+function bookmarkImagePath(id) {
+  return `${bookmarksData.imageDir}${id}${bookmarksData.imageExtension}`;
+}
+
+test('bookmarks.json is a valid inventory', () => {
+  assert(bookmarksData.imageDir && bookmarksData.imageDir.startsWith('/') && bookmarksData.imageDir.endsWith('/'),
+    'bookmarks.json needs an absolute imageDir ending in "/", e.g. "/images/bookmarks/"');
+  assert(bookmarksData.imageExtension && bookmarksData.imageExtension.startsWith('.'),
+    'bookmarks.json needs an imageExtension like ".jpg"');
+  assert(Array.isArray(bookmarksData.variants) && bookmarksData.variants.length > 0,
+    'bookmarks.json needs a non-empty variants array');
+  assert(typeof bookmarksData.multiBuyDiscountPercent === 'number' &&
+    bookmarksData.multiBuyDiscountPercent >= 0 && bookmarksData.multiBuyDiscountPercent < 100,
+    `bookmarks.json has an invalid multiBuyDiscountPercent: ${bookmarksData.multiBuyDiscountPercent}`);
+
+  const root = path.join(__dirname, '..');
+  const seen = new Set();
+
+  [bookmarksData.cover, ...bookmarksData.variants.map(v => v.id)].forEach(id => {
+    assert(id, 'bookmarks.json has a variant with no id');
+    assert(!/[./\\]/.test(id),
+      `Bookmark id "${id}" must be a bare name — no extension or path, the build adds "${bookmarksData.imageExtension}"`);
+    assert(!seen.has(id), `bookmarks.json lists "${id}" twice`);
+    seen.add(id);
+    const onDisk = path.join(root, bookmarkImagePath(id).replace(/^\//, ''));
+    assert(fs.existsSync(onDisk), `bookmarks.json references missing image: ${bookmarkImagePath(id)}`);
+  });
+
+  bookmarksData.variants.forEach(v => {
+    assert(v.status === 'sold' || v.status === 'for_sale',
+      `Bookmark "${v.id}" has invalid status "${v.status}" — use "sold" or "for_sale"`);
+  });
+
+  assert(!bookmarksData.variants.some(v => v.id === bookmarksData.cover),
+    'The cover image must not also be listed as a purchasable variant');
+});
+
+test('Every bookmark image on disk is listed in bookmarks.json', () => {
+  const dir = path.join(__dirname, '..', bookmarksData.imageDir.replace(/^\//, ''));
+  const listed = new Set(
+    [bookmarksData.cover, ...bookmarksData.variants.map(v => v.id)]
+      .map(id => id + bookmarksData.imageExtension)
+  );
+
+  fs.readdirSync(dir)
+    .filter(f => /\.(jpe?g|png|webp)$/i.test(f))
+    .forEach(file => {
+      assert(listed.has(file),
+        `images/bookmarks/${file} is not listed in bookmarks.json — it can never be bought or marked sold` +
+        (file.endsWith(bookmarksData.imageExtension) ? '' : ` (only ${bookmarksData.imageExtension} files are supported)`));
+    });
+});
+
+test('Generated bookmark data matches bookmarks.json', () => {
+  const product = paintings.find(p => p.type === 'bookmark');
+  assert(product, 'No painting entry with type "bookmark" in paintings.js');
+
+  const expectedImages = [bookmarksData.cover, ...bookmarksData.variants.map(v => v.id)]
+    .map(bookmarkImagePath);
+  const expectedSold = bookmarksData.variants
+    .filter(v => v.status === 'sold')
+    .map(v => bookmarkImagePath(v.id));
+
+  assertEqual(JSON.stringify(product.images?.desktop), JSON.stringify(expectedImages),
+    'paintings.js bookmark images are stale — run npm run build');
+  assertEqual(JSON.stringify(product.images?.mobile), JSON.stringify(expectedImages),
+    'paintings.js bookmark images are stale — run npm run build');
+  assertEqual(JSON.stringify(product.soldVariants), JSON.stringify(expectedSold),
+    'paintings.js bookmark soldVariants are stale — run npm run build');
+  assertEqual(product.multiBuyDiscountPercent, bookmarksData.multiBuyDiscountPercent,
+    'paintings.js bookmark discount is stale — run npm run build');
+
+  const allSold = bookmarksData.variants.every(v => v.status === 'sold');
+  assertEqual(product.status, allSold ? 'sold' : 'for_sale',
+    allSold
+      ? 'Every bookmark is sold but the product is still for sale — run npm run build'
+      : 'Bookmarks are still available but the product is marked sold — run npm run build');
+});
+
 test('Bookmark soldVariants only reference existing bookmark files', () => {
   paintings.forEach(p => {
     if (!p.soldVariants) return;
@@ -393,15 +474,31 @@ test('All counts.json entries have valid image counts', () => {
   });
 });
 
-test('Image counts match painting imageCount property (if set)', () => {
-  paintings.forEach(p => {
-    const countValue = counts[p.id];
-    // Only validate if imageCount is explicitly set on the painting
-    if (p.imageCount && countValue) {
-      assertEqual(countValue, p.imageCount,
-        `Painting ${p.id}: counts.json (${countValue}) doesn't match imageCount (${p.imageCount})`);
-    }
+test('Every folder-convention painting has an entry in counts.json', () => {
+  // script.js falls back to imageCount = 1 for anything missing here, which
+  // silently hides every image after the first on the gallery and detail pages
+  const missing = paintings
+    .filter(p => !p.images && !counts[p.id])
+    .map(p => p.id);
+
+  assert(missing.length === 0,
+    'These paintings have no counts.json entry, so only their first image will ever be shown ' +
+    '(run build_paintings_data.bat):\n  ' + missing.join('\n  '));
+});
+
+test('counts.json matches the number of images actually on disk', () => {
+  const root = path.join(__dirname, '..');
+  const mismatches = [];
+
+  Object.entries(counts).forEach(([id, count]) => {
+    const desktopDir = path.join(root, 'images', 'paintings', id, 'desktop');
+    if (!fs.existsSync(desktopDir)) return;
+    const onDisk = fs.readdirSync(desktopDir).filter(f => /\.(jpe?g|png|webp)$/i.test(f)).length;
+    if (onDisk !== count) mismatches.push(`${id}: counts.json says ${count}, ${onDisk} on disk`);
   });
+
+  assert(mismatches.length === 0,
+    'counts.json is out of date (run build_paintings_data.bat):\n  ' + mismatches.join('\n  '));
 });
 
 test('All original images have been synced to desktop and mobile', () => {
@@ -561,14 +658,23 @@ test('All data-i18n-ph placeholder attributes reference existing translation key
 
 console.log(colors.blue + '\n[5] FORM LOGIC VALIDATION' + colors.reset);
 
-test('Originals dropdown excludes SOLD and PERSONAL paintings', () => {
-  const nonSalePaintings = paintings.filter(
-    p => p.status === statuses.SOLD || p.status === statuses.PERSONAL
-  );
-  nonSalePaintings.forEach(p => {
-    assert(p.status !== statuses.FOR_SALE,
-      `Painting ${p.id} with status ${p.status} should not appear in Originals dropdown`);
+// The prints dropdown lists every painting on purpose — a sold original can
+// still be ordered as a print — so what matters is that each entry can render
+// its preview image, which contact.js resolves through getPaintingImagePaths
+test('Every painting in the prints dropdown has a resolvable preview image', () => {
+  const root = path.join(__dirname, '..');
+  const broken = [];
+
+  paintings.forEach(p => {
+    const explicit = p.images && Array.isArray(p.images.desktop) ? p.images.desktop[0] : null;
+    const preview = explicit || `/images/paintings/${p.id}/desktop/01.jpg`;
+    if (!fs.existsSync(path.join(root, preview.replace(/^\//, '')))) {
+      broken.push(`${p.id}: ${preview}`);
+    }
   });
+
+  assert(broken.length === 0,
+    'Selecting these in the prints dropdown shows a broken preview:\n  ' + broken.join('\n  '));
 });
 
 // ─────────────────────────────────────────────────────────────
@@ -577,31 +683,52 @@ test('Originals dropdown excludes SOLD and PERSONAL paintings', () => {
 
 console.log(colors.blue + '\n[6] GALLERY LOGIC VALIDATION' + colors.reset);
 
-test('Paintings sort: FOR_SALE before PERSONAL before SOLD, price descending within group', () => {
-  const statusOrder = {
-    [statuses.FOR_SALE]: 0,
-    [statuses.PERSONAL]: 1,
-    [statuses.SOLD]: 2
-  };
+// Runs the real sortPaintings() from gallery.js rather than re-implementing it,
+// so a change to the gallery's ordering rules is what makes this fail
+function runRealSortPaintings(input) {
+  const gallerySource = fs.readFileSync(path.join(__dirname, '../js/gallery.js'), 'utf8');
+  const start = gallerySource.indexOf('function sortPaintings()');
+  const end = gallerySource.indexOf('\n}', start);
+  assert(start !== -1 && end !== -1, 'Could not extract sortPaintings() from js/gallery.js');
 
-  const sorted = [...paintings].sort((a, b) => {
-    const statusDiff = statusOrder[a.status] - statusOrder[b.status];
-    if (statusDiff !== 0) return statusDiff;
-    return (b.originalPrice || 0) - (a.originalPrice || 0);
-  });
+  const source = gallerySource.slice(start, end + 2);
+  const factory = new Function('STATUS', 'hasPaintingDiscount', 'paintings',
+    `${source}\nsortPaintings();\nreturn paintings;`);
 
-  for (let i = 0; i < sorted.length - 1; i++) {
-    const a = sorted[i];
-    const b = sorted[i + 1];
-    const aOrder = statusOrder[a.status];
-    const bOrder = statusOrder[b.status];
-    assert(aOrder <= bOrder,
-      `Sort order wrong: "${a.id}" (${a.status}) should come before "${b.id}" (${b.status})`);
-    if (aOrder === bOrder) {
-      assert((a.originalPrice || 0) >= (b.originalPrice || 0),
-        `Price order wrong within ${a.status}: "${a.id}" (${a.originalPrice}) should be >= "${b.id}" (${b.originalPrice})`);
+  const hasPaintingDiscount = p =>
+    typeof p.discountPercent === 'number' && p.discountPercent > 0 && p.discountPercent < 100;
+
+  return factory(statuses, hasPaintingDiscount, input);
+}
+
+test('Gallery sort puts for-sale first, then biggest discounts, then sold', () => {
+  // Synthetic input so the rules are exercised even when nothing is discounted
+  const input = [
+    { id: 'sold-a',       status: statuses.SOLD,     _randomGalleryOrder: 0 },
+    { id: 'plain-a',      status: statuses.FOR_SALE, _randomGalleryOrder: 1 },
+    { id: 'discount-10',  status: statuses.FOR_SALE, discountPercent: 10, _randomGalleryOrder: 2 },
+    { id: 'sold-b',       status: statuses.SOLD,     _randomGalleryOrder: 3 },
+    { id: 'discount-40',  status: statuses.FOR_SALE, discountPercent: 40, _randomGalleryOrder: 4 },
+    { id: 'plain-b',      status: statuses.FOR_SALE, _randomGalleryOrder: 5 },
+  ];
+
+  const order = runRealSortPaintings(input).map(p => p.id);
+
+  assertEqual(order.join(' → '), 'discount-40 → discount-10 → plain-a → plain-b → sold-a → sold-b',
+    'Gallery sort order changed');
+});
+
+test('Gallery sort never shows a sold painting before an available one', () => {
+  const sorted = runRealSortPaintings(paintings.map((p, i) => ({ ...p, _randomGalleryOrder: i })));
+
+  let seenSold = null;
+  sorted.forEach(p => {
+    if (p.status === statuses.SOLD) {
+      seenSold = seenSold || p.id;
+    } else if (seenSold) {
+      assert(false, `"${p.id}" (${p.status}) is sorted after sold painting "${seenSold}"`);
     }
-  }
+  });
 });
 
 test('Paintings with frameAvailable have a valid framedPrice', () => {
@@ -663,14 +790,29 @@ function loadCheckoutCatalog() {
   str = str.replace(/,(\s*[}\]])/g, '$1');
   const serverPaintings = JSON.parse(str);
 
+  // Extract BOOKMARKS catalog
+  let bookmarks = null;
+  const bookmarksMatch = content.match(/const BOOKMARKS = \{([\s\S]*?)\n\};/);
+  if (bookmarksMatch) {
+    let bstr = `{${bookmarksMatch[1]}}`;
+    bstr = bstr.replace(/\/\/.*$/gm, '');
+    bstr = bstr.replace(/'([^']*)'/g, '"$1"');
+    bstr = bstr.replace(/(\{|,)\s*([\w]+):/g, '$1"$2":');
+    bstr = bstr.replace(/,(\s*[}\]])/g, '$1');
+    bookmarks = JSON.parse(bstr);
+  }
+
   // Extract shipping constants
   const freeShippingMatch = content.match(/const FREE_SHIPPING_THRESHOLD = (\d+)/);
   const shippingCostMatch = content.match(/const SHIPPING_COST_SE = (\d+)/);
+  const shippingCostEUMatch = content.match(/const SHIPPING_COST_EU = (\d+)/);
 
   return {
     paintings: serverPaintings,
+    bookmarks,
     freeShippingThreshold: freeShippingMatch ? parseInt(freeShippingMatch[1]) : null,
     shippingCost: shippingCostMatch ? parseInt(shippingCostMatch[1]) : null,
+    shippingCostEU: shippingCostEUMatch ? parseInt(shippingCostEUMatch[1]) : null,
   };
 }
 
@@ -684,9 +826,44 @@ try {
 
 test('Checkout catalog covers all for-sale paintings', () => {
   const catalogIds = catalog.paintings.map(p => p.id);
-  paintings.filter(p => p.status === 'for_sale').forEach(p => {
+  // Bookmarks are priced per variant from the BOOKMARKS catalog instead
+  paintings.filter(p => p.status === 'for_sale' && p.type !== 'bookmark').forEach(p => {
     assertIncludes(catalogIds, p.id,
       `For-sale painting "${p.id}" is missing from the checkout price catalog in create-checkout.js`);
+  });
+});
+
+test('Checkout bookmark catalog matches bookmarks.json', () => {
+  const product = paintings.find(p => p.type === 'bookmark');
+
+  assert(catalog.bookmarks, 'Could not find BOOKMARKS catalog in create-checkout.js');
+  assertEqual(catalog.bookmarks.id, product.id,
+    'BOOKMARKS.id does not match the bookmark product id in paintings.js');
+  assertEqual(catalog.bookmarks.price, product.originalPrice,
+    `Bookmark price mismatch: catalog=${catalog.bookmarks.price}, paintings.js=${product.originalPrice}`);
+  assertEqual(catalog.bookmarks.multiBuyDiscountPercent, bookmarksData.multiBuyDiscountPercent,
+    'BOOKMARKS.multiBuyDiscountPercent is stale — run npm run build');
+  assertEqual(catalog.bookmarks.imageDir, bookmarksData.imageDir,
+    'BOOKMARKS.imageDir is stale — run npm run build');
+  assertEqual(catalog.bookmarks.imageExtension, bookmarksData.imageExtension,
+    'BOOKMARKS.imageExtension is stale — run npm run build');
+
+  bookmarksData.variants.forEach(v => {
+    assertEqual(catalog.bookmarks.variants[v.id], v.status,
+      `Bookmark "${v.id}" is "${v.status}" in bookmarks.json but "${catalog.bookmarks.variants[v.id]}" in the checkout catalog — run npm run build`);
+  });
+
+  Object.keys(catalog.bookmarks.variants).forEach(id => {
+    assert(bookmarksData.variants.some(v => v.id === id),
+      `Checkout catalog has unknown bookmark "${id}" — remove it or add it to bookmarks.json`);
+  });
+});
+
+test('Bookmarks are never sellable as a whole product', () => {
+  const catalogIds = catalog.paintings.map(p => p.id);
+  paintings.filter(p => p.type === 'bookmark').forEach(p => {
+    assert(!catalogIds.includes(p.id),
+      `"${p.id}" is in the PAINTINGS catalog — that would let the whole set be bought as one original`);
   });
 });
 
@@ -734,19 +911,45 @@ test('Checkout catalog sold statuses match paintings.js', () => {
 
 test('Checkout shipping constants match cart.js', () => {
   const cartContent = fs.readFileSync(path.join(__dirname, '../js/cart.js'), 'utf8');
-  const freeMatch = cartContent.match(/const FREE_SHIPPING = (\d+)/);
-  const cartFreeShipping = freeMatch ? parseInt(freeMatch[1]) : null;
 
-  assert(catalog.freeShippingThreshold !== null,
-    'FREE_SHIPPING_THRESHOLD not found in create-checkout.js');
-  assert(catalog.shippingCost !== null,
-    'SHIPPING_COST not found in create-checkout.js');
+  // The cart displays these and the server charges them — a mismatch means the
+  // customer is billed something other than what the drawer showed
+  const constants = [
+    ['FREE_SHIPPING_THRESHOLD', catalog.freeShippingThreshold],
+    ['SHIPPING_COST_SE', catalog.shippingCost],
+    ['SHIPPING_COST_EU', catalog.shippingCostEU],
+  ];
 
-  if (cartFreeShipping !== null) {
-    assertEqual(catalog.freeShippingThreshold, cartFreeShipping,
-      `Free shipping threshold mismatch: checkout=${catalog.freeShippingThreshold}, cart.js=${cartFreeShipping}`);
-  }
-  assertEqual(catalog.shippingCost, 59, 'SHIPPING_COST_SE in create-checkout.js should be 59 kr');
+  constants.forEach(([name, serverValue]) => {
+    assert(serverValue !== null && serverValue !== undefined,
+      `${name} not found in create-checkout.js`);
+
+    const match = cartContent.match(new RegExp(`const ${name} = (\\d+)`));
+    assert(match, `${name} not found in cart.js — the server charges it, so the cart must use the same constant`);
+
+    assertEqual(parseInt(match[1]), serverValue,
+      `${name} mismatch: cart.js=${match[1]}, create-checkout.js=${serverValue}`);
+  });
+});
+
+test('cart.js has no hardcoded shipping amounts left', () => {
+  const cartContent = fs.readFileSync(path.join(__dirname, '../js/cart.js'), 'utf8');
+  const values = [catalog.freeShippingThreshold, catalog.shippingCost, catalog.shippingCostEU];
+
+  const offenders = [];
+  cartContent.split('\n').forEach((line, i) => {
+    // Skip the constant declarations themselves
+    if (/^\s*const (FREE_SHIPPING_THRESHOLD|SHIPPING_COST_SE|SHIPPING_COST_EU) = /.test(line)) return;
+    values.forEach(value => {
+      if (new RegExp(`\\b${value}\\b`).test(line)) {
+        offenders.push(`cart.js:${i + 1}: ${line.trim()}`);
+      }
+    });
+  });
+
+  assert(offenders.length === 0,
+    'Shipping amounts are hardcoded instead of using the shared constants, so the ' +
+    'sync test above cannot protect them:\n  ' + offenders.join('\n  '));
 });
 
 // ─────────────────────────────────────────────────────────────

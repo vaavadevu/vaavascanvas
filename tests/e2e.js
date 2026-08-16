@@ -6,9 +6,22 @@
  */
 
 const { chromium } = require('playwright');
-const { spawn } = require('child_process');
+const httpServer = require('http-server');
 const path = require('path');
 const fs = require('fs');
+
+// http-server's `union` dependency reads the long-deprecated res._headers on
+// every response (DEP0066). It only affects the dev server that hosts these
+// tests, never the deployed site, so drop that one warning — anything else,
+// including deprecations in our own code, still gets through.
+const emitWarning = process.emitWarning.bind(process);
+process.emitWarning = (warning, ...args) => {
+  const code = warning?.code
+    || args.find(arg => arg && typeof arg === 'object' && arg.code)?.code
+    || args.find(arg => typeof arg === 'string' && /^DEP\d+$/.test(arg));
+  if (code === 'DEP0066') return;
+  emitWarning(warning, ...args);
+};
 
 // Color output helpers
 const colors = {
@@ -49,54 +62,39 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
-// Start HTTP server with retry logic - returns {server, port}
+// Start an in-process static server — running it inside this process (rather
+// than spawning `npx http-server` through a shell) means it always dies with
+// the test run instead of surviving as an orphan that blocks the next one.
 function startServer() {
   return new Promise((resolve, reject) => {
-    let retries = 0;
     const maxRetries = 3;
     const basePort = 8888;
+    const projectRoot = path.join(__dirname, '..');
 
-    function attemptStart(port) {
-      const projectRoot = path.join(__dirname, '..');
-      const server = spawn('npx', ['http-server', projectRoot, '-p', port.toString(), '-s'], {
-        stdio: 'pipe',
-        shell: true
-      });
+    function attemptStart(port, retries) {
+      const server = httpServer.createServer({ root: projectRoot, cache: -1, silent: true });
 
-      let started = false;
-      let errorOccurred = false;
-
-      server.stdout.on('data', (data) => {
-        if (!started && data.toString().includes('Hit CTRL-C')) {
-          started = true;
-          resolve({ server, port });
-        }
-      });
-
-      server.stderr.on('data', (data) => {
-        const errorMsg = data.toString();
-        if (!started && errorMsg.includes('EADDRINUSE')) {
-          errorOccurred = true;
-          server.kill();
+      const onError = (err) => {
+        if (err.code === 'EADDRINUSE') {
           if (retries < maxRetries) {
-            retries++;
-            log.warn(`Port ${port} in use, retrying on port ${basePort + retries}...`);
-            attemptStart(basePort + retries);
+            log.warn(`Port ${port} in use, retrying on port ${port + 1}...`);
+            attemptStart(port + 1, retries + 1);
           } else {
             reject(new Error(`Could not find available port after ${maxRetries} retries`));
           }
-        } else if (!started && /EACCES|ENOENT|Cannot find module/i.test(errorMsg)) {
-          reject(new Error(`Server error: ${errorMsg}`));
+          return;
         }
-      });
+        reject(new Error(`Server error: ${err.message}`));
+      };
 
-      // Fallback: resolve after 2 seconds
-      setTimeout(() => {
-        if (!started && !errorOccurred) resolve({ server, port });
-      }, 2000);
+      server.server.once('error', onError);
+      server.listen(port, '127.0.0.1', () => {
+        server.server.removeListener('error', onError);
+        resolve({ server, port });
+      });
     }
 
-    attemptStart(basePort);
+    attemptStart(basePort, 0);
   });
 }
 
@@ -172,10 +170,7 @@ async function runTests() {
     server = serverInfo.server;
     const port = serverInfo.port;
 
-    log.info(`Starting HTTP server on port ${port}...`);
-
-    // Wait for server to be ready
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    log.info(`Serving the site on port ${port}...`);
 
     // Launch browser
     log.info('Launching headless browser...\n');
@@ -198,14 +193,27 @@ async function runTests() {
       await test(`${label} loads without console errors`, async () => {
         const page = await browser.newPage();
         const consoleErrors = [];
+        const failedRequests = [];
 
         page.on('console', (msg) => {
           if (msg.type() === 'error') consoleErrors.push(msg.text());
         });
+        // Chromium's console text for a failed request omits the URL, so track
+        // responses separately — otherwise a 404 reports as an unhelpful
+        // "Failed to load resource" with no clue which file is missing
+        page.on('response', (res) => {
+          if (!res.ok()) failedRequests.push(`${res.status()} ${res.url()}`);
+        });
+        page.on('requestfailed', (req) => {
+          failedRequests.push(`${req.failure()?.errorText || 'failed'} ${req.url()}`);
+        });
 
         const response = await page.goto(url, { waitUntil: 'networkidle' });
         assert(response.ok(), `Page load failed with status ${response.status()}`);
-        assert(consoleErrors.length === 0, `Console errors: ${consoleErrors.join(', ')}`);
+        assert(consoleErrors.length === 0,
+          `Console errors: ${consoleErrors.join(', ')}` +
+          (failedRequests.length ? `\n  Failed requests: ${failedRequests.join(', ')}` : ''));
+        assert(failedRequests.length === 0, `Failed requests: ${failedRequests.join(', ')}`);
 
         await page.close();
       });
@@ -409,7 +417,7 @@ async function runTests() {
       await browser.close();
     }
     if (server) {
-      server.kill();
+      server.close();
     }
 
     process.exit(errorCount > 0 ? 1 : 0);

@@ -7,10 +7,36 @@ const path = require('path');
 const paintingsPath = path.join(__dirname, '..', 'data', 'paintings.json');
 const paintingsData = JSON.parse(fs.readFileSync(paintingsPath, 'utf8'));
 
-// Transform each painting object to the server format
+// Read the per-variant bookmark inventory — the source of truth for which
+// individual bookmarks are still available
+const bookmarksPath = path.join(__dirname, '..', 'data', 'bookmarks.json');
+const bookmarksData = JSON.parse(fs.readFileSync(bookmarksPath, 'utf8'));
+
+const bookmarkImagePath = id => `${bookmarksData.imageDir}${id}${bookmarksData.imageExtension}`;
+const bookmarkSoldVariants = bookmarksData.variants
+  .filter(v => v.status === 'sold')
+  .map(v => bookmarkImagePath(v.id));
+const bookmarkImageList = [
+  bookmarkImagePath(bookmarksData.cover),
+  ...bookmarksData.variants.map(v => bookmarkImagePath(v.id)),
+];
+const allBookmarksSold = bookmarksData.variants.every(v => v.status === 'sold');
+
+// Fold the bookmark inventory into the bookmark product entry so the rest of
+// the pipeline sees one shape
+paintingsData.forEach(painting => {
+  if (painting.type !== 'bookmark') return;
+  if (allBookmarksSold) painting.status = 'sold';
+  painting.multiBuyDiscountPercent = bookmarksData.multiBuyDiscountPercent;
+  painting.soldVariants = bookmarkSoldVariants;
+  painting.images = { desktop: bookmarkImageList, mobile: bookmarkImageList };
+});
+
+// Transform each painting object to the server format. Bookmarks are priced
+// per variant and get their own catalog below.
 const serverPaintings = paintingsData.filter(painting => {
   // Only include paintings that have pricing
-  return painting.originalPrice || painting.framedPrice;
+  return (painting.originalPrice || painting.framedPrice) && painting.type !== 'bookmark';
 }).map(painting => {
   const serverPainting = {
     id: painting.id,
@@ -81,6 +107,33 @@ ${formattedPaintings}
 
 checkoutContent = checkoutContent.replace(paintingsRegex, newPaintingsArray);
 
+// Replace the BOOKMARKS catalog so the server can price and reject variants itself
+const bookmarkProduct = paintingsData.find(p => p.type === 'bookmark');
+if (!bookmarkProduct) {
+  throw new Error('No painting entry with type "bookmark" found in paintings.json');
+}
+
+const variantEntries = bookmarksData.variants
+  .map(v => `    '${v.id}': '${v.status}',`)
+  .join('\n');
+
+const newBookmarksCatalog = `const BOOKMARKS = {
+  id: '${bookmarkProduct.id}',
+  price: ${bookmarkProduct.originalPrice},
+  multiBuyDiscountPercent: ${bookmarksData.multiBuyDiscountPercent},
+  imageDir: '${bookmarksData.imageDir}',
+  imageExtension: '${bookmarksData.imageExtension}',
+  variants: {
+${variantEntries}
+  },
+};`;
+
+const bookmarksRegex = /const BOOKMARKS = \{[\s\S]*?\n\};/;
+if (!bookmarksRegex.test(checkoutContent)) {
+  throw new Error('Could not find BOOKMARKS catalog in create-checkout.js');
+}
+checkoutContent = checkoutContent.replace(bookmarksRegex, newBookmarksCatalog);
+
 // Write back the updated checkout file
 fs.writeFileSync(checkoutPath, checkoutContent);
 
@@ -123,6 +176,9 @@ const clientPaintings = paintingsData.map(painting => {
   if (painting.type) {
     clientPainting.type = painting.type === 'clay' ? 'TYPE.CLAY' :
                           painting.type === 'bookmark' ? 'TYPE.BOOKMARK' : 'TYPE.PAINTING';
+  }
+  if (typeof painting.multiBuyDiscountPercent === 'number') {
+    clientPainting.multiBuyDiscountPercent = painting.multiBuyDiscountPercent;
   }
   if (painting.soldVariants) clientPainting.soldVariants = indentJson(painting.soldVariants);
   if (painting.images) clientPainting.images = indentJson(painting.images);

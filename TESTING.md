@@ -1,11 +1,12 @@
 # Vaavascanvas Testing Guide
 
-This project includes two levels of automated testing:
+This project includes three levels of automated testing:
 
 1. **Data Validation Tests** - Check data consistency and structure (runs instantly)
-2. **End-to-End (E2E) Tests** - Open actual pages in a browser, test user interactions, check for errors (takes ~30 seconds)
+2. **Checkout Logic Tests** - Run the real payment function against a stubbed Stripe to check what customers can actually be charged (runs instantly)
+3. **End-to-End (E2E) Tests** - Open actual pages in a browser, test user interactions, check for errors (takes ~30 seconds)
 
-Both test suites run on every push and pull request to catch issues before deployment.
+All three suites run on every push and pull request to catch issues before deployment.
 
 ## What Gets Tested
 
@@ -17,9 +18,10 @@ Both test suites run on every push and pull request to catch issues before deplo
 - All painting description keys reference existing translations
 
 ### 2. **Image Inventory Validation**
-- All painting IDs in `counts.json` exist in `paintings.js`
-- All image counts in `counts.json` are valid (positive numbers)
-- Explicit `imageCount` properties in paintings match `counts.json`
+- Every painting resolves to an image file that actually exists on disk
+- All painting IDs in `counts.json` exist in `paintings.js`, and every painting using the folder convention has a `counts.json` entry
+- `counts.json` matches the number of images actually on disk
+- `bookmarks.json` is a valid inventory, and the generated copies in `paintings.js` and `create-checkout.js` are in sync with it
 
 ### 3. **Translation System Validation**
 - All translation keys have both Swedish (`sv`) and English (`en`) versions
@@ -31,15 +33,25 @@ Both test suites run on every push and pull request to catch issues before deplo
 - All `data-i18n-ph` (placeholder) attributes reference existing translation keys
 
 ### 5. **Form Logic Validation**
-- "Originals" dropdown only includes FOR_SALE paintings
-- "Prints" dropdown includes all paintings
-- All FOR_SALE paintings have valid pricing for display
+- The "Prints" dropdown includes all paintings on purpose (a sold original can still be ordered as a print), so every entry must have a preview image that resolves
 
 ### 6. **Gallery Logic Validation**
-- Paintings can be sorted correctly by status and price
-- All paintings have valid filter status
+- The real `sortPaintings()` from `gallery.js` puts for-sale first, biggest discounts first within that, then sold
+- A sold painting is never sorted ahead of an available one
+- Frame pricing is coherent (`framedPrice` above `originalPrice`, `framedOnly` has no `originalPrice`)
 
-### 7. **End-to-End Browser Tests** (E2E)
+### 7. **Checkout Logic Tests** (`tests/checkout.js`)
+Runs the real `functions/api/create-checkout.js` with Stripe stubbed out, so these
+check behaviour rather than data:
+- Client-supplied prices are ignored — the server charges its own catalog price
+- Sold paintings and sold bookmarks are rejected; one sold item rejects the whole order
+- Quantities are floored to whole positive numbers, and bookmarks are capped at one each
+- The same bookmark cannot be ordered twice, and the set cannot be bought as a single product
+- Multi-buy bookmark pricing (first full price, rest discounted) matches `bookmarks.json`
+- Shipping matches the threshold, Swedish, and EU rates
+- The pricing helpers duplicated in `js/paintings.js` and `create-checkout.js` produce identical results
+
+### 8. **End-to-End Browser Tests** (E2E)
 - Main page loads without JavaScript console errors
 - Hero section renders correctly
 - Gallery displays all paintings
@@ -66,11 +78,16 @@ npx playwright install chromium
 npm test
 ```
 
-This runs both validation tests and E2E tests sequentially.
+This runs validation, checkout, and E2E tests sequentially.
 
 ### Run Only Validation Tests (Fast)
 ```bash
 node tests/validate.js
+```
+
+### Run Only Checkout Tests (Fast)
+```bash
+node tests/checkout.js
 ```
 
 ### Run Only E2E Tests (Slower)

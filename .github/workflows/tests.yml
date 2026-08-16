@@ -26,6 +26,9 @@ jobs:
       - name: Run data validation tests
         run: node tests/validate.js
 
+      - name: Run checkout logic tests
+        run: node tests/checkout.js
+
       - name: Install Playwright browsers
         run: npx playwright install chromium
 

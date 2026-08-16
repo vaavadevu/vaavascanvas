@@ -443,10 +443,11 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 120,
     type: TYPE.BOOKMARK,
+    multiBuyDiscountPercent: 10,
     soldVariants: [
       "/images/bookmarks/cheetah.jpg",
-      "/images/bookmarks/giraffe.jpg",
       "/images/bookmarks/chicken1.jpg",
+      "/images/bookmarks/giraffe.jpg",
       "/images/bookmarks/pingvin.jpg",
       "/images/bookmarks/rabbit.jpg"
     ],

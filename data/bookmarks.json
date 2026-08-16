@@ -1,0 +1,18 @@
+{
+  "imageDir": "/images/bookmarks/",
+  "imageExtension": ".jpg",
+  "cover": "cover",
+  "multiBuyDiscountPercent": 10,
+  "variants": [
+    { "id": "cheetah", "status": "sold" },
+    { "id": "chicken1", "status": "sold" },
+    { "id": "chicken2", "status": "for_sale" },
+    { "id": "giraffe", "status": "sold" },
+    { "id": "mallard", "status": "for_sale" },
+    { "id": "pigeon", "status": "for_sale" },
+    { "id": "piggy", "status": "for_sale" },
+    { "id": "pingvin", "status": "sold" },
+    { "id": "rabbit", "status": "sold" },
+    { "id": "wilddog", "status": "for_sale" }
+  ]
+}

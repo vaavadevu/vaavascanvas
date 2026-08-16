@@ -139,6 +139,14 @@ const wrapper = document.createElement('div');
     buyBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       const paintingType = painting.type || TYPE.PAINTING;
+
+      // Bookmarks are sold per variant — send the buyer to the picker instead
+      // of guessing which one they meant
+      if (paintingType === TYPE.BOOKMARK) {
+        window.location.href = `view.html?painting=${painting.id}`;
+        return;
+      }
+
       const itemType = paintingType === TYPE.PAINTING ? 'original' : paintingType;
       const cartItem = {
         id: painting.framedOnly ? `${painting.id}-framed` : painting.id,

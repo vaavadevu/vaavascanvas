@@ -2,11 +2,39 @@
 // VAAVASCANVAS – CART & CHECKOUT
 // ============================================================
 
+// Shipping rates — must stay in sync with functions/api/create-checkout.js,
+// which recalculates them server-side (tests/validate.js enforces this)
+const FREE_SHIPPING_THRESHOLD = 599;
+const SHIPPING_COST_SE = 59;
+const SHIPPING_COST_EU = 149;
+
 const Cart = (() => {
   let items = JSON.parse(localStorage.getItem('vc_cart') || '[]');
   let selectedCountry = '';
 
+  // Bookmarks are priced as a group: first one full price, the rest discounted.
+  // Recomputed on every change so the cart total matches what create-checkout.js
+  // independently calculates from the same cart order.
+  function repriceBookmarks() {
+    // Prefer the catalog over whatever an older build stored in localStorage
+    const product = (typeof paintings !== 'undefined' && Array.isArray(paintings))
+      ? paintings.find(p => p.type === 'bookmark')
+      : null;
+
+    let seen = 0;
+    items.forEach(i => {
+      if (i.type !== 'bookmark') return;
+      const base = product?.originalPrice ?? i.basePrice ?? i.price;
+      const discount = i.multiBuyDiscountPercent ?? product?.multiBuyDiscountPercent ?? 0;
+      i.basePrice = base;
+      i.multiBuyDiscountPercent = discount;
+      i.price = seen === 0 ? base : Math.round(base * (100 - discount) / 100);
+      seen++;
+    });
+  }
+
   function save() {
+    repriceBookmarks();
     localStorage.setItem('vc_cart', JSON.stringify(items));
     render();
     updateBadge();
@@ -29,23 +57,30 @@ const Cart = (() => {
     }
   }
 
+  // One-of-a-kind pieces: a second copy can never be ordered
+  function isUniqueItem(item) {
+    return item.type === 'original' || item.type === 'bookmark';
+  }
+
   function add(item) {
     const key = `${item.id}-${item.size || 'original'}`;
 
-    if (item.type === 'original') {
+    if (isUniqueItem(item)) {
       const existing = items.find(i => i.key === key);
       if (existing) {
         openCart();
         showToast(`"${item.title}" ${t('cart_toast_already')}`);
         return;
       }
-      // Remove any other frame-variant of the same painting
-      const baseId = item.paintingBaseId || item.id.replace(/-framed$/, '');
-      items = items.filter(i => {
-        if (i.type !== 'original') return true;
-        const iBase = i.paintingBaseId || i.id.replace(/-framed$/, '');
-        return iBase !== baseId;
-      });
+      if (item.type === 'original') {
+        // Remove any other frame-variant of the same painting
+        const baseId = item.paintingBaseId || item.id.replace(/-framed$/, '');
+        items = items.filter(i => {
+          if (i.type !== 'original') return true;
+          const iBase = i.paintingBaseId || i.id.replace(/-framed$/, '');
+          return iBase !== baseId;
+        });
+      }
     } else {
       const existing = items.find(i => i.key === key);
       if (existing) {
@@ -101,9 +136,9 @@ const Cart = (() => {
   }
 
   function shipping() {
-    if (selectedCountry === 'EU') return 149;
+    if (selectedCountry === 'EU') return SHIPPING_COST_EU;
     const sub = subtotal();
-    return sub >= 599 ? 0 : 59;
+    return sub >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST_SE;
   }
 
   function total() {
@@ -177,7 +212,7 @@ const Cart = (() => {
               : `${t('cart_frame_add')} <em>+${(item.framedPrice - item.basePrice).toLocaleString('sv-SE')} kr</em>`
             }</span>
           </label>` : ''}
-          ${item.type === 'original' ? '' : `
+          ${isUniqueItem(item) ? '' : `
           <div class="cart-item-qty">
             <button onclick="Cart.updateQty('${item.key}', -1)">−</button>
             <span>${item.qty || 1}</span>
@@ -194,17 +229,17 @@ const Cart = (() => {
     if (totalEl) totalEl.textContent = total().toLocaleString('sv-SE') + ' kr';
 
     const shippingDisplayEl = document.getElementById('cart-shipping-display');
-    const FREE_SHIPPING = 599;
+    const FREE_SHIPPING = FREE_SHIPPING_THRESHOLD;
     const sub = subtotal();
     const isEU = selectedCountry === 'EU';
 
     if (shippingDisplayEl) {
       if (isEU) {
-        shippingDisplayEl.innerHTML = '<span class="shipping-cost">149 kr</span>';
+        shippingDisplayEl.innerHTML = `<span class="shipping-cost">${SHIPPING_COST_EU} kr</span>`;
       } else if (sub >= FREE_SHIPPING) {
-        shippingDisplayEl.innerHTML = `<s class="shipping-old-price">59 kr</s> <span class="shipping-free-label">${t('cart_free_shipping')}</span>`;
+        shippingDisplayEl.innerHTML = `<s class="shipping-old-price">${SHIPPING_COST_SE} kr</s> <span class="shipping-free-label">${t('cart_free_shipping')}</span>`;
       } else {
-        shippingDisplayEl.innerHTML = '<span class="shipping-cost">59 kr</span>';
+        shippingDisplayEl.innerHTML = `<span class="shipping-cost">${SHIPPING_COST_SE} kr</span>`;
       }
     }
     const progressEl = document.getElementById('cart-shipping-progress');

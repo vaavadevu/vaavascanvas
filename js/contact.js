@@ -98,7 +98,14 @@ function updateArtworkPreview(select, previewId) {
     preview.style.display = "none";
     return;
   }
-  preview.src           = `/images/paintings/${paintingId}/desktop/01.jpg`;
+  // Not every product follows the /images/paintings/<id>/ convention (bookmarks
+  // carry an explicit image list), so resolve through the shared helper
+  const painting = typeof paintings !== "undefined"
+    ? paintings.find(p => p.id === paintingId)
+    : null;
+  preview.src           = painting && typeof getPaintingImagePaths === "function"
+    ? getPaintingImagePaths(painting)[0]
+    : `/images/paintings/${paintingId}/desktop/01.jpg`;
   preview.alt           = select.options[select.selectedIndex].dataset.title;
   preview.style.display = "block";
 }
