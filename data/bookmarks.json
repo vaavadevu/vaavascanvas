@@ -2,7 +2,8 @@
   "imageDir": "/images/bookmarks/",
   "imageExtension": ".jpg",
   "cover": "cover",
-  "multiBuyDiscountPercent": 10,
+  "multiBuyPrice": 100,
+  "multiBuyMinQuantity": 2,
   "variants": [
     { "id": "cheetah", "status": "sold" },
     { "id": "chicken1", "status": "sold" },

@@ -137,7 +137,7 @@ function loadPaintingsData() {
 
   const paintings = JSON.parse(paintingsStr);
 
-  return { paintings, statuses };
+  return { paintings, statuses, mediums };
 }
 
 function loadTranslationsData() {
@@ -222,11 +222,13 @@ console.log(colors.blue + 'VAAVASCANVAS PRE-DEPLOYMENT VALIDATION TESTS' + color
 console.log(colors.blue + '═══════════════════════════════════════════════════════════' + colors.reset + '\n');
 
 // Load data once
-let paintings, statuses, keys, counts, htmlFiles, bookmarksData;
+let paintings, statuses, mediums, keys, counts, htmlFiles, bookmarksData;
 
 try {
-  paintings = loadPaintingsData().paintings;
-  statuses = loadPaintingsData().statuses;
+  const paintingsData = loadPaintingsData();
+  paintings = paintingsData.paintings;
+  statuses = paintingsData.statuses;
+  mediums = paintingsData.mediums;
   keys = loadTranslationsData();
   counts = loadCountsData();
   htmlFiles = loadHtmlFiles();
@@ -324,6 +326,20 @@ test('Painting descKeys reference existing translations', () => {
   });
 });
 
+test('Painting mediums are declared and translated', () => {
+  const validMediums = Object.values(mediums);
+
+  paintings.forEach(p => {
+    assert(p.medium, `Painting ${p.id} has no medium`);
+    assertIncludes(validMediums, p.medium,
+      `Painting ${p.id} uses medium "${p.medium}", which is not in the MEDIUM constants in paintings.js`);
+    // page-view.js renders this straight through t(), so an untranslated
+    // medium would print the raw key on the product page
+    assert(keys[p.medium],
+      `Painting ${p.id} medium "${p.medium}" has no translation — the product page would show the raw key`);
+  });
+});
+
 // Bookmark ids carry no extension — the image path is imageDir + id + imageExtension
 function bookmarkImagePath(id) {
   return `${bookmarksData.imageDir}${id}${bookmarksData.imageExtension}`;
@@ -336,9 +352,10 @@ test('bookmarks.json is a valid inventory', () => {
     'bookmarks.json needs an imageExtension like ".jpg"');
   assert(Array.isArray(bookmarksData.variants) && bookmarksData.variants.length > 0,
     'bookmarks.json needs a non-empty variants array');
-  assert(typeof bookmarksData.multiBuyDiscountPercent === 'number' &&
-    bookmarksData.multiBuyDiscountPercent >= 0 && bookmarksData.multiBuyDiscountPercent < 100,
-    `bookmarks.json has an invalid multiBuyDiscountPercent: ${bookmarksData.multiBuyDiscountPercent}`);
+  assert(typeof bookmarksData.multiBuyPrice === 'number' && bookmarksData.multiBuyPrice > 0,
+    `bookmarks.json has an invalid multiBuyPrice: ${bookmarksData.multiBuyPrice}`);
+  assert(Number.isInteger(bookmarksData.multiBuyMinQuantity) && bookmarksData.multiBuyMinQuantity >= 2,
+    `bookmarks.json multiBuyMinQuantity must be an integer of 2 or more, got: ${bookmarksData.multiBuyMinQuantity}`);
 
   const root = path.join(__dirname, '..');
   const seen = new Set();
@@ -394,8 +411,13 @@ test('Generated bookmark data matches bookmarks.json', () => {
     'paintings.js bookmark images are stale — run npm run build');
   assertEqual(JSON.stringify(product.soldVariants), JSON.stringify(expectedSold),
     'paintings.js bookmark soldVariants are stale — run npm run build');
-  assertEqual(product.multiBuyDiscountPercent, bookmarksData.multiBuyDiscountPercent,
-    'paintings.js bookmark discount is stale — run npm run build');
+  assertEqual(product.multiBuyPrice, bookmarksData.multiBuyPrice,
+    'paintings.js bookmark multi-buy price is stale — run npm run build');
+  assertEqual(product.multiBuyMinQuantity, bookmarksData.multiBuyMinQuantity,
+    'paintings.js bookmark multi-buy threshold is stale — run npm run build');
+  assert(product.multiBuyPrice < product.originalPrice,
+    `The multi-buy price (${product.multiBuyPrice}) must be below the single price (${product.originalPrice}), ` +
+    'otherwise buying more costs more');
 
   const allSold = bookmarksData.variants.every(v => v.status === 'sold');
   assertEqual(product.status, allSold ? 'sold' : 'for_sale',
@@ -604,6 +626,19 @@ test('All translation keys have English (en) version', () => {
     assert(langs.en !== undefined, `Translation key "${key}" missing English (en) version`);
     assert(typeof langs.en === 'string' && langs.en.length > 0,
       `Translation key "${key}" has empty English version`);
+  });
+});
+
+test('Translations use the same {placeholders} in every language', () => {
+  // A missing placeholder in one language silently renders "{single} kr styck"
+  Object.entries(keys).forEach(([key, langs]) => {
+    const placeholdersFor = text => (String(text).match(/\{\w+\}/g) || []).sort().join(', ');
+    const reference = placeholdersFor(langs.sv);
+
+    Object.entries(langs).forEach(([lang, value]) => {
+      assertEqual(placeholdersFor(value), reference,
+        `Translation key "${key}" has different placeholders in "${lang}" than in "sv"`);
+    });
   });
 });
 
@@ -841,8 +876,10 @@ test('Checkout bookmark catalog matches bookmarks.json', () => {
     'BOOKMARKS.id does not match the bookmark product id in paintings.js');
   assertEqual(catalog.bookmarks.price, product.originalPrice,
     `Bookmark price mismatch: catalog=${catalog.bookmarks.price}, paintings.js=${product.originalPrice}`);
-  assertEqual(catalog.bookmarks.multiBuyDiscountPercent, bookmarksData.multiBuyDiscountPercent,
-    'BOOKMARKS.multiBuyDiscountPercent is stale — run npm run build');
+  assertEqual(catalog.bookmarks.multiBuyPrice, bookmarksData.multiBuyPrice,
+    'BOOKMARKS.multiBuyPrice is stale — run npm run build');
+  assertEqual(catalog.bookmarks.multiBuyMinQuantity, bookmarksData.multiBuyMinQuantity,
+    'BOOKMARKS.multiBuyMinQuantity is stale — run npm run build');
   assertEqual(catalog.bookmarks.imageDir, bookmarksData.imageDir,
     'BOOKMARKS.imageDir is stale — run npm run build');
   assertEqual(catalog.bookmarks.imageExtension, bookmarksData.imageExtension,

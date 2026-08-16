@@ -203,6 +203,14 @@ const keys = {
     sv: "Såld",
     en: "Sold",
   },
+  modal_bookmark_price_note: {
+    sv: "{single} kr styck – {multi} kr styck om du köper fler än ett",
+    en: "{single} kr each – {multi} kr each when you buy more than one",
+  },
+  pageview_multibuy_note: {
+    sv: "{multi} kr styck om du köper fler än ett",
+    en: "{multi} kr each when you buy more than one",
+  },
   modal_buy_btn: {
     sv: "Lägg i varukorg",
     en: "Add to cart",
@@ -474,6 +482,10 @@ const keys = {
   medium_acrylic_canvas: {
     sv: "Akryl på duk",
     en: "Acrylic on canvas",
+  },
+  medium_watercolor_paper_laminated: {
+    sv: "Akvarell på papper, laminerat",
+    en: "Watercolor on paper, laminated",
   },
 
   // ── Painting descriptions ──────────────────────────────────────

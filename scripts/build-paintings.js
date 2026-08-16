@@ -27,7 +27,8 @@ const allBookmarksSold = bookmarksData.variants.every(v => v.status === 'sold');
 paintingsData.forEach(painting => {
   if (painting.type !== 'bookmark') return;
   if (allBookmarksSold) painting.status = 'sold';
-  painting.multiBuyDiscountPercent = bookmarksData.multiBuyDiscountPercent;
+  painting.multiBuyPrice = bookmarksData.multiBuyPrice;
+  painting.multiBuyMinQuantity = bookmarksData.multiBuyMinQuantity;
   painting.soldVariants = bookmarkSoldVariants;
   painting.images = { desktop: bookmarkImageList, mobile: bookmarkImageList };
 });
@@ -120,7 +121,8 @@ const variantEntries = bookmarksData.variants
 const newBookmarksCatalog = `const BOOKMARKS = {
   id: '${bookmarkProduct.id}',
   price: ${bookmarkProduct.originalPrice},
-  multiBuyDiscountPercent: ${bookmarksData.multiBuyDiscountPercent},
+  multiBuyPrice: ${bookmarksData.multiBuyPrice},
+  multiBuyMinQuantity: ${bookmarksData.multiBuyMinQuantity},
   imageDir: '${bookmarksData.imageDir}',
   imageExtension: '${bookmarksData.imageExtension}',
   variants: {
@@ -150,6 +152,31 @@ function indentJson(value) {
     .join('\n');
 }
 
+// Media are declared as MEDIUM constants in js/paintings.js; map each JSON
+// value ("medium_acrylic_canvas") back to its constant (MEDIUM.ACRYLIC_CANVAS)
+// so a product can state what it is actually made of
+const mediumBlock = paintingsJsContent.match(/const MEDIUM = \{([\s\S]*?)\};/);
+if (!mediumBlock) throw new Error('Could not find the MEDIUM constants in js/paintings.js');
+
+const mediumConstantByValue = new Map(
+  [...mediumBlock[1].matchAll(/(\w+):\s*"([^"]+)"/g)].map(m => [m[2], m[1]])
+);
+
+function mediumConstant(painting) {
+  const value = painting.medium;
+  if (!value) throw new Error(`Painting "${painting.id}" has no medium`);
+
+  const name = mediumConstantByValue.get(value);
+  if (!name) {
+    throw new Error(
+      `Painting "${painting.id}" uses medium "${value}", which is not declared in the ` +
+      `MEDIUM constants in js/paintings.js — add it there and add a matching ` +
+      `translation key to js/translations.js`
+    );
+  }
+  return `MEDIUM.${name}`;
+}
+
 // Generate the full paintings array for client-side
 const clientPaintings = paintingsData.map(painting => {
   const clientPainting = {
@@ -158,7 +185,7 @@ const clientPaintings = paintingsData.map(painting => {
     descKey: `"${painting.descKey}"`,
     status: painting.status === 'sold' ? 'STATUS.SOLD' :
             painting.status === 'personal' ? 'STATUS.PERSONAL' : 'STATUS.FOR_SALE',
-    medium: 'MEDIUM.ACRYLIC_CANVAS'
+    medium: mediumConstant(painting)
   };
 
   if (painting.width) clientPainting.width = painting.width;
@@ -177,8 +204,9 @@ const clientPaintings = paintingsData.map(painting => {
     clientPainting.type = painting.type === 'clay' ? 'TYPE.CLAY' :
                           painting.type === 'bookmark' ? 'TYPE.BOOKMARK' : 'TYPE.PAINTING';
   }
-  if (typeof painting.multiBuyDiscountPercent === 'number') {
-    clientPainting.multiBuyDiscountPercent = painting.multiBuyDiscountPercent;
+  if (typeof painting.multiBuyPrice === 'number') {
+    clientPainting.multiBuyPrice = painting.multiBuyPrice;
+    clientPainting.multiBuyMinQuantity = painting.multiBuyMinQuantity;
   }
   if (painting.soldVariants) clientPainting.soldVariants = indentJson(painting.soldVariants);
   if (painting.images) clientPainting.images = indentJson(painting.images);

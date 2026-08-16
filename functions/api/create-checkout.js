@@ -42,7 +42,8 @@ const PAINTINGS = [
 const BOOKMARKS = {
   id: 'bookmarks',
   price: 120,
-  multiBuyDiscountPercent: 10,
+  multiBuyPrice: 100,
+  multiBuyMinQuantity: 2,
   imageDir: '/images/bookmarks/',
   imageExtension: '.jpg',
   variants: {
@@ -119,10 +120,11 @@ function resolveBookmarkVariant(item) {
   return variant;
 }
 
-// First bookmark at full price, every additional one discounted
-function getBookmarkPrice(alreadyInOrder) {
-  if (alreadyInOrder === 0) return BOOKMARKS.price;
-  return Math.round(BOOKMARKS.price * (100 - BOOKMARKS.multiBuyDiscountPercent) / 100);
+// Buying several at once drops every bookmark to the lower per-piece price
+function getBookmarkUnitPrice(bookmarksInOrder) {
+  return bookmarksInOrder >= BOOKMARKS.multiBuyMinQuantity
+    ? BOOKMARKS.multiBuyPrice
+    : BOOKMARKS.price;
 }
 
 export async function onRequestPost(context) {
@@ -144,8 +146,14 @@ export async function onRequestPost(context) {
 
     const line_items = [];
     let subtotal = 0;
-    let bookmarksInOrder = 0;
     const claimedBookmarks = new Set();
+
+    // The per-piece price depends on how many bookmarks the whole order holds,
+    // so it is settled before any line item is priced. Invalid bookmarks reject
+    // the order outright, so counting them up front cannot inflate the discount.
+    const bookmarkUnitPrice = getBookmarkUnitPrice(
+      items.filter(item => item.type === 'bookmark').length
+    );
 
     const invalidItem = item => Response.json(
       { error: `Invalid item: ${item.id} (${item.type}${item.size ? ', ' + item.size : ''})` },
@@ -160,8 +168,7 @@ export async function onRequestPost(context) {
         if (!variant || claimedBookmarks.has(variant)) return invalidItem(item);
         claimedBookmarks.add(variant);
 
-        const price = getBookmarkPrice(bookmarksInOrder);
-        bookmarksInOrder += 1;
+        const price = bookmarkUnitPrice;
         subtotal += price;
 
         line_items.push({

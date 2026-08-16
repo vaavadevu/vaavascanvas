@@ -302,17 +302,37 @@ async function runTests() {
 
   console.log(colors.blue + '\n[3] BOOKMARK RULES' + colors.reset);
 
-  await test('First bookmark is full price, the rest are discounted', async () => {
-    const [a, b, c] = availableBookmarks;
-    assert(c, 'Need at least three available bookmarks to test multi-buy pricing');
+  await test('A single bookmark pays the full per-piece price', async () => {
+    const result = await checkout(onRequestPost, [bookmark(availableBookmarks[0])]);
+    assert(!result.error, `Unexpected rejection: ${result.error}`);
+    assertEqual(result.products[0].amount, bookmarks.price,
+      'One bookmark on its own should not get the multi-buy price');
+  });
 
-    const result = await checkout(onRequestPost, [bookmark(a), bookmark(b), bookmark(c)]);
+  await test('Buying several drops every bookmark to the multi-buy price', async () => {
+    const needed = bookmarks.multiBuyMinQuantity;
+    assert(availableBookmarks.length >= needed,
+      `Need at least ${needed} available bookmarks to test multi-buy pricing`);
+
+    const result = await checkout(onRequestPost, availableBookmarks.slice(0, needed).map(bookmark));
     assert(!result.error, `Unexpected rejection: ${result.error}`);
 
-    const discounted = Math.round(bookmarks.price * (100 - bookmarks.multiBuyDiscountPercent) / 100);
-    assertEqual(result.products[0].amount, bookmarks.price, 'First bookmark should be full price');
-    assertEqual(result.products[1].amount, discounted, 'Second bookmark should be discounted');
-    assertEqual(result.products[2].amount, discounted, 'Third bookmark should be discounted');
+    result.products.forEach((line, i) => {
+      assertEqual(line.amount, bookmarks.multiBuyPrice,
+        `Bookmark ${i + 1} of ${needed} should be priced at the multi-buy rate`);
+    });
+  });
+
+  await test('The multi-buy price applies below the threshold to nothing', async () => {
+    const below = bookmarks.multiBuyMinQuantity - 1;
+    if (below < 1) return; // threshold of 1 means everything is always discounted
+
+    const result = await checkout(onRequestPost, availableBookmarks.slice(0, below).map(bookmark));
+    assert(!result.error, `Unexpected rejection: ${result.error}`);
+    result.products.forEach(line => {
+      assertEqual(line.amount, bookmarks.price,
+        `Orders below the multi-buy threshold should pay the full price`);
+    });
   });
 
   await test('The same bookmark cannot be ordered twice', async () => {

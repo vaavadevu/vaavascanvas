@@ -12,24 +12,28 @@ const Cart = (() => {
   let items = JSON.parse(localStorage.getItem('vc_cart') || '[]');
   let selectedCountry = '';
 
-  // Bookmarks are priced as a group: first one full price, the rest discounted.
-  // Recomputed on every change so the cart total matches what create-checkout.js
-  // independently calculates from the same cart order.
+  // Bookmarks are priced as a group: buying several drops every one of them to
+  // the lower per-piece price. Recomputed on every change so the cart total
+  // matches what create-checkout.js independently calculates for the same cart.
   function repriceBookmarks() {
     // Prefer the catalog over whatever an older build stored in localStorage
     const product = (typeof paintings !== 'undefined' && Array.isArray(paintings))
       ? paintings.find(p => p.type === 'bookmark')
       : null;
 
-    let seen = 0;
-    items.forEach(i => {
-      if (i.type !== 'bookmark') return;
-      const base = product?.originalPrice ?? i.basePrice ?? i.price;
-      const discount = i.multiBuyDiscountPercent ?? product?.multiBuyDiscountPercent ?? 0;
+    const bookmarks = items.filter(i => i.type === 'bookmark');
+    if (bookmarks.length === 0) return;
+
+    const base = product?.originalPrice ?? bookmarks[0].basePrice ?? bookmarks[0].price;
+    const multiPrice = product?.multiBuyPrice ?? bookmarks[0].multiBuyPrice ?? base;
+    const minQuantity = product?.multiBuyMinQuantity ?? bookmarks[0].multiBuyMinQuantity ?? 2;
+    const unitPrice = bookmarks.length >= minQuantity ? multiPrice : base;
+
+    bookmarks.forEach(i => {
       i.basePrice = base;
-      i.multiBuyDiscountPercent = discount;
-      i.price = seen === 0 ? base : Math.round(base * (100 - discount) / 100);
-      seen++;
+      i.multiBuyPrice = multiPrice;
+      i.multiBuyMinQuantity = minQuantity;
+      i.price = unitPrice;
     });
   }
 
@@ -163,6 +167,18 @@ const Cart = (() => {
     }
   }
 
+  // The struck-through "was" price, or null when the item is at full price.
+  // Discounted originals compare against their pre-discount price; bookmarks
+  // against the single-piece price they lose once the multi-buy rate applies.
+  function cartItemOldPrice(item) {
+    if (item.type === 'original') {
+      const before = item.withFrame ? item.originalFramedPrice : item.originalBasePrice;
+      const now = item.withFrame ? item.framedPrice : item.basePrice;
+      return before && before !== now ? before : null;
+    }
+    return item.basePrice && item.price < item.basePrice ? item.basePrice : null;
+  }
+
   function render() {
     const list = document.getElementById('cart-items');
     const emptyMsg = document.getElementById('cart-empty');
@@ -189,6 +205,7 @@ const Cart = (() => {
     items.forEach(item => {
       const el = document.createElement('div');
       el.className = 'cart-item';
+      const oldPrice = cartItemOldPrice(item);
       el.innerHTML = `
         <div class="cart-item-img">
           ${item.image
@@ -200,7 +217,7 @@ const Cart = (() => {
           <div class="cart-item-meta">${formatCartItemType(item.type)}</div>
           <div class="cart-item-price">
             ${(item.price * (item.qty || 1)).toLocaleString('sv-SE')} kr
-            ${item.type === 'original' && ((item.withFrame && item.originalFramedPrice && item.originalFramedPrice !== item.framedPrice) || (!item.withFrame && item.originalBasePrice && item.originalBasePrice !== item.basePrice)) ? `<span class="cart-item-price-old">${((item.withFrame ? item.originalFramedPrice : item.originalBasePrice) * (item.qty || 1)).toLocaleString('sv-SE')} kr</span>` : ''}
+            ${oldPrice ? `<span class="cart-item-price-old">${(oldPrice * (item.qty || 1)).toLocaleString('sv-SE')} kr</span>` : ''}
           </div>
           ${item.framedOnly ? `
           <span class="cart-frame-fixed">${t('cart_frame_included')}</span>` :

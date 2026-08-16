@@ -143,6 +143,55 @@
   opacity: 1;
 }
 
+/* Sold variants (bookmarks) stay browsable but read as unavailable */
+.pageViewThumbWrap {
+  position: relative;
+  display: inline-flex;
+  line-height: 0;
+}
+
+.pageViewThumbWrap.sold .pageViewThumb {
+  filter: grayscale(0.85);
+}
+
+.pageViewThumbSold {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  transform: translateX(-50%);
+  background: var(--accent-green);
+  color: var(--text-light);
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.6rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 600;
+  line-height: 1.4;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.pageview-sold-flag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  background: var(--accent-green);
+  color: var(--text-light);
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.pageview-sold-flag[hidden] {
+  display: none;
+}
+
 /* Right column with info */
 .pageViewRight {
   display: flex;
@@ -382,6 +431,12 @@
   margin: 3px 0 0 0;
 }
 
+.pageview-multibuy-note {
+  font-size: 0.9rem;
+  color: var(--accent-green);
+  margin: 4px 0 0 0;
+}
+
 #pageview-medium {
   font-size: 0.95rem;
   color: var(--text-dark);
@@ -455,6 +510,21 @@
     height: 60px;
   }
 
+  .pageViewThumbSold {
+    bottom: 4px;
+    padding: 2px 6px;
+    font-size: 0.5rem;
+    letter-spacing: 0.5px;
+  }
+
+  .pageview-sold-flag {
+    top: 8px;
+    left: 8px;
+    padding: 4px 12px;
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+  }
+
   .page-view-container .arrow {
     opacity: 0;
     pointer-events: none;
@@ -522,22 +592,14 @@
   display: none;
 }
 .bookmark-selector-actions { display:flex; gap:12px; align-items:center; justify-content:flex-end; }
-.bookmark-selector-title { margin:0 0 6px 0; }
-.bookmark-selector-inner { position: relative; }
-.modal-back-btn {
-  position: absolute;
-  left: 12px;
-  top: 12px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--accent-green);
-  background: transparent;
-  border: none;
-  font-weight: 700;
-  text-decoration: none;
+.bookmark-selector-title { margin:0 0 2px 0; }
+.bookmark-selector-price-note {
+  margin: 0 0 10px 0;
+  font-size: 0.9rem;
+  opacity: 0.8;
 }
-.modal-back-btn:hover { opacity: 0.9; }
+.bookmark-selector-price-note:empty { display: none; }
+.bookmark-selector-inner { position: relative; }
 
 /* Make modal action buttons use page view button styles */
 .bookmark-selector-inner .btn {

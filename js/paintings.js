@@ -20,7 +20,8 @@ const SHAPE = {
 
 // Medium constants
 const MEDIUM = {
-  ACRYLIC_CANVAS: "medium_acrylic_canvas"
+  ACRYLIC_CANVAS: "medium_acrylic_canvas",
+  WATERCOLOR_PAPER_LAMINATED: "medium_watercolor_paper_laminated"
 };
 
 // Size constants
@@ -437,13 +438,14 @@ const paintings = [
     title: "Bokmärken",
     descKey: "desc_bookmarks",
     status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
+    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
     width: 5,
     height: 15,
     shape: SHAPE.RECTANGULAR,
     originalPrice: 120,
     type: TYPE.BOOKMARK,
-    multiBuyDiscountPercent: 10,
+    multiBuyPrice: 100,
+    multiBuyMinQuantity: 2,
     soldVariants: [
       "/images/bookmarks/cheetah.jpg",
       "/images/bookmarks/chicken1.jpg",
