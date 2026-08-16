@@ -304,10 +304,9 @@ nav.active {
   }
 
   /* --- HERO --- */
-  .hero {
-    height: 95vh;
-    /* Något kortare på mobil */
-  }
+  /* No height override here: 95vh ignored the fixed header above main and
+     pushed the hero — and the call to action with it — below the fold. The
+     base rule already sizes it to the space left under the header. */
 
   .hero-text {
     left: 20px;

@@ -7,6 +7,9 @@ function adjustHeaderPadding() {
   if (headerContainer && mainContent) {
     const headerHeight = headerContainer.getBoundingClientRect().height;
     mainContent.style.paddingTop = headerHeight + 'px';
+    // Published so CSS can size full-height content against the space that is
+    // actually left below the header — which grows when the banner is showing
+    document.documentElement.style.setProperty('--header-offset', headerHeight + 'px');
   }
 }
 
