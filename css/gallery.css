@@ -235,6 +235,12 @@
   padding: 0 20px;
 }
 
+/* The type dropdown is the narrow-screen counterpart of #filter-type-buttons.
+   Declared before the media queries so they can turn it back on. */
+#filter-type-dd {
+  display: none;
+}
+
 /* ─── Sticky filter bar (desktop) ─── */
 #gallery-filter-bar {
   display: none; /* visas bara på desktop via media query */
@@ -265,19 +271,23 @@
     top: auto;
     z-index: auto;
     gap: 10px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    /* Not `overflow-x: auto` — any non-visible overflow makes the other axis
+       clip too, which cut open dropdown panels down to a few pixels. The
+       controls fit without sideways scrolling at every width. */
+    overflow: visible;
     padding: 12px 10px 8px;
   }
 
-  .filter-button-group {
+  /* Scoped to the bar so it outranks the later `.filter-button-group` rule,
+     which would otherwise let the buttons wrap into four stacked rows */
+  #gallery-filter-bar .filter-button-group {
     flex-wrap: nowrap;
     overflow-x: auto;
     white-space: nowrap;
     scrollbar-width: none;
   }
 
-  .filter-button-group::-webkit-scrollbar {
+  #gallery-filter-bar .filter-button-group::-webkit-scrollbar {
     display: none;
   }
 
@@ -287,6 +297,26 @@
 
   #filter-fab {
     display: none !important;
+  }
+}
+
+/* Below 769px setupFilterBar() stops offsetting content for the fixed header
+   (it returns early and clears main's padding-top), so the filter bar — the
+   first thing on the page — has to clear the header itself */
+@media (max-width: 768px) {
+  #gallery-filter-bar {
+    padding-top: calc(var(--header-height) + 12px);
+    justify-content: center;
+  }
+
+  /* The four type buttons do not fit across a phone, so use the same dropdown
+     the status and size filters use */
+  #filter-type-buttons {
+    display: none;
+  }
+
+  #filter-type-dd {
+    display: flex;
   }
 }
 

@@ -224,7 +224,14 @@ nav.active {
   #gallery {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
-    padding: 120px 10px ;
+    /* The header is fixed and only slides in on scroll, and the filter bar and
+       title already sit above the gallery, so no header offset is needed here */
+    padding: 10px 10px 40px;
+  }
+
+  .page-title {
+    font-size: 1.4rem;
+    margin: 0 10px 12px;
   }
 
   img {

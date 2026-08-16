@@ -112,6 +112,21 @@
       <button class="filter-button filter-type-button" data-filter="clay" data-i18n="filter_type_clay" onclick="setActiveTypeFilter('clay')">Lera</button>
       <button class="filter-button filter-type-button" data-filter="bookmark" data-i18n="filter_type_bookmark" onclick="setActiveTypeFilter('bookmark')">Bokmärke</button>
     </div>
+    <!-- Same type filter as a dropdown, used on narrow screens where the
+         button row would not fit -->
+    <div class="filter-dropdown" id="filter-type-dd">
+      <button class="filter-dropdown-trigger" onclick="toggleFilterDropdown('filter-type-dd')" aria-expanded="false">
+        <span class="filter-dropdown-label" id="filter-type-label">Typ</span>
+        <svg class="filter-chevron" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg"><path d="M0 0l5 6 5-6z"/></svg>
+      </button>
+      <button class="filter-reset-btn" onclick="setActiveTypeFilter('all')" aria-label="Nollställ filter">×</button>
+      <div class="filter-dropdown-panel">
+        <button class="filter-option active" data-filter="all" data-i18n="filter_all" onclick="setActiveTypeFilter('all')">Alla</button>
+        <button class="filter-option" data-filter="painting" data-i18n="filter_type_painting" onclick="setActiveTypeFilter('painting')">Målning</button>
+        <button class="filter-option" data-filter="clay" data-i18n="filter_type_clay" onclick="setActiveTypeFilter('clay')">Lera</button>
+        <button class="filter-option" data-filter="bookmark" data-i18n="filter_type_bookmark" onclick="setActiveTypeFilter('bookmark')">Bokmärke</button>
+      </div>
+    </div>
     <div class="filter-dropdown" id="filter-size-dd">
       <button class="filter-dropdown-trigger" onclick="toggleFilterDropdown('filter-size-dd')" aria-expanded="false">
         <span class="filter-dropdown-label" id="filter-size-label">Storlek</span>

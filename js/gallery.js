@@ -328,6 +328,15 @@ function setActiveTypeFilter(filter) {
   document.querySelectorAll(".fab-filter-btn.type-filter, .filter-type-button").forEach(b => {
     b.classList.toggle("active", b.dataset.filter === filter);
   });
+  document.querySelectorAll("#filter-type-dd .filter-option").forEach(b => {
+    b.classList.toggle("active", b.dataset.filter === filter);
+  });
+  const typeDd = document.getElementById("filter-type-dd");
+  if (typeDd) {
+    typeDd.classList.toggle("has-filter", filter !== "all");
+    typeDd.classList.remove("open");
+    typeDd.querySelector(".filter-dropdown-trigger")?.setAttribute("aria-expanded", "false");
+  }
 
   const showSizeFilter = filter === "all" || filter === "painting";
   updateSizeFilterVisibility(showSizeFilter);
