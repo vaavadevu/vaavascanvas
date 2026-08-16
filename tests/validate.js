@@ -349,6 +349,36 @@ test('Bookmark soldVariants only reference existing bookmark files', () => {
 
 console.log(colors.blue + '\n[2] IMAGE INVENTORY VALIDATION' + colors.reset);
 
+test('Every painting resolves to real image files', () => {
+  const root = path.join(__dirname, '..');
+  const missing = [];
+
+  paintings.forEach(p => {
+    if (p.images) {
+      // Explicit image lists (bookmarks, clay): every path must exist on disk
+      ['desktop', 'mobile'].forEach(variant => {
+        assert(Array.isArray(p.images[variant]),
+          `Painting ${p.id} has images but no ${variant} array — gallery.js would fall back to the folder convention`);
+        p.images[variant].forEach(src => {
+          if (!fs.existsSync(path.join(root, src.replace(/^\//, '')))) {
+            missing.push(`${p.id}: ${src}`);
+          }
+        });
+      });
+      return;
+    }
+
+    // No explicit images — gallery.js builds /images/paintings/<id>/desktop/01.jpg
+    const firstImage = path.join(root, 'images', 'paintings', p.id, 'desktop', '01.jpg');
+    if (!fs.existsSync(firstImage)) {
+      missing.push(`${p.id}: images/paintings/${p.id}/desktop/01.jpg (no images block and no matching folder)`);
+    }
+  });
+
+  assert(missing.length === 0,
+    'Paintings point at image files that do not exist:\n  ' + missing.join('\n  '));
+});
+
 test('All painting IDs in counts.json exist in paintings.js', () => {
   const paintingIds = paintings.map(p => p.id);
   Object.keys(counts).forEach(countId => {

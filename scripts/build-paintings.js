@@ -88,6 +88,15 @@ fs.writeFileSync(checkoutPath, checkoutContent);
 const paintingsJsPath = path.join(__dirname, '..', 'js', 'paintings.js');
 let paintingsJsContent = fs.readFileSync(paintingsJsPath, 'utf8');
 
+// Serialize a nested value as JS literal, indented to sit inside a painting entry
+function indentJson(value) {
+  return JSON.stringify(value, null, 2)
+    .replace(/^(\s*)"([A-Za-z_$][\w$]*)":/gm, '$1$2:')
+    .split('\n')
+    .map((line, i) => (i === 0 ? line : '    ' + line))
+    .join('\n');
+}
+
 // Generate the full paintings array for client-side
 const clientPaintings = paintingsData.map(painting => {
   const clientPainting = {
@@ -111,6 +120,12 @@ const clientPaintings = paintingsData.map(painting => {
   if (typeof painting.discountPercent === 'number') clientPainting.discountPercent = painting.discountPercent;
   if (painting.framedOnly) clientPainting.framedOnly = true;
   if (painting.frameAvailable) clientPainting.frameAvailable = true;
+  if (painting.type) {
+    clientPainting.type = painting.type === 'clay' ? 'TYPE.CLAY' :
+                          painting.type === 'bookmark' ? 'TYPE.BOOKMARK' : 'TYPE.PAINTING';
+  }
+  if (painting.soldVariants) clientPainting.soldVariants = indentJson(painting.soldVariants);
+  if (painting.images) clientPainting.images = indentJson(painting.images);
 
   return clientPainting;
 });
