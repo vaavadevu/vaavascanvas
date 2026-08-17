@@ -2,39 +2,24 @@
 // VAAVASCANVAS – CART & CHECKOUT
 // ============================================================
 
-// Shipping rates — must stay in sync with functions/api/create-checkout.js,
-// which recalculates them server-side (tests/validate.js enforces this)
-const FREE_SHIPPING_THRESHOLD = 599;
-const SHIPPING_COST_SE = 59;
-const SHIPPING_COST_EU = 149;
+// The money rules live in js/cart-math.js, which this file expects to have been
+// loaded first: FREE_SHIPPING_THRESHOLD, SHIPPING_COST_SE, SHIPPING_COST_EU,
+// calcSubtotal, calcShipping, calcTotal, calcCount, applyBookmarkPricing and
+// cartItemOldPrice all come from there.
 
 const Cart = (() => {
   let items = JSON.parse(localStorage.getItem('vc_cart') || '[]');
   let selectedCountry = '';
 
-  // Bookmarks are priced as a group: buying several drops every one of them to
-  // the lower per-piece price. Recomputed on every change so the cart total
-  // matches what create-checkout.js independently calculates for the same cart.
+  // Recomputed on every change so the cart total matches what
+  // create-checkout.js independently calculates for the same cart
   function repriceBookmarks() {
     // Prefer the catalog over whatever an older build stored in localStorage
     const product = (typeof paintings !== 'undefined' && Array.isArray(paintings))
       ? paintings.find(p => p.type === 'bookmark')
       : null;
 
-    const bookmarks = items.filter(i => i.type === 'bookmark');
-    if (bookmarks.length === 0) return;
-
-    const base = product?.originalPrice ?? bookmarks[0].basePrice ?? bookmarks[0].price;
-    const multiPrice = product?.multiBuyPrice ?? bookmarks[0].multiBuyPrice ?? base;
-    const minQuantity = product?.multiBuyMinQuantity ?? bookmarks[0].multiBuyMinQuantity ?? 2;
-    const unitPrice = bookmarks.length >= minQuantity ? multiPrice : base;
-
-    bookmarks.forEach(i => {
-      i.basePrice = base;
-      i.multiBuyPrice = multiPrice;
-      i.multiBuyMinQuantity = minQuantity;
-      i.price = unitPrice;
-    });
+    applyBookmarkPricing(items, product);
   }
 
   function save() {
@@ -136,21 +121,19 @@ const Cart = (() => {
   }
 
   function subtotal() {
-    return items.reduce((sum, i) => sum + i.price * (i.qty || 1), 0);
+    return calcSubtotal(items);
   }
 
   function shipping() {
-    if (selectedCountry === 'EU') return SHIPPING_COST_EU;
-    const sub = subtotal();
-    return sub >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST_SE;
+    return calcShipping(subtotal(), selectedCountry);
   }
 
   function total() {
-    return subtotal() + shipping();
+    return calcTotal(items, selectedCountry);
   }
 
   function count() {
-    return items.reduce((sum, i) => sum + (i.qty || 1), 0);
+    return calcCount(items);
   }
 
   function updateBadge() {
@@ -165,18 +148,6 @@ const Cart = (() => {
         badge.classList.add('pop');
       }
     }
-  }
-
-  // The struck-through "was" price, or null when the item is at full price.
-  // Discounted originals compare against their pre-discount price; bookmarks
-  // against the single-piece price they lose once the multi-buy rate applies.
-  function cartItemOldPrice(item) {
-    if (item.type === 'original') {
-      const before = item.withFrame ? item.originalFramedPrice : item.originalBasePrice;
-      const now = item.withFrame ? item.framedPrice : item.basePrice;
-      return before && before !== now ? before : null;
-    }
-    return item.basePrice && item.price < item.basePrice ? item.basePrice : null;
   }
 
   function render() {

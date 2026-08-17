@@ -4,7 +4,7 @@
   "description": "Devika's Art Gallery Website",
   "scripts": {
     "build": "node scripts/build-paintings.js",
-    "test": "node tests/validate.js && node tests/checkout.js && node tests/e2e.js"
+    "test": "node tests/validate.js && node tests/cart-math.js && node tests/checkout.js && node tests/e2e.js"
   },
   "dependencies": {
     "stripe": "^17.7.0"

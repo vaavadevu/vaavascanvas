@@ -1001,11 +1001,13 @@ test('_headers keeps code assets revalidating', () => {
   });
 });
 
-test('Checkout shipping constants match cart.js', () => {
-  const cartContent = fs.readFileSync(path.join(__dirname, '../js/cart.js'), 'utf8');
+test('Checkout shipping constants match the cart', () => {
+  // The cart declares these in js/cart-math.js and the server charges them — a
+  // mismatch means the customer is billed something other than what the drawer
+  // showed. tests/cart-math.js checks how they are applied; this checks the
+  // numbers themselves still agree across the client/server split.
+  const cartMath = fs.readFileSync(path.join(__dirname, '../js/cart-math.js'), 'utf8');
 
-  // The cart displays these and the server charges them — a mismatch means the
-  // customer is billed something other than what the drawer showed
   const constants = [
     ['FREE_SHIPPING_THRESHOLD', catalog.freeShippingThreshold],
     ['SHIPPING_COST_SE', catalog.shippingCost],
@@ -1016,32 +1018,50 @@ test('Checkout shipping constants match cart.js', () => {
     assert(serverValue !== null && serverValue !== undefined,
       `${name} not found in create-checkout.js`);
 
-    const match = cartContent.match(new RegExp(`const ${name} = (\\d+)`));
-    assert(match, `${name} not found in cart.js — the server charges it, so the cart must use the same constant`);
+    const match = cartMath.match(new RegExp(`const ${name} = (\\d+)`));
+    assert(match, `${name} not found in cart-math.js — the server charges it, so the cart must use the same constant`);
 
     assertEqual(parseInt(match[1]), serverValue,
-      `${name} mismatch: cart.js=${match[1]}, create-checkout.js=${serverValue}`);
+      `${name} mismatch: cart-math.js=${match[1]}, create-checkout.js=${serverValue}`);
   });
 });
 
-test('cart.js has no hardcoded shipping amounts left', () => {
-  const cartContent = fs.readFileSync(path.join(__dirname, '../js/cart.js'), 'utf8');
+test('The cart has no hardcoded shipping amounts left', () => {
   const values = [catalog.freeShippingThreshold, catalog.shippingCost, catalog.shippingCostEU];
+  const files = ['js/cart-math.js', 'js/cart.js'];
 
   const offenders = [];
-  cartContent.split('\n').forEach((line, i) => {
-    // Skip the constant declarations themselves
-    if (/^\s*const (FREE_SHIPPING_THRESHOLD|SHIPPING_COST_SE|SHIPPING_COST_EU) = /.test(line)) return;
-    values.forEach(value => {
-      if (new RegExp(`\\b${value}\\b`).test(line)) {
-        offenders.push(`cart.js:${i + 1}: ${line.trim()}`);
-      }
+  files.forEach(file => {
+    const content = fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
+    content.split('\n').forEach((line, i) => {
+      // Skip the constant declarations themselves
+      if (/^\s*const (FREE_SHIPPING_THRESHOLD|SHIPPING_COST_SE|SHIPPING_COST_EU) = /.test(line)) return;
+      values.forEach(value => {
+        if (new RegExp(`\\b${value}\\b`).test(line)) {
+          offenders.push(`${file}:${i + 1}: ${line.trim()}`);
+        }
+      });
     });
   });
 
   assert(offenders.length === 0,
     'Shipping amounts are hardcoded instead of using the shared constants, so the ' +
     'sync test above cannot protect them:\n  ' + offenders.join('\n  '));
+});
+
+test('Every page that loads cart.js loads cart-math.js first', () => {
+  // cart.js calls calcSubtotal/calcShipping/applyBookmarkPricing as globals, so
+  // a page that loads it alone throws on the first render
+  const pages = htmlFiles.filter(f => /<script[^>]+src="[^"]*js\/cart\.js"/.test(f.content));
+  assert(pages.length > 0, 'No page loads cart.js — the selector above is probably wrong');
+
+  pages.forEach(file => {
+    const name = path.basename(file.path);
+    const mathAt = file.content.search(/<script[^>]+src="[^"]*js\/cart-math\.js"/);
+    const cartAt = file.content.search(/<script[^>]+src="[^"]*js\/cart\.js"/);
+    assert(mathAt !== -1, `${name} loads cart.js without cart-math.js`);
+    assert(mathAt < cartAt, `${name} loads cart-math.js after cart.js — it has to come first`);
+  });
 });
 
 // ─────────────────────────────────────────────────────────────

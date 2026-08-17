@@ -40,7 +40,20 @@ All three suites run on every push and pull request to catch issues before deplo
 - A sold painting is never sorted ahead of an available one
 - Frame pricing is coherent (`framedPrice` above `originalPrice`, `framedOnly` has no `originalPrice`)
 
-### 7. **Checkout Logic Tests** (`tests/checkout.js`)
+### 7. **Cart Math Unit Tests** (`tests/cart-math.js`)
+Calls the functions in `js/cart-math.js` directly — no browser, no DOM, no data
+files — so these check the arithmetic a buyer is shown in the cart drawer:
+- Subtotals and the badge count, including items stored without an explicit quantity
+- The free-shipping threshold, including the boundary itself (a cart landing exactly
+  on the threshold ships free)
+- EU orders always pay EU shipping, whatever the subtotal
+- Bookmark group pricing: one piece pays full price, reaching the threshold reprices
+  every piece, and a stray quantity does not unlock the discount
+- Stale prices in a `localStorage` cart are overridden by the catalog, and the cart
+  still totals sensibly when the catalog is missing entirely
+- Which cart lines get a struck-through "was" price
+
+### 8. **Checkout Logic Tests** (`tests/checkout.js`)
 Runs the real `functions/api/create-checkout.js` with Stripe stubbed out, so these
 check behaviour rather than data:
 - Client-supplied prices are ignored — the server charges its own catalog price
@@ -51,7 +64,7 @@ check behaviour rather than data:
 - Shipping matches the threshold, Swedish, and EU rates
 - The pricing helpers duplicated in `js/paintings.js` and `create-checkout.js` produce identical results
 
-### 8. **End-to-End Browser Tests** (E2E)
+### 9. **End-to-End Browser Tests** (E2E)
 - Main page loads without JavaScript console errors
 - Hero section renders correctly
 - Gallery displays all paintings
@@ -78,11 +91,16 @@ npx playwright install chromium
 npm test
 ```
 
-This runs validation, checkout, and E2E tests sequentially.
+This runs validation, cart math, checkout, and E2E tests sequentially.
 
 ### Run Only Validation Tests (Fast)
 ```bash
 node tests/validate.js
+```
+
+### Run Only Cart Math Tests (Fast)
+```bash
+node tests/cart-math.js
 ```
 
 ### Run Only Checkout Tests (Fast)
@@ -142,7 +160,15 @@ Failed: 0
 ✓ All E2E tests passed!
 ```
 
-## Why Two Types of Tests?
+## Why Several Types of Tests?
+
+### Unit Tests (Fast - well under a second)
+✓ Call one function directly with fixed inputs
+✓ Pin down boundaries and edge cases cheaply (thresholds, empty carts, missing fields)
+✓ Fail with a message naming the exact rule that broke
+
+✗ Won't catch anything about how the function is wired into a page
+✗ Only cover code that has been separated out from the DOM (currently `js/cart-math.js`)
 
 ### Data Validation Tests (Fast - ~1 second)
 ✓ Catch data structure problems (missing fields, wrong types)
@@ -304,8 +330,10 @@ Then run `npm test` to verify everything is correct.
 
 ## Test Files
 
-- `tests/validate.js` - Data validation test suite (19 tests)
-- `tests/e2e.js` - End-to-end browser tests (10 tests)
+- `tests/validate.js` - Data validation test suite (41 tests)
+- `tests/cart-math.js` - Cart math unit tests (29 tests)
+- `tests/checkout.js` - Checkout logic tests against the real Cloudflare function (21 tests)
+- `tests/e2e.js` - End-to-end browser tests (21 tests)
 - `package.json` - npm configuration with dependencies and test scripts
 - `.github/workflows/tests.yml` - GitHub Actions workflow configuration
 
