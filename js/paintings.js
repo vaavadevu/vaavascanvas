@@ -254,7 +254,7 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 600,
+    originalPrice: 600
   },
   {
     id: "lodjur",
@@ -265,7 +265,7 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 600,
+    originalPrice: 600
   },
   {
     id: "kattuggla",
@@ -440,7 +440,7 @@ const paintings = [
     id: "skogsvila",
     title: "Skogsvila",
     descKey: "desc_skogsvila",
-    status: STATUS.FOR_SALE,
+    status: STATUS.SOLD,
     medium: MEDIUM.ACRYLIC_CANVAS,
     diameter: 90,
     shape: SHAPE.CIRCLE,

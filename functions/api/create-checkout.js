@@ -27,7 +27,7 @@ const PAINTINGS = [
   { id: 'skaViPlockaBlommor', originalPrice: 1500, status: 'sold' },
   { id: 'varkansla', originalPrice: 1500, status: 'sold' },
   { id: 'vargen', originalPrice: 1800, status: 'for_sale' },
-  { id: 'skogsvila', originalPrice: 3000, status: 'for_sale' },
+  { id: 'skogsvila', originalPrice: 3000, status: 'sold' },
   { id: 'vinterlek', originalPrice: 1800, status: 'sold' },
   { id: 'sommarvila', originalPrice: 1800, status: 'for_sale' },
   { id: 'dagensFynd', originalPrice: 1200, framedPrice: 2100, frameAvailable: true, status: 'for_sale' },
