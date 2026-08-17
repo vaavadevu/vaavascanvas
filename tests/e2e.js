@@ -326,6 +326,45 @@ async function runTests() {
       await page.close();
     });
 
+    // A sold painting must not be buyable from the page. The server rejects it
+    // too (tests/checkout.js), but a visible buy button would still let someone
+    // fill a cart with a canvas that no longer exists.
+    await test('Sold paintings offer no buy button', async () => {
+      const soldPaintings = paintings.filter(p => p.status === 'sold');
+      assert(soldPaintings.length > 0, 'No sold paintings in the catalog to check');
+
+      const page = await browser.newPage();
+
+      // Control: prove the selector matches something before trusting a count of
+      // zero anywhere else, otherwise a renamed class would make this test pass
+      // by finding nothing at all
+      const forSale = paintings.find(p => p.status === 'for_sale' && !p.framedOnly && !p.frameAvailable);
+      await page.goto(`${baseUrl}/pages/view.html?painting=${forSale.id}`, { waitUntil: 'networkidle' });
+      await page.waitForSelector('.page-view-container', { timeout: 10000 });
+      const controlButtons = await page.locator('button.pageview-buy-btn').count();
+      assertEqual(controlButtons, 1,
+        `The buy-button selector matched ${controlButtons} buttons on for-sale painting ` +
+        `"${forSale.id}" — the checks below cannot mean anything until it matches exactly one`);
+
+      // A sample rather than all of them — this is one status-driven code path,
+      // and every extra page load lengthens the suite
+      const sample = soldPaintings.slice(0, 3);
+
+      for (const painting of sample) {
+        await page.goto(`${baseUrl}/pages/view.html?painting=${painting.id}`, { waitUntil: 'networkidle' });
+        await page.waitForSelector('.page-view-container', { timeout: 10000 });
+
+        const buyButtons = await page.locator('button.pageview-buy-btn').count();
+        assertEqual(buyButtons, 0, `Sold painting "${painting.id}" still shows a buy button`);
+
+        const priceText = await page.locator('#pageview-price-section').textContent();
+        assert(priceText.trim().length > 0,
+          `Sold painting "${painting.id}" shows nothing at all where the sold notice should be`);
+      }
+
+      await page.close();
+    });
+
     console.log(colors.blue + '\n[6] FORM TESTS' + colors.reset);
 
     // Test 8: Contact form exists
@@ -491,6 +530,130 @@ async function runTests() {
       const hasError = await page.locator('.cart-terms-label.cart-terms-error').count();
       assert(hasError > 0, 'Expected cart-terms-error class on terms label');
 
+      await page.close();
+    });
+
+    // The cart is kept in localStorage so a buyer can leave and come back. The
+    // maths behind the numbers is covered by tests/cart-math.js — what matters
+    // here is that the contents survive the round trip at all.
+    await test('The cart survives a page reload', async () => {
+      const page = await browser.newPage();
+      const painting = paintings.find(p => p.status === 'for_sale' && !p.framedOnly && !p.frameAvailable);
+      assert(painting, 'No plain for-sale painting to add to the cart');
+
+      await page.goto(`${baseUrl}/pages/view.html?painting=${painting.id}`, { waitUntil: 'networkidle' });
+      await page.evaluate(() => localStorage.removeItem('vc_cart'));
+
+      await page.waitForSelector('button.pageview-buy-btn', { timeout: 10000 });
+      await page.locator('button.pageview-buy-btn').click();
+      await page.waitForSelector('#cart-drawer.open', { timeout: 5000 });
+
+      const before = await page.evaluate(() => ({
+        stored: JSON.parse(localStorage.getItem('vc_cart') || '[]'),
+        badge: document.getElementById('cart-badge')?.textContent,
+      }));
+      assertEqual(before.stored.length, 1, 'The painting was not stored in the cart');
+
+      // Come back to a different page entirely, the way a returning visitor would
+      await page.goto(`${baseUrl}/pages/pictures.html`, { waitUntil: 'networkidle' });
+
+      const after = await page.evaluate(() => ({
+        stored: JSON.parse(localStorage.getItem('vc_cart') || '[]'),
+        badge: document.getElementById('cart-badge')?.textContent,
+        badgeVisible: document.getElementById('cart-badge')?.style.display !== 'none',
+      }));
+
+      assertEqual(after.stored.length, 1, 'The cart was empty after reloading');
+      assertEqual(after.stored[0].id, painting.id, 'A different painting came back from the cart');
+      assertEqual(after.stored[0].price, before.stored[0].price, 'The stored price changed across the reload');
+      assertEqual(after.badge, '1', 'The cart badge does not show the restored item');
+      assert(after.badgeVisible, 'The cart badge is hidden even though the cart has an item');
+
+      await page.evaluate(() => localStorage.removeItem('vc_cart'));
+      await page.close();
+    });
+
+    console.log(colors.blue + '\n[9] CHECKOUT REQUEST TESTS' + colors.reset);
+
+    // The seam between the two tested halves: tests/cart-math.js proves the cart
+    // totals correctly and tests/checkout.js proves the server prices a payload
+    // correctly, but nothing else checks that the browser sends the payload the
+    // server expects. Stripe is never contacted — the route is stubbed here.
+    await test('Checkout posts the cart to the server and clears it on success', async () => {
+      const page = await browser.newPage();
+      const painting = paintings.find(p => p.status === 'for_sale' && !p.framedOnly && !p.frameAvailable);
+
+      await page.goto(`${baseUrl}/pages/view.html?painting=${painting.id}`, { waitUntil: 'networkidle' });
+      await page.evaluate(() => localStorage.removeItem('vc_cart'));
+
+      await page.waitForSelector('button.pageview-buy-btn', { timeout: 10000 });
+      await page.locator('button.pageview-buy-btn').click();
+      await page.waitForSelector('#cart-drawer.open', { timeout: 5000 });
+
+      await page.selectOption('#cart-country', 'SE');
+      await page.locator('#cart-terms-checkbox').check();
+
+      let requestBody = null;
+      await page.route('**/api/create-checkout', async (route) => {
+        requestBody = route.request().postDataJSON();
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ url: `${baseUrl}/?order=success` }),
+        });
+      });
+
+      await page.locator('#checkout-btn').click();
+      await page.waitForURL(/order=success/, { timeout: 10000 });
+
+      assert(requestBody, 'The browser never called /api/create-checkout');
+      assert(Array.isArray(requestBody.items), 'The request body carries no items array');
+      assertEqual(requestBody.items.length, 1, 'Wrong number of items in the checkout request');
+      assertEqual(requestBody.items[0].id, painting.id, 'The wrong painting was sent to checkout');
+      assertEqual(requestBody.country, 'SE', 'The chosen shipping country was not sent');
+
+      // The server prices from the id, but it needs a title for the Stripe line
+      assert(requestBody.items[0].title, 'The item was sent without a title for the Stripe line item');
+
+      const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('vc_cart') || '[]'));
+      assertEqual(stored.length, 0, 'The cart was not cleared after a successful checkout');
+
+      await page.close();
+    });
+
+    await test('A failed checkout keeps the cart and re-enables the button', async () => {
+      const page = await browser.newPage();
+      const painting = paintings.find(p => p.status === 'for_sale' && !p.framedOnly && !p.frameAvailable);
+
+      await page.goto(`${baseUrl}/pages/view.html?painting=${painting.id}`, { waitUntil: 'networkidle' });
+      await page.evaluate(() => localStorage.removeItem('vc_cart'));
+
+      await page.waitForSelector('button.pageview-buy-btn', { timeout: 10000 });
+      await page.locator('button.pageview-buy-btn').click();
+      await page.waitForSelector('#cart-drawer.open', { timeout: 5000 });
+
+      await page.selectOption('#cart-country', 'SE');
+      await page.locator('#cart-terms-checkbox').check();
+
+      // The server rejecting the order must not lose what the buyer picked
+      await page.route('**/api/create-checkout', async (route) => {
+        await route.fulfill({
+          status: 400,
+          contentType: 'application/json',
+          body: JSON.stringify({ error: 'Invalid item' }),
+        });
+      });
+
+      await page.locator('#checkout-btn').click();
+      await new Promise(resolve => setTimeout(resolve, 800));
+
+      const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('vc_cart') || '[]'));
+      assertEqual(stored.length, 1, 'A rejected checkout emptied the cart');
+
+      const disabled = await page.locator('#checkout-btn').isDisabled();
+      assert(!disabled, 'The checkout button was left disabled, so the buyer cannot try again');
+
+      await page.evaluate(() => localStorage.removeItem('vc_cart'));
       await page.close();
     });
 

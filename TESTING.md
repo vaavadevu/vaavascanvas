@@ -99,14 +99,20 @@ check behaviour rather than data:
 - The pricing helpers duplicated in `js/paintings.js` and `create-checkout.js` produce identical results
 
 ### 11. **End-to-End Browser Tests** (E2E)
-- Main page loads without JavaScript console errors
-- Hero section renders correctly
-- Gallery displays all paintings
-- All gallery images load without 404 errors
-- Clicking a painting navigates to page view
-- Language switching works (Swedish ↔ English)
+- Every page loads without JavaScript console errors or failed requests
+- The header component loads on every page
+- Featured cards and the full gallery render, and their images load without 404s
+- The painting detail page renders, and language switching works (Swedish ↔ English)
+- Each page translates *fully* — no text is left in Swedish after switching
 - Contact form is present and accessible
-- Paintings page loads without errors
+- **Sold paintings offer no buy button** (with a control check on a for-sale
+  painting first, so a renamed CSS class cannot make this pass by matching nothing)
+- **The cart survives a page reload** — contents, price and badge count come back
+- **Checkout posts the cart to the server and clears it on success** — the request
+  body is captured and checked for the right painting and shipping country. Stripe
+  is never contacted; the route is stubbed in the browser.
+- **A failed checkout keeps the cart** and re-enables the button, so a server
+  rejection does not lose what the buyer picked
 
 ## Running Tests Locally
 
@@ -224,6 +230,7 @@ Failed: 0
 ✓ Tests language switching
 ✓ Tests form presence and accessibility
 ✓ Catches runtime bugs that data tests miss
+✓ Covers the seam between browser and server (what the cart actually POSTs)
 
 Together, they provide comprehensive coverage before deployment.
 
@@ -371,7 +378,7 @@ Then run `npm test` to verify everything is correct.
 - `tests/cart-rules.js` - Cart rules unit tests (24 tests)
 - `tests/painting-model.js` - Painting model unit tests (24 tests)
 - `tests/checkout.js` - Checkout logic tests against the real Cloudflare function (21 tests)
-- `tests/e2e.js` - End-to-end browser tests (21 tests)
+- `tests/e2e.js` - End-to-end browser tests (25 tests)
 - `package.json` - npm configuration with dependencies and test scripts
 - `.github/workflows/tests.yml` - GitHub Actions workflow configuration
 
