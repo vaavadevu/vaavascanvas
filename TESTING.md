@@ -3,7 +3,7 @@
 This project includes four levels of automated testing:
 
 1. **Data Validation Tests** - Check data consistency and structure (runs instantly)
-2. **Cart Unit Tests** - Call the cart's money rules and add-to-cart rules directly, with no browser involved (runs instantly)
+2. **Unit Tests** - Call the cart's money rules, its add-to-cart rules and the painting model directly, with no browser involved (runs instantly)
 3. **Checkout Logic Tests** - Run the real payment function against a stubbed Stripe to check what customers can actually be charged (runs instantly)
 4. **End-to-End (E2E) Tests** - Open actual pages in a browser, test user interactions, check for errors (takes ~30 seconds)
 
@@ -66,7 +66,28 @@ the cart, as opposed to what it costs:
 - Checkout reports every blocker at once (no country, unaccepted terms, or both)
   so the buyer is not made to discover them one at a time
 
-### 9. **Checkout Logic Tests** (`tests/checkout.js`)
+### 9. **Painting Model Unit Tests** (`tests/painting-model.js`)
+Calls the rules in `js/paintings.js` directly — the catalog plus everything
+derived from it. These used to be written inline in `page-view.js` where nothing
+could reach them:
+- Size brackets change exactly on their boundaries (small < 40 ≤ medium < 60 ≤ large)
+- Area is computed correctly for rectangles and circles, and is `null` for a piece
+  with no measurements
+- Display scale spreads the catalog across ±20%, puts unmeasured pieces at 1, and
+  survives a catalog where every piece is the same size (no divide-by-zero)
+- The product page price section: sold and personal show a status line, a for-sale
+  painting shows one price, a discounted one adds the old price and the percentage
+- Uneven discounts round to the nearest krona in **both** directions
+- A discount of 0% or 100% is refused rather than giving a painting away
+
+One test walks a spread of discounted and undiscounted pieces and checks that the
+product page and the gallery tile derive the **same** numbers from the catalog.
+They used to disagree: a discounted `framedOnly` painting got a struck-through
+price on its gallery tile but not on its product page, because the product page
+required an `originalPrice` that `framedOnly` paintings never carry. That is
+fixed, and the test keeps the two views from drifting apart again.
+
+### 10. **Checkout Logic Tests** (`tests/checkout.js`)
 Runs the real `functions/api/create-checkout.js` with Stripe stubbed out, so these
 check behaviour rather than data:
 - Client-supplied prices are ignored — the server charges its own catalog price
@@ -77,7 +98,7 @@ check behaviour rather than data:
 - Shipping matches the threshold, Swedish, and EU rates
 - The pricing helpers duplicated in `js/paintings.js` and `create-checkout.js` produce identical results
 
-### 10. **End-to-End Browser Tests** (E2E)
+### 11. **End-to-End Browser Tests** (E2E)
 - Main page loads without JavaScript console errors
 - Hero section renders correctly
 - Gallery displays all paintings
@@ -104,17 +125,18 @@ npx playwright install chromium
 npm test
 ```
 
-This runs validation, cart math, cart rules, checkout, and E2E tests sequentially.
+This runs validation, cart math, cart rules, painting model, checkout, and E2E tests sequentially.
 
 ### Run Only Validation Tests (Fast)
 ```bash
 node tests/validate.js
 ```
 
-### Run Only Cart Unit Tests (Fast)
+### Run Only Unit Tests (Fast)
 ```bash
 node tests/cart-math.js
 node tests/cart-rules.js
+node tests/painting-model.js
 ```
 
 ### Run Only Checkout Tests (Fast)
@@ -182,7 +204,7 @@ Failed: 0
 ✓ Fail with a message naming the exact rule that broke
 
 ✗ Won't catch anything about how the function is wired into a page
-✗ Only cover code that has been separated out from the DOM (currently `js/cart-math.js` and `js/cart-rules.js`)
+✗ Only cover code that has been separated out from the DOM (currently `js/cart-math.js`, `js/cart-rules.js` and the rules in `js/paintings.js`)
 
 ### Data Validation Tests (Fast - ~1 second)
 ✓ Catch data structure problems (missing fields, wrong types)
@@ -347,6 +369,7 @@ Then run `npm test` to verify everything is correct.
 - `tests/validate.js` - Data validation test suite (42 tests)
 - `tests/cart-math.js` - Cart math unit tests (29 tests)
 - `tests/cart-rules.js` - Cart rules unit tests (24 tests)
+- `tests/painting-model.js` - Painting model unit tests (24 tests)
 - `tests/checkout.js` - Checkout logic tests against the real Cloudflare function (21 tests)
 - `tests/e2e.js` - End-to-end browser tests (21 tests)
 - `package.json` - npm configuration with dependencies and test scripts

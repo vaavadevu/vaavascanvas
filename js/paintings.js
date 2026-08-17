@@ -78,6 +78,80 @@ function getPaintingEffectivePrice(painting, withFrame = false) {
   return getPaintingDiscountedPrice(painting);
 }
 
+// What the product page should show in its price section, worked out without
+// touching the DOM so tests/painting-model.js can check it directly:
+//
+//   sold / personal — a status line instead of a price
+//   priced          — `price`, plus `oldPrice` and `discountPercent` when the
+//                     piece is discounted, otherwise both null
+//   none            — nothing to show (no price on record)
+function getPriceModel(painting) {
+  if (painting.status === STATUS.SOLD) return { status: 'sold' };
+  if (painting.status === STATUS.PERSONAL) return { status: 'personal' };
+
+  const priced = (price, discounted, oldPrice) => ({
+    status: 'priced',
+    price,
+    oldPrice: discounted ? oldPrice : null,
+    discountPercent: discounted ? painting.discountPercent : null,
+  });
+
+  if (painting.framedOnly && painting.framedPrice) {
+    // A framedOnly painting carries no originalPrice (enforced by
+    // tests/validate.js), so its framed price is the one the discount comes
+    // off and the one that gets struck through — the same pair the gallery
+    // tile shows via getGalleryPriceHtml()
+    return priced(
+      getPaintingFramedSalePrice(painting) || painting.framedPrice,
+      hasPaintingDiscount(painting),
+      painting.framedPrice,
+    );
+  }
+
+  if (painting.originalPrice) {
+    return priced(getPaintingDiscountedPrice(painting), hasPaintingDiscount(painting), painting.originalPrice);
+  }
+
+  return { status: 'none' };
+}
+
+// ── Physical size ─────────────────────────────────────────────
+
+// Surface area in cm², or null when the piece records no measurements
+function paintingArea(painting) {
+  if (painting.shape === SHAPE.RECTANGULAR && painting.width && painting.height) {
+    return painting.width * painting.height;
+  }
+  if (painting.shape === SHAPE.CIRCLE && painting.diameter) {
+    const radius = painting.diameter / 2;
+    return Math.PI * radius * radius;
+  }
+  return null;
+}
+
+// Spreads the catalog across a ±20% scale by area, so bigger canvases read as
+// bigger on screen. Pieces without measurements sit at 1, and a catalog whose
+// pieces are all one size lands in the middle rather than dividing by zero.
+function assignSizeScales(list) {
+  const areas = list.map(paintingArea).filter(a => a !== null);
+  if (areas.length === 0) return list;
+
+  const minArea = Math.min(...areas);
+  const areaRange = Math.max(...areas) - minArea;
+
+  list.forEach(p => {
+    const area = paintingArea(p);
+    if (area === null) {
+      p.sizeScale = 1;
+      return;
+    }
+    const normalized = areaRange > 0 ? (area - minArea) / areaRange : 0.5;
+    p.sizeScale = 1 + (normalized - 0.5) * 0.4;
+  });
+
+  return list;
+}
+
 const paintings = [
   {
     id: "herrOchFruAndersson",
@@ -180,7 +254,7 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 600
+    originalPrice: 600,
   },
   {
     id: "lodjur",
@@ -191,7 +265,7 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 600
+    originalPrice: 600,
   },
   {
     id: "kattuggla",
@@ -505,3 +579,23 @@ const paintings = [
     originalPrice: 1600
   },
 ];
+
+// ── Node export tail (ignored by the browser) ─────────────────
+//
+// Lets tests/painting-model.js and tests/checkout.js require the real catalog
+// and pricing helpers instead of extracting them from this file's source.
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    STATUS, STATUS_TEXT, SHAPE, MEDIUM, SIZE, TYPE,
+    paintings,
+    getPaintingSize,
+    hasPaintingDiscount,
+    getPaintingDiscountedPrice,
+    getPaintingFramedSalePrice,
+    getPaintingEffectivePrice,
+    getPriceModel,
+    paintingArea,
+    assignSizeScales,
+  };
+}

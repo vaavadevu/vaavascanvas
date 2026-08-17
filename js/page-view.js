@@ -574,56 +574,34 @@ function renderPageViewFrameInfo(painting) {
 function renderPageViewPrice(painting) {
   pageViewPriceSection.innerHTML = "";
 
-  if (painting.status === STATUS.SOLD) {
+  const addLine = (text, className, color) => {
     const p = document.createElement("p");
-    p.textContent = t("status_sold");
-    p.style.color = "red";
+    p.textContent = text;
+    if (className) p.classList.add(className);
+    if (color) p.style.color = color;
     pageViewPriceSection.appendChild(p);
+    return p;
+  };
+
+  // getPriceModel() decides what belongs here; this function only draws it
+  const model = getPriceModel(painting);
+
+  if (model.status === 'sold') {
+    addLine(t("status_sold"), null, "red");
     return;
   }
 
-  if (painting.status === STATUS.PERSONAL) {
-    const p = document.createElement("p");
-    p.textContent = t("status_personal");
-    pageViewPriceSection.appendChild(p);
+  if (model.status === 'personal') {
+    addLine(t("status_personal"));
     return;
   }
 
-  if (painting.framedOnly && painting.framedPrice) {
-    const salePrice = getPaintingFramedSalePrice(painting) || painting.framedPrice;
-    const price = document.createElement("p");
-    price.textContent = formatPrice(salePrice);
-    price.classList.add("pageview-price");
-    pageViewPriceSection.appendChild(price);
+  if (model.status === 'priced') {
+    addLine(formatPrice(model.price), "pageview-price");
 
-    if (hasPaintingDiscount(painting) && painting.originalPrice) {
-      const oldPrice = document.createElement("p");
-      oldPrice.textContent = formatPrice(painting.framedPrice);
-      oldPrice.classList.add("pageview-old-price");
-      pageViewPriceSection.appendChild(oldPrice);
-
-      const discountNote = document.createElement("p");
-      discountNote.textContent = `-${painting.discountPercent}% ${t('pageview_discount_text')}`;
-      discountNote.classList.add("pageview-discount-note");
-      pageViewPriceSection.appendChild(discountNote);
-    }
-  } else if (painting.originalPrice) {
-    const salePrice = getPaintingDiscountedPrice(painting);
-    const price = document.createElement("p");
-    price.textContent = formatPrice(salePrice);
-    price.classList.add("pageview-price");
-    pageViewPriceSection.appendChild(price);
-
-    if (hasPaintingDiscount(painting)) {
-      const oldPrice = document.createElement("p");
-      oldPrice.textContent = formatPrice(painting.originalPrice);
-      oldPrice.classList.add("pageview-old-price");
-      pageViewPriceSection.appendChild(oldPrice);
-
-      const discountNote = document.createElement("p");
-      discountNote.textContent = `-${painting.discountPercent}% ${t('pageview_discount_text')}`;
-      discountNote.classList.add("pageview-discount-note");
-      pageViewPriceSection.appendChild(discountNote);
+    if (model.oldPrice !== null) {
+      addLine(formatPrice(model.oldPrice), "pageview-old-price");
+      addLine(`-${model.discountPercent}% ${t('pageview_discount_text')}`, "pageview-discount-note");
     }
   }
 
@@ -631,10 +609,7 @@ function renderPageViewPrice(painting) {
   // here too, so it is visible while browsing and not only inside the picker
   const multiBuyNote = getMultiBuyPriceNote(painting, 'pageview_multibuy_note');
   if (multiBuyNote) {
-    const note = document.createElement("p");
-    note.textContent = multiBuyNote;
-    note.classList.add("pageview-multibuy-note");
-    pageViewPriceSection.appendChild(note);
+    addLine(multiBuyNote, "pageview-multibuy-note");
   }
 }
 
@@ -1028,41 +1003,7 @@ async function initPageView() {
     }
   }
 
-  // Calculate size scales
-  const parsedSizes = paintings.map(p => {
-    if (p.shape === SHAPE.RECTANGULAR && p.width && p.height) {
-      return p.width * p.height;
-    } else if (p.shape === SHAPE.CIRCLE && p.diameter) {
-      const radius = p.diameter / 2;
-      return Math.PI * radius * radius;
-    }
-    return null;
-  }).filter(a => a !== null);
-
-  if (parsedSizes.length > 0) {
-    const minArea = Math.min(...parsedSizes);
-    const maxArea = Math.max(...parsedSizes);
-    const areaRange = maxArea - minArea;
-
-    paintings.forEach(p => {
-      let area = null;
-      if (p.shape === SHAPE.RECTANGULAR && p.width && p.height) {
-        area = p.width * p.height;
-      } else if (p.shape === SHAPE.CIRCLE && p.diameter) {
-        const radius = p.diameter / 2;
-        area = Math.PI * radius * radius;
-      }
-
-      if (area === null) {
-        p.sizeScale = 1;
-        return;
-      }
-
-      const normalized = areaRange > 0 ? (area - minArea) / areaRange : 0.5;
-      p.sizeScale = 1 + (normalized - 0.5) * 0.4;
-    });
-  }
-
+  assignSizeScales(paintings);
   sortPaintings();
 
   const params = new URLSearchParams(window.location.search);

@@ -55,7 +55,10 @@ function assertEqual(actual, expected, message) {
 }
 
 const checkoutPath = path.join(__dirname, '../functions/api/create-checkout.js');
-const paintingsJsPath = path.join(__dirname, '../js/paintings.js');
+
+// The browser side exports its helpers, so the parity test below compares the
+// real js/paintings.js rather than a copy sliced out of its source
+const clientPricing = require('../js/paintings.js');
 
 // Cloudflare Workers always provide Response.json(); older Node versions don't,
 // so give the function the same footing it has in production
@@ -180,7 +183,11 @@ function loadCatalogs() {
 }
 
 // ─────────────────────────────────────────────────────────────
-// Extract the shared pricing helpers from both copies
+// Extract the shared pricing helpers from the server function
+//
+// js/paintings.js is require()d directly (see clientPricing above).
+// functions/api/create-checkout.js is a Cloudflare module with no export tail,
+// so its copy still has to be lifted out of the source.
 // ─────────────────────────────────────────────────────────────
 
 const PRICING_FUNCTIONS = [
@@ -430,8 +437,13 @@ async function runTests() {
   console.log(colors.blue + '\n[6] CLIENT / SERVER PRICING PARITY' + colors.reset);
 
   await test('Pricing helpers behave identically in the browser bundle and the server function', () => {
-    const client = loadPricingHelpers(paintingsJsPath, 'js/paintings.js');
+    const client = clientPricing;
     const server = loadPricingHelpers(checkoutPath, 'functions/api/create-checkout.js');
+
+    PRICING_FUNCTIONS.forEach(name => {
+      assert(typeof client[name] === 'function',
+        `js/paintings.js no longer exports ${name}() — the parity check cannot run without it`);
+    });
 
     // Real catalog entries plus edge cases the catalog may not contain yet
     const cases = [
