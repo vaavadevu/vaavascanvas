@@ -34,6 +34,14 @@ echo.
 
 call node tests/cart-math.js
 
+if errorlevel 1 goto :failed
+
+echo.
+echo Running cart rules unit tests...
+echo.
+
+call node tests/cart-rules.js
+
 :failed
 if errorlevel 1 (
     color 0C

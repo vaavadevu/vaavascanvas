@@ -29,6 +29,9 @@ jobs:
       - name: Run cart math unit tests
         run: node tests/cart-math.js
 
+      - name: Run cart rules unit tests
+        run: node tests/cart-rules.js
+
       - name: Run checkout logic tests
         run: node tests/checkout.js
 

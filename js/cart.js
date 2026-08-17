@@ -2,10 +2,15 @@
 // VAAVASCANVAS – CART & CHECKOUT
 // ============================================================
 
-// The money rules live in js/cart-math.js, which this file expects to have been
-// loaded first: FREE_SHIPPING_THRESHOLD, SHIPPING_COST_SE, SHIPPING_COST_EU,
-// calcSubtotal, calcShipping, calcTotal, calcCount, applyBookmarkPricing and
-// cartItemOldPrice all come from there.
+// This file owns the drawer: the DOM, the toasts and the network call. The
+// decisions behind them live in two files it expects to have been loaded first.
+//
+//   js/cart-math.js  — what a cart costs: FREE_SHIPPING_THRESHOLD,
+//                      SHIPPING_COST_SE, SHIPPING_COST_EU, calcSubtotal,
+//                      calcShipping, calcTotal, calcCount,
+//                      applyBookmarkPricing, cartItemOldPrice
+//   js/cart-rules.js — what belongs in it: isUniqueItem, resolveAdd,
+//                      withoutFrameVariants, validateCheckout, buildOrderItems
 
 const Cart = (() => {
   let items = JSON.parse(localStorage.getItem('vc_cart') || '[]');
@@ -46,47 +51,35 @@ const Cart = (() => {
     }
   }
 
-  // One-of-a-kind pieces: a second copy can never be ordered
-  function isUniqueItem(item) {
-    return item.type === 'original' || item.type === 'bookmark';
-  }
-
   function add(item) {
-    const key = `${item.id}-${item.size || 'original'}`;
+    const outcome = resolveAdd(items, item);
 
-    if (isUniqueItem(item)) {
-      const existing = items.find(i => i.key === key);
-      if (existing) {
-        openCart();
-        showToast(`"${item.title}" ${t('cart_toast_already')}`);
-        return;
-      }
-      if (item.type === 'original') {
-        // Remove any other frame-variant of the same painting
-        const baseId = item.paintingBaseId || item.id.replace(/-framed$/, '');
-        items = items.filter(i => {
-          if (i.type !== 'original') return true;
-          const iBase = i.paintingBaseId || i.id.replace(/-framed$/, '');
-          return iBase !== baseId;
-        });
-      }
-    } else {
-      const existing = items.find(i => i.key === key);
-      if (existing) {
-        existing.qty = (existing.qty || 1) + 1;
-        trackEvent('add_to_cart', { currency: 'SEK', value: item.price, items: [{ item_id: item.id, item_name: item.title, item_category: item.type, price: item.price, quantity: 1 }] });
-        save();
-        openCart();
-        showToast(`"${item.title}" ${t('cart_toast_added')}`);
-        return;
-      }
+    // Nothing to add — the piece is one of a kind and already in the cart
+    if (outcome.action === 'duplicate') {
+      openCart();
+      showToast(`"${item.title}" ${t('cart_toast_already')}`);
+      return;
     }
 
-    items.push({ ...item, key, qty: 1 });
-    trackEvent('add_to_cart', { currency: 'SEK', value: item.price, items: [{ item_id: item.id, item_name: item.title, item_category: item.type, price: item.price, quantity: 1 }] });
+    if (outcome.action === 'increment') {
+      const existing = items.find(i => i.key === outcome.key);
+      existing.qty = (existing.qty || 1) + 1;
+    } else {
+      // Picking the other frame-variant swaps out the one already there
+      if (outcome.action === 'replace') {
+        items = withoutFrameVariants(items, outcome.baseId);
+      }
+      items.push({ ...item, key: outcome.key, qty: 1 });
+    }
+
+    trackEvent('add_to_cart', {
+      currency: 'SEK',
+      value: item.price,
+      items: buildOrderItems([{ ...item, qty: 1 }]),
+    });
     save();
     openCart();
-    showToast(`"${item.title}" lagd i varukorgen`);
+    showToast(`"${item.title}" ${t('cart_toast_added')}`);
   }
 
   function toggleFrame(key, withFrame) {
@@ -303,33 +296,27 @@ const Cart = (() => {
   async function checkout() {
     if (items.length === 0) return;
 
-    const hasOriginals = items.some(i => i.type === 'original');
     const cb = document.getElementById('cart-terms-checkbox');
-    let blocked = false;
+    const { ok, blockers } = validateCheckout({
+      country: selectedCountry,
+      termsAccepted: !!cb?.checked,
+    });
 
-    if (selectedCountry === '') {
-      const countryRow = document.getElementById('cart-country-row');
-      if (countryRow) {
-        countryRow.classList.remove('cart-terms-error');
-        void countryRow.offsetWidth;
-        countryRow.classList.add('cart-terms-error');
-      }
-      blocked = true;
+    if (!ok) {
+      // Re-triggering the animation needs the class off, a reflow, then on again
+      const flagError = (el) => {
+        if (!el) return;
+        el.classList.remove('cart-terms-error');
+        void el.offsetWidth;
+        el.classList.add('cart-terms-error');
+      };
+
+      if (blockers.includes('country')) flagError(document.getElementById('cart-country-row'));
+      if (blockers.includes('terms')) flagError(cb?.closest('.cart-terms-label'));
+      return;
     }
 
-    if (!cb?.checked) {
-      const label = cb?.closest('.cart-terms-label');
-      if (label) {
-        label.classList.remove('cart-terms-error');
-        void label.offsetWidth;
-        label.classList.add('cart-terms-error');
-      }
-      blocked = true;
-    }
-
-    if (blocked) return;
-
-    const orderItems = items.map(i => ({ item_id: i.id, item_name: i.title, item_category: i.type, price: i.price, quantity: i.qty || 1 }));
+    const orderItems = buildOrderItems(items);
     trackEvent('begin_checkout', { currency: 'SEK', value: total(), items: orderItems });
     sessionStorage.setItem('vc_last_order', JSON.stringify({ value: total(), items: orderItems }));
 

@@ -1049,19 +1049,42 @@ test('The cart has no hardcoded shipping amounts left', () => {
     'sync test above cannot protect them:\n  ' + offenders.join('\n  '));
 });
 
-test('Every page that loads cart.js loads cart-math.js first', () => {
-  // cart.js calls calcSubtotal/calcShipping/applyBookmarkPricing as globals, so
-  // a page that loads it alone throws on the first render
+test('Every page that loads cart.js loads its dependencies first', () => {
+  // cart.js calls calcSubtotal, resolveAdd, validateCheckout and friends as
+  // globals, so a page that loads it alone throws on the first render
+  const dependencies = ['cart-math', 'cart-rules'];
+
   const pages = htmlFiles.filter(f => /<script[^>]+src="[^"]*js\/cart\.js"/.test(f.content));
   assert(pages.length > 0, 'No page loads cart.js — the selector above is probably wrong');
 
   pages.forEach(file => {
     const name = path.basename(file.path);
-    const mathAt = file.content.search(/<script[^>]+src="[^"]*js\/cart-math\.js"/);
     const cartAt = file.content.search(/<script[^>]+src="[^"]*js\/cart\.js"/);
-    assert(mathAt !== -1, `${name} loads cart.js without cart-math.js`);
-    assert(mathAt < cartAt, `${name} loads cart-math.js after cart.js — it has to come first`);
+
+    dependencies.forEach(dep => {
+      const depAt = file.content.search(new RegExp(`<script[^>]+src="[^"]*js/${dep}\\.js"`));
+      assert(depAt !== -1, `${name} loads cart.js without ${dep}.js`);
+      assert(depAt < cartAt, `${name} loads ${dep}.js after cart.js — it has to come first`);
+    });
   });
+});
+
+test('cart.js does not redeclare what its dependency modules export', () => {
+  // A local copy would silently shadow the shared one and drift from the tests
+  const cartContent = fs.readFileSync(path.join(__dirname, '../js/cart.js'), 'utf8');
+  const shared = [
+    'calcSubtotal', 'calcShipping', 'calcTotal', 'calcCount',
+    'applyBookmarkPricing', 'cartItemOldPrice',
+    'isUniqueItem', 'resolveAdd', 'withoutFrameVariants',
+    'validateCheckout', 'buildOrderItems',
+  ];
+
+  const offenders = shared.filter(name =>
+    new RegExp(`function\\s+${name}\\s*\\(`).test(cartContent));
+
+  assert(offenders.length === 0,
+    'cart.js redeclares functions that come from cart-math.js/cart-rules.js, ' +
+    'so the tested version is not the one running:\n  ' + offenders.join('\n  '));
 });
 
 // ─────────────────────────────────────────────────────────────

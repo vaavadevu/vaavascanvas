@@ -1,12 +1,13 @@
 # Vaavascanvas Testing Guide
 
-This project includes three levels of automated testing:
+This project includes four levels of automated testing:
 
 1. **Data Validation Tests** - Check data consistency and structure (runs instantly)
-2. **Checkout Logic Tests** - Run the real payment function against a stubbed Stripe to check what customers can actually be charged (runs instantly)
-3. **End-to-End (E2E) Tests** - Open actual pages in a browser, test user interactions, check for errors (takes ~30 seconds)
+2. **Cart Unit Tests** - Call the cart's money rules and add-to-cart rules directly, with no browser involved (runs instantly)
+3. **Checkout Logic Tests** - Run the real payment function against a stubbed Stripe to check what customers can actually be charged (runs instantly)
+4. **End-to-End (E2E) Tests** - Open actual pages in a browser, test user interactions, check for errors (takes ~30 seconds)
 
-All three suites run on every push and pull request to catch issues before deployment.
+All four suites run on every push and pull request to catch issues before deployment.
 
 ## What Gets Tested
 
@@ -53,7 +54,19 @@ files — so these check the arithmetic a buyer is shown in the cart drawer:
   still totals sensibly when the catalog is missing entirely
 - Which cart lines get a struck-through "was" price
 
-### 8. **Checkout Logic Tests** (`tests/checkout.js`)
+### 8. **Cart Rules Unit Tests** (`tests/cart-rules.js`)
+Calls the functions in `js/cart-rules.js` directly — these decide what may go in
+the cart, as opposed to what it costs:
+- A one-of-a-kind piece (an original, a bookmark variant) cannot be added twice
+- Adding the framed version of a painting swaps out the unframed one rather than
+  selling the same canvas twice, and vice versa — matched on the id's `-framed`
+  suffix, so carts saved before `paintingBaseId` existed still work
+- Replacing removes only the matching painting, leaving the rest of the cart alone
+- Repeatable products raise their quantity, and two sizes stay two separate lines
+- Checkout reports every blocker at once (no country, unaccepted terms, or both)
+  so the buyer is not made to discover them one at a time
+
+### 9. **Checkout Logic Tests** (`tests/checkout.js`)
 Runs the real `functions/api/create-checkout.js` with Stripe stubbed out, so these
 check behaviour rather than data:
 - Client-supplied prices are ignored — the server charges its own catalog price
@@ -64,7 +77,7 @@ check behaviour rather than data:
 - Shipping matches the threshold, Swedish, and EU rates
 - The pricing helpers duplicated in `js/paintings.js` and `create-checkout.js` produce identical results
 
-### 9. **End-to-End Browser Tests** (E2E)
+### 10. **End-to-End Browser Tests** (E2E)
 - Main page loads without JavaScript console errors
 - Hero section renders correctly
 - Gallery displays all paintings
@@ -91,16 +104,17 @@ npx playwright install chromium
 npm test
 ```
 
-This runs validation, cart math, checkout, and E2E tests sequentially.
+This runs validation, cart math, cart rules, checkout, and E2E tests sequentially.
 
 ### Run Only Validation Tests (Fast)
 ```bash
 node tests/validate.js
 ```
 
-### Run Only Cart Math Tests (Fast)
+### Run Only Cart Unit Tests (Fast)
 ```bash
 node tests/cart-math.js
+node tests/cart-rules.js
 ```
 
 ### Run Only Checkout Tests (Fast)
@@ -168,7 +182,7 @@ Failed: 0
 ✓ Fail with a message naming the exact rule that broke
 
 ✗ Won't catch anything about how the function is wired into a page
-✗ Only cover code that has been separated out from the DOM (currently `js/cart-math.js`)
+✗ Only cover code that has been separated out from the DOM (currently `js/cart-math.js` and `js/cart-rules.js`)
 
 ### Data Validation Tests (Fast - ~1 second)
 ✓ Catch data structure problems (missing fields, wrong types)
@@ -330,8 +344,9 @@ Then run `npm test` to verify everything is correct.
 
 ## Test Files
 
-- `tests/validate.js` - Data validation test suite (41 tests)
+- `tests/validate.js` - Data validation test suite (42 tests)
 - `tests/cart-math.js` - Cart math unit tests (29 tests)
+- `tests/cart-rules.js` - Cart rules unit tests (24 tests)
 - `tests/checkout.js` - Checkout logic tests against the real Cloudflare function (21 tests)
 - `tests/e2e.js` - End-to-end browser tests (21 tests)
 - `package.json` - npm configuration with dependencies and test scripts
