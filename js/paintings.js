@@ -152,6 +152,68 @@ function assignSizeScales(list) {
   return list;
 }
 
+// ── Gallery sort orders ───────────────────────────────────────
+
+// The orders the shop lets a buyer choose between. GALLERY_SORT.DEFAULT is the
+// curated arrangement gallery.js builds itself (for sale first, biggest
+// discounts on top); the rest are ranked on one measurable key.
+const GALLERY_SORT = {
+  DEFAULT: "sort_default",
+  PRICE_ASC: "sort_price_asc",
+  PRICE_DESC: "sort_price_desc",
+  SIZE_ASC: "sort_size_asc",
+  SIZE_DESC: "sort_size_desc",
+};
+
+// What the piece costs today, or null when it carries no price at all
+function paintingSortPrice(painting) {
+  const price = getPaintingEffectivePrice(painting);
+  return typeof price === "number" && price > 0 ? price : null;
+}
+
+const GALLERY_SORT_KEYS = {
+  [GALLERY_SORT.PRICE_ASC]:  { valueOf: paintingSortPrice, direction: 1 },
+  [GALLERY_SORT.PRICE_DESC]: { valueOf: paintingSortPrice, direction: -1 },
+  [GALLERY_SORT.SIZE_ASC]:   { valueOf: paintingArea, direction: 1 },
+  [GALLERY_SORT.SIZE_DESC]:  { valueOf: paintingArea, direction: -1 },
+};
+
+// Comparator for one of the chosen orders, or null for GALLERY_SORT.DEFAULT
+// and anything unrecognised, which leaves the curated order in charge.
+//
+// Two rules hold whichever key is picked: sold pieces stay behind available
+// ones so the shop leads with what can be bought, and a piece the key cannot
+// measure — no price, no dimensions — sinks below the ones it can, instead of
+// landing at an arbitrary end of the run.
+function comparePaintingsBy(order) {
+  const key = GALLERY_SORT_KEYS[order];
+  if (!key) return null;
+
+  const soldRank = p => (p.status === STATUS.SOLD ? 1 : 0);
+
+  return (a, b) => {
+    const soldDiff = soldRank(a) - soldRank(b);
+    if (soldDiff !== 0) return soldDiff;
+
+    const valueA = key.valueOf(a);
+    const valueB = key.valueOf(b);
+    if (valueA === null || valueB === null) {
+      if (valueA === valueB) return compareByGalleryOrder(a, b);
+      return valueA === null ? 1 : -1;
+    }
+
+    if (valueA !== valueB) return (valueA - valueB) * key.direction;
+    return compareByGalleryOrder(a, b);
+  };
+}
+
+// Equal prices and equal areas are common, so ties fall back on the shuffled
+// order the page assigned — the same arrangement the default sort uses, which
+// keeps the grid from reshuffling every time an order is picked
+function compareByGalleryOrder(a, b) {
+  return (a._randomGalleryOrder || 0) - (b._randomGalleryOrder || 0);
+}
+
 const paintings = [
   {
     id: "herrOchFruAndersson",
@@ -597,5 +659,8 @@ if (typeof module !== 'undefined' && module.exports) {
     getPriceModel,
     paintingArea,
     assignSizeScales,
+    GALLERY_SORT,
+    paintingSortPrice,
+    comparePaintingsBy,
   };
 }

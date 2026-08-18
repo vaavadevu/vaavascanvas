@@ -104,7 +104,7 @@ async function init() {
     painting._randomGalleryOrder = index;
   });
 
-  sortPaintings();
+  applyGallerySort();
   buildGallery();
 
   // Legacy: redirect old ?painting= URLs to view.html

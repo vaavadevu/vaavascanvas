@@ -22,6 +22,9 @@ const {
   getPriceModel,
   paintingArea,
   assignSizeScales,
+  GALLERY_SORT,
+  paintingSortPrice,
+  comparePaintingsBy,
 } = require('../js/paintings.js');
 
 const colors = {
@@ -290,6 +293,124 @@ test('The product page and the gallery tile agree on discounted prices', () => {
       `"${p.id}": the product page and the gallery quote different prices`);
     assertEqual(model.oldPrice, galleryOldPrice ?? null,
       `"${p.id}": the product page and the gallery disagree on the struck-through price`);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────
+// SUITE 4: Buyer-chosen sort orders
+// ─────────────────────────────────────────────────────────────
+
+console.log(colors.blue + '\n[4] BUYER-CHOSEN SORT ORDERS' + colors.reset);
+
+// Every piece carries a _randomGalleryOrder in the browser, so the tie-break
+// is exercised the same way here
+const sortedIds = (list, order) =>
+  list
+    .map((p, i) => ({ _randomGalleryOrder: i, status: STATUS.FOR_SALE, ...p }))
+    .sort(comparePaintingsBy(order))
+    .map(p => p.id);
+
+test('The default order has no comparator, leaving the curated arrangement alone', () => {
+  assertEqual(comparePaintingsBy(GALLERY_SORT.DEFAULT), null,
+    'The default order should fall through to gallery.js sortPaintings()');
+  assertEqual(comparePaintingsBy('sort_nonsense'), null,
+    'An unknown order should fall through rather than throw');
+});
+
+test('Sorting by price runs cheapest to dearest and back again', () => {
+  const list = [
+    { id: 'mid', originalPrice: 1500 },
+    { id: 'dear', originalPrice: 3000 },
+    { id: 'cheap', originalPrice: 600 },
+  ];
+
+  assertEqual(sortedIds(list, GALLERY_SORT.PRICE_ASC).join(' → '), 'cheap → mid → dear',
+    'Lowest price first is in the wrong order');
+  assertEqual(sortedIds(list, GALLERY_SORT.PRICE_DESC).join(' → '), 'dear → mid → cheap',
+    'Highest price first is in the wrong order');
+});
+
+test('Sorting by price uses what the buyer pays today, not the pre-discount price', () => {
+  const list = [
+    { id: 'discounted-2400', originalPrice: 3000, discountPercent: 20 },
+    { id: 'plain-2500', originalPrice: 2500 },
+  ];
+
+  assertEqual(sortedIds(list, GALLERY_SORT.PRICE_ASC).join(' → '), 'discounted-2400 → plain-2500',
+    'A discounted painting should sort on its discounted price');
+  assertEqual(paintingSortPrice({ status: STATUS.FOR_SALE, framedPrice: 2000, framedOnly: true }), 2000,
+    'A framed-only piece sorts on its framed price');
+});
+
+test('Sorting by size runs on area, so a wide piece outranks a tall thin one', () => {
+  const list = [
+    { id: 'tall-thin', ...rect(30, 90) },   // 2700 cm²
+    { id: 'wide', ...rect(90, 60) },        // 5400 cm²
+    { id: 'small', ...rect(18, 24) },       // 432 cm²
+  ];
+
+  assertEqual(sortedIds(list, GALLERY_SORT.SIZE_ASC).join(' → '), 'small → tall-thin → wide',
+    'Smallest size first is in the wrong order');
+  assertEqual(sortedIds(list, GALLERY_SORT.SIZE_DESC).join(' → '), 'wide → tall-thin → small',
+    'Largest size first is in the wrong order');
+});
+
+test('Sold pieces stay behind available ones in every order', () => {
+  const list = [
+    { id: 'sold-cheap', status: STATUS.SOLD, originalPrice: 500 },
+    { id: 'for-sale-dear', originalPrice: 3000 },
+    { id: 'sold-dear', status: STATUS.SOLD, originalPrice: 4000 },
+    { id: 'for-sale-cheap', originalPrice: 600 },
+  ];
+
+  assertEqual(sortedIds(list, GALLERY_SORT.PRICE_ASC).join(' → '),
+    'for-sale-cheap → for-sale-dear → sold-cheap → sold-dear',
+    'Cheapest first should still lead with what can be bought');
+  assertEqual(sortedIds(list, GALLERY_SORT.PRICE_DESC).join(' → '),
+    'for-sale-dear → for-sale-cheap → sold-dear → sold-cheap',
+    'Dearest first should still lead with what can be bought');
+});
+
+test('A piece the sort key cannot measure sinks below the ones it can', () => {
+  const list = [
+    { id: 'unmeasured' },
+    { id: 'measured', ...rect(20, 20), originalPrice: 800 },
+  ];
+
+  [GALLERY_SORT.SIZE_ASC, GALLERY_SORT.SIZE_DESC, GALLERY_SORT.PRICE_ASC, GALLERY_SORT.PRICE_DESC]
+    .forEach(order => {
+      assertEqual(sortedIds(list, order).join(' → '), 'measured → unmeasured',
+        `${order} put a piece with nothing to sort on ahead of a real one`);
+    });
+});
+
+test('Equal values keep the order the page shuffled them into', () => {
+  const list = [
+    { id: 'second', originalPrice: 1000, ...rect(20, 20) },
+    { id: 'first', originalPrice: 1000, ...rect(20, 20) },
+  ];
+
+  // Both keys tie, so the ids come back in _randomGalleryOrder order — the
+  // grid must not reshuffle itself each time an order is picked
+  assertEqual(sortedIds(list, GALLERY_SORT.PRICE_ASC).join(' → '), 'second → first',
+    'Equal prices should fall back on the shuffled order');
+  assertEqual(sortedIds(list, GALLERY_SORT.SIZE_DESC).join(' → '), 'second → first',
+    'Equal areas should fall back on the shuffled order');
+});
+
+test('Every catalog piece can be ranked by both keys without crashing', () => {
+  const ranked = paintings.map((p, i) => ({ ...p, _randomGalleryOrder: i }));
+  Object.values(GALLERY_SORT).forEach(order => {
+    const comparator = comparePaintingsBy(order);
+    if (!comparator) return;
+    const result = [...ranked].sort(comparator);
+    assertEqual(result.length, paintings.length, `${order} lost or duplicated a painting`);
+
+    let seenSold = null;
+    result.forEach(p => {
+      if (p.status === STATUS.SOLD) seenSold = seenSold || p.id;
+      else if (seenSold) assert(false, `${order}: "${p.id}" is sorted after sold painting "${seenSold}"`);
+    });
   });
 });
 

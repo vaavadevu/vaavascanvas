@@ -63,17 +63,111 @@ function sortPaintings() {
   });
 }
 
+// Puts `paintings` in the order the buyer asked for. The chosen orders live in
+// paintings.js; without one, the curated arrangement above applies.
+function applyGallerySort() {
+  const comparator = comparePaintingsBy(activeSortOrder);
+  if (comparator) paintings.sort(comparator);
+  else sortPaintings();
+}
+
+// ── Masonry layout ────────────────────────────────────────────
+//
+// The grid was CSS multi-column, which fills one column top to bottom before
+// starting the next. With a sort order picked that read wrong: on two columns
+// the left one held the first half of the order and the right one the second,
+// so the tile next to the cheapest painting was the middle of the run rather
+// than the second cheapest. Tiles are placed by hand instead — each goes to
+// the column that is shortest so far, so reading left to right, top to bottom
+// follows the sort order while the columns stay ragged and roughly level.
+
+// Painting id → its tile. Laying out again moves the existing elements between
+// columns rather than rebuilding them, so the images are never re-fetched.
+let galleryTiles = new Map();
+
+// The default when a piece has neither metadata nor measurements: slightly
+// taller than wide, the shape most of the catalog is
+const DEFAULT_TILE_RATIO = 0.8;
+
+// Tiles are placed before their images load, so the height is estimated from
+// the recorded aspect ratio, falling back on the piece's own measurements.
+// The unit is one column width — only how the columns compare matters.
+function estimateTileHeight(painting) {
+  const isPainting = (painting.type || TYPE.PAINTING) === TYPE.PAINTING;
+  const ratio = painting.aspectRatio
+    || (painting.shape === SHAPE.CIRCLE ? 1 : 0)
+    // A painting's photo is the painting, so its measurements are the shape of
+    // the tile too. A product shot — the bookmark cover, showing a row of
+    // them — is not, so that falls through to the default instead.
+    || (isPainting && painting.width && painting.height ? painting.width / painting.height : 0)
+    || DEFAULT_TILE_RATIO;
+  return 1 / ratio;
+}
+
+// How many columns the stylesheet asks for at this width — the breakpoints
+// stay in CSS, this only reads the result
+function galleryColumnCount() {
+  const galleryElement = document.getElementById("gallery");
+  if (!galleryElement) return 1;
+  const declared = parseInt(getComputedStyle(galleryElement).getPropertyValue("--gallery-columns"), 10);
+  return declared > 0 ? declared : 1;
+}
+
+// Heights of the tiles as currently rendered, in column widths. Measured
+// before anything moves, since a tile taken out of the page measures zero.
+// The ratio holds when the column count changes, so these stay usable across
+// a resize — and they beat the estimate for a piece whose photo is a
+// different shape from the piece itself, such as the bookmark cover.
+function measureTileHeights() {
+  const measured = new Map();
+  const column = document.querySelector(".gallery-column");
+  const columnWidth = column ? column.getBoundingClientRect().width : 0;
+  if (columnWidth <= 0) return measured;
+
+  galleryTiles.forEach((tile, id) => {
+    const height = tile.getBoundingClientRect().height;
+    if (height > 0) measured.set(id, height / columnWidth);
+  });
+  return measured;
+}
+
+let laidOutColumnCount = 0;
+
+function layoutGallery(visiblePaintings) {
+  const galleryElement = document.getElementById("gallery");
+  if (!galleryElement) return;
+
+  const measured = measureTileHeights();
+  const columns = Array.from({ length: galleryColumnCount() }, () => {
+    const el = document.createElement("div");
+    el.className = "gallery-column";
+    return { el, height: 0 };
+  });
+
+  visiblePaintings.forEach(painting => {
+    const tile = galleryTiles.get(painting.id);
+    if (!tile) return;
+    // A tie keeps the leftmost column, so the top row fills left to right
+    // before anything starts a second row
+    const target = columns.reduce((shortest, column) =>
+      column.height < shortest.height ? column : shortest);
+    target.el.appendChild(tile);
+    target.height += measured.get(painting.id) ?? estimateTileHeight(painting);
+  });
+
+  galleryElement.replaceChildren(...columns.map(column => column.el));
+  laidOutColumnCount = columns.length;
+}
+
+// Builds a tile per painting and lays the matching ones out
 function buildGallery() {
   const galleryElement = document.getElementById("gallery");
   if (!galleryElement) return;
-  galleryElement.innerHTML = "";
-  paintings.forEach((painting, idx) => {
-    const item = createGalleryItem(painting, idx);
-    galleryElement.appendChild(item);
-  });
+  galleryTiles = new Map(paintings.map(painting => [painting.id, createGalleryItem(painting)]));
+  filterGallery();
 }
 
-function createGalleryItem(painting, index) {
+function createGalleryItem(painting) {
   const item = document.createElement("div");
   item.classList.add("gallery-item");
 
@@ -95,7 +189,7 @@ function createGalleryItem(painting, index) {
 
   img.addEventListener("error", () => { img.src = "/images/devika.jpg"; });
   img.addEventListener("click", () => {
-    window.location.href = `view.html?painting=${paintings[index].id}`;
+    window.location.href = `view.html?painting=${painting.id}`;
   });
 
   item.appendChild(img);
@@ -201,6 +295,7 @@ function addDiscountBadge(container, painting) {
 let activeStatusFilter = "all";
 let activeSizeFilter = "size_all";
 let activeTypeFilter = "all";
+let activeSortOrder = GALLERY_SORT.DEFAULT;
 
 const STATUS_LABEL_KEYS = {
   all:      "filter_status_label",
@@ -215,6 +310,14 @@ const SIZE_LABEL_KEYS = {
   size_large:  "filter_size_large",
 };
 
+const SORT_LABEL_KEYS = {
+  [GALLERY_SORT.DEFAULT]:    "filter_sort_label",
+  [GALLERY_SORT.PRICE_ASC]:  "filter_sort_price_asc",
+  [GALLERY_SORT.PRICE_DESC]: "filter_sort_price_desc",
+  [GALLERY_SORT.SIZE_ASC]:   "filter_sort_size_asc",
+  [GALLERY_SORT.SIZE_DESC]:  "filter_sort_size_desc",
+};
+
 const TYPE_LABEL_KEYS = {
   all:       "filter_type_label",
   painting:  "filter_type_painting",
@@ -226,9 +329,11 @@ function updateFilterLabels() {
   const statusLabel = document.getElementById("filter-status-label");
   const sizeLabel   = document.getElementById("filter-size-label");
   const typeLabel   = document.getElementById("filter-type-label");
+  const sortLabel   = document.getElementById("filter-sort-label");
   if (statusLabel) statusLabel.textContent = t(STATUS_LABEL_KEYS[activeStatusFilter]);
   if (sizeLabel)   sizeLabel.textContent   = t(SIZE_LABEL_KEYS[activeSizeFilter]);
   if (typeLabel)   typeLabel.textContent   = t(TYPE_LABEL_KEYS[activeTypeFilter]);
+  if (sortLabel)   sortLabel.textContent   = t(SORT_LABEL_KEYS[activeSortOrder]);
 }
 
 function toggleFilterDropdown(id) {
@@ -255,6 +360,8 @@ function attachFilterListeners() {
         setActiveTypeFilter(filter);
       } else if (btn.classList.contains("status-filter")) {
         setActiveStatusFilter(filter);
+      } else if (btn.classList.contains("sort-filter")) {
+        setActiveSortOrder(filter);
       }
       closeFab();
     });
@@ -283,8 +390,13 @@ function attachFilterListeners() {
     // Tile prices and badges are built with t() at render time, so they keep
     // the old language until the grid is rebuilt
     buildGallery();
-    filterGallery();
   });
+
+  // The stylesheet asks for fewer columns as the window narrows, and the tiles
+  // have to be dealt out again when it does
+  window.addEventListener("resize", () => requestAnimationFrame(() => {
+    if (galleryColumnCount() !== laidOutColumnCount) filterGallery();
+  }));
   updateFilterLabels();
 
   setupFab();
@@ -331,7 +443,7 @@ function setActiveSizeFilter(filter) {
 
 function setActiveTypeFilter(filter) {
   activeTypeFilter = filter;
-  document.querySelectorAll(".fab-filter-btn.type-filter, .filter-type-button").forEach(b => {
+  document.querySelectorAll(".fab-filter-btn.type-filter").forEach(b => {
     b.classList.toggle("active", b.dataset.filter === filter);
   });
   document.querySelectorAll("#filter-type-dd .filter-option").forEach(b => {
@@ -355,34 +467,57 @@ function setActiveTypeFilter(filter) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+function setActiveSortOrder(order) {
+  activeSortOrder = order;
+  document.querySelectorAll("#filter-sort-dd .filter-option").forEach(b => {
+    b.classList.toggle("active", b.dataset.filter === order);
+  });
+  document.querySelectorAll(".fab-filter-btn.sort-filter").forEach(b => {
+    b.classList.toggle("active", b.dataset.filter === order);
+  });
+  const dd = document.getElementById("filter-sort-dd");
+  if (dd) {
+    dd.classList.toggle("has-filter", order !== GALLERY_SORT.DEFAULT);
+    dd.classList.remove("open");
+    dd.querySelector(".filter-dropdown-trigger")?.setAttribute("aria-expanded", "false");
+  }
+  updateFilterLabels();
+  applyGallerySort();
+  filterGallery();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 function updateSizeFilterVisibility(show) {
   const sizeFilterDd = document.getElementById("filter-size-dd");
-  const sizeFilterButtons = document.querySelectorAll(".fab-filter-btn.size-filter");
+  // The whole group goes, heading included — a lone "Storlek" label above an
+  // empty row would be worse than no group at all
+  const sizeFilterGroup = document.getElementById("fab-group-size");
   if (sizeFilterDd) {
     sizeFilterDd.style.display = show ? "" : "none";
   }
-  sizeFilterButtons.forEach(btn => {
-    btn.style.display = show ? "inline-flex" : "none";
-  });
+  if (sizeFilterGroup) {
+    sizeFilterGroup.style.display = show ? "" : "none";
+  }
+}
+
+function paintingMatchesFilters(painting) {
+  const type = painting.type || TYPE.PAINTING;
+  const size = getPaintingSize(painting);
+  const statusMatch = activeStatusFilter === "all" || painting.status === activeStatusFilter;
+  const typeMatch = activeTypeFilter === "all" || type === activeTypeFilter;
+  const sizeMatch = activeSizeFilter === "size_all" || size === activeSizeFilter.replace("size_", "");
+  return statusMatch && typeMatch && sizeMatch;
 }
 
 function filterGallery() {
-  document.querySelectorAll(".gallery-item").forEach((item, idx) => {
-    const painting = paintings[idx];
-    const status = painting.status;
-    const size = getPaintingSize(painting);
-    const type = painting.type || TYPE.PAINTING;
-    const statusMatch = activeStatusFilter === "all" || status === activeStatusFilter;
-    const typeMatch = activeTypeFilter === "all" || type === activeTypeFilter;
-    const sizeMatch = activeSizeFilter === "size_all" || size === activeSizeFilter.replace("size_", "");
-    item.style.display = (statusMatch && typeMatch && sizeMatch) ? "" : "none";
-  });
+  const visiblePaintings = paintings.filter(paintingMatchesFilters);
+  layoutGallery(visiblePaintings);
+
   // Show clay-empty notice when clay filter selected and no items are visible
   const galleryWrapper = document.getElementById('gallery-wrapper');
   if (!galleryWrapper) return;
   const existingNotice = document.getElementById('clay-empty-notice');
-  const itemsVisible = Array.from(document.querySelectorAll('.gallery-item')).some(i => i.style.display !== 'none');
-  if (activeTypeFilter === 'clay' && !itemsVisible) {
+  if (activeTypeFilter === 'clay' && visiblePaintings.length === 0) {
     if (!existingNotice) {
       const notice = document.createElement('div');
       notice.id = 'clay-empty-notice';
@@ -409,21 +544,9 @@ function setupFab() {
   if (!fab || !trigger || !popup) return;
 
   popup.style.display = "none";
-  let closeTimer = null;
-
-  const openFab = () => {
-    clearTimeout(closeTimer);
-    popup.style.display = "flex";
-    requestAnimationFrame(() => requestAnimationFrame(() => fab.classList.add("open")));
-  };
-
-  const closeFabLocal = () => {
-    fab.classList.remove("open");
-    closeTimer = setTimeout(() => { popup.style.display = "none"; }, 550);
-  };
 
   const toggleFab = () => {
-    fab.classList.contains("open") ? closeFabLocal() : openFab();
+    fab.classList.contains("open") ? closeFab() : openFab();
   };
 
   const ripple = document.createElement("span");
@@ -481,12 +604,30 @@ function setupFab() {
   document.addEventListener("click", (e) => { if (!fab.contains(e.target)) closeFab(); });
 }
 
+// The sheet is taken out of the flow once it has faded, so it cannot catch
+// taps meant for the page underneath. Opening and closing share one timer:
+// with a timer each, a close left over from the last scroll would hide a sheet
+// that had already been reopened.
+const FAB_FADE_MS = 250;
+let fabCloseTimer = null;
+
+function openFab() {
+  const fab = document.getElementById("filter-fab");
+  const popup = fab?.querySelector(".fab-popup");
+  if (!popup) return;
+  clearTimeout(fabCloseTimer);
+  popup.style.display = "flex";
+  // Two frames, so the sheet is laid out before the opening transition starts
+  requestAnimationFrame(() => requestAnimationFrame(() => fab.classList.add("open")));
+}
+
 function closeFab() {
   const fab = document.getElementById("filter-fab");
-  if (!fab) return;
+  const popup = fab?.querySelector(".fab-popup");
+  if (!popup) return;
   fab.classList.remove("open");
-  const popup = fab.querySelector(".fab-popup");
-  if (popup) setTimeout(() => { popup.style.display = "none"; }, 550);
+  clearTimeout(fabCloseTimer);
+  fabCloseTimer = setTimeout(() => { popup.style.display = "none"; }, FAB_FADE_MS);
 }
 
 // ── Sticky filter bar (desktop) ───────────────────────────────
@@ -498,16 +639,21 @@ function setupFilterBar() {
   const headerContainer = document.getElementById("header-container");
   let headerH = 0;
 
+  // The bar only exists from 961px up (below that the floating button carries
+  // the filters), so both of these leave the page alone on smaller screens and
+  // main keeps the plain header offset it gets from base.css
+  const isDesktopBar = () => window.innerWidth >= 961;
+
   const updateMainPadding = () => {
     const mainEl = document.querySelector("main");
     if (!mainEl) return;
-    mainEl.style.paddingTop = window.innerWidth >= 769
+    mainEl.style.paddingTop = isDesktopBar()
       ? headerH + bar.offsetHeight + 16 + "px"
       : "";
   };
 
   const setBarTransform = (show) => {
-    if (window.innerWidth < 769) return;
+    if (!isDesktopBar()) return;
     bar.style.transform = show ? `translateY(${headerH}px)` : "translateY(-2px)";
   };
 

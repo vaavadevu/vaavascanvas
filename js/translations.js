@@ -201,6 +201,32 @@ const keys = {
     en: "Bookmark",
   },
 
+  // ── Sort orders ────────────────────────────────────────────
+  filter_sort_label: {
+    sv: "Sortera",
+    en: "Sort",
+  },
+  filter_sort_default: {
+    sv: "Rekommenderat",
+    en: "Recommended",
+  },
+  filter_sort_price_asc: {
+    sv: "Lägsta pris först",
+    en: "Lowest price first",
+  },
+  filter_sort_price_desc: {
+    sv: "Högsta pris först",
+    en: "Highest price first",
+  },
+  filter_sort_size_asc: {
+    sv: "Minsta storlek först",
+    en: "Smallest size first",
+  },
+  filter_sort_size_desc: {
+    sv: "Största storlek först",
+    en: "Largest size first",
+  },
+
   // ── Cookie policy ──────────────────────────────────────────
   cookie_policy_link: {
     sv: "Cookiepolicy",

@@ -9,10 +9,6 @@
   nav {
     justify-content: flex-end;
   }
-
-  #gallery {
-    grid-template-columns: repeat(4, minmax(220px, 1fr));
-  }
 }
 
 /* --- Mobilanpassning (max-width: 960px) --- */
@@ -222,7 +218,6 @@ nav.active {
   }
 
   #gallery {
-    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
     /* The header is fixed and only slides in on scroll, and the filter bar and
        title already sit above the gallery, so no header offset is needed here */

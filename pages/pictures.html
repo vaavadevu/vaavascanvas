@@ -106,14 +106,6 @@
         <button class="filter-option" data-filter="sold" data-i18n="filter_sold" onclick="setActiveStatusFilter('sold')">Sålda</button>
       </div>
     </div>
-    <div class="filter-button-group" id="filter-type-buttons">
-      <button class="filter-button filter-type-button active" data-filter="all" data-i18n="filter_all" onclick="setActiveTypeFilter('all')">Alla</button>
-      <button class="filter-button filter-type-button" data-filter="painting" data-i18n="filter_type_painting" onclick="setActiveTypeFilter('painting')">Målning</button>
-      <button class="filter-button filter-type-button" data-filter="clay" data-i18n="filter_type_clay" onclick="setActiveTypeFilter('clay')">Lera</button>
-      <button class="filter-button filter-type-button" data-filter="bookmark" data-i18n="filter_type_bookmark" onclick="setActiveTypeFilter('bookmark')">Bokmärke</button>
-    </div>
-    <!-- Same type filter as a dropdown, used on narrow screens where the
-         button row would not fit -->
     <div class="filter-dropdown" id="filter-type-dd">
       <button class="filter-dropdown-trigger" onclick="toggleFilterDropdown('filter-type-dd')" aria-expanded="false">
         <span class="filter-dropdown-label" id="filter-type-label">Typ</span>
@@ -140,9 +132,23 @@
         <button class="filter-option" data-filter="size_large" data-i18n="filter_size_large" onclick="setActiveSizeFilter('size_large')">Stora</button>
       </div>
     </div>
+    <div class="filter-dropdown" id="filter-sort-dd">
+      <button class="filter-dropdown-trigger" onclick="toggleFilterDropdown('filter-sort-dd')" aria-expanded="false">
+        <span class="filter-dropdown-label" id="filter-sort-label">Sortera</span>
+        <svg class="filter-chevron" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg"><path d="M0 0l5 6 5-6z"/></svg>
+      </button>
+      <button class="filter-reset-btn" onclick="setActiveSortOrder('sort_default')" aria-label="Nollställ sortering">×</button>
+      <div class="filter-dropdown-panel">
+        <button class="filter-option active" data-filter="sort_default" data-i18n="filter_sort_default" onclick="setActiveSortOrder('sort_default')">Rekommenderat</button>
+        <button class="filter-option" data-filter="sort_price_asc" data-i18n="filter_sort_price_asc" onclick="setActiveSortOrder('sort_price_asc')">Lägsta pris först</button>
+        <button class="filter-option" data-filter="sort_price_desc" data-i18n="filter_sort_price_desc" onclick="setActiveSortOrder('sort_price_desc')">Högsta pris först</button>
+        <button class="filter-option" data-filter="sort_size_asc" data-i18n="filter_sort_size_asc" onclick="setActiveSortOrder('sort_size_asc')">Minsta storlek först</button>
+        <button class="filter-option" data-filter="sort_size_desc" data-i18n="filter_sort_size_desc" onclick="setActiveSortOrder('sort_size_desc')">Största storlek först</button>
+      </div>
+    </div>
   </div>
 
-  <main>
+  <main class="gallery-main">
     <h1 class="page-title" data-i18n="pictures_title">Köp mina original och hantverk</h1>
     <div id="gallery-wrapper" style="position:relative;">
       <div class="gallery" id="gallery"></div>
@@ -186,20 +192,46 @@
   </footer>
 
   <div id="filter-fab">
-    <div class="fab-popup">
-      <button class="fab-filter-btn status-filter active" data-filter="all" data-i18n="filter_all">Alla</button>
-      <button class="fab-filter-btn status-filter" data-filter="for_sale" data-i18n="filter_for_sale">Till salu</button>
-      <button class="fab-filter-btn status-filter" data-filter="sold" data-i18n="filter_sold">Sålda</button>
-      <div class="fab-divider"></div>
-      <button class="fab-filter-btn type-filter active" data-filter="all" data-i18n="filter_all">Alla</button>
-      <button class="fab-filter-btn type-filter" data-filter="painting" data-i18n="filter_type_painting">Målning</button>
-      <button class="fab-filter-btn type-filter" data-filter="clay" data-i18n="filter_type_clay">Lera</button>
-      <button class="fab-filter-btn type-filter" data-filter="bookmark" data-i18n="filter_type_bookmark">Bokmärke</button>
-      <div class="fab-divider"></div>
-      <button class="fab-filter-btn size-filter active" data-filter="size_all" data-i18n="filter_size_all">Alla storlekar</button>
-      <button class="fab-filter-btn size-filter" data-filter="size_small" data-i18n="filter_size_small">Små</button>
-      <button class="fab-filter-btn size-filter" data-filter="size_medium" data-i18n="filter_size_medium">Medel</button>
-      <button class="fab-filter-btn size-filter" data-filter="size_large" data-i18n="filter_size_large">Stora</button>
+    <!-- Same filters as the bar at the top of the page, reachable once that has
+         scrolled away. Grouped under headings because three of the groups
+         offer an "Alla" of their own. -->
+    <div class="fab-popup" role="dialog" aria-modal="false" aria-label="Filtrera och sortera">
+      <div class="fab-group">
+        <span class="fab-group-label" data-i18n="filter_status_label">Status</span>
+        <div class="fab-group-options">
+          <button class="fab-filter-btn status-filter active" data-filter="all" data-i18n="filter_all">Alla</button>
+          <button class="fab-filter-btn status-filter" data-filter="for_sale" data-i18n="filter_for_sale">Till salu</button>
+          <button class="fab-filter-btn status-filter" data-filter="sold" data-i18n="filter_sold">Sålda</button>
+        </div>
+      </div>
+      <div class="fab-group">
+        <span class="fab-group-label" data-i18n="filter_type_label">Typ</span>
+        <div class="fab-group-options">
+          <button class="fab-filter-btn type-filter active" data-filter="all" data-i18n="filter_all">Alla</button>
+          <button class="fab-filter-btn type-filter" data-filter="painting" data-i18n="filter_type_painting">Målning</button>
+          <button class="fab-filter-btn type-filter" data-filter="clay" data-i18n="filter_type_clay">Lera</button>
+          <button class="fab-filter-btn type-filter" data-filter="bookmark" data-i18n="filter_type_bookmark">Bokmärke</button>
+        </div>
+      </div>
+      <div class="fab-group" id="fab-group-size">
+        <span class="fab-group-label" data-i18n="filter_size_label">Storlek</span>
+        <div class="fab-group-options">
+          <button class="fab-filter-btn size-filter active" data-filter="size_all" data-i18n="filter_size_all">Alla storlekar</button>
+          <button class="fab-filter-btn size-filter" data-filter="size_small" data-i18n="filter_size_small">Små</button>
+          <button class="fab-filter-btn size-filter" data-filter="size_medium" data-i18n="filter_size_medium">Medel</button>
+          <button class="fab-filter-btn size-filter" data-filter="size_large" data-i18n="filter_size_large">Stora</button>
+        </div>
+      </div>
+      <div class="fab-group">
+        <span class="fab-group-label" data-i18n="filter_sort_label">Sortera</span>
+        <div class="fab-group-options">
+          <button class="fab-filter-btn sort-filter active" data-filter="sort_default" data-i18n="filter_sort_default">Rekommenderat</button>
+          <button class="fab-filter-btn sort-filter" data-filter="sort_price_asc" data-i18n="filter_sort_price_asc">Lägsta pris först</button>
+          <button class="fab-filter-btn sort-filter" data-filter="sort_price_desc" data-i18n="filter_sort_price_desc">Högsta pris först</button>
+          <button class="fab-filter-btn sort-filter" data-filter="sort_size_asc" data-i18n="filter_sort_size_asc">Minsta storlek först</button>
+          <button class="fab-filter-btn sort-filter" data-filter="sort_size_desc" data-i18n="filter_sort_size_desc">Största storlek först</button>
+        </div>
+      </div>
     </div>
     <button class="fab-main-btn" id="fab-trigger" aria-label="Filtrera">
       <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"

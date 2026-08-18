@@ -61,49 +61,72 @@
 }
 
 /* ── Popup ─── */
+/* A small sheet above the button rather than a free-standing column of pills:
+   with four groups there are sixteen options, too many to stand on their own
+   without headings to say which filter each belongs to. */
 .fab-popup {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
+  gap: 14px;
+  width: min(78vw, 320px);
+  max-height: min(72vh, 560px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin-bottom: 12px;
+  padding: 14px;
+  background: var(--bg-light);
+  border: 1px solid var(--accent-light);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+  /* The sheet itself animates, so the options do not each need to fly in */
+  opacity: 0;
+  transform: translateY(10px) scale(0.96);
+  transform-origin: bottom right;
+  transition: opacity 0.15s ease, transform 0.15s ease;
   pointer-events: none;
+}
+
+#filter-fab.open .fab-popup {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.2s ease, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: auto;
+}
+
+.fab-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.fab-group-label {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-green);
+}
+
+.fab-group-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .fab-filter-btn {
   background: white;
   color: #5a8a6a;
   border: 2px solid #5a8a6a;
-  padding: 8px 18px;
-  border-radius: 20px;
+  padding: 6px 13px;
+  border-radius: 16px;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.8rem;
   font-weight: 700;
+  line-height: 1.2;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  transition: transform 0.2s, background 0.2s;
-  /* staggerad in-animation */
-  opacity: 0;
-  transform: translateX(20px) scale(0.85);
-}
-
-#filter-fab.open .fab-filter-btn {
-  opacity: 1;
-  transform: translateX(0) scale(1);
-  pointer-events: auto;
-}
-
-/* Staggerad fördröjning per knapp (nedifrån och upp) */
-#filter-fab.open .fab-filter-btn:nth-child(9) { transition: opacity 0.22s 0.00s cubic-bezier(0.34,1.56,0.64,1), transform 0.22s 0.00s cubic-bezier(0.34,1.56,0.64,1); }
-#filter-fab.open .fab-filter-btn:nth-child(8) { transition: opacity 0.22s 0.04s cubic-bezier(0.34,1.56,0.64,1), transform 0.22s 0.04s cubic-bezier(0.34,1.56,0.64,1); }
-#filter-fab.open .fab-filter-btn:nth-child(7) { transition: opacity 0.22s 0.08s cubic-bezier(0.34,1.56,0.64,1), transform 0.22s 0.08s cubic-bezier(0.34,1.56,0.64,1); }
-#filter-fab.open .fab-filter-btn:nth-child(6) { transition: opacity 0.22s 0.12s cubic-bezier(0.34,1.56,0.64,1), transform 0.22s 0.12s cubic-bezier(0.34,1.56,0.64,1); }
-#filter-fab.open .fab-filter-btn:nth-child(5) { transition: opacity 0.22s 0.16s cubic-bezier(0.34,1.56,0.64,1), transform 0.22s 0.16s cubic-bezier(0.34,1.56,0.64,1); }
-#filter-fab.open .fab-filter-btn:nth-child(4) { transition: opacity 0.22s 0.20s cubic-bezier(0.34,1.56,0.64,1), transform 0.22s 0.20s cubic-bezier(0.34,1.56,0.64,1); }
-#filter-fab.open .fab-filter-btn:nth-child(3) { transition: opacity 0.22s 0.24s cubic-bezier(0.34,1.56,0.64,1), transform 0.22s 0.24s cubic-bezier(0.34,1.56,0.64,1); }
-#filter-fab.open .fab-filter-btn:nth-child(2) { transition: opacity 0.22s 0.28s cubic-bezier(0.34,1.56,0.64,1), transform 0.22s 0.28s cubic-bezier(0.34,1.56,0.64,1); }
-#filter-fab.open .fab-filter-btn:nth-child(1) { transition: opacity 0.22s 0.32s cubic-bezier(0.34,1.56,0.64,1), transform 0.22s 0.32s cubic-bezier(0.34,1.56,0.64,1); }
-
-/* Snabb ut-animation (ingen fördröjning) */
-#filter-fab:not(.open) .fab-filter-btn {
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  transition: transform 0.15s, background 0.2s, color 0.2s;
 }
 
 .fab-filter-btn:active {
@@ -113,13 +136,6 @@
 .fab-filter-btn.active {
   background: #5a8a6a;
   color: white;
-}
-
-.fab-divider {
-  height: 1px;
-  background: var(--accent-green);
-  margin: 4px 0;
-  opacity: 0.2;
 }
 
 /* Dölj FAB på desktop – filterbaren används istället */

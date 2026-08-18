@@ -284,6 +284,161 @@ async function runTests() {
       await page.close();
     });
 
+    // Test 5b: The masonry grid places tiles across the columns, not down them
+    //
+    // CSS multi-column, which this grid used to be, fills each column top to
+    // bottom before starting the next — so with "lowest price first" the tile
+    // beside the cheapest painting was the middle of the run. layoutGallery()
+    // deals the tiles out instead, and this checks the result at both a
+    // two-column and a four-column width.
+    for (const { label, width } of [{ label: 'two columns', width: 390 }, { label: 'four columns', width: 1280 }]) {
+      await test(`Sorted tiles read across the grid, not down it (${label})`, async () => {
+        const page = await browser.newPage({ viewport: { width, height: 900 } });
+        await page.goto(`${baseUrl}/pages/pictures.html`, { waitUntil: 'networkidle' });
+        await page.waitForSelector('.gallery-item', { timeout: 10000 });
+
+        const grid = await page.evaluate(() => {
+          setActiveSortOrder('sort_price_asc');
+          const order = paintings.filter(paintingMatchesFilters).map(p => p.title);
+          const columns = [...document.querySelectorAll('.gallery-column')]
+            .map(column => [...column.children].map(tile => order.indexOf(tile.querySelector('img').alt)));
+          return { order, columns };
+        });
+
+        assert(grid.columns.length > 1, `Expected more than one column at ${width}px`);
+
+        // The top row is the start of the sort order, left to right
+        const topRow = grid.columns.map(column => column[0]);
+        assertEqual(topRow.join(','), topRow.map((_, i) => i).join(','),
+          `The top row should hold the first ${grid.columns.length} paintings of the sort order, left to right`);
+
+        // And no column ever runs backwards through the order
+        grid.columns.forEach((column, i) => {
+          const ascending = column.every((position, j) => j === 0 || position > column[j - 1]);
+          assert(ascending, `Column ${i + 1} runs out of sort order: ${column.join(' -> ')}`);
+        });
+
+        await page.close();
+      });
+    }
+
+    // Test 5c: Which filter control a screen gets
+    //
+    // The bar is desktop-only and the floating button covers everything below
+    // 961px. Both stylesheets have to agree on that: the button once ended up
+    // hidden at every width because each thought the other breakpoint showed
+    // it, and nothing caught it.
+    for (const { label, width, bar, fab } of [
+      { label: 'a phone', width: 390, bar: false, fab: true },
+      { label: 'a tablet', width: 900, bar: false, fab: true },
+      { label: 'a desktop', width: 1280, bar: true, fab: false },
+    ]) {
+      await test(`Exactly one set of filter controls shows on ${label}`, async () => {
+        const page = await browser.newPage({ viewport: { width, height: 900 } });
+        await page.goto(`${baseUrl}/pages/pictures.html`, { waitUntil: 'networkidle' });
+        await page.waitForSelector('.gallery-item', { timeout: 10000 });
+
+        assertEqual(await page.locator('#gallery-filter-bar').isVisible(), bar,
+          `The filter bar should ${bar ? '' : 'not '}show at ${width}px`);
+        assertEqual(await page.locator('#filter-fab').isVisible(), fab,
+          `The floating filter button should ${fab ? '' : 'not '}show at ${width}px`);
+
+        // Nothing may hide behind the fixed header either way
+        const clear = await page.evaluate(() => {
+          const header = document.getElementById('header-container').getBoundingClientRect();
+          const title = document.querySelector('.page-title').getBoundingClientRect();
+          return title.top >= header.bottom;
+        });
+        assert(clear, `The page title is tucked under the fixed header at ${width}px`);
+
+        await page.close();
+      });
+    }
+
+    // Test 5c2: The bar's four controls sit on one row at the narrowest width
+    // that still shows it, with every filter set to its longest label
+    await test('The filter bar keeps its four controls on one row at 961px', async () => {
+      const page = await browser.newPage({ viewport: { width: 961, height: 900 } });
+      await page.goto(`${baseUrl}/pages/pictures.html`, { waitUntil: 'networkidle' });
+      await page.waitForSelector('.gallery-item', { timeout: 10000 });
+
+      const row = await page.evaluate(() => {
+        setActiveStatusFilter('for_sale');
+        setActiveTypeFilter('painting');
+        setActiveSizeFilter('size_large');
+        setActiveSortOrder('sort_size_desc');
+
+        const controls = [...document.querySelectorAll('#gallery-filter-bar .filter-dropdown')]
+          .filter(control => control.getBoundingClientRect().width > 0);
+        return {
+          count: controls.length,
+          rows: new Set(controls.map(c => Math.round(c.getBoundingClientRect().top))).size,
+          offScreen: controls.filter(c => c.getBoundingClientRect().right > window.innerWidth).length,
+          clipped: controls
+            .map(c => c.querySelector('.filter-dropdown-label'))
+            .filter(label => label.scrollWidth > label.clientWidth + 1)
+            .map(label => label.textContent),
+        };
+      });
+
+      assertEqual(row.count, 4, 'Expected four filter controls in the bar');
+      assertEqual(row.rows, 1, 'The filter controls wrapped onto more than one row');
+      assertEqual(row.offScreen, 0, 'A filter control hangs off the right of the screen');
+      assertEqual(row.clipped.join(', '), '', 'A filter label had to be cut short: ' + row.clipped.join(', '));
+
+      await page.close();
+    });
+
+    // Test 5d: The filters stay reachable on a phone once the bar has scrolled
+    // away — the floating button is the only way back to them, and it spent a
+    // while hidden at every width by two stylesheets that each thought the
+    // other breakpoint was showing it.
+    await test('The floating filter button filters the grid on a phone', async () => {
+      const page = await browser.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true });
+      await page.goto(`${baseUrl}/pages/pictures.html`, { waitUntil: 'networkidle' });
+      await page.waitForSelector('.gallery-item', { timeout: 10000 });
+
+      // Past the top of the page, where the static filter bar is long gone
+      await page.evaluate(() => window.scrollTo({ top: 1200, behavior: 'instant' }));
+      await page.waitForTimeout(600);
+
+      const barGone = await page.evaluate(() =>
+        document.getElementById('gallery-filter-bar').getBoundingClientRect().bottom <= 0);
+      assert(barGone, 'The filter bar should have scrolled away before the floating button matters');
+      assert(await page.locator('#filter-fab').isVisible(), 'The floating filter button is not visible on a phone');
+
+      await page.click('#fab-trigger');
+      await page.waitForTimeout(400);
+
+      const sheet = await page.evaluate(() => {
+        const popup = document.querySelector('.fab-popup');
+        const box = popup.getBoundingClientRect();
+        return {
+          opacity: getComputedStyle(popup).opacity,
+          groups: [...popup.querySelectorAll('.fab-group')].map(g => g.querySelector('.fab-group-label').textContent),
+          onScreen: box.top >= 0 && box.bottom <= window.innerHeight && box.right <= window.innerWidth,
+        };
+      });
+      assertEqual(sheet.opacity, '1', 'The filter sheet did not open');
+      assertEqual(sheet.groups.length, 4, `Expected four filter groups, got: ${sheet.groups.join(', ')}`);
+      assert(sheet.onScreen, 'The filter sheet opens partly off the screen');
+
+      await page.click('.fab-filter-btn.status-filter[data-filter="sold"]');
+      await page.waitForTimeout(600);
+
+      const result = await page.evaluate(() => ({
+        stillOpen: document.getElementById('filter-fab').classList.contains('open'),
+        shown: document.querySelectorAll('.gallery-item').length,
+        barLabel: document.getElementById('filter-status-label').textContent,
+      }));
+      assert(!result.stillOpen, 'The sheet should close once a filter is picked');
+      assertEqual(result.shown, paintings.filter(p => p.status === 'sold').length,
+        'Picking "Sålda" in the sheet did not filter the grid to the sold paintings');
+      assertEqual(result.barLabel, 'Sålda', 'The bar at the top did not follow the choice made in the sheet');
+
+      await page.close();
+    });
+
     console.log(colors.blue + '\n[4] LANGUAGE SWITCHING TESTS' + colors.reset);
 
     // Test 6: Language switching works
