@@ -7,6 +7,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 // Color output helpers
 const colors = {
@@ -265,6 +266,22 @@ test('All paintings have required fields', () => {
     }
     assert(p.status, `Painting ${i} (${p.id}) missing status`);
   });
+});
+
+test('No painting is still an unfilled placeholder', () => {
+  // sync_paintings_images.bat writes a placeholder entry for any image folder
+  // that has none, so a newly synced painting cannot be forgotten. The
+  // placeholder is invalid on purpose — the price is 0 and its descKey points
+  // at a translation that does not exist — and this test is what states the
+  // reason in one message instead of leaving three scattered failures.
+  const entries = JSON.parse(
+    fs.readFileSync(path.join(__dirname, '../data/paintings.json'), 'utf8'));
+  const stubs = entries.filter(entry => entry._todo);
+
+  assert(stubs.length === 0,
+    'These paintings are still placeholders written by the image sync. Fill them in and ' +
+    'delete their "_todo" line:\n  ' +
+    stubs.map(stub => `${stub.id} — ${stub._todo}`).join('\n  '));
 });
 
 test('All painting statuses are valid', () => {
@@ -582,6 +599,158 @@ test('All original images have been synced to desktop and mobile', () => {
   );
 });
 
+// ─────────────────────────────────────────────────────────────
+// Image build manifest
+//
+// The counting tests above catch a painting with the wrong NUMBER of built
+// images. They cannot see a desktop/01.jpg that was compressed from an older
+// original — same count, stale picture — which is exactly what an incremental
+// rebuild risks. scripts/generate_mobile_images.py records a sha256 of every
+// original it built from; re-hashing them here costs about a third of a second
+// and turns that risk into a failing test.
+// ─────────────────────────────────────────────────────────────
+
+const paintingsImageDir = path.join(__dirname, '../images/paintings');
+const manifestPath = path.join(paintingsImageDir, '.image-build.json');
+
+function imageFolderIds() {
+  if (!fs.existsSync(paintingsImageDir)) return [];
+  return fs.readdirSync(paintingsImageDir)
+    .filter(name => fs.statSync(path.join(paintingsImageDir, name)).isDirectory())
+    .sort();
+}
+
+function originalNames(id) {
+  const dir = path.join(paintingsImageDir, id, 'original');
+  if (!fs.existsSync(dir)) return [];
+  return fs.readdirSync(dir).filter(f => /\.(jpe?g|png|webp)$/i.test(f)).sort();
+}
+
+function loadImageManifest() {
+  if (!fs.existsSync(manifestPath)) return null;
+  return JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+}
+
+test('Every painting folder is recorded in the image build manifest', () => {
+  const manifest = loadImageManifest();
+  assert(manifest !== null,
+    'images/paintings/.image-build.json is missing — run sync_paintings_images.bat once to create it');
+
+  const folders = imageFolderIds();
+  const recorded = Object.keys(manifest.paintings || {}).sort();
+
+  const unrecorded = folders.filter(id => originalNames(id).length > 0 && !recorded.includes(id));
+  assert(unrecorded.length === 0,
+    'These paintings have never been built by the image script, so nothing knows what their ' +
+    'desktop/ and mobile/ images were made from (run sync_paintings_images.bat):\n  ' +
+    unrecorded.join('\n  '));
+
+  const orphans = recorded.filter(id => !folders.includes(id));
+  assert(orphans.length === 0,
+    'The build manifest still lists paintings whose folder is gone (run sync_paintings_images.bat):\n  ' +
+    orphans.join('\n  '));
+});
+
+test('Built images match the originals they were built from', () => {
+  const manifest = loadImageManifest();
+  if (manifest === null) return; // already reported by the test above
+
+  const stale = [];
+
+  Object.entries(manifest.paintings || {}).forEach(([id, entry]) => {
+    const originalDir = path.join(paintingsImageDir, id, 'original');
+    if (!fs.existsSync(originalDir)) return; // already reported as an orphan above
+
+    const recorded = entry.sources || {};
+    const onDisk = {};
+    originalNames(id).forEach(name => {
+      onDisk[name] = crypto
+        .createHash('sha256')
+        .update(fs.readFileSync(path.join(originalDir, name)))
+        .digest('hex');
+    });
+
+    Object.keys(onDisk).forEach(name => {
+      if (!(name in recorded)) stale.push(`${id}/${name}: added since the last build`);
+      else if (recorded[name] !== onDisk[name]) stale.push(`${id}/${name}: the original has changed since it was built`);
+    });
+    Object.keys(recorded).forEach(name => {
+      if (!(name in onDisk)) stale.push(`${id}/${name}: built once but the original is gone`);
+    });
+
+    // The built folders must hold exactly the originals, under the same names
+    ['desktop', 'mobile'].forEach(variant => {
+      const dir = path.join(paintingsImageDir, id, variant);
+      const built = fs.existsSync(dir)
+        ? fs.readdirSync(dir).filter(f => /\.(jpe?g|png|webp)$/i.test(f)).sort()
+        : [];
+      const expected = Object.keys(onDisk).sort();
+      if (built.join(',') !== expected.join(',')) {
+        stale.push(`${id}/${variant}: holds ${built.join(', ') || '(nothing)'} but original/ holds ${expected.join(', ')}`);
+      }
+    });
+  });
+
+  assert(stale.length === 0,
+    'Some built images no longer match their originals — the site would serve the old picture ' +
+    '(run sync_paintings_images.bat and pick [1]):\n  ' + stale.join('\n  '));
+});
+
+test('metadata.json aspect ratios match the images on disk', () => {
+  // Read the frame size straight out of the JPEG: a stale aspect ratio makes the
+  // gallery reserve the wrong height for a tile, which no count can reveal and
+  // which only shows up as a grid that jumps while it loads
+  const jpegSize = (file) => {
+    const buf = fs.readFileSync(file);
+    if (buf.length < 4 || buf.readUInt16BE(0) !== 0xFFD8) return null;
+    let offset = 2;
+    while (offset + 9 < buf.length) {
+      if (buf[offset] !== 0xFF) { offset++; continue; }
+      const marker = buf[offset + 1];
+      const isStartOfFrame = marker >= 0xC0 && marker <= 0xCF &&
+        marker !== 0xC4 && marker !== 0xC8 && marker !== 0xCC;
+      if (isStartOfFrame) {
+        return { height: buf.readUInt16BE(offset + 5), width: buf.readUInt16BE(offset + 7) };
+      }
+      offset += 2 + buf.readUInt16BE(offset + 2);
+    }
+    return null;
+  };
+
+  const metadataPath = path.join(paintingsImageDir, 'metadata.json');
+  assert(fs.existsSync(metadataPath),
+    'images/paintings/metadata.json is missing (run sync_paintings_images.bat)');
+  const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+  const wrong = [];
+
+  imageFolderIds().forEach(id => {
+    const first = path.join(paintingsImageDir, id, 'desktop', '01.jpg');
+    if (!fs.existsSync(first)) return;
+
+    if (!(id in metadata)) {
+      wrong.push(`${id}: no entry, so the gallery has to guess how tall its tile is`);
+      return;
+    }
+
+    const size = jpegSize(first);
+    if (!size) return;
+
+    const actual = Math.round((size.width / size.height) * 10000) / 10000;
+    if (Math.abs(actual - metadata[id]) > 0.001) {
+      wrong.push(`${id}: metadata.json says ${metadata[id]}, the image is ${actual} (${size.width}x${size.height})`);
+    }
+  });
+
+  Object.keys(metadata).forEach(id => {
+    if (!fs.existsSync(path.join(paintingsImageDir, id))) {
+      wrong.push(`${id}: listed in metadata.json but the folder is gone`);
+    }
+  });
+
+  assert(wrong.length === 0,
+    'metadata.json is out of date (run sync_paintings_images.bat):\n  ' + wrong.join('\n  '));
+});
+
 test('No Swedish characters (å/ä/ö) in identifiers that become URLs or JS keys', () => {
   const swedish = /[åäöÅÄÖ]/;
   const violations = [];
@@ -664,6 +833,26 @@ test('Translations use the same {placeholders} in every language', () => {
         `Translation key "${key}" has different placeholders in "${lang}" than in "sv"`);
     });
   });
+});
+
+test('No translation is still a TODO placeholder', () => {
+  // The image sync writes a desc_ entry for every new painting so the key
+  // exists, but marks it TODO rather than inventing copy. A description that
+  // reached the shop reading "TODO: skriv beskrivningen" would be worse than a
+  // missing one, so it fails here until it is written.
+  const todos = [];
+
+  Object.entries(keys).forEach(([key, languages]) => {
+    Object.entries(languages).forEach(([language, value]) => {
+      if (typeof value === 'string' && value.includes('TODO:')) {
+        todos.push(`${key} (${language})`);
+      }
+    });
+  });
+
+  assert(todos.length === 0,
+    'These translations are still placeholders written by the image sync — write the real ' +
+    'text in js/translations.js:\n  ' + todos.join('\n  '));
 });
 
 test('All translation values are non-empty strings', () => {
