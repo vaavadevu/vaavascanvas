@@ -52,7 +52,7 @@ const BOOKMARKS = {
     'chicken2': 'for_sale',
     'giraffe': 'sold',
     'mallard': 'for_sale',
-    'pigeon': 'for_sale',
+    'pigeon': 'sold',
     'piggy': 'for_sale',
     'pingvin': 'sold',
     'rabbit': 'sold',

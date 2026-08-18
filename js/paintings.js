@@ -586,6 +586,7 @@ const paintings = [
       "/images/bookmarks/cheetah.jpg",
       "/images/bookmarks/chicken1.jpg",
       "/images/bookmarks/giraffe.jpg",
+      "/images/bookmarks/pigeon.jpg",
       "/images/bookmarks/pingvin.jpg",
       "/images/bookmarks/rabbit.jpg"
     ],

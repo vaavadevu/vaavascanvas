@@ -10,7 +10,7 @@
     { "id": "chicken2", "status": "for_sale" },
     { "id": "giraffe", "status": "sold" },
     { "id": "mallard", "status": "for_sale" },
-    { "id": "pigeon", "status": "for_sale" },
+    { "id": "pigeon", "status": "sold" },
     { "id": "piggy", "status": "for_sale" },
     { "id": "pingvin", "status": "sold" },
     { "id": "rabbit", "status": "sold" },
