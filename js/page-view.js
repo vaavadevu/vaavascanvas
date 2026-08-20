@@ -203,8 +203,35 @@ function addPaintingToCart(painting, withFrame) {
   Cart.add(cartItem);
 }
 
+// Where a sold work sends the buyer instead of stopping at "Såld". The
+// commission link carries the work along, so the form opens already knowing
+// which motif started the conversation.
+function commissionUrlFor(painting) {
+  return `/pages/commissions.html?type=Commissions&ref=${encodeURIComponent(painting.id)}#footer`;
+}
+
 function renderPageViewButtons(painting) {
   pageViewButtons.innerHTML = "";
+
+  // A sold work is the best proof the art sells, so its page offers a way on
+  // rather than ending in a red "Såld"
+  if (painting.status === STATUS.SOLD) {
+    const commission = document.createElement("a");
+    commission.className = "btn btn-primary pageview-sold-btn";
+    commission.href = commissionUrlFor(painting);
+    commission.dataset.i18n = "pageview_sold_commission_btn";
+    commission.textContent = t("pageview_sold_commission_btn");
+    pageViewButtons.appendChild(commission);
+
+    const notify = document.createElement("button");
+    // Opens the same modal as the footer's bell — see setupModals() in ui.js
+    notify.className = "btn btn-secondary pageview-sold-btn subscribe-open";
+    notify.type = "button";
+    notify.dataset.i18n = "pageview_sold_notify_btn";
+    notify.textContent = t("pageview_sold_notify_btn");
+    pageViewButtons.appendChild(notify);
+    return;
+  }
 
   if (painting.status === STATUS.FOR_SALE && (painting.originalPrice || painting.framedOnly)) {
     if (painting.framedOnly) {

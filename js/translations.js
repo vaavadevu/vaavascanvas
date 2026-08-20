@@ -288,6 +288,27 @@ const keys = {
     sv: "rabatt på ordinarie pris",
     en: "discount on list price",
   },
+
+  // ── Såld målning: vägen vidare ─────────────────────────────
+  // En såld tavla är slutet på sidan om den inte erbjuder något annat, och
+  // sålda verk är de som bevisar att konsten går att köpa
+  pageview_sold_commission_btn: {
+    sv: "Beställ något liknande",
+    en: "Order something similar",
+  },
+  pageview_sold_notify_btn: {
+    sv: "Meddela mig om nya verk",
+    en: "Tell me about new work",
+  },
+  pageview_more_works: {
+    sv: "Fler verk",
+    en: "More work",
+  },
+  form_ref_message: {
+    sv: "Hej! Jag såg \"{title}\" på er sida och skulle vilja beställa något liknande.",
+    en: "Hi! I saw \"{title}\" on your site and would like to order something similar.",
+  },
+
   status_sold: {
     sv: "Den här tavlan är såld.",
     en: "This painting has been sold.",

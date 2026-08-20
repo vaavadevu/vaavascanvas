@@ -132,22 +132,28 @@
           <h2 data-i18n="featured_heading">Utvalda verk</h2>
           <a href="/pictures/" data-i18n="featured_see_all">Se alla →</a>
         </div>
-        <div class="featured-grid">
-          <div class="featured-card">
-            <source media="(max-width: 768px)" srcset="images/paintings/sommarvila/mobile/01.jpg">
-            <img src="images/paintings/sommarvila/desktop/01.jpg" alt="Sommarvila" />
+        <div class="featured-grid" style="--featured-columns: 0.3166fr 0.3138fr 0.3697fr">
+          <a class="featured-card" href="/pictures/sommarvila.html">
+            <picture>
+              <source media="(max-width: 768px)" srcset="/images/paintings/sommarvila/mobile/01.jpg">
+              <img src="/images/paintings/sommarvila/desktop/01.jpg" alt="Sommarvila" style="aspect-ratio: 0.7077" />
+            </picture>
             <div class="featured-card-label">Sommarvila</div>
-          </div>
-          <div class="featured-card">
-            <source media="(max-width: 768px)" srcset="images/paintings/skogsvila/mobile/01.jpg">
-            <img src="images/paintings/skogsvila/desktop/01.jpg" alt="Skogsvila" />
-            <div class="featured-card-label">Skogsvila</div>
-          </div>
-          <div class="featured-card">
-            <source media="(max-width: 768px)" srcset="images/paintings/varkansla/mobile/01.jpg">
-            <img src="images/paintings/varkansla/desktop/01.jpg" alt="Vårkänsla" />
-            <div class="featured-card-label">Vårkänsla</div>
-          </div>
+          </a>
+          <a class="featured-card" href="/pictures/vid-an.html">
+            <picture>
+              <source media="(max-width: 768px)" srcset="/images/paintings/vidAn/mobile/01.jpg">
+              <img src="/images/paintings/vidAn/desktop/01.jpg" alt="Vid Ån" style="aspect-ratio: 0.6952" />
+            </picture>
+            <div class="featured-card-label">Vid Ån</div>
+          </a>
+          <a class="featured-card" href="/pictures/min-mamma.html">
+            <picture>
+              <source media="(max-width: 768px)" srcset="/images/paintings/minMamma/mobile/01.jpg">
+              <img src="/images/paintings/minMamma/desktop/01.jpg" alt="Min mamma" style="aspect-ratio: 0.9649" />
+            </picture>
+            <div class="featured-card-label">Min mamma</div>
+          </a>
         </div>
       </div>
     </section>

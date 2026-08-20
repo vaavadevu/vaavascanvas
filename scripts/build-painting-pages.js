@@ -219,7 +219,89 @@ function priceSectionHtml(painting) {
   return lines.join('\n          ');
 }
 
-function renderPage(template, painting) {
+// ── Where a page leads ────────────────────────────────────────
+
+// Six other works to end the page with. Without these each page is an island:
+// a visitor who does not want this particular painting has only the back
+// button, and a crawler reaches the catalogue through the shop page alone.
+//
+// Available work comes first, because that is what there is to sell, and the
+// list starts from the neighbours of the work being shown so no two pages
+// offer the same six. Walking the catalogue in order keeps it deterministic —
+// a rebuild that changed nothing must not rewrite 34 files.
+//
+// Bookmarks stay out, as they do on the homepage: they are a run of small
+// printed pieces rather than a single artwork, they carry no measured image
+// ratio, and their physical 5×15 cm shape makes a thumbnail three times taller
+// than it is wide.
+function relatedWorks(painting, all, count = 6) {
+  const others = all.filter(other =>
+    other.id !== painting.id && other.type !== TYPE.BOOKMARK);
+  const from = all.indexOf(painting);
+  const rotated = others.map((_, i) => others[(from + i) % others.length]);
+
+  const available = rotated.filter(other => other.status === STATUS.FOR_SALE);
+  const sold = rotated.filter(other => other.status !== STATUS.FOR_SALE);
+
+  return [...available, ...sold].slice(0, count);
+}
+
+function relatedWorksHtml(painting, all) {
+  const ratios = imageAspectRatios();
+
+  const cards = relatedWorks(painting, all).map(other => {
+    const soldFlag = other.status === STATUS.SOLD
+      ? `\n          <span class="related-work-sold" data-i18n="modal_sold">${escapeHtml(sv('modal_sold'))}</span>`
+      : '';
+
+    // Same reason as the homepage cards: a thumbnail cropped to a common
+    // shape shows a different painting than the one it links to
+    const ratio = aspectRatioFor(other, ratios);
+    const style = ratio ? ` style="aspect-ratio: ${ratio}"` : '';
+
+    return [
+      `        <a class="related-work" href="${paintingPageUrl(other)}">`,
+      `          <img src="${escapeHtml(firstImage(other))}" alt="${escapeHtml(other.title)}"${style} loading="lazy" />${soldFlag}`,
+      `          <span class="related-work-title">${escapeHtml(other.title)}</span>`,
+      `        </a>`,
+    ].join('\n');
+  });
+
+  return [
+    '',
+    '    <section class="related-works">',
+    `      <h2 data-i18n="pageview_more_works">${escapeHtml(sv('pageview_more_works'))}</h2>`,
+    '      <div class="related-works-grid">',
+    ...cards,
+    '      </div>',
+    `      <a class="related-works-all" href="${SHOP_URL}" data-i18n="featured_see_all">${escapeHtml(sv('featured_see_all'))}</a>`,
+    '    </section>',
+    '  </main>',
+  ].join('\n');
+}
+
+// page-view.js rebuilds these on load in the visitor's language; writing the
+// Swedish version in means the way onward from a sold work is in the markup,
+// not only in the script.
+function buttonsHtml(painting) {
+  if (painting.status !== STATUS.SOLD) return '';
+
+  const commission =
+    `<a class="btn btn-primary pageview-sold-btn" ` +
+    `href="/pages/commissions.html?type=Commissions&amp;ref=${escapeHtml(painting.id)}#footer" ` +
+    `data-i18n="pageview_sold_commission_btn">${escapeHtml(sv('pageview_sold_commission_btn'))}</a>`;
+
+  const notify =
+    `<button type="button" class="btn btn-secondary pageview-sold-btn subscribe-open" ` +
+    `data-i18n="pageview_sold_notify_btn">${escapeHtml(sv('pageview_sold_notify_btn'))}</button>`;
+
+  return `
+          ${commission}
+          ${notify}
+        `;
+}
+
+function renderPage(template, painting, all) {
   const url = `${SITE}${paintingPageUrl(painting)}`;
   const title = paintingPageTitle(painting, sv(painting.medium));
   const description = metaDescription(painting);
@@ -315,10 +397,20 @@ function renderPage(template, painting) {
   );
   html = replaceOne(
     html,
+    /<div id="pageview-buttons"><\/div>/,
+    `<div id="pageview-buttons">${buttonsHtml(painting)}</div>`,
+    'buttons container'
+  );
+
+  html = replaceOne(
+    html,
     /<p id="pageview-medium"><\/p>/,
     `<p id="pageview-medium">${escapeHtml(sv(painting.medium))}</p>`,
     'medium element'
   );
+
+  // Ends the page with somewhere to go next, just inside </main>
+  html = replaceOne(html, /\n  <\/main>/, relatedWorksHtml(painting, all), 'closing </main>');
 
   const banner =
     '<!-- GENERATED FILE — do not edit.\n' +
@@ -358,6 +450,128 @@ function updateShopSchema(paintings) {
   html = html.replace(pattern, () => `"hasPart": ${block}`);
   fs.writeFileSync(shopPath, html);
   return hasPart.length;
+}
+
+// ── Homepage ──────────────────────────────────────────────────
+//
+// The three featured cards used to be hand-written markup, and went stale: two
+// of the three had sold, so the strongest page on the site was showcasing work
+// nobody could buy — and they were plain divs, linking nowhere.
+//
+// Which works appear is still a choice, made in data/paintings.json with
+// `"featured": 1`, `2`, `3` — the number is the position in the row, and the
+// first card is the wide one. What is no longer left to chance is that they
+// are for sale: a featured work that sells drops out and the build says so, so
+// the homepage cannot quietly advertise something that is gone.
+
+const FEATURED_COUNT = 3;
+
+function featuredWorks(paintings) {
+  const eligible = paintings.filter(p => p.type !== TYPE.BOOKMARK);
+  const available = eligible.filter(p => p.status === STATUS.FOR_SALE);
+
+  const chosen = eligible
+    .filter(p => typeof p.featured === 'number')
+    .sort((a, b) => a.featured - b.featured);
+
+  const sold = chosen.filter(p => p.status !== STATUS.FOR_SALE);
+  const showing = chosen.filter(p => p.status === STATUS.FOR_SALE);
+
+  if (sold.length > 0) {
+    console.log(
+      `  Note: ${sold.map(p => p.title).join(', ')} ` +
+      `${sold.length === 1 ? 'is' : 'are'} marked "featured" but sold — ` +
+      `pick another in data/paintings.json`
+    );
+  }
+
+  // Newest first, because the stub script appends new works to the end of the
+  // catalogue. Only used to fill seats the choices left empty.
+  const fallback = [...available].reverse().filter(p => !showing.includes(p));
+
+  return [...showing, ...fallback].slice(0, FEATURED_COUNT);
+}
+
+// Measured from the image files by the image sync. The gallery already sizes
+// its tiles from these; the homepage used to crop every painting to 3:4, which
+// cost a near-square work like Min mamma a fifth of itself and would take half
+// of a landscape one.
+function imageAspectRatios() {
+  const file = path.join(ROOT, 'images', 'paintings', 'metadata.json');
+  return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {};
+}
+
+function aspectRatioFor(painting, ratios) {
+  if (ratios[painting.id]) return String(ratios[painting.id]);
+  if (painting.shape === SHAPE.CIRCLE) return '1 / 1';
+  if (painting.width && painting.height) return `${painting.width} / ${painting.height}`;
+  return null;
+}
+
+// As a number, for working out how wide a card wants to be
+function aspectRatioValue(painting, ratios) {
+  if (ratios[painting.id]) return Number(ratios[painting.id]);
+  if (painting.shape === SHAPE.CIRCLE) return 1;
+  if (painting.width && painting.height) return painting.width / painting.height;
+  return 1;
+}
+
+// Column widths that give the three cards roughly equal area, so a portrait
+// and a near-square painting carry the same visual weight instead of one
+// towering over the other. Area is width x height and height is width/ratio,
+// so area = width² / ratio — equal area therefore means width ∝ √ratio.
+//
+// This is the compromise between the two things that both matter: nothing gets
+// cropped, and no painting dominates the row just because of its shape. Widths
+// go out as a custom property rather than as grid-template-columns, because
+// responsive.css restacks this grid at two breakpoints and an inline property
+// would win against those media queries.
+function featuredColumns(chosen, ratios) {
+  const weights = chosen.map(painting => Math.sqrt(aspectRatioValue(painting, ratios)));
+  const total = weights.reduce((sum, w) => sum + w, 0);
+
+  return weights.map(w => `${(w / total).toFixed(4)}fr`).join(' ');
+}
+
+function featuredCardHtml(painting, ratios) {
+  const desktop = firstImage(painting);
+  const mobile = desktop.replace('/desktop/', '/mobile/');
+  const ratio = aspectRatioFor(painting, ratios);
+  const style = ratio ? ` style="aspect-ratio: ${ratio}"` : '';
+
+  return [
+    `          <a class="featured-card" href="${paintingPageUrl(painting)}">`,
+    '            <picture>',
+    `              <source media="(max-width: 768px)" srcset="${escapeHtml(mobile)}">`,
+    `              <img src="${escapeHtml(desktop)}" alt="${escapeHtml(painting.title)}"${style} />`,
+    '            </picture>',
+    `            <div class="featured-card-label">${escapeHtml(painting.title)}</div>`,
+    '          </a>',
+  ].join('\n');
+}
+
+function updateHomepageFeatured(paintings) {
+  const indexPath = path.join(ROOT, 'index.html');
+  let html = fs.readFileSync(indexPath, 'utf8');
+
+  const chosen = featuredWorks(paintings);
+  const ratios = imageAspectRatios();
+  const grid = [
+    `<div class="featured-grid" style="--featured-columns: ${featuredColumns(chosen, ratios)}">`,
+    ...chosen.map(painting => featuredCardHtml(painting, ratios)),
+    '        </div>',
+  ].join('\n');
+
+  // Matches the grid whether or not it already carries the column widths this
+  // function writes — the build has to be able to run twice
+  const pattern = /<div class="featured-grid"[^>]*>[\s\S]*?\n        <\/div>/;
+  if (!pattern.test(html)) {
+    throw new Error('Could not find the featured grid in index.html');
+  }
+
+  html = html.replace(pattern, () => grid);
+  fs.writeFileSync(indexPath, html);
+  return chosen;
 }
 
 // ── Sitemap ───────────────────────────────────────────────────
@@ -432,15 +646,20 @@ function buildPaintingPages(paintings) {
     .forEach(file => fs.unlinkSync(path.join(PAGE_DIR, file)));
 
   paintings.forEach(painting => {
-    fs.writeFileSync(path.join(PAGE_DIR, `${paintingSlug(painting)}.html`), renderPage(template, painting));
+    fs.writeFileSync(
+      path.join(PAGE_DIR, `${paintingSlug(painting)}.html`),
+      renderPage(template, painting, paintings)
+    );
   });
 
   const shopEntries = updateShopSchema(paintings);
+  const featured = updateHomepageFeatured(paintings);
   const sitemapEntries = writeSitemap(paintings);
 
   console.log(`Wrote ${paintings.length} work pages to ${SHOP_URL}`);
   console.log(`Updated hasPart structured data in ${SHOP_URL}${SHOP_INDEX} with ${shopEntries} products`);
+  console.log(`Featured on the homepage: ${featured.map(p => p.title).join(', ')}`);
   console.log(`Wrote sitemap.xml with ${sitemapEntries} URLs`);
 }
 
-module.exports = { buildPaintingPages, paintingSlug, workSchema, metaDescription };
+module.exports = { buildPaintingPages, paintingSlug, workSchema, metaDescription, featuredWorks };

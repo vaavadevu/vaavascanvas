@@ -139,6 +139,17 @@ The address of the whole section comes from one constant, `SHOP_DIR` in
   whole catalogue from search
 - The sitemap lists every work page, and nothing links to a work through the
   retired `view.html?painting=…` URL
+- **Every work page leads somewhere else** — at least four other works under
+  "Fler verk", never itself, never the same work twice. Without them each page
+  is a dead end for a visitor and reachable only through the shop page for a
+  crawler
+- **A sold work offers a way on** — a commission link carrying the work it came
+  from, and a way to hear about new work. A third of the catalogue is sold, and
+  a page that stops at a red "Såld" converts nobody. Checked against a control:
+  a for-sale work must *not* be pre-rendered with those buttons
+- **The homepage features work that is for sale.** The three cards were picked
+  by hand and went stale — two of the three had sold, so the strongest page on
+  the site was showcasing work nobody could buy
 
 ## Running Tests Locally
 

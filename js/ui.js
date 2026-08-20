@@ -267,7 +267,9 @@ function setupModals() {
 
   document.addEventListener("click", (e) => {
     // Subscribe modal
-    if (e.target.closest("#subscribeBtn")) {
+    // The footer bell is #subscribeBtn; .subscribe-open lets any other button
+    // open the same modal without duplicating that id
+    if (e.target.closest("#subscribeBtn, .subscribe-open")) {
       document.getElementById("subscribeModal").style.display = "flex";
     }
     if (e.target.closest("#subscribeClose")) {

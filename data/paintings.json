@@ -168,6 +168,7 @@
     "originalPrice": 1500,
     "framedPrice": 1800,
     "status": "for_sale",
+    "featured": 3,
     "medium": "medium_acrylic_canvas",
     "frameAvailable": true
   },
@@ -202,6 +203,7 @@
     "shape": "rectangular",
     "originalPrice": 1500,
     "status": "for_sale",
+    "featured": 2,
     "medium": "medium_acrylic_canvas"
   },
   {
@@ -313,6 +315,7 @@
     "shape": "rectangular",
     "originalPrice": 1800,
     "status": "for_sale",
+    "featured": 1,
     "medium": "medium_acrylic_canvas"
   },
   {

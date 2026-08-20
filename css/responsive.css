@@ -359,10 +359,9 @@ nav.active {
     gap: 20px;
   }
 
-  .featured-card img {
-    aspect-ratio: 1 / 1;
-    /* Kvadratiska bilder ser ofta bättre ut i mobillistor */
-  }
+  /* Kvadratisk beskärning togs bort: varje kort bär numera målningens egna
+     proportioner, skrivna av bygget, och en inline-stil vinner ändå över den
+     här regeln. Målningen ska se likadan ut i mobilen som i butiken. */
 }
 
 @media (max-width: 1024px) {

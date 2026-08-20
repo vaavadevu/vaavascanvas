@@ -1431,6 +1431,173 @@ test('No work page tells search engines to ignore it', () => {
     'pages/view.html lost its noindex — it duplicates a work page it only redirects to');
 });
 
+test('Every work page leads somewhere else', () => {
+  // Without these each page is an island: a visitor who does not want this
+  // particular painting has only the back button, and a crawler reaches the
+  // catalogue through the shop page alone
+  paintings.forEach(painting => {
+    const html = readWorkPage(painting);
+
+    const links = [...html.matchAll(/<a class="related-work" href="([^"]+)"/g)].map(m => m[1]);
+    assert(links.length >= 4,
+      painting.id + ': its page offers only ' + links.length + ' other works to go to');
+
+    assert(!links.includes(paintingPageUrl(painting)),
+      painting.id + ': its own page is listed among the works to go to next');
+
+    const known = new Set(paintings.map(p => paintingPageUrl(p)));
+    links.forEach(href => {
+      assert(known.has(href), painting.id + ': links on to ' + href + ', which is not a work page');
+    });
+
+    assert(new Set(links).size === links.length,
+      painting.id + ': lists the same work twice under "Fler verk"');
+
+    // Bookmarks have no measured image ratio, so a thumbnail of them falls
+    // back to their physical 5x15 cm and renders as a sliver
+    const bookmarks = paintings.filter(p => p.type === 'bookmark').map(p => paintingPageUrl(p));
+    bookmarks.forEach(href => {
+      assert(!links.includes(href),
+        painting.id + ': shows a bookmark under "Fler verk", which has no artwork proportions');
+    });
+  });
+});
+
+test('A sold work offers a way on instead of ending at "Såld"', () => {
+  // Sold works are the ones that prove the art sells, and a third of the
+  // catalogue is sold — a page of theirs that stops at a red "Såld" converts
+  // nobody
+  const sold = paintings.filter(p => p.status === 'sold');
+  assert(sold.length > 0, 'No sold paintings — this check would pass by matching nothing');
+
+  sold.forEach(painting => {
+    const html = readWorkPage(painting);
+    const buttons = /<div id="pageview-buttons">([\s\S]*?)<\/div>/.exec(html);
+    assert(buttons, painting.id + ': has no buttons container');
+
+    assert(buttons[1].includes('type=Commissions&amp;ref=' + painting.id),
+      painting.id + ': its commission link does not carry the work it came from');
+    assert(/class="[^"]*subscribe-open/.test(buttons[1]),
+      painting.id + ': offers no way to hear about new work');
+  });
+
+  // The control: an available work shows a buy button instead, rendered by
+  // page-view.js, so its container stays empty in the markup
+  const forSale = paintings.find(p => p.status === 'for_sale');
+  assert(readWorkPage(forSale).includes('<div id="pageview-buttons"></div>'),
+    forSale.id + ': is for sale but its page was pre-rendered with sold buttons');
+});
+
+test('Thumbnails show a painting in its own proportions', () => {
+  // Every one of these used to be cropped to a fixed 3/4 box, so the picture
+  // advertising a work was not the work — a near-square painting lost a fifth
+  // of itself and a landscape one would lose half
+  const ratios = JSON.parse(
+    fs.readFileSync(path.join(__dirname, '../images/paintings/metadata.json'), 'utf8'));
+
+  const index = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
+  const featured = [...index.matchAll(/<a class="featured-card" href="([^"]+)"[\s\S]*?<img([^>]*)>/g)];
+  assertEqual(featured.length, 3, 'index.html does not feature three works');
+
+  featured.forEach(([, href, attrs]) => {
+    const painting = paintings.find(p => paintingPageUrl(p) === href);
+    assert(/aspect-ratio:/.test(attrs),
+      'The homepage card for "' + painting.title + '" has no aspect ratio and will be cropped');
+    if (ratios[painting.id]) {
+      assert(attrs.includes(String(ratios[painting.id])),
+        'The homepage card for "' + painting.title + '" does not use its measured ratio');
+    }
+  });
+
+  paintings.forEach(painting => {
+    const html = readWorkPage(painting);
+    const thumbs = [...html.matchAll(/<a class="related-work" href="([^"]+)"[\s\S]*?<img([^>]*)>/g)];
+    thumbs.forEach(([, href, attrs]) => {
+      assert(/aspect-ratio:/.test(attrs),
+        painting.id + ': its "Fler verk" thumbnail for ' + href + ' has no aspect ratio');
+    });
+  });
+});
+
+test('The homepage cards come out about the same size', () => {
+  // Showing true proportions means the cards differ in shape, but one painting
+  // should not tower over another just for being a portrait. The build sizes
+  // the columns so the areas match: area = width squared / ratio, so equal
+  // area means width proportional to the square root of the ratio.
+  const index = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
+  const ratios = JSON.parse(
+    fs.readFileSync(path.join(__dirname, '../images/paintings/metadata.json'), 'utf8'));
+
+  const declared = /--featured-columns:\s*([^"]+)"/.exec(index);
+  assert(declared, 'index.html does not declare --featured-columns, so the cards will not be balanced');
+
+  const widths = declared[1].trim().split(/\s+/).map(part => {
+    const value = Number(part.replace('fr', ''));
+    assert(Number.isFinite(value) && value > 0, 'Column width "' + part + '" is not a positive fr value');
+    return value;
+  });
+
+  const featured = [...index.matchAll(/<a class="featured-card" href="([^"]+)"/g)].map(m => m[1]);
+  assertEqual(widths.length, featured.length, '--featured-columns does not cover every featured card');
+
+  const areas = featured.map((href, i) => {
+    const painting = paintings.find(p => paintingPageUrl(p) === href);
+    const ratio = ratios[painting.id] || (painting.width / painting.height) || 1;
+    return (widths[i] * widths[i]) / ratio;
+  });
+
+  const spread = Math.max(...areas) / Math.min(...areas);
+  assert(spread < 1.15,
+    'The featured cards differ in area by ' + Math.round((spread - 1) * 100) + '% — ' +
+    'the column widths are not balancing their shapes');
+});
+
+test('The "featured" positions in paintings.json are usable', () => {
+  // The number is a seat in the homepage row, so two works cannot hold the
+  // same one and there are only three seats
+  const catalogue = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/paintings.json'), 'utf8'));
+  const chosen = catalogue.filter(p => p.featured !== undefined);
+
+  const seats = [];
+  chosen.forEach(p => {
+    assert(Number.isInteger(p.featured) && p.featured >= 1 && p.featured <= 3,
+      p.id + ': "featured" is ' + JSON.stringify(p.featured) + ', not a position from 1 to 3');
+    assert(!seats.includes(p.featured),
+      p.id + ' and another work both claim featured position ' + p.featured);
+    seats.push(p.featured);
+  });
+
+  assert(chosen.length <= 3, 'More than three works are marked featured — only three fit');
+});
+
+test('The homepage features work that is actually for sale', () => {
+  // These were hand-picked and went stale — two of the three had sold, so the
+  // strongest page on the site was showcasing work nobody could buy
+  const index = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
+  const grid = /<div class="featured-grid"[^>]*>([\s\S]*?)\n {8}<\/div>/.exec(index);
+  assert(grid, 'Could not find the featured grid in index.html');
+
+  const links = [...grid[1].matchAll(/<a class="featured-card" href="([^"]+)"/g)].map(m => m[1]);
+  assertEqual(links.length, 3, 'index.html does not feature three works');
+
+  const byUrl = new Map(paintings.map(p => [paintingPageUrl(p), p]));
+  const available = paintings.filter(p => p.status === 'for_sale' && p.type !== 'bookmark');
+
+  links.forEach(href => {
+    const painting = byUrl.get(href);
+    assert(painting, 'index.html features ' + href + ', which is not a work page');
+
+    assert(painting.type !== 'bookmark',
+      'index.html features the bookmarks, which have no artwork proportions to show at');
+
+    // Sold work is only acceptable on the homepage when there is not enough
+    // for sale to fill the row
+    assert(painting.status === 'for_sale' || available.length < 3,
+      'index.html features "' + painting.title + '", which is sold, while ' +
+      available.length + ' works are for sale');
+  });
+});
+
 test('The sitemap lists every work page', () => {
   const sitemap = fs.readFileSync(path.join(__dirname, '../sitemap.xml'), 'utf8');
 

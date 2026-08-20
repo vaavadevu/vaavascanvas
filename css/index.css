@@ -286,12 +286,24 @@
 
 .featured-grid {
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr;
+  /* Written by the build: widths proportional to the square root of each
+     painting's aspect ratio, which gives the three cards about the same area.
+     Nothing is cropped, and no painting dominates the row for being a
+     different shape. The fallback is the old fixed hierarchy. */
+  grid-template-columns: var(--featured-columns, 1.4fr 1fr 1fr);
   gap: 30px;
-  align-items: start;
+  /* Cards keep each painting's own proportions, so they differ in height.
+     Sitting them on a shared baseline lines the titles up and reads as an
+     arrangement rather than as three things that failed to match. */
+  align-items: end;
 }
 
+/* Generated as links by scripts/build-painting-pages.js, so each card opens
+   the work it shows instead of being a dead image */
 .featured-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
   position: relative;
   overflow: hidden;
   border-radius: 2px;
@@ -301,6 +313,10 @@
 
 .featured-card img {
   width: 100%;
+  /* The real ratio comes from images/paintings/metadata.json, written onto
+     each card by the build. Cropping every painting to 3/4 took a fifth off a
+     near-square work and would take half of a landscape one — the shop grid
+     has always shown true proportions, and now the homepage does too. */
   aspect-ratio: 3 / 4;
   object-fit: cover;
   display: block;
