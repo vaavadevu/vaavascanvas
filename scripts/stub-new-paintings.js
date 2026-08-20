@@ -8,6 +8,13 @@
  *   1. Varje bildmapp utan post i data/paintings.json får en placeholder.
  *   2. Varje descKey som datafilen pekar på, men som saknar översättning, får
  *      en placeholder i js/translations.js.
+ *   3. Varje post vars bildmapp är borta tas bort ur data/paintings.json.
+ *
+ * Punkt 3 raderar data. Beskrivningen i js/translations.js lämnas kvar — den
+ * är skriven för hand, och läggs mappen tillbaka används den igen som den är.
+ * Vad som togs bort skrivs ut i sin helhet, så en mapp som råkat försvinna
+ * syns direkt och posten går att hämta tillbaka med
+ * `git checkout data/paintings.json`.
  *
  * Bägge placeholders är med flit OGILTIGA: priset är 0 och beskrivningen står
  * som "TODO:". Då faller `npm test` tills de är ifyllda, istället för att en
@@ -114,6 +121,86 @@ function appendStubs(raw, stubs) {
   return head + separator + stubs.map(stubText).join(',\r\n') + '\r\n' + tail;
 }
 
+// ── Ta bort poster ───────────────────────────────────────────────────────────
+
+// Varje objekt direkt i listan, som {start, end} i råtexten. Skannern hoppar
+// över stränginnehåll, så en klammer inne i en beskrivning eller en _todo-rad
+// inte räknas som slutet på en post.
+function topLevelObjects(raw) {
+  const ranges = [];
+  let depth = 0;
+  let start = -1;
+  let inString = false;
+  let escaped = false;
+
+  for (let i = 0; i < raw.length; i++) {
+    const ch = raw[i];
+
+    if (inString) {
+      if (escaped) escaped = false;
+      else if (ch === '\\') escaped = true;
+      else if (ch === '"') inString = false;
+      continue;
+    }
+
+    if (ch === '"') inString = true;
+    else if (ch === '{') {
+      if (depth === 0) start = i;
+      depth++;
+    } else if (ch === '}') {
+      depth--;
+      if (depth === 0) ranges.push({ start, end: i + 1 });
+    }
+  }
+
+  return ranges;
+}
+
+// Textborttagning av samma skäl som appendStubs gör textinfogning: posterna som
+// blir kvar ska stå kvar rad för rad som de gjorde.
+function removeEntry(raw, id) {
+  const marker = new RegExp(`"id"\\s*:\\s*"${id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`);
+  const hit = marker.exec(raw);
+  if (!hit) throw new Error(`Hittar inte posten "${id}" i data/paintings.json`);
+
+  const range = topLevelObjects(raw).find(r => hit.index >= r.start && hit.index < r.end);
+  if (!range) throw new Error(`Kan inte avgöra var posten "${id}" börjar och slutar`);
+
+  // Hela rader bort: från radens början till och med radbrytningen efter posten
+  const from = raw.lastIndexOf('\n', range.start) + 1;
+  let to = range.end;
+  const comma = /^[ \t]*,/.exec(raw.slice(to));
+  if (comma) to += comma[0].length;
+  const eol = /^[ \t]*\r?\n/.exec(raw.slice(to));
+  if (eol) to += eol[0].length;
+
+  // Stod posten sist blir kommatecknet före den hängande. Bara kommatecknet
+  // ska bort — radbrytningen efter ] hör till filen, inte till posten.
+  return (raw.slice(0, from) + raw.slice(to)).replace(/,(\s*\]\s*)$/, '$1');
+}
+
+// Bevisa efteråt istället för att lita på regexen: filen ska fortfarande vara
+// JSON, och exakt de utpekade posterna ska vara borta.
+function removeEntries(raw, ids, before) {
+  const out = ids.reduce(removeEntry, raw);
+
+  let after;
+  try {
+    after = JSON.parse(out);
+  } catch (err) {
+    throw new Error(`Borttagningen gjorde data/paintings.json trasig: ${err.message}`);
+  }
+
+  const left = new Set(after.map(entry => entry.id));
+  const stillThere = ids.filter(id => left.has(id));
+  const alsoGone = before.filter(id => !left.has(id) && !ids.includes(id));
+
+  if (stillThere.length > 0) throw new Error(`Posten blev kvar: ${stillThere.join(', ')}`);
+  if (alsoGone.length > 0) throw new Error(`Fel poster togs bort: ${alsoGone.join(', ')}`);
+
+  return out;
+}
+
 // ── js/translations.js ───────────────────────────────────────────────────────
 
 function translationEntry(key) {
@@ -194,11 +281,22 @@ function main() {
     .filter(entry => followsFolderConvention(entry) && !folders.includes(entry.id))
     .map(entry => entry.id);
 
-  if (strays.length > 0) {
-    console.log('⚠️  De här posterna i data/paintings.json har ingen bildmapp längre:');
-    strays.forEach(id => console.log(`      ${id}`));
-    console.log('   Ta bort posten om målningen är borttagen — annars visas den utan bild.\n');
-  }
+  // Borttagning är det enda som raderar något här, så en post som ska bort
+  // skrivs ut med det som stod i den. Är det en såld målning eller ett pris
+  // man känner igen, märks det innan filen sparas — inte långt efteråt.
+  const byId = new Map(entries.map(entry => [entry.id, entry]));
+
+  const describe = entry => {
+    if (!entry) return '(okänd post)';
+    const price = entry.originalPrice || entry.framedPrice;
+    const facts = [
+      entry.title,
+      price ? `${price} kr` : null,
+      entry.status === 'sold' ? 'SÅLD' : null,
+    ].filter(Boolean);
+    return facts.length > 0 ? `${entry.id}   (${facts.join(', ')})` : entry.id;
+  };
+
 
   // Varje descKey datafilen pekar på ska finnas som översättning, oavsett om
   // posten är ny eller har legat där ett tag. Poster utan bildmapp hoppas över
@@ -229,12 +327,21 @@ function main() {
           poster: '   LÄGGS TILL       post i data/paintings.json:',
           texter: '   LÄGGS TILL       beskrivning i js/translations.js:',
           todo:   '   VÄNTAR PÅ TEXT   står som TODO i js/translations.js:',
+          bort:   '   TAS BORT         posten har ingen bildmapp längre:',
         }
       : {
           poster: '⚠️  De här bildmapparna saknar post i data/paintings.json:',
           texter: '⚠️  De här beskrivningarna saknas i js/translations.js:',
           todo:   '⚠️  De här beskrivningarna står fortfarande som TODO:',
+          bort:   '⚠️  De här posterna har ingen bildmapp längre och tas bort:',
         };
+
+    if (strays.length > 0) {
+      found = true;
+      console.log(rubrik.bort);
+      strays.forEach(id => console.log(`      ${describe(byId.get(id))}`));
+      console.log('');
+    }
 
     if (missing.length > 0) {
       found = true;
@@ -264,8 +371,8 @@ function main() {
       console.log('✅ Alla bildmappar har en post och en beskrivning.');
       return 0;
     }
-    if (missing.length > 0 || untranslated.length > 0) {
-      console.log('   Kör sync_paintings_images.bat och välj [1] så läggs de till.');
+    if (missing.length > 0 || untranslated.length > 0 || strays.length > 0) {
+      console.log('   Kör sync_paintings_images.bat och välj [1] så synkas datafilerna.');
     } else {
       // Bara TODO-texter kvar, och dem kan inget script skriva åt dig
       console.log('   Skriv de riktiga texterna i js/translations.js.');
@@ -274,13 +381,22 @@ function main() {
   }
 
   // ── Skriv ──────────────────────────────────────────────────────────────────
-  if (missing.length === 0 && untranslated.length === 0) {
+  if (missing.length === 0 && untranslated.length === 0 && strays.length === 0) {
     console.log('✅ Alla bildmappar har en post och en beskrivning.');
     return 0;
   }
 
+  // Borttagningen först, så att en post och en ny placeholder med samma id
+  // aldrig kan finnas samtidigt
+  let data = raw;
+  if (strays.length > 0) {
+    data = removeEntries(data, strays, entries.map(entry => entry.id));
+  }
   if (stubs.length > 0) {
-    fs.writeFileSync(dataPath, appendStubs(raw, stubs));
+    data = appendStubs(data, stubs);
+  }
+  if (data !== raw) {
+    fs.writeFileSync(dataPath, data);
   }
   if (untranslated.length > 0 && hasTranslations) {
     fs.writeFileSync(translationsPath, insertTranslations(source, untranslated));
@@ -288,8 +404,20 @@ function main() {
 
   console.log('');
   console.log('='.repeat(60));
-  console.log('📝 Placeholders tillagda');
+  console.log(strays.length > 0 && stubs.length === 0 && untranslated.length === 0
+    ? '🗑️  Poster borttagna'
+    : '📝 Datafilerna synkade mot bildmapparna');
   console.log('='.repeat(60));
+
+  if (strays.length > 0) {
+    const antal = strays.length === 1 ? '1 post' : `${strays.length} poster`;
+    console.log(`   ${antal} togs bort ur data/paintings.json — bildmappen var borta:`);
+    strays.forEach(id => console.log(`      ${describe(byId.get(id))}`));
+    console.log('');
+    console.log('   Beskrivningarna står kvar i js/translations.js. Försvann en');
+    console.log('   mapp av misstag: `git checkout data/paintings.json`.');
+    console.log('');
+  }
 
   if (stubs.length > 0) {
     const antal = stubs.length === 1 ? '1 ny post' : `${stubs.length} nya poster`;
