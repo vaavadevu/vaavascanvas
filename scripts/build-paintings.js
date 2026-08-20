@@ -3,6 +3,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const { buildPaintingPages } = require('./build-painting-pages');
+
 // Read the paintings data from JSON
 const paintingsPath = path.join(__dirname, '..', 'data', 'paintings.json');
 const paintingsData = JSON.parse(fs.readFileSync(paintingsPath, 'utf8'));
@@ -232,3 +234,7 @@ fs.writeFileSync(paintingsJsPath, paintingsJsContent);
 
 console.log(`Updated PAINTINGS array in create-checkout.js with ${serverPaintings.length} paintings`);
 console.log(`Updated paintings array in paintings.js with ${clientPaintings.length} paintings`);
+
+// Give every work its own page, sitemap entry and structured data. Runs last
+// because it reads js/paintings.js, which the step above has just rewritten.
+buildPaintingPages(paintingsData);

@@ -10,6 +10,10 @@ const httpServer = require('http-server');
 const path = require('path');
 const fs = require('fs');
 
+// Each work has a page of its own under /pictures/. Build the address the same way
+// the site does, so a change to the URL scheme moves the tests with it.
+const { paintingPageUrl, SHOP_URL } = require('../js/paintings.js');
+
 // http-server's `union` dependency reads the long-deprecated res._headers on
 // every response (DEP0066). It only affects the dev server that hosts these
 // tests, never the deployed site, so drop that one warning — anything else,
@@ -184,8 +188,8 @@ async function runTests() {
     // Test 1: Every page loads without console errors and has a header
     const allPages = [
       { label: 'Main page',        url: `${baseUrl}/` },
-      { label: 'Gallery page',     url: `${baseUrl}/pages/pictures.html` },
-      { label: 'View page',        url: `${baseUrl}/pages/view.html` },
+      { label: 'Gallery page',     url: `${baseUrl}${SHOP_URL}` },
+      { label: 'View page',        url: `${baseUrl}${paintingPageUrl(paintings[0])}` },
       { label: 'Commissions page', url: `${baseUrl}/pages/commissions.html` },
     ];
 
@@ -273,7 +277,7 @@ async function runTests() {
     // Test 5: Full gallery renders on paintings page
     await test(`Gallery renders all ${paintings.length} paintings`, async () => {
       const page = await browser.newPage();
-      await page.goto(`${baseUrl}/pages/pictures.html`, { waitUntil: 'networkidle' });
+      await page.goto(`${baseUrl}${SHOP_URL}`, { waitUntil: 'networkidle' });
 
       // Wait for gallery to load
       await page.waitForSelector('.gallery-item', { timeout: 10000 });
@@ -294,7 +298,7 @@ async function runTests() {
     for (const { label, width } of [{ label: 'two columns', width: 390 }, { label: 'four columns', width: 1280 }]) {
       await test(`Sorted tiles read across the grid, not down it (${label})`, async () => {
         const page = await browser.newPage({ viewport: { width, height: 900 } });
-        await page.goto(`${baseUrl}/pages/pictures.html`, { waitUntil: 'networkidle' });
+        await page.goto(`${baseUrl}${SHOP_URL}`, { waitUntil: 'networkidle' });
         await page.waitForSelector('.gallery-item', { timeout: 10000 });
 
         const grid = await page.evaluate(() => {
@@ -335,7 +339,7 @@ async function runTests() {
     ]) {
       await test(`Exactly one set of filter controls shows on ${label}`, async () => {
         const page = await browser.newPage({ viewport: { width, height: 900 } });
-        await page.goto(`${baseUrl}/pages/pictures.html`, { waitUntil: 'networkidle' });
+        await page.goto(`${baseUrl}${SHOP_URL}`, { waitUntil: 'networkidle' });
         await page.waitForSelector('.gallery-item', { timeout: 10000 });
 
         assertEqual(await page.locator('#gallery-filter-bar').isVisible(), bar,
@@ -359,7 +363,7 @@ async function runTests() {
     // that still shows it, with every filter set to its longest label
     await test('The filter bar keeps its four controls on one row at 961px', async () => {
       const page = await browser.newPage({ viewport: { width: 961, height: 900 } });
-      await page.goto(`${baseUrl}/pages/pictures.html`, { waitUntil: 'networkidle' });
+      await page.goto(`${baseUrl}${SHOP_URL}`, { waitUntil: 'networkidle' });
       await page.waitForSelector('.gallery-item', { timeout: 10000 });
 
       const row = await page.evaluate(() => {
@@ -395,7 +399,7 @@ async function runTests() {
     // other breakpoint was showing it.
     await test('The floating filter button filters the grid on a phone', async () => {
       const page = await browser.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true });
-      await page.goto(`${baseUrl}/pages/pictures.html`, { waitUntil: 'networkidle' });
+      await page.goto(`${baseUrl}${SHOP_URL}`, { waitUntil: 'networkidle' });
       await page.waitForSelector('.gallery-item', { timeout: 10000 });
 
       // Past the top of the page, where the static filter bar is long gone
@@ -468,7 +472,7 @@ async function runTests() {
       const firstPainting = paintings[0];
 
       const response = await page.goto(
-        `${baseUrl}/pages/view.html?painting=${firstPainting.id}`,
+        `${baseUrl}${paintingPageUrl(firstPainting)}`,
         { waitUntil: 'networkidle' }
       );
       assert(response.ok(), `View page failed to load with status ${response.status()}`);
@@ -494,7 +498,7 @@ async function runTests() {
       // zero anywhere else, otherwise a renamed class would make this test pass
       // by finding nothing at all
       const forSale = paintings.find(p => p.status === 'for_sale' && !p.framedOnly && !p.frameAvailable);
-      await page.goto(`${baseUrl}/pages/view.html?painting=${forSale.id}`, { waitUntil: 'networkidle' });
+      await page.goto(`${baseUrl}${paintingPageUrl(forSale)}`, { waitUntil: 'networkidle' });
       await page.waitForSelector('.page-view-container', { timeout: 10000 });
       const controlButtons = await page.locator('button.pageview-buy-btn').count();
       assertEqual(controlButtons, 1,
@@ -506,7 +510,7 @@ async function runTests() {
       const sample = soldPaintings.slice(0, 3);
 
       for (const painting of sample) {
-        await page.goto(`${baseUrl}/pages/view.html?painting=${painting.id}`, { waitUntil: 'networkidle' });
+        await page.goto(`${baseUrl}${paintingPageUrl(painting)}`, { waitUntil: 'networkidle' });
         await page.waitForSelector('.page-view-container', { timeout: 10000 });
 
         const buyButtons = await page.locator('button.pageview-buy-btn').count();
@@ -568,7 +572,7 @@ async function runTests() {
     // interaction into view — otherwise captions and modals are never compared
     const languagePages = [
       { label: 'Main page',        url: `${baseUrl}/` },
-      { label: 'Gallery page',     url: `${baseUrl}/pages/pictures.html` },
+      { label: 'Gallery page',     url: `${baseUrl}${SHOP_URL}` },
       {
         label: 'Portfolio page',
         url: `${baseUrl}/pages/portfolio.html`,
@@ -585,7 +589,7 @@ async function runTests() {
         },
       },
       { label: 'Commissions page', url: `${baseUrl}/pages/commissions.html` },
-      { label: 'View page',        url: `${baseUrl}/pages/view.html?painting=${paintings[0].id}` },
+      { label: 'View page',        url: `${baseUrl}${paintingPageUrl(paintings[0])}` },
     ];
 
     for (const { label, url, reveal } of languagePages) {
@@ -662,7 +666,7 @@ async function runTests() {
       // to view.html for purchasing). Pick a plain for-sale painting with no frame
       // options so a single click adds it to the cart without opening a modal.
       const simplePainting = paintings.find(p => p.status === 'for_sale' && !p.framedOnly && !p.frameAvailable);
-      await page.goto(`${baseUrl}/pages/view.html?painting=${simplePainting.id}`, { waitUntil: 'networkidle' });
+      await page.goto(`${baseUrl}${paintingPageUrl(simplePainting)}`, { waitUntil: 'networkidle' });
 
       // Add an item so the cart footer (with checkout button) is visible
       await page.waitForSelector('button.pageview-buy-btn', { timeout: 10000 });
@@ -696,7 +700,7 @@ async function runTests() {
       const painting = paintings.find(p => p.status === 'for_sale' && !p.framedOnly && !p.frameAvailable);
       assert(painting, 'No plain for-sale painting to add to the cart');
 
-      await page.goto(`${baseUrl}/pages/view.html?painting=${painting.id}`, { waitUntil: 'networkidle' });
+      await page.goto(`${baseUrl}${paintingPageUrl(painting)}`, { waitUntil: 'networkidle' });
       await page.evaluate(() => localStorage.removeItem('vc_cart'));
 
       await page.waitForSelector('button.pageview-buy-btn', { timeout: 10000 });
@@ -710,7 +714,7 @@ async function runTests() {
       assertEqual(before.stored.length, 1, 'The painting was not stored in the cart');
 
       // Come back to a different page entirely, the way a returning visitor would
-      await page.goto(`${baseUrl}/pages/pictures.html`, { waitUntil: 'networkidle' });
+      await page.goto(`${baseUrl}${SHOP_URL}`, { waitUntil: 'networkidle' });
 
       const after = await page.evaluate(() => ({
         stored: JSON.parse(localStorage.getItem('vc_cart') || '[]'),
@@ -738,7 +742,7 @@ async function runTests() {
       const page = await browser.newPage();
       const painting = paintings.find(p => p.status === 'for_sale' && !p.framedOnly && !p.frameAvailable);
 
-      await page.goto(`${baseUrl}/pages/view.html?painting=${painting.id}`, { waitUntil: 'networkidle' });
+      await page.goto(`${baseUrl}${paintingPageUrl(painting)}`, { waitUntil: 'networkidle' });
       await page.evaluate(() => localStorage.removeItem('vc_cart'));
 
       await page.waitForSelector('button.pageview-buy-btn', { timeout: 10000 });
@@ -780,7 +784,7 @@ async function runTests() {
       const page = await browser.newPage();
       const painting = paintings.find(p => p.status === 'for_sale' && !p.framedOnly && !p.frameAvailable);
 
-      await page.goto(`${baseUrl}/pages/view.html?painting=${painting.id}`, { waitUntil: 'networkidle' });
+      await page.goto(`${baseUrl}${paintingPageUrl(painting)}`, { waitUntil: 'networkidle' });
       await page.evaluate(() => localStorage.removeItem('vc_cart'));
 
       await page.waitForSelector('button.pageview-buy-btn', { timeout: 10000 });

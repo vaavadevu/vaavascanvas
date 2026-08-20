@@ -81,11 +81,29 @@ function openPageView(index) {
   renderPageViewFrameInfo(painting);
   renderPageViewButtons(painting);
   preloadAdjacentImages();
-  setUrlParam("painting", painting.id);
+  updatePageViewUrl(painting);
   const price = getPaintingEffectivePrice(painting, painting.framedOnly);
   const paintingType = painting.type || TYPE.PAINTING;
   const category = paintingType === TYPE.PAINTING ? 'original' : paintingType;
   trackEvent('view_item', { currency: 'SEK', value: price, items: [{ item_id: painting.id, item_name: painting.title, item_category: category, price }] });
+}
+
+// Browsing on from a work lands on another work, so the address bar, the tab
+// title and the canonical link all have to follow. Without this a visitor who
+// clicked through and then shared the link would be handing out a URL whose
+// preview showed whichever work they happened to start from.
+function updatePageViewUrl(painting) {
+  if (isLegacyViewPage()) {
+    setUrlParam("painting", painting.id);
+    return;
+  }
+
+  document.body.dataset.paintingId = painting.id;
+  window.history.replaceState({}, "", paintingPageUrl(painting));
+  document.title = paintingPageTitle(painting, t(painting.medium));
+
+  const canonical = document.querySelector('link[rel="canonical"]');
+  if (canonical) canonical.href = new URL(paintingPageUrl(painting), window.location.origin).href;
 }
 
 // ── Populate helpers ──────────────────────────────────────────
@@ -977,8 +995,8 @@ async function initPageView() {
   // Load painting data if not already loaded
   try {
     const [countsRes, metaRes] = await Promise.all([
-      fetch("../images/paintings/counts.json"),
-      fetch("../images/paintings/metadata.json")
+      fetch("/images/paintings/counts.json"),
+      fetch("/images/paintings/metadata.json")
     ]);
 
     if (countsRes.ok) {
@@ -1006,14 +1024,31 @@ async function initPageView() {
   assignSizeScales(paintings);
   sortPaintings();
 
-  const params = new URLSearchParams(window.location.search);
-  const paintingId = params.get("painting");
+  const paintingId = resolvePaintingId();
+  if (!paintingId) return;
 
-  if (paintingId) {
-    const index = paintings.findIndex(p => p.id === paintingId);
-    if (index !== -1) {
-      openPageView(index);
-      attachPageViewListeners();
-    }
+  const index = paintings.findIndex(p => p.id === paintingId);
+  if (index === -1) return;
+
+  // /pages/view.html?painting=<id> was the only address a work ever had. It
+  // still works, but it now sends the visitor on to the work's own page so
+  // there is a single URL to share, link to and index.
+  if (isLegacyViewPage()) {
+    window.location.replace(paintingPageUrl(paintings[index]));
+    return;
   }
+
+  openPageView(index);
+  attachPageViewListeners();
+}
+
+// A generated page under /pictures/ names its work in the markup; the legacy
+// view.html carries it in the query string
+function resolvePaintingId() {
+  return document.body.dataset.paintingId
+    || new URLSearchParams(window.location.search).get("painting");
+}
+
+function isLegacyViewPage() {
+  return !document.body.dataset.paintingId;
 }

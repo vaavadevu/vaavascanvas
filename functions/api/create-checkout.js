@@ -224,7 +224,7 @@ export async function onRequestPost(context) {
         line_items,
         mode: 'payment',
         success_url: `${origin}/?order=success`,
-        cancel_url: `${origin}/pages/pictures.html`,
+        cancel_url: `${origin}/pictures/`,
         shipping_address_collection: {
           allowed_countries: EU_COUNTRIES,
         },

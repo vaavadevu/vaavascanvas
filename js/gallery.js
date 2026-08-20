@@ -10,9 +10,10 @@ function getPaintingImagePaths(painting) {
 
   const folderId = painting.id;
   const count = painting.imageCount || 1;
-  const isViewPage = window.location.pathname.includes('/view');
-  const base = isViewPage ? `../images/paintings/${folderId}/desktop/` : `/images/paintings/${folderId}/desktop/`;
-  const mobileBase = isViewPage ? `../images/paintings/${folderId}/mobile/` : `/images/paintings/${folderId}/mobile/`;
+  // Absolute, so the same path works from the root, from /pages/ and from a
+  // work's own page under /pictures/
+  const base = `/images/paintings/${folderId}/desktop/`;
+  const mobileBase = `/images/paintings/${folderId}/mobile/`;
   const isMobile = window.innerWidth <= 960;
 
   return Array.from({ length: count }, (_, i) => {
@@ -189,7 +190,7 @@ function createGalleryItem(painting) {
 
   img.addEventListener("error", () => { img.src = "/images/devika.jpg"; });
   img.addEventListener("click", () => {
-    window.location.href = `view.html?painting=${painting.id}`;
+    window.location.href = paintingPageUrl(painting);
   });
 
   item.appendChild(img);
@@ -237,7 +238,7 @@ const wrapper = document.createElement('div');
       // Bookmarks are sold per variant — send the buyer to the picker instead
       // of guessing which one they meant
       if (paintingType === TYPE.BOOKMARK) {
-        window.location.href = `view.html?painting=${painting.id}`;
+        window.location.href = paintingPageUrl(painting);
         return;
       }
 

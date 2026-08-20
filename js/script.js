@@ -107,11 +107,13 @@ async function init() {
   applyGallerySort();
   buildGallery();
 
-  // Legacy: redirect old ?painting= URLs to view.html
+  // Legacy: ?painting= on a listing page used to open the detail view. Send it
+  // straight to the work's own page.
   const params     = new URLSearchParams(window.location.search);
   const paintingId = params.get("painting");
   if (paintingId) {
-    window.location.href = `view.html?painting=${paintingId}`;
+    const painting = paintings.find(p => p.id === paintingId);
+    if (painting) window.location.href = paintingPageUrl(painting);
   }
 }
 
@@ -133,7 +135,7 @@ if (!isBlogPage) {
   init();
 }
 
-// Only initialize page view on view.html
-if (window.location.pathname.includes("view")) {
+// Only initialize page view on a work's detail page
+if (isWorkPage()) {
   initPageView();
 }

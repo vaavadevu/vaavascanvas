@@ -114,6 +114,32 @@ check behaviour rather than data:
 - **A failed checkout keeps the cart** and re-enables the button, so a server
   rejection does not lose what the buyer picked
 
+### 12. **Generated Work Page Validation**
+The shop lives at `/pictures/`, and every work has a page of its own beside it
+(`/pictures/kattuggla.html`). Those pages are written by
+`scripts/build-painting-pages.js`, together with `sitemap.xml` and the product
+structured data on the shop page itself. All three are generated from
+`data/paintings.json`, so these tests exist to catch a **stale build** rather
+than a bad edit — if one fails, run `npm run build`.
+
+The address of the whole section comes from one constant, `SHOP_DIR` in
+`js/paintings.js`; nothing else hardcodes it.
+
+- Every work has a generated page, and no page is left behind for a work that
+  has been removed from the catalogue
+- Each page's canonical URL, `og:url`, `<title>` and share image describe *that*
+  work — a missed substitution in the template would otherwise ship one work's
+  page carrying another's link preview
+- Structured data quotes the same price and availability as the catalogue, on
+  both the work's page and the shop page. This is the check that would have
+  caught the drift the generator replaced: the shop page had been advertising
+  two sold paintings as in stock, plus four paintings that no longer existed
+- No work page carries `noindex`. The `pages/view.html` shell they are built
+  from does carry it (it only redirects), and inheriting that tag would hide the
+  whole catalogue from search
+- The sitemap lists every work page, and nothing links to a work through the
+  retired `view.html?painting=…` URL
+
 ## Running Tests Locally
 
 ### Prerequisites

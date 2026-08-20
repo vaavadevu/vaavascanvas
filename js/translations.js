@@ -60,8 +60,8 @@ const keys = {
     en: "A selection of my work across different mediums — acrylic, oil pastel and digital. Some are for sale, others live only here.",
   },
   portfolio_outro: {
-    sv: "Gillar du något du ser? En del av verken ovan går att köpa. <a href='/pages/pictures.html'>Se hela galleriet</a> eller <a href='/pages/commissions.html'>beställ en commission</a>.",
-    en: "Like something you see? Some of the works above are for sale. <a href='/pages/pictures.html'>See the full gallery</a> or <a href='/pages/commissions.html'>order a commission</a>.",
+    sv: "Gillar du något du ser? En del av verken ovan går att köpa. <a href='/pictures/'>Se hela galleriet</a> eller <a href='/pages/commissions.html'>beställ en commission</a>.",
+    en: "Like something you see? Some of the works above are for sale. <a href='/pictures/'>See the full gallery</a> or <a href='/pages/commissions.html'>order a commission</a>.",
   },
   medium_oilpastel: {
     sv: "Oljepastell",
@@ -914,3 +914,12 @@ for (const [key, langs] of Object.entries(keys)) {
   }
 }
 
+
+// ── Node export tail (ignored by the browser) ─────────────────
+//
+// Lets scripts/build-painting-pages.js read the real Swedish text when it
+// writes each work's page instead of re-parsing this file's source.
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { keys, translations };
+}

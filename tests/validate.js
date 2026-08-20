@@ -198,6 +198,21 @@ function loadHtmlFiles() {
     });
   }
 
+  // Read the shop and its generated per-work pages, so the checks that sweep
+  // all markup (translation keys, script order) cover them too
+  const shopDir = path.join(__dirname, '../pictures');
+  if (fs.existsSync(shopDir)) {
+    fs.readdirSync(shopDir).forEach(file => {
+      if (file.endsWith('.html')) {
+        const filePath = path.join(shopDir, file);
+        files.push({
+          path: filePath,
+          content: fs.readFileSync(filePath, 'utf8')
+        });
+      }
+    });
+  }
+
   // Read components
   if (fs.existsSync(componentsDir)) {
     fs.readdirSync(componentsDir).forEach(file => {
@@ -1274,6 +1289,184 @@ test('cart.js does not redeclare what its dependency modules export', () => {
   assert(offenders.length === 0,
     'cart.js redeclares functions that come from cart-math.js/cart-rules.js, ' +
     'so the tested version is not the one running:\n  ' + offenders.join('\n  '));
+});
+
+console.log(colors.blue + '\n[9] GENERATED WORK PAGE VALIDATION' + colors.reset);
+
+// Everything checked here is written by scripts/build-painting-pages.js. The
+// hand-maintained version of this markup had drifted badly — sold paintings
+// were still advertised to Google as in stock and four entries named works
+// that had been removed — so these tests exist to catch a stale build rather
+// than a stale edit. If one fails, run `npm run build`.
+
+const {
+  paintingPageUrl, paintingSlug, getPriceModel, SHOP_DIR, SHOP_URL,
+} = require('../js/paintings.js');
+
+// The shop's own index.html sits in here alongside the generated work pages
+const WORK_DIR = path.join(__dirname, '..', SHOP_DIR.replace(/^\//, ''));
+const SHOP_INDEX = 'index.html';
+const SITE = 'https://vaavascanvas.se';
+
+function readWorkPage(painting) {
+  const file = path.join(WORK_DIR, paintingSlug(painting) + '.html');
+  assert(fs.existsSync(file), 'No generated page for "' + painting.id + '" — run `npm run build`');
+  return fs.readFileSync(file, 'utf8');
+}
+
+// The <script type="application/ld+json"> payload of a page, as an object
+function readSchema(html, what) {
+  const match = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+  assert(match, what + ' carries no structured data');
+  try {
+    return JSON.parse(match[1]);
+  } catch (err) {
+    throw new Error(what + ' has structured data that is not valid JSON: ' + err.message);
+  }
+}
+
+function expectedAvailability(painting) {
+  return painting.status === 'sold' ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock';
+}
+
+test('Every work has a generated page', () => {
+  paintings.forEach(painting => readWorkPage(painting));
+});
+
+test('No generated page is left behind for a work that no longer exists', () => {
+  const expected = new Set([SHOP_INDEX, ...paintings.map(p => paintingSlug(p) + '.html')]);
+  const orphans = fs.readdirSync(WORK_DIR).filter(f => f.endsWith('.html') && !expected.has(f));
+  assert(orphans.length === 0,
+    'These pages under ' + SHOP_URL + ' describe works that are not in paintings.json:\n  ' +
+    orphans.join('\n  '));
+});
+
+test('Each work page describes itself and not another work', () => {
+  // The generator builds every page from one template, so a missed
+  // substitution would ship one work's page carrying another's title or
+  // share image — invisible on screen, wrong in every link preview
+  paintings.forEach(painting => {
+    const html = readWorkPage(painting);
+    const url = SITE + paintingPageUrl(painting);
+
+    const canonical = html.match(/<link rel="canonical" href="([^"]+)"/);
+    assertEqual(canonical && canonical[1], url, painting.id + ': wrong canonical URL');
+
+    const ogUrl = html.match(/<meta property="og:url" content="([^"]+)"/);
+    assertEqual(ogUrl && ogUrl[1], url, painting.id + ': wrong og:url');
+
+    const title = html.match(/<title>([^<]*)<\/title>/);
+    assert(title && title[1].includes(painting.title),
+      painting.id + ': <title> is "' + (title && title[1]) + '", which does not name the work');
+
+    const ogImage = html.match(/<meta property="og:image" content="([^"]+)"/);
+    assert(ogImage && ogImage[1].startsWith(SITE),
+      painting.id + ': og:image is not an absolute URL — link previews need one');
+    assert(ogImage[1].includes('/' + painting.id + '/') || painting.type === 'bookmark',
+      painting.id + ': og:image shows another work — ' + ogImage[1]);
+  });
+});
+
+test('Work page structured data matches the catalog', () => {
+  paintings.forEach(painting => {
+    const html = readWorkPage(painting);
+    const schema = readSchema(html, painting.id + "'s page");
+    const work = schema['@graph'].find(node => node['@id'].endsWith('#work'));
+    assert(work, painting.id + ': structured data has no work node');
+
+    assertEqual(work.name, painting.title, painting.id + ': structured data names the wrong work');
+    assertEqual(work.offers.availability, expectedAvailability(painting),
+      painting.id + ': structured data advertises the wrong availability');
+
+    // A sold one-off has no price to quote; an available one must quote the
+    // same price the buyer is charged
+    if (painting.status === 'sold') {
+      assert(work.offers.price === undefined,
+        painting.id + ': is sold but its structured data still quotes a price');
+    } else {
+      assertEqual(work.offers.price, String(getPriceModel(painting).price),
+        painting.id + ': structured data price does not match the catalog');
+    }
+  });
+});
+
+test('Shop page structured data matches the catalog', () => {
+  // This is the check that would have caught the drift: the shop page was
+  // listing Skogsvila and Sommarstuga as in stock after both had sold, plus
+  // four paintings that no longer existed at all
+  const shop = htmlFiles.find(f => f.path === path.join(WORK_DIR, SHOP_INDEX));
+  assert(shop, 'The shop page was not found at ' + SHOP_URL);
+
+  const listed = readSchema(shop.content, 'the shop page').hasPart;
+  assertEqual(listed.length, paintings.length,
+    'The shop page lists a different number of products than the catalog holds');
+
+  listed.forEach(entry => {
+    const painting = paintings.find(p => p.title === entry.name);
+    assert(painting, 'The shop page advertises "' + entry.name + '", which is not in paintings.json');
+    assertEqual(entry.offers.availability, expectedAvailability(painting),
+      'The shop page advertises the wrong availability for "' + entry.name + '"');
+    assertEqual(entry.url, SITE + paintingPageUrl(painting),
+      'The shop page links "' + entry.name + '" to the wrong page');
+  });
+
+  paintings.forEach(painting => {
+    assert(listed.some(entry => entry.name === painting.title),
+      'The shop page does not list "' + painting.title + '"');
+  });
+});
+
+test('No work page tells search engines to ignore it', () => {
+  // The template these are built from carries noindex, because view.html is a
+  // shell that redirects. Inheriting that tag would hide the entire catalogue
+  // from search — the exact opposite of why these pages exist
+  paintings.forEach(painting => {
+    const html = readWorkPage(painting);
+    assert(!/name="robots"[^>]*noindex/.test(html),
+      painting.id + ': its page carries noindex — the generator failed to strip the template’s tag');
+  });
+
+  const shell = fs.readFileSync(path.join(__dirname, '../pages/view.html'), 'utf8');
+  assert(/name="robots"[^>]*noindex/.test(shell),
+    'pages/view.html lost its noindex — it duplicates a work page it only redirects to');
+});
+
+test('The sitemap lists every work page', () => {
+  const sitemap = fs.readFileSync(path.join(__dirname, '../sitemap.xml'), 'utf8');
+
+  paintings.forEach(painting => {
+    const url = SITE + paintingPageUrl(painting);
+    assert(sitemap.includes('<loc>' + url + '</loc>'), 'sitemap.xml is missing ' + url);
+  });
+
+  // view.html is a redirecting shell now, so it has nothing of its own to index
+  assert(!sitemap.includes('/pages/view.html'),
+    'sitemap.xml still lists view.html, which now just redirects to a work page');
+});
+
+test('Nothing links to a work through the retired query-string URL', () => {
+  // Those links still work, but they cost the visitor a redirect and split
+  // a work between two addresses
+  const offenders = [];
+
+  fs.readdirSync(path.join(__dirname, '../js'))
+    .filter(file => file.endsWith('.js'))
+    .forEach(file => {
+      // Comments still name the old URL, to explain why it is handled at all
+      const code = fs.readFileSync(path.join(__dirname, '../js', file), 'utf8')
+        .split(/\r?\n/)
+        .filter(line => !line.trim().startsWith('//'))
+        .join('\n');
+      if (/view\.html\?painting=/.test(code)) offenders.push('js/' + file);
+    });
+
+  htmlFiles.forEach(file => {
+    if (/href="[^"]*view\.html\?painting=/.test(file.content)) offenders.push(path.basename(file.path));
+  });
+
+  assert(offenders.length === 0,
+    'These link to /pages/view.html?painting=… instead of the work’s own page:\n  ' +
+    offenders.join('\n  '));
 });
 
 // ─────────────────────────────────────────────────────────────
