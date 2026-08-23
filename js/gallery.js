@@ -580,28 +580,73 @@ function setupFab() {
     doRipple(e.offsetX, e.offsetY);
   });
 
+  // The header floats over the page, so anything the button or the sheet does
+  // near the top of the screen has to stay clear of it. Its height is the same
+  // whether or not it is showing; where it currently sits is not, since it
+  // slides in and out on its own.
+  const header = document.getElementById("header-container");
+  const headerHeight = () => (header ? header.offsetHeight : 0);
+  const headerBottom = () => (header ? Math.max(0, header.getBoundingClientRect().bottom) : 0);
+
+  // Where the sheet opens is fixed: the button returns to its resting corner
+  // first, so the menu is always the same full size in the same place, however
+  // far up the footer had pushed the button beforehand.
+  const layoutPopup = () => {
+    fab.classList.add("fab--sliding");
+    void fab.offsetWidth; // so the slide home animates rather than jumping
+    fab.style.bottom = FAB_HOME_MARGIN + "px";
+
+    const gap = 12;   // the sheet's own margin against the button
+    const edge = 16;  // never let the sheet touch the top of the screen
+    const buttonTop = window.innerHeight - FAB_HOME_MARGIN - (trigger.offsetHeight || 52);
+    const room = buttonTop - gap - headerBottom() - edge;
+    // Otherwise as tall as the stylesheet ever lets it be
+    popup.style.maxHeight = Math.min(window.innerHeight * 0.72, 560, room) + "px";
+  };
+
   const updatePosition = () => {
     const galleryWrapper = document.getElementById("gallery-wrapper");
     if (galleryWrapper && galleryWrapper.getBoundingClientRect().bottom <= 0) {
       fab.style.display = "none";
       return;
     }
-    if (!footer) { fab.style.display = "flex"; return; }
+    fab.style.display = "flex";
+    if (!footer) { fab.style.bottom = FAB_HOME_MARGIN + "px"; return; }
     const footerRect = footer.getBoundingClientRect();
     const windowHeight = window.innerHeight;
-    const margin = 24;
-    if (footerRect.top < windowHeight) {
-      fab.style.bottom = (windowHeight - footerRect.top + margin) + "px";
-    } else {
-      fab.style.bottom = margin + "px";
-    }
-    fab.style.display = "flex";
+    const lift = footerRect.top < windowHeight
+      ? windowHeight - footerRect.top + FAB_HOME_MARGIN
+      : FAB_HOME_MARGIN;
+    // A tall footer on a short page could otherwise push the button clean off
+    // the top of the screen, or up behind the header — where it cannot be
+    // tapped, and with an empty grid it is the only way back to the filters.
+    // The reserved band is the header's height, not where it happens to be:
+    // it can slide into view long after this last ran.
+    const maxLift = windowHeight - headerHeight() - 8 - (trigger.offsetHeight || 52);
+    fab.style.bottom = Math.max(FAB_HOME_MARGIN, Math.min(lift, maxLift)) + "px";
+  };
+
+  fabLayoutPopup = layoutPopup;
+  // Closing hands the button back to the footer, sliding rather than jumping
+  fabRestorePosition = () => {
+    updatePosition();
+    setTimeout(() => fab.classList.remove("fab--sliding"), 300);
   };
 
   updatePosition();
   setTimeout(updatePosition, 100);
   setTimeout(updatePosition, 500);
-  window.addEventListener("scroll", () => { window.requestAnimationFrame(updatePosition); closeFab(); }, { passive: true });
+  window.addEventListener("scroll", () => {
+    // Tracking the footer frame by frame, so no transition to lag behind
+    fab.classList.remove("fab--sliding");
+    window.requestAnimationFrame(updatePosition);
+    closeFab();
+  }, { passive: true });
+  window.addEventListener("resize", () => {
+    window.requestAnimationFrame(() => {
+      if (fab.classList.contains("open")) layoutPopup(); else updatePosition();
+    });
+  }, { passive: true });
   document.addEventListener("click", (e) => { if (!fab.contains(e.target)) closeFab(); });
 }
 
@@ -610,13 +655,17 @@ function setupFab() {
 // with a timer each, a close left over from the last scroll would hide a sheet
 // that had already been reopened.
 const FAB_FADE_MS = 250;
+const FAB_HOME_MARGIN = 24;
 let fabCloseTimer = null;
+let fabLayoutPopup = null;
+let fabRestorePosition = null;
 
 function openFab() {
   const fab = document.getElementById("filter-fab");
   const popup = fab?.querySelector(".fab-popup");
   if (!popup) return;
   clearTimeout(fabCloseTimer);
+  if (fabLayoutPopup) fabLayoutPopup();
   popup.style.display = "flex";
   // Two frames, so the sheet is laid out before the opening transition starts
   requestAnimationFrame(() => requestAnimationFrame(() => fab.classList.add("open")));
@@ -626,9 +675,11 @@ function closeFab() {
   const fab = document.getElementById("filter-fab");
   const popup = fab?.querySelector(".fab-popup");
   if (!popup) return;
+  const wasOpen = fab.classList.contains("open");
   fab.classList.remove("open");
   clearTimeout(fabCloseTimer);
   fabCloseTimer = setTimeout(() => { popup.style.display = "none"; }, FAB_FADE_MS);
+  if (wasOpen && fabRestorePosition) fabRestorePosition();
 }
 
 // ── Sticky filter bar (desktop) ───────────────────────────────

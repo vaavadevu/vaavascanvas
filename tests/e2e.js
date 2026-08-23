@@ -443,9 +443,72 @@ async function runTests() {
       await page.close();
     });
 
-    console.log(colors.blue + '\n[4] LANGUAGE SWITCHING TESTS' + colors.reset);
+    // Near the end of the page the button climbs to stay clear of the footer,
+    // and with an empty grid it ends up near the top of the screen. Wherever it
+    // has got to, the sheet should open at its full size in the same place.
+    await test('The filter sheet opens at full size wherever the button has drifted to', async () => {
+      const page = await browser.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true });
+      await page.goto(`${baseUrl}${SHOP_URL}`, { waitUntil: 'networkidle' });
+      await page.waitForSelector('.gallery-item', { timeout: 10000 });
 
-    // Test 6: Language switching works
+      const openAndMeasure = async () => {
+        await page.evaluate(() => openFab());
+        await page.waitForTimeout(450);
+        const box = await page.evaluate(() => {
+          const popup = document.querySelector('.fab-popup');
+          const rect = popup.getBoundingClientRect();
+          const header = document.getElementById('header-container').getBoundingClientRect();
+          return {
+            top: Math.round(rect.top), bottom: Math.round(rect.bottom),
+            opacity: getComputedStyle(popup).opacity,
+            squeezed: popup.scrollHeight > popup.clientHeight + 1,
+            behindHeader: header.bottom > 0 && rect.top < header.bottom,
+            onScreen: rect.top >= 0 && rect.bottom <= window.innerHeight,
+          };
+        });
+        await page.evaluate(() => closeFab());
+        await page.waitForTimeout(400);
+        return box;
+      };
+
+      // The ordinary case: partway down the page, the button at its resting corner
+      await page.evaluate(() => window.scrollTo({ top: 1200, behavior: 'instant' }));
+      await page.waitForTimeout(600);
+      const resting = await openAndMeasure();
+      assertEqual(resting.opacity, '1', 'The filter sheet did not open');
+      assert(!resting.squeezed, "The filter sheet is squeezed even at the button's resting position");
+
+      // An empty grid leaves a short page, so the footer shoves the button up
+      await page.evaluate(() => { setActiveTypeFilter('clay'); setActiveStatusFilter('sold'); filterGallery(); });
+      await page.waitForTimeout(800);
+      assertEqual(await page.locator('.gallery-item').count(), 0, 'Expected the grid to be empty for this test');
+      await page.evaluate(() => window.scrollTo({ top: 300, behavior: 'instant' }));
+      await page.waitForTimeout(600);
+      await page.evaluate(() => window.scrollTo({ top: 100, behavior: 'instant' }));
+      await page.waitForTimeout(600);
+
+      const climbed = await page.evaluate(() => {
+        const fab = document.getElementById('filter-fab');
+        const rect = document.getElementById('fab-trigger').getBoundingClientRect();
+        const header = document.getElementById('header-container').getBoundingClientRect();
+        return { visible: getComputedStyle(fab).display !== 'none', top: rect.top, headerBottom: header.bottom };
+      });
+      assert(climbed.visible, 'The floating button must stay reachable when the grid is empty — it is the only way back');
+      assert(climbed.top < 400, `The button should have climbed up the screen, but sits at ${Math.round(climbed.top)}px`);
+      assert(climbed.top >= climbed.headerBottom,
+        `The button climbed behind the header, where it cannot be tapped (${Math.round(climbed.top)}px vs ${Math.round(climbed.headerBottom)}px)`);
+
+      const lifted = await openAndMeasure();
+      assertEqual(lifted.opacity, '1', 'The filter sheet did not open with the button lifted');
+      assert(lifted.onScreen, 'The filter sheet opens off the screen when the button has been lifted');
+      assert(!lifted.behindHeader, 'The filter sheet opens behind the header when the button has been lifted');
+      assert(!lifted.squeezed, 'The filter sheet is squeezed into the gap left by the lifted button');
+      assertEqual(lifted.bottom, resting.bottom,
+        'The filter sheet should open in the same place however far the button had been lifted');
+
+      await page.close();
+    });
+
     await test('Language switching to English works', async () => {
       const page = await browser.newPage();
       await page.goto(`${baseUrl}/`, { waitUntil: 'networkidle' });

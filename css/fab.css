@@ -93,6 +93,17 @@
   pointer-events: auto;
 }
 
+/* The button rides up above the footer as you reach the bottom of the page, and
+   can end up high enough that a sheet above it would be squeezed against the
+   top of the screen — or hidden behind the header. So it slides back down to
+   its resting corner as the sheet opens, and the sheet is always the same full
+   size in the same place, whatever the button was doing beforehand. The slide
+   is only animated then: the rest of the time the button tracks the footer on
+   every scroll frame, where a transition would just lag behind. */
+#filter-fab.fab--sliding {
+  transition: transform 0.2s ease, opacity 0.2s ease, bottom 0.25s ease;
+}
+
 .fab-group {
   display: flex;
   flex-direction: column;
