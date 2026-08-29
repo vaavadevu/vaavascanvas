@@ -12,6 +12,15 @@ function formatPrice(sek) {
   return `${sek} kr`;
 }
 
+// ── Page kind ─────────────────────────────────────────────────
+
+// A single work's detail page: either its own page under /pictures/ or the legacy
+// /pages/view.html shell. Recognised by the markup it contains rather than by
+// its address, because every work now has an address of its own.
+function isWorkPage() {
+  return !!document.querySelector(".page-view-container");
+}
+
 // ── Shared utilities ──────────────────────────────────────────
 
 function setupSwipe(element, handler, shouldIgnore) {
@@ -44,10 +53,9 @@ function setupSwipe(element, handler, shouldIgnore) {
 }
 
 function formatDimensions(painting) {
-  if (painting.shape === SHAPE.CIRCLE) {
-    return `${painting.diameter} cm diameter`;
-  }
-  return `${painting.width} x ${painting.height} cm`;
+  // paintings.js owns the wording so the page, its <title> and its structured
+  // data all state the same size
+  return paintingDimensions(painting) || "";
 }
 
 function preloadAdjacentImages() {

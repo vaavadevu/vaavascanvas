@@ -1,12 +1,12 @@
 // Portfolio Dynamic Loader
+// labelKey is resolved through t() at render time so the medium shown in the
+// lightbox follows the selected language
 const portfolioMediums = {
-  akryl: { id: 'akryl', label: 'Akryl', folder: 'akryl' },
-  oljapastell: { id: 'oilpastel', label: 'Oljepastell', folder: 'oljapastell' },
-  akvarell: { id: 'akvarell', label: 'Akvarell', folder: 'akvarell' },
-  digitalt: { id: 'digital', label: 'Digitalt', folder: 'digitalt' }
+  akryl: { id: 'akryl', labelKey: 'medium_acrylic', folder: 'akryl' },
+  oljapastell: { id: 'oilpastel', labelKey: 'medium_oilpastel', folder: 'oljapastell' },
+  akvarell: { id: 'akvarell', labelKey: 'medium_watercolor', folder: 'akvarell' },
+  digitalt: { id: 'digital', labelKey: 'medium_digital', folder: 'digitalt' }
 };
-
-const emptyMessage = 'Just nu är det tomt här, men det kommer mer snart!';
 
 // Get image files from a folder via manifest
 async function getImagesFromFolder(folderName) {
@@ -67,7 +67,7 @@ async function loadPortfolioSections() {
         const figure = createPieceFigure(
           imagePath,
           fileName.charAt(0).toUpperCase() + fileName.slice(1),
-          medium.label
+          t(medium.labelKey)
         );
         grid.appendChild(figure);
       });
@@ -141,3 +141,7 @@ function setupLightbox() {
 
 // Load on page load
 document.addEventListener('DOMContentLoaded', loadPortfolioSections);
+
+// The medium labels are baked into each tile when it is built, so rebuild the
+// grid when the language changes
+window.addEventListener('languagechange', loadPortfolioSections);

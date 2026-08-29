@@ -143,6 +143,55 @@
   opacity: 1;
 }
 
+/* Sold variants (bookmarks) stay browsable but read as unavailable */
+.pageViewThumbWrap {
+  position: relative;
+  display: inline-flex;
+  line-height: 0;
+}
+
+.pageViewThumbWrap.sold .pageViewThumb {
+  filter: grayscale(0.85);
+}
+
+.pageViewThumbSold {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  transform: translateX(-50%);
+  background: var(--accent-green);
+  color: var(--text-light);
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.6rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 600;
+  line-height: 1.4;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.pageview-sold-flag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  background: var(--accent-green);
+  color: var(--text-light);
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.pageview-sold-flag[hidden] {
+  display: none;
+}
+
 /* Right column with info */
 .pageViewRight {
   display: flex;
@@ -152,7 +201,10 @@
   color: var(--text-dark);
 }
 
-.pageViewRight h3 {
+/* The work's own page titles it with an <h1> — it is the page's subject —
+   while the shared view.html shell still uses an <h3>. Both are this heading. */
+.pageViewRight h3,
+#pageview-title {
   font-size: 1.6rem;
   margin: 0 0 10px;
 }
@@ -169,6 +221,41 @@
   align-items: center;
   margin-top: 20px;
   gap: 10px;
+}
+
+/* A sold work offers a way on instead of ending at "Såld": a commission
+   enquiry and a place to hear about new work. One is a link and one a button,
+   so both are styled here rather than leaning on `.pageViewRight button`. */
+.pageview-sold-btn {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1.5px solid var(--accent-green);
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+a.pageview-sold-btn.btn-primary,
+button.pageview-sold-btn.btn-primary {
+  background: var(--accent-green);
+  color: var(--text-light);
+}
+
+a.pageview-sold-btn.btn-secondary,
+button.pageview-sold-btn.btn-secondary {
+  background: transparent;
+  color: var(--accent-green);
+}
+
+.pageview-sold-btn:hover {
+  opacity: 0.85;
 }
 
 .pageViewRight button {
@@ -382,6 +469,12 @@
   margin: 3px 0 0 0;
 }
 
+.pageview-multibuy-note {
+  font-size: 0.9rem;
+  color: var(--accent-green);
+  margin: 4px 0 0 0;
+}
+
 #pageview-medium {
   font-size: 0.95rem;
   color: var(--text-dark);
@@ -455,6 +548,21 @@
     height: 60px;
   }
 
+  .pageViewThumbSold {
+    bottom: 4px;
+    padding: 2px 6px;
+    font-size: 0.5rem;
+    letter-spacing: 0.5px;
+  }
+
+  .pageview-sold-flag {
+    top: 8px;
+    left: 8px;
+    padding: 4px 12px;
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+  }
+
   .page-view-container .arrow {
     opacity: 0;
     pointer-events: none;
@@ -522,22 +630,14 @@
   display: none;
 }
 .bookmark-selector-actions { display:flex; gap:12px; align-items:center; justify-content:flex-end; }
-.bookmark-selector-title { margin:0 0 6px 0; }
-.bookmark-selector-inner { position: relative; }
-.modal-back-btn {
-  position: absolute;
-  left: 12px;
-  top: 12px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--accent-green);
-  background: transparent;
-  border: none;
-  font-weight: 700;
-  text-decoration: none;
+.bookmark-selector-title { margin:0 0 2px 0; }
+.bookmark-selector-price-note {
+  margin: 0 0 10px 0;
+  font-size: 0.9rem;
+  opacity: 0.8;
 }
-.modal-back-btn:hover { opacity: 0.9; }
+.bookmark-selector-price-note:empty { display: none; }
+.bookmark-selector-inner { position: relative; }
 
 /* Make modal action buttons use page view button styles */
 .bookmark-selector-inner .btn {
@@ -557,3 +657,97 @@
   color: var(--accent-green);
 }
 .bookmark-selector-inner .btn:hover { background: var(--bg-warm); color: var(--accent-green); }
+
+/* ── Fler verk ─────────────────────────────────────────────────
+   Every work page used to end at its own buy button, which left a visitor who
+   did not want this particular painting with only the back button — and left
+   the catalogue reachable to a crawler through the shop page alone. */
+
+.related-works {
+  max-width: 1100px;
+  margin: 60px auto 0;
+  padding: 0 20px 40px;
+  text-align: center;
+}
+
+.related-works h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--text-dark);
+  margin: 0 0 24px;
+}
+
+.related-works-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 20px;
+  /* Thumbnails keep each painting's proportions, so they differ in height —
+     a shared baseline lines the titles up */
+  align-items: end;
+}
+
+.related-work {
+  position: relative;
+  display: block;
+  text-decoration: none;
+  color: var(--text-dark);
+}
+
+.related-work img {
+  width: 100%;
+  /* Overridden per card with the real ratio from metadata.json; this is the
+     fallback for a painting the image sync has not measured yet */
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  display: block;
+  border-radius: 2px;
+  box-shadow: 0 4px 20px var(--shadow-light);
+  transition: transform 0.3s ease;
+}
+
+.related-work:hover img {
+  transform: scale(1.03);
+}
+
+.related-work-title {
+  display: block;
+  margin-top: 10px;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.related-work-sold {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 3px 10px;
+  border-radius: 2px;
+  background: rgba(30, 21, 16, 0.75);
+  color: var(--text-light);
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.related-works-all {
+  display: inline-block;
+  margin-top: 28px;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
+  color: var(--text-link);
+  text-decoration: none;
+}
+
+.related-works-all:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .related-works-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+}

@@ -7,6 +7,9 @@ function adjustHeaderPadding() {
   if (headerContainer && mainContent) {
     const headerHeight = headerContainer.getBoundingClientRect().height;
     mainContent.style.paddingTop = headerHeight + 'px';
+    // Published so CSS can size full-height content against the space that is
+    // actually left below the header — which grows when the banner is showing
+    document.documentElement.style.setProperty('--header-offset', headerHeight + 'px');
   }
 }
 
@@ -32,7 +35,7 @@ async function buildComponents() {
       const isCommissions = window.location.pathname.includes("commissions");
       const isBlog = window.location.pathname.includes("blog");
       if (isIndex) document.querySelector('a[href="/##top"]')?.classList.add("active");
-      if (isPictures) document.querySelector('a[href="/pages/pictures.html"]')?.classList.add("active");
+      if (isPictures) document.querySelector('a[href="/pictures/"]')?.classList.add("active");
       if (isPortfolio) document.querySelector('a[href="/pages/portfolio.html"]')?.classList.add("active");
       if (isCommissions) document.querySelector('a[href="/pages/commissions.html"]')?.classList.add("active");
       if (isBlog) document.querySelector('a[href="/pages/blog.html"]')?.classList.add("active");
@@ -217,7 +220,7 @@ function setupScrollWatcher() {
     if (!footer) return;
 
     const footerInView = footer.getBoundingClientRect().top <= window.innerHeight / 2;
-    const isViewPage = window.location.pathname.includes("/view");
+    const isViewPage = isWorkPage();
     const isPictures = window.location.pathname.includes("pictures");
     const isCommissions = window.location.pathname.includes("commissions");
     const isBlog = window.location.pathname.includes("blog");
@@ -230,7 +233,7 @@ function setupScrollWatcher() {
     } else if (isViewPage) {
       currentQuery = null;
     } else if (isPictures) {
-      currentQuery = "/pages/pictures.html";
+      currentQuery = "/pictures/";
     } else if (isCommissions) {
       currentQuery = "/pages/commissions.html";
     } else if (isBlog) {
@@ -264,7 +267,9 @@ function setupModals() {
 
   document.addEventListener("click", (e) => {
     // Subscribe modal
-    if (e.target.closest("#subscribeBtn")) {
+    // The footer bell is #subscribeBtn; .subscribe-open lets any other button
+    // open the same modal without duplicating that id
+    if (e.target.closest("#subscribeBtn, .subscribe-open")) {
       document.getElementById("subscribeModal").style.display = "flex";
     }
     if (e.target.closest("#subscribeClose")) {

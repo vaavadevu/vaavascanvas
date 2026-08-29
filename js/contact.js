@@ -37,6 +37,19 @@ if (type) {
   typeSelect.value = type;
   applyTypeVisibility(type); // VIKTIGT
 }
+
+// A sold work links here with ?ref=<id>, so the message opens already naming
+// the painting that prompted it — the buyer starts from a sentence rather
+// than an empty box, and the reply knows what they were looking at
+const ref = params.get("ref");
+if (ref && messageField && !messageField.value) {
+  const painting = typeof paintings !== "undefined"
+    ? paintings.find(p => p.id === ref)
+    : null;
+  if (painting) {
+    messageField.value = t("form_ref_message").replace("{title}", painting.title);
+  }
+}
   function applyTypeVisibility(val) {
   if (printField)       printField.style.display       = val === "Prints"       ? "block" : "none";
   if (commissionFields) commissionFields.style.display = val === "Commissions"  ? "block" : "none";
@@ -98,7 +111,14 @@ function updateArtworkPreview(select, previewId) {
     preview.style.display = "none";
     return;
   }
-  preview.src           = `/images/paintings/${paintingId}/desktop/01.jpg`;
+  // Not every product follows the /images/paintings/<id>/ convention (bookmarks
+  // carry an explicit image list), so resolve through the shared helper
+  const painting = typeof paintings !== "undefined"
+    ? paintings.find(p => p.id === paintingId)
+    : null;
+  preview.src           = painting && typeof getPaintingImagePaths === "function"
+    ? getPaintingImagePaths(painting)[0]
+    : `/images/paintings/${paintingId}/desktop/01.jpg`;
   preview.alt           = select.options[select.selectedIndex].dataset.title;
   preview.style.display = "block";
 }

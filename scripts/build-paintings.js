@@ -3,14 +3,43 @@
 const fs = require('fs');
 const path = require('path');
 
+const { buildPaintingPages } = require('./build-painting-pages');
+
 // Read the paintings data from JSON
 const paintingsPath = path.join(__dirname, '..', 'data', 'paintings.json');
 const paintingsData = JSON.parse(fs.readFileSync(paintingsPath, 'utf8'));
 
-// Transform each painting object to the server format
+// Read the per-variant bookmark inventory — the source of truth for which
+// individual bookmarks are still available
+const bookmarksPath = path.join(__dirname, '..', 'data', 'bookmarks.json');
+const bookmarksData = JSON.parse(fs.readFileSync(bookmarksPath, 'utf8'));
+
+const bookmarkImagePath = id => `${bookmarksData.imageDir}${id}${bookmarksData.imageExtension}`;
+const bookmarkSoldVariants = bookmarksData.variants
+  .filter(v => v.status === 'sold')
+  .map(v => bookmarkImagePath(v.id));
+const bookmarkImageList = [
+  bookmarkImagePath(bookmarksData.cover),
+  ...bookmarksData.variants.map(v => bookmarkImagePath(v.id)),
+];
+const allBookmarksSold = bookmarksData.variants.every(v => v.status === 'sold');
+
+// Fold the bookmark inventory into the bookmark product entry so the rest of
+// the pipeline sees one shape
+paintingsData.forEach(painting => {
+  if (painting.type !== 'bookmark') return;
+  if (allBookmarksSold) painting.status = 'sold';
+  painting.multiBuyPrice = bookmarksData.multiBuyPrice;
+  painting.multiBuyMinQuantity = bookmarksData.multiBuyMinQuantity;
+  painting.soldVariants = bookmarkSoldVariants;
+  painting.images = { desktop: bookmarkImageList, mobile: bookmarkImageList };
+});
+
+// Transform each painting object to the server format. Bookmarks are priced
+// per variant and get their own catalog below.
 const serverPaintings = paintingsData.filter(painting => {
   // Only include paintings that have pricing
-  return painting.originalPrice || painting.framedPrice;
+  return (painting.originalPrice || painting.framedPrice) && painting.type !== 'bookmark';
 }).map(painting => {
   const serverPainting = {
     id: painting.id,
@@ -81,12 +110,74 @@ ${formattedPaintings}
 
 checkoutContent = checkoutContent.replace(paintingsRegex, newPaintingsArray);
 
+// Replace the BOOKMARKS catalog so the server can price and reject variants itself
+const bookmarkProduct = paintingsData.find(p => p.type === 'bookmark');
+if (!bookmarkProduct) {
+  throw new Error('No painting entry with type "bookmark" found in paintings.json');
+}
+
+const variantEntries = bookmarksData.variants
+  .map(v => `    '${v.id}': '${v.status}',`)
+  .join('\n');
+
+const newBookmarksCatalog = `const BOOKMARKS = {
+  id: '${bookmarkProduct.id}',
+  price: ${bookmarkProduct.originalPrice},
+  multiBuyPrice: ${bookmarksData.multiBuyPrice},
+  multiBuyMinQuantity: ${bookmarksData.multiBuyMinQuantity},
+  imageDir: '${bookmarksData.imageDir}',
+  imageExtension: '${bookmarksData.imageExtension}',
+  variants: {
+${variantEntries}
+  },
+};`;
+
+const bookmarksRegex = /const BOOKMARKS = \{[\s\S]*?\n\};/;
+if (!bookmarksRegex.test(checkoutContent)) {
+  throw new Error('Could not find BOOKMARKS catalog in create-checkout.js');
+}
+checkoutContent = checkoutContent.replace(bookmarksRegex, newBookmarksCatalog);
+
 // Write back the updated checkout file
 fs.writeFileSync(checkoutPath, checkoutContent);
 
 // Also update paintings.js with the full paintings data
 const paintingsJsPath = path.join(__dirname, '..', 'js', 'paintings.js');
 let paintingsJsContent = fs.readFileSync(paintingsJsPath, 'utf8');
+
+// Serialize a nested value as JS literal, indented to sit inside a painting entry
+function indentJson(value) {
+  return JSON.stringify(value, null, 2)
+    .replace(/^(\s*)"([A-Za-z_$][\w$]*)":/gm, '$1$2:')
+    .split('\n')
+    .map((line, i) => (i === 0 ? line : '    ' + line))
+    .join('\n');
+}
+
+// Media are declared as MEDIUM constants in js/paintings.js; map each JSON
+// value ("medium_acrylic_canvas") back to its constant (MEDIUM.ACRYLIC_CANVAS)
+// so a product can state what it is actually made of
+const mediumBlock = paintingsJsContent.match(/const MEDIUM = \{([\s\S]*?)\};/);
+if (!mediumBlock) throw new Error('Could not find the MEDIUM constants in js/paintings.js');
+
+const mediumConstantByValue = new Map(
+  [...mediumBlock[1].matchAll(/(\w+):\s*"([^"]+)"/g)].map(m => [m[2], m[1]])
+);
+
+function mediumConstant(painting) {
+  const value = painting.medium;
+  if (!value) throw new Error(`Painting "${painting.id}" has no medium`);
+
+  const name = mediumConstantByValue.get(value);
+  if (!name) {
+    throw new Error(
+      `Painting "${painting.id}" uses medium "${value}", which is not declared in the ` +
+      `MEDIUM constants in js/paintings.js — add it there and add a matching ` +
+      `translation key to js/translations.js`
+    );
+  }
+  return `MEDIUM.${name}`;
+}
 
 // Generate the full paintings array for client-side
 const clientPaintings = paintingsData.map(painting => {
@@ -96,7 +187,7 @@ const clientPaintings = paintingsData.map(painting => {
     descKey: `"${painting.descKey}"`,
     status: painting.status === 'sold' ? 'STATUS.SOLD' :
             painting.status === 'personal' ? 'STATUS.PERSONAL' : 'STATUS.FOR_SALE',
-    medium: 'MEDIUM.ACRYLIC_CANVAS'
+    medium: mediumConstant(painting)
   };
 
   if (painting.width) clientPainting.width = painting.width;
@@ -111,6 +202,16 @@ const clientPaintings = paintingsData.map(painting => {
   if (typeof painting.discountPercent === 'number') clientPainting.discountPercent = painting.discountPercent;
   if (painting.framedOnly) clientPainting.framedOnly = true;
   if (painting.frameAvailable) clientPainting.frameAvailable = true;
+  if (painting.type) {
+    clientPainting.type = painting.type === 'clay' ? 'TYPE.CLAY' :
+                          painting.type === 'bookmark' ? 'TYPE.BOOKMARK' : 'TYPE.PAINTING';
+  }
+  if (typeof painting.multiBuyPrice === 'number') {
+    clientPainting.multiBuyPrice = painting.multiBuyPrice;
+    clientPainting.multiBuyMinQuantity = painting.multiBuyMinQuantity;
+  }
+  if (painting.soldVariants) clientPainting.soldVariants = indentJson(painting.soldVariants);
+  if (painting.images) clientPainting.images = indentJson(painting.images);
 
   return clientPainting;
 });
@@ -133,3 +234,7 @@ fs.writeFileSync(paintingsJsPath, paintingsJsContent);
 
 console.log(`Updated PAINTINGS array in create-checkout.js with ${serverPaintings.length} paintings`);
 console.log(`Updated paintings array in paintings.js with ${clientPaintings.length} paintings`);
+
+// Give every work its own page, sitemap entry and structured data. Runs last
+// because it reads js/paintings.js, which the step above has just rewritten.
+buildPaintingPages(paintingsData);

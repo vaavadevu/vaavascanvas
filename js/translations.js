@@ -40,9 +40,44 @@ const keys = {
     sv: "Portfolio",  
     en: "Portfolio",
   },
-  nav_cart: { 
+  nav_cart: {
     sv: "Varukorg",
     en: "Cart",
+  },
+
+  pictures_title: {
+    sv: "Köp mina original och hantverk",
+    en: "Buy my originals and handcrafts",
+  },
+
+  // ── Portfolio ──────────────────────────────────────────────────
+  portfolio_title: {
+    sv: "Illustrationer &amp; verk",
+    en: "Illustrations &amp; works",
+  },
+  portfolio_intro: {
+    sv: "Ett urval av mitt arbete genom olika medium — akryl, oljepastell och digitalt. Vissa går att köpa, andra finns bara här.",
+    en: "A selection of my work across different mediums — acrylic, oil pastel and digital. Some are for sale, others live only here.",
+  },
+  portfolio_outro: {
+    sv: "Gillar du något du ser? En del av verken ovan går att köpa. <a href='/pictures/'>Se hela galleriet</a> eller <a href='/pages/commissions.html'>beställ en commission</a>.",
+    en: "Like something you see? Some of the works above are for sale. <a href='/pictures/'>See the full gallery</a> or <a href='/pages/commissions.html'>order a commission</a>.",
+  },
+  medium_oilpastel: {
+    sv: "Oljepastell",
+    en: "Oil pastel",
+  },
+  medium_acrylic: {
+    sv: "Akryl",
+    en: "Acrylic",
+  },
+  medium_watercolor: {
+    sv: "Akvarell",
+    en: "Watercolor",
+  },
+  medium_digital: {
+    sv: "Digitalt",
+    en: "Digital",
   },
   item_type_original: {
     sv: "Original",
@@ -166,6 +201,32 @@ const keys = {
     en: "Bookmark",
   },
 
+  // ── Sort orders ────────────────────────────────────────────
+  filter_sort_label: {
+    sv: "Sortera",
+    en: "Sort",
+  },
+  filter_sort_default: {
+    sv: "Rekommenderat",
+    en: "Recommended",
+  },
+  filter_sort_price_asc: {
+    sv: "Lägsta pris först",
+    en: "Lowest price first",
+  },
+  filter_sort_price_desc: {
+    sv: "Högsta pris först",
+    en: "Highest price first",
+  },
+  filter_sort_size_asc: {
+    sv: "Minsta storlek först",
+    en: "Smallest size first",
+  },
+  filter_sort_size_desc: {
+    sv: "Största storlek först",
+    en: "Largest size first",
+  },
+
   // ── Cookie policy ──────────────────────────────────────────
   cookie_policy_link: {
     sv: "Cookiepolicy",
@@ -203,6 +264,14 @@ const keys = {
     sv: "Såld",
     en: "Sold",
   },
+  modal_bookmark_price_note: {
+    sv: "{single} kr styck – {multi} kr styck om du köper fler än ett",
+    en: "{single} kr each – {multi} kr each when you buy more than one",
+  },
+  pageview_multibuy_note: {
+    sv: "{multi} kr styck om du köper fler än ett",
+    en: "{multi} kr each when you buy more than one",
+  },
   modal_buy_btn: {
     sv: "Lägg i varukorg",
     en: "Add to cart",
@@ -219,6 +288,27 @@ const keys = {
     sv: "rabatt på ordinarie pris",
     en: "discount on list price",
   },
+
+  // ── Såld målning: vägen vidare ─────────────────────────────
+  // En såld tavla är slutet på sidan om den inte erbjuder något annat, och
+  // sålda verk är de som bevisar att konsten går att köpa
+  pageview_sold_commission_btn: {
+    sv: "Beställ något liknande",
+    en: "Order something similar",
+  },
+  pageview_sold_notify_btn: {
+    sv: "Meddela mig om nya verk",
+    en: "Tell me about new work",
+  },
+  pageview_more_works: {
+    sv: "Fler verk",
+    en: "More work",
+  },
+  form_ref_message: {
+    sv: "Hej! Jag såg \"{title}\" på er sida och skulle vilja beställa något liknande.",
+    en: "Hi! I saw \"{title}\" on your site and would like to order something similar.",
+  },
+
   status_sold: {
     sv: "Den här tavlan är såld.",
     en: "This painting has been sold.",
@@ -474,6 +564,10 @@ const keys = {
   medium_acrylic_canvas: {
     sv: "Akryl på duk",
     en: "Acrylic on canvas",
+  },
+  medium_watercolor_paper_laminated: {
+    sv: "Akvarell på papper, laminerat",
+    en: "Watercolor on paper, laminated",
   },
 
   // ── Painting descriptions ──────────────────────────────────────
@@ -887,3 +981,12 @@ for (const [key, langs] of Object.entries(keys)) {
   }
 }
 
+
+// ── Node export tail (ignored by the browser) ─────────────────
+//
+// Lets scripts/build-painting-pages.js read the real Swedish text when it
+// writes each work's page instead of re-parsing this file's source.
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { keys, translations };
+}

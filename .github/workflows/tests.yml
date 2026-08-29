@@ -26,6 +26,18 @@ jobs:
       - name: Run data validation tests
         run: node tests/validate.js
 
+      - name: Run cart math unit tests
+        run: node tests/cart-math.js
+
+      - name: Run cart rules unit tests
+        run: node tests/cart-rules.js
+
+      - name: Run painting model unit tests
+        run: node tests/painting-model.js
+
+      - name: Run checkout logic tests
+        run: node tests/checkout.js
+
       - name: Install Playwright browsers
         run: npx playwright install chromium
 

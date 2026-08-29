@@ -1,0 +1,275 @@
+{
+  "settings": {
+    "desktop_quality": 82,
+    "desktop_max_kb": 600,
+    "mobile_max_width": 800,
+    "mobile_quality": 75,
+    "mobile_max_kb": 300
+  },
+  "paintings": {
+    "aldrigEnsam": {
+      "sources": {
+        "01.jpg": "36128f12b0e2ad3cc9a04cf7904049cdd9217353acf09c06c52b6fb66dd41102",
+        "02.jpg": "411fd99648089bc91355d5f94f7ea5a6803489ed56e92ae9b9bdc367dd3bc3dc",
+        "03.jpg": "17bf9edd2a3eea23f339bd4eef033696226070ba9189163c0c234b382b1ba6b4",
+        "04.jpg": "98ef3b24771f4de16597877f59ab2f156a2351621bc7b5fbc97832860f891187",
+        "05.jpg": "115c59830ec40f4c19075e75ff7e296420dff23b3a2f9287bd3ed9abe6af1f77"
+      }
+    },
+    "breadwinner": {
+      "sources": {
+        "01.jpg": "01fe6512247e3f35e80870aa1f61154ac2e23dbe9ff9bb073a71c0d019528ff3",
+        "02.jpg": "b88836a60c1b1ab380fd477253cbac841dd9355f7aa04f9d04b59d73d2d85814",
+        "03.jpg": "7a41c1384c862efd2310d6315808249365dc9a5cdfeedc3f4842aa6f6fab549b"
+      }
+    },
+    "busungen": {
+      "sources": {
+        "01.jpg": "833f4bed5de04860cfce566169e0a2085ef98e064bf944e880805f5488744bac",
+        "02.jpg": "6c00af3200757c1e73ea09fb96b3893e1bd925b1ac2ae151fac875a245e50efc",
+        "03.jpg": "791dc00a2ac1dc395a79cbfc3c921712e23b622f4e027cb0feac886a09a5280f"
+      }
+    },
+    "dagensFynd": {
+      "sources": {
+        "01.jpg": "35f08b01c7496f127346bb8c7d588aff8dfb530d059563d698836ce56d44f50f",
+        "02.jpg": "c6ce6977e22adc231156e767e2f40882bd89448c67b3628f0832fb6087c47a44",
+        "03.jpg": "a316d9f709f6f7900c0a683986337cabdfd9d8f07f789bfd47ef88dc61f057c0",
+        "04.jpg": "790ca784624f00a51cba4888ec9f587680a57daedb29bf75a9f210991db5414c"
+      }
+    },
+    "efterIde": {
+      "sources": {
+        "01.jpg": "65b5513ffca9d6ed2bfdc2ac3ed20f294a8c7785ef6ceafb20c2f786eb3046a4",
+        "02.jpg": "34e34c0c07e2677e8598da5c707a6b242fc36595f37ac0d592b97c20b0c49b23",
+        "03.jpg": "7fd2adfa4884f676dbee93579e311833b31615922625104f15cdc6b29e3e921d",
+        "04.jpg": "18a053bacaec4dae638ef7cee09f886e385bd0d355bd90637bd325117537586e",
+        "05.jpg": "31be056b78ac8aef7403135eb6443d83b72d6bc1c4a1fe275db7bb319643056d",
+        "06.jpg": "92a12de0828f4155de0c8235dc9b54ae8a53c4c74f1ffc04109f59990ef575b7",
+        "07.jpg": "896c68f75978a671f9eb305e3c493151d749903df6f1aa7613e9614232e66737"
+      }
+    },
+    "enLerigDrom": {
+      "sources": {
+        "01.jpg": "a4b44d90395af78e0187ea3fb26945179c09a50694723aded5b1b6bae9e6e0cd",
+        "02.jpg": "cc5122c65a7aefc37c59837059fee59829b87f335e91c27c9fd129ed6408e525",
+        "03.jpg": "c9d90dd607af1de1bef17c66623255d76775a2a21f67d0804d5188c1696b0ad0",
+        "04.jpg": "4f88618d456133e79174f81677811e46769525544cc9db081315eaa3562a7358",
+        "05.jpg": "a781c7d2e582e5c4271e3eb857019382b86d9ed6e9e88361032a3609950e4a88"
+      }
+    },
+    "foreStormen": {
+      "sources": {
+        "01.jpg": "77570fa9ddfc9b57d9c269743ca9840fbb0255477ac1d8817f9387065899c851",
+        "02.jpg": "435e60d62ebe15258aa0fefd5803246d22b5dafc0451d1cf1cc7acb636a6f4a5",
+        "03.jpg": "745473e9550ca1f1c0a590ea6921f546456940a071cb6202839cf83a2df82fc1",
+        "04.jpg": "a84ca9a4e37c4381ddee6068e723cdb05b01ae43a83767a4f8dc3a3eae462be6",
+        "05.jpg": "718546a560b3418230c5d6e2f8e866c0e65bf5e0c8e278fcac53128e6ff1dfd2"
+      }
+    },
+    "frihet": {
+      "sources": {
+        "01.jpg": "80bcfd29a6e8bec3cfb025ac7e2038ef12e784097af262a6daa89819a5e0dd81",
+        "02.jpg": "90905bff9aacdf6de8dcace708b3093913be8e3d5de85a2987ecd4a10d0159cf"
+      }
+    },
+    "herrOchFruAndersson": {
+      "sources": {
+        "01.jpg": "bca8c29930a6b356ff1a4ff50a1e656be5c0b8007720780bd458b55b0f833489",
+        "02.jpg": "6e26c0a43a8b36c69a512c94b69b1b6a8c4d8cc06bcfb68dc42fc53d67ddb8af",
+        "03.jpg": "e3dfa31295da14bd8d8ee934e9cef81490089b45bc3b69000b3fff5a727c36f9",
+        "04.jpg": "51ea2e43998809e68cfd546e48814c8e339d9968db6cf46b8d6f69b58a8d056a",
+        "05.jpg": "a6af3cfc965c5c0d71e9173e3a63dec55a740cbd993df478691f2339b8bb1b42",
+        "06.jpg": "61102f0d839e9a1255855a58937d294906b1f5cd196c3ac57932af76e8c43c9c"
+      }
+    },
+    "kattuggla": {
+      "sources": {
+        "01.jpg": "0cebd171149e8394ed06668f1abca971af7bd67184a79a6fcc1ef13b77f9b8e1",
+        "02.jpg": "8f7f62b53b27824dc1b8e4646bc3418b2d25a00b2d47a50cd202072e4493f273"
+      }
+    },
+    "koslapp": {
+      "sources": {
+        "01.jpg": "20c3b208cac56006aaed16c32f5b19e82ffbdc58e725c2bc2fb6cd53e9ac830f",
+        "02.jpg": "4e59a99a6069b8c43e5640e15299d6ba658f2e3c600c55f14c4d882460ad9a08",
+        "03.jpg": "5ab15a7d2691b37f829da13bcb01944de725aa69a335148eab8fa56ff4785406",
+        "04.jpg": "9f16e420fe4caebabe20017884d0a1c057bc9ad363e08275ec6de9ab7d784f4c",
+        "05.jpg": "20c12c1950d39f62c9d27b5e9e93cfda519e47af6a095f7a124910ab96ad735e",
+        "06.jpg": "490f363f6836df69e3f849de524fe1516b8c9bdff29238e78d17eaaa27b49c4c"
+      }
+    },
+    "lodjur": {
+      "sources": {
+        "01.jpg": "c8dd747805c51d18a38685a158fa93c7183d5cab5eb2f75d45ee22e37cf5c8cf",
+        "02.jpg": "90f4c3aecdd69faa0a346dfc7beea681d59893dc9e03c34bee956fb221ad93f3"
+      }
+    },
+    "maskrosdrom": {
+      "sources": {
+        "01.jpg": "ce61a099b1efb220cd9cb09bc4b5e149f293c1c73f2d86370c55c6930a7e77ed",
+        "02.jpg": "c876b77cb087eaa777af237476f42f5d23f26fa2e10fff8acd3da0f16b622df0",
+        "03.jpg": "9b360725ab17173dbb717f9f91caedc5abfd1c9b80ba3b8c0d196ac1f16ac819"
+      }
+    },
+    "minMamma": {
+      "sources": {
+        "01.jpg": "5523ddd0814b27ec2fb26091f4aa0852b63120c2cd93320d2e880542e7bbd784",
+        "02.jpg": "c4284b7baf8f4bf77d4aab9cfb61d58bb899764e4097024aa93502a1c448ff61",
+        "03.jpg": "c1e92542a9b9465fb9d55268a854597bc18d4c2bf49d079b71048612aaeb9e75",
+        "04.jpg": "3ebcc66d676bdc33bd97098a4aad7fb47f99b6f1f45de8a0c7c5cf3fdd937fa5",
+        "05.jpg": "e25618357dbffbf0d28100f5227661280500807c9c0e7c7dbd691edbac464c1c",
+        "06.jpg": "6609cc1432728d9064c2571296d1445838a5cff88a5e7dca1cf30a9309582860"
+      }
+    },
+    "narhet": {
+      "sources": {
+        "01.jpg": "88a03321a1408c363efd1c0f3409e6c9811d79390f1363ffde8b9343781ff799",
+        "02.jpg": "df32d5dc70f9d45946a4df11978d127af9f5ea9f2ac35a50ce71b94983a7683f",
+        "03.jpg": "b14181fab7b14cd33ef57539b1df8d6c74f797a9be0edf82bca4b9cb072a5ad1",
+        "04.jpg": "2adf4ad5ec3ae8265f848ceb3412a7fd346a6430f8f9e693a85756892d5f5db9"
+      }
+    },
+    "operationBaver": {
+      "sources": {
+        "01.jpg": "3c364aba8b58a8eb6a3c24e4cf96eee28371fa4487529ae949154d6b023da93e",
+        "02.jpg": "b3c4e34120b73980452899e153e8418e172c0de7dbb10c9c3a5329d96c3c8d34",
+        "03.jpg": "3cb3943692a985dc48739a38226f4fa074121af3f94bc299c5e460f2545107b4",
+        "04.jpg": "6e94ab0b4ed8dcb462d9087bc3cf9eeaef5c699eca09786e1ac2fce744222331"
+      }
+    },
+    "photobomb": {
+      "sources": {
+        "01.jpg": "d6f180cd82eafc5183ee7c8aacc27ac2f48472757f14e55e676b9cd19ac8c797",
+        "02.jpg": "d284f8d4351190924e52fbdb439cced2d78afd6c3f3ae7325a71222a18e8f349",
+        "03.jpg": "cf96cc5546cfaa301eecd9c4ec2e15de408de5316e0a081b681b8a49cbb205c4",
+        "04.jpg": "b679e81a74a6aa5603a6c08e4b6b60898070512a39d03ebc21ee02b27cac5da3",
+        "05.jpg": "ffcfb136defb76ff134801dabf4a15e22022bf2c2dbb63b05d92bfc707dacd1d"
+      }
+    },
+    "skaViPlockaBlommor": {
+      "sources": {
+        "01.jpg": "e73bcc7b686b462a385ce9470628d2ba368d246bc6e8c0fde0369b8023534b6e",
+        "02.jpg": "ba12af163c4e7a80d8d40e0af58e1c2c502b47449e3ed740ccf3b15a0538549c",
+        "03.jpg": "878de3af002b971b93dda55d5f1ed2015809e962280dbcdd53da3375b86d5f65",
+        "04.jpg": "87355068f6a5789160e7683832cb814b4e07bd0bdceb5129cd7bbd7290bb72df"
+      }
+    },
+    "skogsvila": {
+      "sources": {
+        "01.jpg": "8254b965e1f630d73b1b59d6bd7ea83d2f5f615d1460e0df5f63eead7389f95b",
+        "02.jpg": "279b6923f13b588bb23d982f6c4e15af6ef5df25e20ba37a7e8c90544340d7b6",
+        "03.jpg": "c3fa0e04ddd1f3cdac9d3b96f18ea4bf6711bd1c96a853315a08f65b5d011a7a"
+      }
+    },
+    "skymningsDrom": {
+      "sources": {
+        "01.jpg": "b3ee1a47086e30bf2c99d97bb6729c4c987b5957833e7434d682f524d616c70d",
+        "02.jpg": "f20dd6879604897d0601a0d4a9fb4c8328a67b35a1283ad91d011042d2313edb",
+        "03.jpg": "8b396d2b3e2d2cbd1e4432856ff1d84b6a1d94c5dafd1961f55b1749bed04348",
+        "04.jpg": "2942a8ef3331fc1e7f77c5e6c77b3e1c32ef7ea1839015a70a63f856aa7a6142",
+        "05.jpg": "5a51346a3cb0a7c15c3863d5262b32929168f4ab3bbd4620e061667ab660e46c",
+        "06.jpg": "6dee3d1b3f4f4c34eedc58a46f5648fb3b5da3435ab47e06724ddd7a56a3e9e7"
+      }
+    },
+    "solvarmeISkogen": {
+      "sources": {
+        "01.jpg": "6b8c513ad31fa114085c08adeaa43c24f8ff05ce451887fd8b3f0d981dcc2250",
+        "02.jpg": "e9c432ee9dba80a76aaa1b17bcef8ccfc163cc287bf1d090faf6f88dd1961418",
+        "03.jpg": "efb85a2df2920987d24471a44676cd8cecd230e4f8f5a35dd536c8d9ac342ce6"
+      }
+    },
+    "sommarPaStranden": {
+      "sources": {
+        "01.jpg": "0541089679fe8a3e23d61dd2fc6e77d2d1812f2e3da81cc10ee8524c309d4bc6",
+        "02.jpg": "9dac9a1ef0fe870334e340a963bd37846fdc10134413268607b46e479d01e6b7",
+        "03.jpg": "7454ead1bfeab438f81b8181b52bddb3e3412f705ad61bdc98906deb0db6b3ef",
+        "04.jpg": "d0c94893d65f331585224ff48954a109655bdcbbdc385d528c896f4174bc8cd4"
+      }
+    },
+    "sommarstuga": {
+      "sources": {
+        "01.jpg": "2fd9f1f01cf56728853daaf21bbe236a7a75612ab534321087c1b6711b2d7cd1",
+        "02.jpg": "7c965094b65cf03a9bb26ce625db00d71882e7c36c8071fb2d7dd6193d877194",
+        "03.jpg": "2dd29a763ca3603ef5a4e701a433c35bc6f5711619c6b43e7ea5698344a8931d",
+        "04.jpg": "f744463db16100fe3b072dd8cc5cd5360412ce30673ff1e0aac51492362446d7",
+        "05.jpg": "2636952fd538418b7b590417d28009d005596df96a7329f6e6638ab3dae30beb"
+      }
+    },
+    "sommarvila": {
+      "sources": {
+        "01.jpg": "d2325d0641d5e477ba9a52444ff692df1c4dbf30724a7c821874a5ff75ced653",
+        "02.jpg": "e37cce20d8498d94496a5965fbd7fe5d53f8756d095c7dc99e91cdc2e1484feb",
+        "03.jpg": "806eb016059cac05d4ca2df79a50fe44476818f9d344b2062fac6c4eee011ed2",
+        "04.jpg": "e2e5d879086075d39a168d99535e5d1f66aee31d5803887c337ead0545ec9ad8"
+      }
+    },
+    "sugenPaEttApple": {
+      "sources": {
+        "01.jpg": "1fc58c457ccb59a5d315cc06fd313ae41cbb857f588de5f5fb87690aecb1e6ce",
+        "02.jpg": "979a29b3ae8b0513cfef037193e08842bd0a3ce643d18ae10f66d2c5af8d29a1",
+        "03.jpg": "3a2a93706b2b326a597384043aee709564993fad91acd8f320520808b9908e5e",
+        "04.jpg": "5f18bfb071456dad0513fdf5cb7a197fc83b1cddd9795fcc2acd5ac3e8dc2bbd"
+      }
+    },
+    "tjuvsmak": {
+      "sources": {
+        "01.jpg": "9391ea65f341477d91487be3eceb3d524f43e1189f83e08f2fb9979a00eb1485",
+        "02.jpg": "5715de0f4b6bfe04869888d2a5adb72e3a4218c20774223ffa7ec5a9a8630cda",
+        "03.jpg": "285290a2866043daf8bf398850d0fa881ef6906db020e3addda264adffe61e22"
+      }
+    },
+    "tropisktBad": {
+      "sources": {
+        "01.jpg": "ba1d11bcee1796f96ecee5f970ee7fdfe0c15216e3dbef0619d4d950af8c1559",
+        "02.jpg": "fdfc387ee54438bad9e43fbf8d05967f96567deb6331ce23684be68132c7c3bf",
+        "03.jpg": "45c8782183877826c05caba1c002b0bd55c8f7ebd90466ceccdb399ae2d2cd69"
+      }
+    },
+    "underHennesVingar": {
+      "sources": {
+        "01.jpg": "dc49869574306adaea3a3f06b12226fa810c5654c0d70d5c5e80d084eea4c67f",
+        "02.jpg": "59c0982dee1eb6c6f5297238b06b62db7ee5458eaceedf35a20650ef0c1fde54",
+        "03.jpg": "7df1ebd47bce5305375eb0ac58f9527f1a4c5e2ca1d773ea572093eb23e898f4",
+        "04.jpg": "9a8a09932ccb96bd28c4bcc20bfe8ac32f0d9ea6af85aaa0b8c8fa32d5410618"
+      }
+    },
+    "vargen": {
+      "sources": {
+        "01.jpg": "d43393b1ee3f79bd724d9fdb43273744dfe935dc8ffb1ca40432516052aceb70",
+        "02.jpg": "33fcd22ac0b6c6b5784e074f46277e6790b9717d16c0b383753aad2272adcb6e",
+        "03.jpg": "2ecfa8c6f7ac3d7f92c837afbe0ffc610a7894e8635f8bad959721f6391b64cf"
+      }
+    },
+    "varkansla": {
+      "sources": {
+        "01.jpg": "b6f0ce207a133a651e4461dc2b146c951c28f395bca2ee4523545c5a91c31ac8",
+        "02.jpg": "02df154458ba1f71c90f5438e566bbc51ba826033bea7ea6fa84e20664557c11",
+        "03.jpg": "2caba3a157e0f7684c8ef462e8d4a30c4d7496be974e65d0fad7951db65f5f05"
+      }
+    },
+    "varlek": {
+      "sources": {
+        "01.jpg": "066f922a773acffdd4a0053af5b773e8aeb881cf0460200ff60a46f5eb76de35",
+        "02.jpg": "be87a081874660fe493cb84d64fd6433885238bde0469c4af7f698be65ab1fe5",
+        "03.jpg": "7a2c3cc51f373cd37ab4846c0712bcebcf409ece30ca87f5d9122f2c2c968c04",
+        "04.jpg": "04dad432ca815d45c9d32334d1f2c633b31f05f3573f4d197627d6a689a26088",
+        "05.jpg": "0947b5a37d901c7ba96a908eb950e0a5694e81b01d4e123e3a12978596db3dc7"
+      }
+    },
+    "vidAn": {
+      "sources": {
+        "01.jpg": "6258dc676b139e052c7e497b4727472e5868ccbee895e76eab2d43fad5fe713e",
+        "02.jpg": "9e892d25bef415496d9540748d5b03ee5eb719fb5a3ebbbc543612964e79ff3c",
+        "03.jpg": "8d3b677e18f056ee086c4e4c8ad104b868392fe2f547a3a26c313df7453e1c9e",
+        "04.jpg": "8d095eaf586fa7f2c2603a1d022aec9d85037776dc2b56392c9dc550f0a09b21"
+      }
+    },
+    "vinterlek": {
+      "sources": {
+        "01.jpg": "c3993607b73352ffb62cf7f3f6956598d62be2ce0737f4e26fcc369168333cc0",
+        "02.jpg": "0a694f2f5a25b812584290471f75fcaa04eb053d7d42e2e4d20e38edeb67dd3f"
+      }
+    }
+  }
+}

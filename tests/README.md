@@ -11,9 +11,9 @@ Quick batch scripts to run tests on Windows. Simply double-click any of these fi
 - Double-click to run
 
 ### `run-validation-only.bat`
-Runs only fast data validation tests (no browser).
+Runs only the fast tests — data validation, cart math and cart rules (no browser).
 - Takes: ~1 second
-- Quick check of data structure
+- Quick check of data structure and the cart's money and add-to-cart rules
 - Good for rapid iteration
 
 ### `run-e2e-only.bat`

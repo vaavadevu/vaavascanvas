@@ -1,0 +1,35 @@
+# Cloudflare Pages response headers
+#
+# Pages defaults static assets to `max-age=14400` (4 hours) while HTML gets
+# `max-age=0`. Because the stylesheets and scripts here are unversioned, that
+# combination lets a returning visitor pair freshly fetched HTML with CSS or JS
+# that is up to four hours old — which is how a deploy can look broken for some
+# people and fine for others.
+#
+# `max-age=0, must-revalidate` does not disable caching: the browser keeps the
+# file and asks whether it changed, and an ETag match is answered with an empty
+# 304. Images keep the longer default, since they are large and their contents
+# do not have to agree with the code.
+
+/css/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/js/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Fetched at runtime by ui.js and contact.js, so they have to match the current
+# markup and scripts
+/components/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Read at runtime by script.js and page-view.js to decide how many images each
+# painting has and what shape they are
+/images/paintings/counts.json
+  Cache-Control: public, max-age=0, must-revalidate
+
+/images/paintings/metadata.json
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Read at runtime by portfolio-loader.js to build the portfolio grid
+/data/portfolio-manifest.json
+  Cache-Control: public, max-age=0, must-revalidate

@@ -11,6 +11,11 @@
   <meta name="description" content="Detaljerad produktsida för konst och hantverk från Vaavascanvas. Se pris, material och köp direkt via varukorgen." />
   <link rel="canonical" href="https://vaavascanvas.se/pages/view.html" />
 
+  <!-- This page is a shell: it redirects to the work's own page under /pictures/,
+       so it has no content of its own worth indexing. The generator strips
+       this tag out of the pages it builds from this template. -->
+  <meta name="robots" content="noindex,follow" />
+
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://vaavascanvas.se/pages/view.html" />
@@ -58,7 +63,7 @@
 
   <div id="header-container"></div>
 
-  <a href="/pages/pictures.html" class="pageview-back-btn-side" title="Tillbaka">
+  <a href="/pictures/" class="pageview-back-btn-side" title="Tillbaka">
     <span class="pageview-back-arrow">←</span>
     <span class="pageview-back-text" data-i18n="nav_back">Tillbaka</span>
   </a>
@@ -69,6 +74,7 @@
         <div class="pageViewImageWrapper">
           <span class="pageViewArrow pageViewArrowLeft" id="pageview-img-prev">&#10094;</span>
           <img id="pageview-img" src="" alt="" />
+          <span class="pageview-sold-flag" id="pageview-sold-flag" data-i18n="modal_sold" hidden>Såld</span>
           <span class="pageViewArrow pageViewArrowRight" id="pageview-img-next">&#10095;</span>
         </div>
         <div class="pageViewThumbs" id="pageview-thumbs"></div>
@@ -137,6 +143,8 @@
   <script src="../js/contact.js"></script>
   <script src="../js/ui.js"></script>
   <script src="../js/script.js"></script>
+  <script src="../js/cart-math.js"></script>
+  <script src="../js/cart-rules.js"></script>
   <script src="../js/cart.js"></script>
 
 </body>

@@ -27,13 +27,12 @@ const PAINTINGS = [
   { id: 'skaViPlockaBlommor', originalPrice: 1500, status: 'sold' },
   { id: 'varkansla', originalPrice: 1500, status: 'sold' },
   { id: 'vargen', originalPrice: 1800, status: 'for_sale' },
-  { id: 'skogsvila', originalPrice: 3000, status: 'for_sale' },
+  { id: 'skogsvila', originalPrice: 3000, status: 'sold' },
   { id: 'vinterlek', originalPrice: 1800, status: 'sold' },
   { id: 'sommarvila', originalPrice: 1800, status: 'for_sale' },
   { id: 'dagensFynd', originalPrice: 1200, framedPrice: 2100, frameAvailable: true, status: 'for_sale' },
   { id: 'sugenPaEttApple', originalPrice: 1800, framedPrice: 2000, frameAvailable: true, status: 'for_sale' },
   { id: 'varlek', originalPrice: 1600, framedPrice: 1900, frameAvailable: true, status: 'for_sale' },
-  { id: 'bookmarks', originalPrice: 120, status: 'for_sale' },
   { id: 'foreStormen', originalPrice: 1600, status: 'for_sale' },
   { id: 'photobomb', originalPrice: 1600, status: 'for_sale' },
   { id: 'leraRav', originalPrice: 250, status: 'sold' },
@@ -47,6 +46,29 @@ const PAINTINGS = [
   { id: 'leraBlame', originalPrice: 250, status: 'for_sale' },
   { id: 'leraKanin', originalPrice: 250, status: 'for_sale' },
 ];
+
+// Bookmark inventory — one entry per physical bookmark, generated from
+// data/bookmarks.json by scripts/build-paintings.js
+const BOOKMARKS = {
+  id: 'bookmarks',
+  price: 120,
+  multiBuyPrice: 100,
+  multiBuyMinQuantity: 2,
+  imageDir: '/images/bookmarks/',
+  imageExtension: '.jpg',
+  variants: {
+    'cheetah': 'sold',
+    'chicken1': 'sold',
+    'chicken2': 'for_sale',
+    'giraffe': 'sold',
+    'mallard': 'for_sale',
+    'pigeon': 'sold',
+    'piggy': 'for_sale',
+    'pingvin': 'sold',
+    'rabbit': 'sold',
+    'wilddog': 'for_sale',
+  },
+};
 
 function hasPaintingDiscount(painting) {
   return typeof painting.discountPercent === 'number' && painting.discountPercent > 0 && painting.discountPercent < 100;
@@ -96,6 +118,25 @@ function resolvePrice(item) {
   return getPaintingEffectivePrice(painting, isFramed || painting.framedOnly) ?? null;
 }
 
+// Bookmark cart ids carry the variant: `bookmarks::cheetah`
+function resolveBookmarkVariant(item) {
+  if (typeof item.id !== 'string') return null;
+  const separator = item.id.indexOf('::');
+  if (separator === -1) return null;
+  if (item.id.slice(0, separator) !== BOOKMARKS.id) return null;
+
+  const variant = item.id.slice(separator + 2);
+  if (BOOKMARKS.variants[variant] !== 'for_sale') return null;
+  return variant;
+}
+
+// Buying several at once drops every bookmark to the lower per-piece price
+function getBookmarkUnitPrice(bookmarksInOrder) {
+  return bookmarksInOrder >= BOOKMARKS.multiBuyMinQuantity
+    ? BOOKMARKS.multiBuyPrice
+    : BOOKMARKS.price;
+}
+
 export async function onRequestPost(context) {
   try {
     const stripe = new Stripe(context.env.STRIPE_SECRET_KEY);
@@ -111,17 +152,53 @@ export async function onRequestPost(context) {
       return Response.json({ error: 'No items in cart' }, { status: 400 });
     }
 
+    const origin = new URL(context.request.url).origin;
+
     const line_items = [];
     let subtotal = 0;
+    const claimedBookmarks = new Set();
+
+    // The per-piece price depends on how many bookmarks the whole order holds,
+    // so it is settled before any line item is priced. Invalid bookmarks reject
+    // the order outright, so counting them up front cannot inflate the discount.
+    const bookmarkUnitPrice = getBookmarkUnitPrice(
+      items.filter(item => item.type === 'bookmark').length
+    );
+
+    const invalidItem = item => Response.json(
+      { error: `Invalid item: ${item.id} (${item.type}${item.size ? ', ' + item.size : ''})` },
+      { status: 400 }
+    );
 
     for (const item of items) {
-      const price = resolvePrice(item);
-      if (price === null) {
-        return Response.json(
-          { error: `Invalid item: ${item.id} (${item.type}${item.size ? ', ' + item.size : ''})` },
-          { status: 400 }
-        );
+      // Each bookmark is one physical piece: no quantities, no duplicates,
+      // and never one that has already been sold
+      if (item.type === 'bookmark') {
+        const variant = resolveBookmarkVariant(item);
+        if (!variant || claimedBookmarks.has(variant)) return invalidItem(item);
+        claimedBookmarks.add(variant);
+
+        const price = bookmarkUnitPrice;
+        subtotal += price;
+
+        line_items.push({
+          price_data: {
+            currency: 'sek',
+            product_data: {
+              name: `Bokmärke – ${variant}`,
+              description: 'Handgjort bokmärke. Leverans inom Sverige.',
+              images: [`${origin}${BOOKMARKS.imageDir}${variant}${BOOKMARKS.imageExtension}`],
+            },
+            unit_amount: price * 100,
+          },
+          quantity: 1,
+        });
+        continue;
       }
+
+      const price = resolvePrice(item);
+      if (price === null) return invalidItem(item);
+
       const qty = Math.max(1, Math.floor(item.qty || 1));
       subtotal += price * qty;
 
@@ -152,14 +229,12 @@ export async function onRequestPost(context) {
       });
     }
 
-    const origin = new URL(context.request.url).origin;
-
     try {
       const session = await stripe.checkout.sessions.create({
         line_items,
         mode: 'payment',
         success_url: `${origin}/?order=success`,
-        cancel_url: `${origin}/pages/pictures.html`,
+        cancel_url: `${origin}/pictures/`,
         shipping_address_collection: {
           allowed_countries: EU_COUNTRIES,
         },

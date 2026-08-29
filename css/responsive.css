@@ -9,10 +9,6 @@
   nav {
     justify-content: flex-end;
   }
-
-  #gallery {
-    grid-template-columns: repeat(4, minmax(220px, 1fr));
-  }
 }
 
 /* --- Mobilanpassning (max-width: 960px) --- */
@@ -222,9 +218,15 @@ nav.active {
   }
 
   #gallery {
-    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
-    padding: 120px 10px ;
+    /* The header is fixed and only slides in on scroll, and the filter bar and
+       title already sit above the gallery, so no header offset is needed here */
+    padding: 10px 10px 40px;
+  }
+
+  .page-title {
+    font-size: 1.4rem;
+    margin: 0 10px 12px;
   }
 
   img {
@@ -297,10 +299,9 @@ nav.active {
   }
 
   /* --- HERO --- */
-  .hero {
-    height: 95vh;
-    /* Något kortare på mobil */
-  }
+  /* No height override here: 95vh ignored the fixed header above main and
+     pushed the hero — and the call to action with it — below the fold. The
+     base rule already sizes it to the space left under the header. */
 
   .hero-text {
     left: 20px;
@@ -358,10 +359,9 @@ nav.active {
     gap: 20px;
   }
 
-  .featured-card img {
-    aspect-ratio: 1 / 1;
-    /* Kvadratiska bilder ser ofta bättre ut i mobillistor */
-  }
+  /* Kvadratisk beskärning togs bort: varje kort bär numera målningens egna
+     proportioner, skrivna av bygget, och en inline-stil vinner ändå över den
+     här regeln. Målningen ska se likadan ut i mobilen som i butiken. */
 }
 
 @media (max-width: 1024px) {

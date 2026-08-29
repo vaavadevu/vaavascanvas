@@ -6,9 +6,26 @@
  */
 
 const { chromium } = require('playwright');
-const { spawn } = require('child_process');
+const httpServer = require('http-server');
 const path = require('path');
 const fs = require('fs');
+
+// Each work has a page of its own under /pictures/. Build the address the same way
+// the site does, so a change to the URL scheme moves the tests with it.
+const { paintingPageUrl, SHOP_URL } = require('../js/paintings.js');
+
+// http-server's `union` dependency reads the long-deprecated res._headers on
+// every response (DEP0066). It only affects the dev server that hosts these
+// tests, never the deployed site, so drop that one warning — anything else,
+// including deprecations in our own code, still gets through.
+const emitWarning = process.emitWarning.bind(process);
+process.emitWarning = (warning, ...args) => {
+  const code = warning?.code
+    || args.find(arg => arg && typeof arg === 'object' && arg.code)?.code
+    || args.find(arg => typeof arg === 'string' && /^DEP\d+$/.test(arg));
+  if (code === 'DEP0066') return;
+  emitWarning(warning, ...args);
+};
 
 // Color output helpers
 const colors = {
@@ -49,54 +66,39 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
-// Start HTTP server with retry logic - returns {server, port}
+// Start an in-process static server — running it inside this process (rather
+// than spawning `npx http-server` through a shell) means it always dies with
+// the test run instead of surviving as an orphan that blocks the next one.
 function startServer() {
   return new Promise((resolve, reject) => {
-    let retries = 0;
     const maxRetries = 3;
     const basePort = 8888;
+    const projectRoot = path.join(__dirname, '..');
 
-    function attemptStart(port) {
-      const projectRoot = path.join(__dirname, '..');
-      const server = spawn('npx', ['http-server', projectRoot, '-p', port.toString(), '-s'], {
-        stdio: 'pipe',
-        shell: true
-      });
+    function attemptStart(port, retries) {
+      const server = httpServer.createServer({ root: projectRoot, cache: -1, silent: true });
 
-      let started = false;
-      let errorOccurred = false;
-
-      server.stdout.on('data', (data) => {
-        if (!started && data.toString().includes('Hit CTRL-C')) {
-          started = true;
-          resolve({ server, port });
-        }
-      });
-
-      server.stderr.on('data', (data) => {
-        const errorMsg = data.toString();
-        if (!started && errorMsg.includes('EADDRINUSE')) {
-          errorOccurred = true;
-          server.kill();
+      const onError = (err) => {
+        if (err.code === 'EADDRINUSE') {
           if (retries < maxRetries) {
-            retries++;
-            log.warn(`Port ${port} in use, retrying on port ${basePort + retries}...`);
-            attemptStart(basePort + retries);
+            log.warn(`Port ${port} in use, retrying on port ${port + 1}...`);
+            attemptStart(port + 1, retries + 1);
           } else {
             reject(new Error(`Could not find available port after ${maxRetries} retries`));
           }
-        } else if (!started && /EACCES|ENOENT|Cannot find module/i.test(errorMsg)) {
-          reject(new Error(`Server error: ${errorMsg}`));
+          return;
         }
-      });
+        reject(new Error(`Server error: ${err.message}`));
+      };
 
-      // Fallback: resolve after 2 seconds
-      setTimeout(() => {
-        if (!started && !errorOccurred) resolve({ server, port });
-      }, 2000);
+      server.server.once('error', onError);
+      server.listen(port, '127.0.0.1', () => {
+        server.server.removeListener('error', onError);
+        resolve({ server, port });
+      });
     }
 
-    attemptStart(basePort);
+    attemptStart(basePort, 0);
   });
 }
 
@@ -172,10 +174,7 @@ async function runTests() {
     server = serverInfo.server;
     const port = serverInfo.port;
 
-    log.info(`Starting HTTP server on port ${port}...`);
-
-    // Wait for server to be ready
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    log.info(`Serving the site on port ${port}...`);
 
     // Launch browser
     log.info('Launching headless browser...\n');
@@ -189,8 +188,8 @@ async function runTests() {
     // Test 1: Every page loads without console errors and has a header
     const allPages = [
       { label: 'Main page',        url: `${baseUrl}/` },
-      { label: 'Gallery page',     url: `${baseUrl}/pages/pictures.html` },
-      { label: 'View page',        url: `${baseUrl}/pages/view.html` },
+      { label: 'Gallery page',     url: `${baseUrl}${SHOP_URL}` },
+      { label: 'View page',        url: `${baseUrl}${paintingPageUrl(paintings[0])}` },
       { label: 'Commissions page', url: `${baseUrl}/pages/commissions.html` },
     ];
 
@@ -198,14 +197,27 @@ async function runTests() {
       await test(`${label} loads without console errors`, async () => {
         const page = await browser.newPage();
         const consoleErrors = [];
+        const failedRequests = [];
 
         page.on('console', (msg) => {
           if (msg.type() === 'error') consoleErrors.push(msg.text());
         });
+        // Chromium's console text for a failed request omits the URL, so track
+        // responses separately — otherwise a 404 reports as an unhelpful
+        // "Failed to load resource" with no clue which file is missing
+        page.on('response', (res) => {
+          if (!res.ok()) failedRequests.push(`${res.status()} ${res.url()}`);
+        });
+        page.on('requestfailed', (req) => {
+          failedRequests.push(`${req.failure()?.errorText || 'failed'} ${req.url()}`);
+        });
 
         const response = await page.goto(url, { waitUntil: 'networkidle' });
         assert(response.ok(), `Page load failed with status ${response.status()}`);
-        assert(consoleErrors.length === 0, `Console errors: ${consoleErrors.join(', ')}`);
+        assert(consoleErrors.length === 0,
+          `Console errors: ${consoleErrors.join(', ')}` +
+          (failedRequests.length ? `\n  Failed requests: ${failedRequests.join(', ')}` : ''));
+        assert(failedRequests.length === 0, `Failed requests: ${failedRequests.join(', ')}`);
 
         await page.close();
       });
@@ -265,7 +277,7 @@ async function runTests() {
     // Test 5: Full gallery renders on paintings page
     await test(`Gallery renders all ${paintings.length} paintings`, async () => {
       const page = await browser.newPage();
-      await page.goto(`${baseUrl}/pages/pictures.html`, { waitUntil: 'networkidle' });
+      await page.goto(`${baseUrl}${SHOP_URL}`, { waitUntil: 'networkidle' });
 
       // Wait for gallery to load
       await page.waitForSelector('.gallery-item', { timeout: 10000 });
@@ -276,9 +288,227 @@ async function runTests() {
       await page.close();
     });
 
-    console.log(colors.blue + '\n[4] LANGUAGE SWITCHING TESTS' + colors.reset);
+    // Test 5b: The masonry grid places tiles across the columns, not down them
+    //
+    // CSS multi-column, which this grid used to be, fills each column top to
+    // bottom before starting the next — so with "lowest price first" the tile
+    // beside the cheapest painting was the middle of the run. layoutGallery()
+    // deals the tiles out instead, and this checks the result at both a
+    // two-column and a four-column width.
+    for (const { label, width } of [{ label: 'two columns', width: 390 }, { label: 'four columns', width: 1280 }]) {
+      await test(`Sorted tiles read across the grid, not down it (${label})`, async () => {
+        const page = await browser.newPage({ viewport: { width, height: 900 } });
+        await page.goto(`${baseUrl}${SHOP_URL}`, { waitUntil: 'networkidle' });
+        await page.waitForSelector('.gallery-item', { timeout: 10000 });
 
-    // Test 6: Language switching works
+        const grid = await page.evaluate(() => {
+          setActiveSortOrder('sort_price_asc');
+          const order = paintings.filter(paintingMatchesFilters).map(p => p.title);
+          const columns = [...document.querySelectorAll('.gallery-column')]
+            .map(column => [...column.children].map(tile => order.indexOf(tile.querySelector('img').alt)));
+          return { order, columns };
+        });
+
+        assert(grid.columns.length > 1, `Expected more than one column at ${width}px`);
+
+        // The top row is the start of the sort order, left to right
+        const topRow = grid.columns.map(column => column[0]);
+        assertEqual(topRow.join(','), topRow.map((_, i) => i).join(','),
+          `The top row should hold the first ${grid.columns.length} paintings of the sort order, left to right`);
+
+        // And no column ever runs backwards through the order
+        grid.columns.forEach((column, i) => {
+          const ascending = column.every((position, j) => j === 0 || position > column[j - 1]);
+          assert(ascending, `Column ${i + 1} runs out of sort order: ${column.join(' -> ')}`);
+        });
+
+        await page.close();
+      });
+    }
+
+    // Test 5c: Which filter control a screen gets
+    //
+    // The bar is desktop-only and the floating button covers everything below
+    // 961px. Both stylesheets have to agree on that: the button once ended up
+    // hidden at every width because each thought the other breakpoint showed
+    // it, and nothing caught it.
+    for (const { label, width, bar, fab } of [
+      { label: 'a phone', width: 390, bar: false, fab: true },
+      { label: 'a tablet', width: 900, bar: false, fab: true },
+      { label: 'a desktop', width: 1280, bar: true, fab: false },
+    ]) {
+      await test(`Exactly one set of filter controls shows on ${label}`, async () => {
+        const page = await browser.newPage({ viewport: { width, height: 900 } });
+        await page.goto(`${baseUrl}${SHOP_URL}`, { waitUntil: 'networkidle' });
+        await page.waitForSelector('.gallery-item', { timeout: 10000 });
+
+        assertEqual(await page.locator('#gallery-filter-bar').isVisible(), bar,
+          `The filter bar should ${bar ? '' : 'not '}show at ${width}px`);
+        assertEqual(await page.locator('#filter-fab').isVisible(), fab,
+          `The floating filter button should ${fab ? '' : 'not '}show at ${width}px`);
+
+        // Nothing may hide behind the fixed header either way
+        const clear = await page.evaluate(() => {
+          const header = document.getElementById('header-container').getBoundingClientRect();
+          const title = document.querySelector('.page-title').getBoundingClientRect();
+          return title.top >= header.bottom;
+        });
+        assert(clear, `The page title is tucked under the fixed header at ${width}px`);
+
+        await page.close();
+      });
+    }
+
+    // Test 5c2: The bar's four controls sit on one row at the narrowest width
+    // that still shows it, with every filter set to its longest label
+    await test('The filter bar keeps its four controls on one row at 961px', async () => {
+      const page = await browser.newPage({ viewport: { width: 961, height: 900 } });
+      await page.goto(`${baseUrl}${SHOP_URL}`, { waitUntil: 'networkidle' });
+      await page.waitForSelector('.gallery-item', { timeout: 10000 });
+
+      const row = await page.evaluate(() => {
+        setActiveStatusFilter('for_sale');
+        setActiveTypeFilter('painting');
+        setActiveSizeFilter('size_large');
+        setActiveSortOrder('sort_size_desc');
+
+        const controls = [...document.querySelectorAll('#gallery-filter-bar .filter-dropdown')]
+          .filter(control => control.getBoundingClientRect().width > 0);
+        return {
+          count: controls.length,
+          rows: new Set(controls.map(c => Math.round(c.getBoundingClientRect().top))).size,
+          offScreen: controls.filter(c => c.getBoundingClientRect().right > window.innerWidth).length,
+          clipped: controls
+            .map(c => c.querySelector('.filter-dropdown-label'))
+            .filter(label => label.scrollWidth > label.clientWidth + 1)
+            .map(label => label.textContent),
+        };
+      });
+
+      assertEqual(row.count, 4, 'Expected four filter controls in the bar');
+      assertEqual(row.rows, 1, 'The filter controls wrapped onto more than one row');
+      assertEqual(row.offScreen, 0, 'A filter control hangs off the right of the screen');
+      assertEqual(row.clipped.join(', '), '', 'A filter label had to be cut short: ' + row.clipped.join(', '));
+
+      await page.close();
+    });
+
+    // Test 5d: The filters stay reachable on a phone once the bar has scrolled
+    // away — the floating button is the only way back to them, and it spent a
+    // while hidden at every width by two stylesheets that each thought the
+    // other breakpoint was showing it.
+    await test('The floating filter button filters the grid on a phone', async () => {
+      const page = await browser.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true });
+      await page.goto(`${baseUrl}${SHOP_URL}`, { waitUntil: 'networkidle' });
+      await page.waitForSelector('.gallery-item', { timeout: 10000 });
+
+      // Past the top of the page, where the static filter bar is long gone
+      await page.evaluate(() => window.scrollTo({ top: 1200, behavior: 'instant' }));
+      await page.waitForTimeout(600);
+
+      const barGone = await page.evaluate(() =>
+        document.getElementById('gallery-filter-bar').getBoundingClientRect().bottom <= 0);
+      assert(barGone, 'The filter bar should have scrolled away before the floating button matters');
+      assert(await page.locator('#filter-fab').isVisible(), 'The floating filter button is not visible on a phone');
+
+      await page.click('#fab-trigger');
+      await page.waitForTimeout(400);
+
+      const sheet = await page.evaluate(() => {
+        const popup = document.querySelector('.fab-popup');
+        const box = popup.getBoundingClientRect();
+        return {
+          opacity: getComputedStyle(popup).opacity,
+          groups: [...popup.querySelectorAll('.fab-group')].map(g => g.querySelector('.fab-group-label').textContent),
+          onScreen: box.top >= 0 && box.bottom <= window.innerHeight && box.right <= window.innerWidth,
+        };
+      });
+      assertEqual(sheet.opacity, '1', 'The filter sheet did not open');
+      assertEqual(sheet.groups.length, 4, `Expected four filter groups, got: ${sheet.groups.join(', ')}`);
+      assert(sheet.onScreen, 'The filter sheet opens partly off the screen');
+
+      await page.click('.fab-filter-btn.status-filter[data-filter="sold"]');
+      await page.waitForTimeout(600);
+
+      const result = await page.evaluate(() => ({
+        stillOpen: document.getElementById('filter-fab').classList.contains('open'),
+        shown: document.querySelectorAll('.gallery-item').length,
+        barLabel: document.getElementById('filter-status-label').textContent,
+      }));
+      assert(!result.stillOpen, 'The sheet should close once a filter is picked');
+      assertEqual(result.shown, paintings.filter(p => p.status === 'sold').length,
+        'Picking "Sålda" in the sheet did not filter the grid to the sold paintings');
+      assertEqual(result.barLabel, 'Sålda', 'The bar at the top did not follow the choice made in the sheet');
+
+      await page.close();
+    });
+
+    // Near the end of the page the button climbs to stay clear of the footer,
+    // and with an empty grid it ends up near the top of the screen. Wherever it
+    // has got to, the sheet should open at its full size in the same place.
+    await test('The filter sheet opens at full size wherever the button has drifted to', async () => {
+      const page = await browser.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true });
+      await page.goto(`${baseUrl}${SHOP_URL}`, { waitUntil: 'networkidle' });
+      await page.waitForSelector('.gallery-item', { timeout: 10000 });
+
+      const openAndMeasure = async () => {
+        await page.evaluate(() => openFab());
+        await page.waitForTimeout(450);
+        const box = await page.evaluate(() => {
+          const popup = document.querySelector('.fab-popup');
+          const rect = popup.getBoundingClientRect();
+          const header = document.getElementById('header-container').getBoundingClientRect();
+          return {
+            top: Math.round(rect.top), bottom: Math.round(rect.bottom),
+            opacity: getComputedStyle(popup).opacity,
+            squeezed: popup.scrollHeight > popup.clientHeight + 1,
+            behindHeader: header.bottom > 0 && rect.top < header.bottom,
+            onScreen: rect.top >= 0 && rect.bottom <= window.innerHeight,
+          };
+        });
+        await page.evaluate(() => closeFab());
+        await page.waitForTimeout(400);
+        return box;
+      };
+
+      // The ordinary case: partway down the page, the button at its resting corner
+      await page.evaluate(() => window.scrollTo({ top: 1200, behavior: 'instant' }));
+      await page.waitForTimeout(600);
+      const resting = await openAndMeasure();
+      assertEqual(resting.opacity, '1', 'The filter sheet did not open');
+      assert(!resting.squeezed, "The filter sheet is squeezed even at the button's resting position");
+
+      // An empty grid leaves a short page, so the footer shoves the button up
+      await page.evaluate(() => { setActiveTypeFilter('clay'); setActiveStatusFilter('sold'); filterGallery(); });
+      await page.waitForTimeout(800);
+      assertEqual(await page.locator('.gallery-item').count(), 0, 'Expected the grid to be empty for this test');
+      await page.evaluate(() => window.scrollTo({ top: 300, behavior: 'instant' }));
+      await page.waitForTimeout(600);
+      await page.evaluate(() => window.scrollTo({ top: 100, behavior: 'instant' }));
+      await page.waitForTimeout(600);
+
+      const climbed = await page.evaluate(() => {
+        const fab = document.getElementById('filter-fab');
+        const rect = document.getElementById('fab-trigger').getBoundingClientRect();
+        const header = document.getElementById('header-container').getBoundingClientRect();
+        return { visible: getComputedStyle(fab).display !== 'none', top: rect.top, headerBottom: header.bottom };
+      });
+      assert(climbed.visible, 'The floating button must stay reachable when the grid is empty — it is the only way back');
+      assert(climbed.top < 400, `The button should have climbed up the screen, but sits at ${Math.round(climbed.top)}px`);
+      assert(climbed.top >= climbed.headerBottom,
+        `The button climbed behind the header, where it cannot be tapped (${Math.round(climbed.top)}px vs ${Math.round(climbed.headerBottom)}px)`);
+
+      const lifted = await openAndMeasure();
+      assertEqual(lifted.opacity, '1', 'The filter sheet did not open with the button lifted');
+      assert(lifted.onScreen, 'The filter sheet opens off the screen when the button has been lifted');
+      assert(!lifted.behindHeader, 'The filter sheet opens behind the header when the button has been lifted');
+      assert(!lifted.squeezed, 'The filter sheet is squeezed into the gap left by the lifted button');
+      assertEqual(lifted.bottom, resting.bottom,
+        'The filter sheet should open in the same place however far the button had been lifted');
+
+      await page.close();
+    });
+
     await test('Language switching to English works', async () => {
       const page = await browser.newPage();
       await page.goto(`${baseUrl}/`, { waitUntil: 'networkidle' });
@@ -305,7 +535,7 @@ async function runTests() {
       const firstPainting = paintings[0];
 
       const response = await page.goto(
-        `${baseUrl}/pages/view.html?painting=${firstPainting.id}`,
+        `${baseUrl}${paintingPageUrl(firstPainting)}`,
         { waitUntil: 'networkidle' }
       );
       assert(response.ok(), `View page failed to load with status ${response.status()}`);
@@ -314,6 +544,45 @@ async function runTests() {
 
       const title = await page.locator('#pageview-title').textContent();
       assert(title.length > 0, 'Painting title not rendered on detail page');
+
+      await page.close();
+    });
+
+    // A sold painting must not be buyable from the page. The server rejects it
+    // too (tests/checkout.js), but a visible buy button would still let someone
+    // fill a cart with a canvas that no longer exists.
+    await test('Sold paintings offer no buy button', async () => {
+      const soldPaintings = paintings.filter(p => p.status === 'sold');
+      assert(soldPaintings.length > 0, 'No sold paintings in the catalog to check');
+
+      const page = await browser.newPage();
+
+      // Control: prove the selector matches something before trusting a count of
+      // zero anywhere else, otherwise a renamed class would make this test pass
+      // by finding nothing at all
+      const forSale = paintings.find(p => p.status === 'for_sale' && !p.framedOnly && !p.frameAvailable);
+      await page.goto(`${baseUrl}${paintingPageUrl(forSale)}`, { waitUntil: 'networkidle' });
+      await page.waitForSelector('.page-view-container', { timeout: 10000 });
+      const controlButtons = await page.locator('button.pageview-buy-btn').count();
+      assertEqual(controlButtons, 1,
+        `The buy-button selector matched ${controlButtons} buttons on for-sale painting ` +
+        `"${forSale.id}" — the checks below cannot mean anything until it matches exactly one`);
+
+      // A sample rather than all of them — this is one status-driven code path,
+      // and every extra page load lengthens the suite
+      const sample = soldPaintings.slice(0, 3);
+
+      for (const painting of sample) {
+        await page.goto(`${baseUrl}${paintingPageUrl(painting)}`, { waitUntil: 'networkidle' });
+        await page.waitForSelector('.page-view-container', { timeout: 10000 });
+
+        const buyButtons = await page.locator('button.pageview-buy-btn').count();
+        assertEqual(buyButtons, 0, `Sold painting "${painting.id}" still shows a buy button`);
+
+        const priceText = await page.locator('#pageview-price-section').textContent();
+        assert(priceText.trim().length > 0,
+          `Sold painting "${painting.id}" shows nothing at all where the sold notice should be`);
+      }
 
       await page.close();
     });
@@ -339,6 +608,105 @@ async function runTests() {
     });
 
 
+    console.log(colors.blue + '\n[7] LANGUAGE COVERAGE TESTS' + colors.reset);
+
+    // Text that is legitimately identical in both languages. Anything not
+    // listed here that survives a switch to English is untranslated copy.
+    const SAME_IN_BOTH_LANGUAGES = [
+      /^[\s\d.,:·×–—@/()+-]*$/,          // numbers, symbols, separators
+      /^\d+\s*(kr|cm|%)/i,                // prices and measurements
+      /^\d+\s*[x×]\s*\d+/i,               // dimensions
+      /^(Portfolio|Vaavascanvas|Devika|Instagram|Mailchimp|Stripe|Swish|Klarna)$/i,
+      /@vaavascanvas/i,                   // social handle
+      /vaavascanvas\.se/i,                // domain and e-mail
+      /^©/,                               // copyright line
+      /^(Alla|Status)$/,                  // filter words that are the same word
+      /diameter/i,                        // same word in both languages
+    ];
+
+    // Painting and product names are proper nouns and stay as they are
+    const PROPER_NOUNS = new Set(paintings.map(p => p.title));
+
+    // Elements holding artwork names rather than interface copy. Portfolio
+    // titles come from image file names, so they have no translation.
+    const CONTENT_SELECTORS = '#lightboxTitle, .featured-card-label, #pageview-title';
+
+    // `reveal` runs before each snapshot to bring text that is hidden behind an
+    // interaction into view — otherwise captions and modals are never compared
+    const languagePages = [
+      { label: 'Main page',        url: `${baseUrl}/` },
+      { label: 'Gallery page',     url: `${baseUrl}${SHOP_URL}` },
+      {
+        label: 'Portfolio page',
+        url: `${baseUrl}/pages/portfolio.html`,
+        reveal: async (page) => {
+          // The medium caption only exists once a piece is opened
+          const opened = await page.evaluate(() => {
+            const piece = document.querySelector('.medium-section:not([style*="none"]) .piece');
+            if (!piece) return false;
+            piece.click();
+            return true;
+          });
+          assert(opened, 'No portfolio pieces rendered, so the lightbox caption cannot be checked');
+          await new Promise(resolve => setTimeout(resolve, 300));
+        },
+      },
+      { label: 'Commissions page', url: `${baseUrl}/pages/commissions.html` },
+      { label: 'View page',        url: `${baseUrl}${paintingPageUrl(paintings[0])}` },
+    ];
+
+    for (const { label, url, reveal } of languagePages) {
+      await test(`${label} translates fully to English`, async () => {
+        const page = await browser.newPage();
+
+        const readVisibleText = () => page.evaluate((contentSelectors) => {
+          const out = [];
+          const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+          let node;
+          while ((node = walk.nextNode())) {
+            const el = node.parentElement;
+            if (!el || ['SCRIPT', 'STYLE', 'NOSCRIPT'].includes(el.tagName)) continue;
+            if (!el.offsetParent && el.tagName !== 'BODY') continue;
+            if (el.closest(contentSelectors)) continue;
+            const text = node.textContent.replace(/\s+/g, ' ').trim();
+            if (text) out.push(text);
+          }
+          return out;
+        }, CONTENT_SELECTORS);
+
+        await page.goto(url, { waitUntil: 'networkidle' });
+        await page.waitForFunction(() => typeof setLanguage === 'function', { timeout: 10000 });
+        await page.evaluate(() => setLanguage('sv'));
+        await new Promise(resolve => setTimeout(resolve, 600));
+        if (reveal) await reveal(page);
+        const swedish = await readVisibleText();
+
+        await page.evaluate(() => setLanguage('en'));
+        await new Promise(resolve => setTimeout(resolve, 600));
+        if (reveal) await reveal(page);
+        const english = await readVisibleText();
+
+        const untranslated = [];
+        const shared = Math.min(swedish.length, english.length);
+        for (let i = 0; i < shared; i++) {
+          if (swedish[i] !== english[i]) continue;
+          const text = swedish[i];
+          if (PROPER_NOUNS.has(text)) continue;
+          if (SAME_IN_BOTH_LANGUAGES.some(rule => rule.test(text))) continue;
+          // Needs at least one word to be prose rather than a stray glyph
+          if (!/[a-zåäö]{3}/i.test(text)) continue;
+          if (!untranslated.includes(text)) untranslated.push(text);
+        }
+
+        assert(untranslated.length === 0,
+          `Text did not change when switching to English — it is missing a data-i18n ` +
+          `attribute, or is rendered by JS that does not re-run on languagechange:\n  ` +
+          untranslated.map(t => `"${t.slice(0, 80)}"`).join('\n  '));
+
+        await page.close();
+      });
+    }
+
     console.log(colors.blue + '\n[8] CART TESTS' + colors.reset);
 
     await test('Cart drawer opens when clicking the cart icon', async () => {
@@ -361,7 +729,7 @@ async function runTests() {
       // to view.html for purchasing). Pick a plain for-sale painting with no frame
       // options so a single click adds it to the cart without opening a modal.
       const simplePainting = paintings.find(p => p.status === 'for_sale' && !p.framedOnly && !p.frameAvailable);
-      await page.goto(`${baseUrl}/pages/view.html?painting=${simplePainting.id}`, { waitUntil: 'networkidle' });
+      await page.goto(`${baseUrl}${paintingPageUrl(simplePainting)}`, { waitUntil: 'networkidle' });
 
       // Add an item so the cart footer (with checkout button) is visible
       await page.waitForSelector('button.pageview-buy-btn', { timeout: 10000 });
@@ -387,6 +755,130 @@ async function runTests() {
       await page.close();
     });
 
+    // The cart is kept in localStorage so a buyer can leave and come back. The
+    // maths behind the numbers is covered by tests/cart-math.js — what matters
+    // here is that the contents survive the round trip at all.
+    await test('The cart survives a page reload', async () => {
+      const page = await browser.newPage();
+      const painting = paintings.find(p => p.status === 'for_sale' && !p.framedOnly && !p.frameAvailable);
+      assert(painting, 'No plain for-sale painting to add to the cart');
+
+      await page.goto(`${baseUrl}${paintingPageUrl(painting)}`, { waitUntil: 'networkidle' });
+      await page.evaluate(() => localStorage.removeItem('vc_cart'));
+
+      await page.waitForSelector('button.pageview-buy-btn', { timeout: 10000 });
+      await page.locator('button.pageview-buy-btn').click();
+      await page.waitForSelector('#cart-drawer.open', { timeout: 5000 });
+
+      const before = await page.evaluate(() => ({
+        stored: JSON.parse(localStorage.getItem('vc_cart') || '[]'),
+        badge: document.getElementById('cart-badge')?.textContent,
+      }));
+      assertEqual(before.stored.length, 1, 'The painting was not stored in the cart');
+
+      // Come back to a different page entirely, the way a returning visitor would
+      await page.goto(`${baseUrl}${SHOP_URL}`, { waitUntil: 'networkidle' });
+
+      const after = await page.evaluate(() => ({
+        stored: JSON.parse(localStorage.getItem('vc_cart') || '[]'),
+        badge: document.getElementById('cart-badge')?.textContent,
+        badgeVisible: document.getElementById('cart-badge')?.style.display !== 'none',
+      }));
+
+      assertEqual(after.stored.length, 1, 'The cart was empty after reloading');
+      assertEqual(after.stored[0].id, painting.id, 'A different painting came back from the cart');
+      assertEqual(after.stored[0].price, before.stored[0].price, 'The stored price changed across the reload');
+      assertEqual(after.badge, '1', 'The cart badge does not show the restored item');
+      assert(after.badgeVisible, 'The cart badge is hidden even though the cart has an item');
+
+      await page.evaluate(() => localStorage.removeItem('vc_cart'));
+      await page.close();
+    });
+
+    console.log(colors.blue + '\n[9] CHECKOUT REQUEST TESTS' + colors.reset);
+
+    // The seam between the two tested halves: tests/cart-math.js proves the cart
+    // totals correctly and tests/checkout.js proves the server prices a payload
+    // correctly, but nothing else checks that the browser sends the payload the
+    // server expects. Stripe is never contacted — the route is stubbed here.
+    await test('Checkout posts the cart to the server and clears it on success', async () => {
+      const page = await browser.newPage();
+      const painting = paintings.find(p => p.status === 'for_sale' && !p.framedOnly && !p.frameAvailable);
+
+      await page.goto(`${baseUrl}${paintingPageUrl(painting)}`, { waitUntil: 'networkidle' });
+      await page.evaluate(() => localStorage.removeItem('vc_cart'));
+
+      await page.waitForSelector('button.pageview-buy-btn', { timeout: 10000 });
+      await page.locator('button.pageview-buy-btn').click();
+      await page.waitForSelector('#cart-drawer.open', { timeout: 5000 });
+
+      await page.selectOption('#cart-country', 'SE');
+      await page.locator('#cart-terms-checkbox').check();
+
+      let requestBody = null;
+      await page.route('**/api/create-checkout', async (route) => {
+        requestBody = route.request().postDataJSON();
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ url: `${baseUrl}/?order=success` }),
+        });
+      });
+
+      await page.locator('#checkout-btn').click();
+      await page.waitForURL(/order=success/, { timeout: 10000 });
+
+      assert(requestBody, 'The browser never called /api/create-checkout');
+      assert(Array.isArray(requestBody.items), 'The request body carries no items array');
+      assertEqual(requestBody.items.length, 1, 'Wrong number of items in the checkout request');
+      assertEqual(requestBody.items[0].id, painting.id, 'The wrong painting was sent to checkout');
+      assertEqual(requestBody.country, 'SE', 'The chosen shipping country was not sent');
+
+      // The server prices from the id, but it needs a title for the Stripe line
+      assert(requestBody.items[0].title, 'The item was sent without a title for the Stripe line item');
+
+      const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('vc_cart') || '[]'));
+      assertEqual(stored.length, 0, 'The cart was not cleared after a successful checkout');
+
+      await page.close();
+    });
+
+    await test('A failed checkout keeps the cart and re-enables the button', async () => {
+      const page = await browser.newPage();
+      const painting = paintings.find(p => p.status === 'for_sale' && !p.framedOnly && !p.frameAvailable);
+
+      await page.goto(`${baseUrl}${paintingPageUrl(painting)}`, { waitUntil: 'networkidle' });
+      await page.evaluate(() => localStorage.removeItem('vc_cart'));
+
+      await page.waitForSelector('button.pageview-buy-btn', { timeout: 10000 });
+      await page.locator('button.pageview-buy-btn').click();
+      await page.waitForSelector('#cart-drawer.open', { timeout: 5000 });
+
+      await page.selectOption('#cart-country', 'SE');
+      await page.locator('#cart-terms-checkbox').check();
+
+      // The server rejecting the order must not lose what the buyer picked
+      await page.route('**/api/create-checkout', async (route) => {
+        await route.fulfill({
+          status: 400,
+          contentType: 'application/json',
+          body: JSON.stringify({ error: 'Invalid item' }),
+        });
+      });
+
+      await page.locator('#checkout-btn').click();
+      await new Promise(resolve => setTimeout(resolve, 800));
+
+      const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('vc_cart') || '[]'));
+      assertEqual(stored.length, 1, 'A rejected checkout emptied the cart');
+
+      const disabled = await page.locator('#checkout-btn').isDisabled();
+      assert(!disabled, 'The checkout button was left disabled, so the buyer cannot try again');
+
+      await page.evaluate(() => localStorage.removeItem('vc_cart'));
+      await page.close();
+    });
+
     console.log('\n' + colors.blue + '═══════════════════════════════════════════════════════════' + colors.reset);
     console.log(colors.blue + 'E2E TEST RESULTS' + colors.reset);
     console.log(colors.blue + '═══════════════════════════════════════════════════════════' + colors.reset);
@@ -409,7 +901,7 @@ async function runTests() {
       await browser.close();
     }
     if (server) {
-      server.kill();
+      server.close();
     }
 
     process.exit(errorCount > 0 ? 1 : 0);

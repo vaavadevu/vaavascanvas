@@ -2,11 +2,33 @@
 // VAAVASCANVAS – CART & CHECKOUT
 // ============================================================
 
+// This file owns the drawer: the DOM, the toasts and the network call. The
+// decisions behind them live in two files it expects to have been loaded first.
+//
+//   js/cart-math.js  — what a cart costs: FREE_SHIPPING_THRESHOLD,
+//                      SHIPPING_COST_SE, SHIPPING_COST_EU, calcSubtotal,
+//                      calcShipping, calcTotal, calcCount,
+//                      applyBookmarkPricing, cartItemOldPrice
+//   js/cart-rules.js — what belongs in it: isUniqueItem, resolveAdd,
+//                      withoutFrameVariants, validateCheckout, buildOrderItems
+
 const Cart = (() => {
   let items = JSON.parse(localStorage.getItem('vc_cart') || '[]');
   let selectedCountry = '';
 
+  // Recomputed on every change so the cart total matches what
+  // create-checkout.js independently calculates for the same cart
+  function repriceBookmarks() {
+    // Prefer the catalog over whatever an older build stored in localStorage
+    const product = (typeof paintings !== 'undefined' && Array.isArray(paintings))
+      ? paintings.find(p => p.type === 'bookmark')
+      : null;
+
+    applyBookmarkPricing(items, product);
+  }
+
   function save() {
+    repriceBookmarks();
     localStorage.setItem('vc_cart', JSON.stringify(items));
     render();
     updateBadge();
@@ -30,39 +52,34 @@ const Cart = (() => {
   }
 
   function add(item) {
-    const key = `${item.id}-${item.size || 'original'}`;
+    const outcome = resolveAdd(items, item);
 
-    if (item.type === 'original') {
-      const existing = items.find(i => i.key === key);
-      if (existing) {
-        openCart();
-        showToast(`"${item.title}" ${t('cart_toast_already')}`);
-        return;
-      }
-      // Remove any other frame-variant of the same painting
-      const baseId = item.paintingBaseId || item.id.replace(/-framed$/, '');
-      items = items.filter(i => {
-        if (i.type !== 'original') return true;
-        const iBase = i.paintingBaseId || i.id.replace(/-framed$/, '');
-        return iBase !== baseId;
-      });
-    } else {
-      const existing = items.find(i => i.key === key);
-      if (existing) {
-        existing.qty = (existing.qty || 1) + 1;
-        trackEvent('add_to_cart', { currency: 'SEK', value: item.price, items: [{ item_id: item.id, item_name: item.title, item_category: item.type, price: item.price, quantity: 1 }] });
-        save();
-        openCart();
-        showToast(`"${item.title}" ${t('cart_toast_added')}`);
-        return;
-      }
+    // Nothing to add — the piece is one of a kind and already in the cart
+    if (outcome.action === 'duplicate') {
+      openCart();
+      showToast(`"${item.title}" ${t('cart_toast_already')}`);
+      return;
     }
 
-    items.push({ ...item, key, qty: 1 });
-    trackEvent('add_to_cart', { currency: 'SEK', value: item.price, items: [{ item_id: item.id, item_name: item.title, item_category: item.type, price: item.price, quantity: 1 }] });
+    if (outcome.action === 'increment') {
+      const existing = items.find(i => i.key === outcome.key);
+      existing.qty = (existing.qty || 1) + 1;
+    } else {
+      // Picking the other frame-variant swaps out the one already there
+      if (outcome.action === 'replace') {
+        items = withoutFrameVariants(items, outcome.baseId);
+      }
+      items.push({ ...item, key: outcome.key, qty: 1 });
+    }
+
+    trackEvent('add_to_cart', {
+      currency: 'SEK',
+      value: item.price,
+      items: buildOrderItems([{ ...item, qty: 1 }]),
+    });
     save();
     openCart();
-    showToast(`"${item.title}" lagd i varukorgen`);
+    showToast(`"${item.title}" ${t('cart_toast_added')}`);
   }
 
   function toggleFrame(key, withFrame) {
@@ -97,21 +114,19 @@ const Cart = (() => {
   }
 
   function subtotal() {
-    return items.reduce((sum, i) => sum + i.price * (i.qty || 1), 0);
+    return calcSubtotal(items);
   }
 
   function shipping() {
-    if (selectedCountry === 'EU') return 149;
-    const sub = subtotal();
-    return sub >= 599 ? 0 : 59;
+    return calcShipping(subtotal(), selectedCountry);
   }
 
   function total() {
-    return subtotal() + shipping();
+    return calcTotal(items, selectedCountry);
   }
 
   function count() {
-    return items.reduce((sum, i) => sum + (i.qty || 1), 0);
+    return calcCount(items);
   }
 
   function updateBadge() {
@@ -154,6 +169,7 @@ const Cart = (() => {
     items.forEach(item => {
       const el = document.createElement('div');
       el.className = 'cart-item';
+      const oldPrice = cartItemOldPrice(item);
       el.innerHTML = `
         <div class="cart-item-img">
           ${item.image
@@ -165,7 +181,7 @@ const Cart = (() => {
           <div class="cart-item-meta">${formatCartItemType(item.type)}</div>
           <div class="cart-item-price">
             ${(item.price * (item.qty || 1)).toLocaleString('sv-SE')} kr
-            ${item.type === 'original' && ((item.withFrame && item.originalFramedPrice && item.originalFramedPrice !== item.framedPrice) || (!item.withFrame && item.originalBasePrice && item.originalBasePrice !== item.basePrice)) ? `<span class="cart-item-price-old">${((item.withFrame ? item.originalFramedPrice : item.originalBasePrice) * (item.qty || 1)).toLocaleString('sv-SE')} kr</span>` : ''}
+            ${oldPrice ? `<span class="cart-item-price-old">${(oldPrice * (item.qty || 1)).toLocaleString('sv-SE')} kr</span>` : ''}
           </div>
           ${item.framedOnly ? `
           <span class="cart-frame-fixed">${t('cart_frame_included')}</span>` :
@@ -177,7 +193,7 @@ const Cart = (() => {
               : `${t('cart_frame_add')} <em>+${(item.framedPrice - item.basePrice).toLocaleString('sv-SE')} kr</em>`
             }</span>
           </label>` : ''}
-          ${item.type === 'original' ? '' : `
+          ${isUniqueItem(item) ? '' : `
           <div class="cart-item-qty">
             <button onclick="Cart.updateQty('${item.key}', -1)">−</button>
             <span>${item.qty || 1}</span>
@@ -194,17 +210,17 @@ const Cart = (() => {
     if (totalEl) totalEl.textContent = total().toLocaleString('sv-SE') + ' kr';
 
     const shippingDisplayEl = document.getElementById('cart-shipping-display');
-    const FREE_SHIPPING = 599;
+    const FREE_SHIPPING = FREE_SHIPPING_THRESHOLD;
     const sub = subtotal();
     const isEU = selectedCountry === 'EU';
 
     if (shippingDisplayEl) {
       if (isEU) {
-        shippingDisplayEl.innerHTML = '<span class="shipping-cost">149 kr</span>';
+        shippingDisplayEl.innerHTML = `<span class="shipping-cost">${SHIPPING_COST_EU} kr</span>`;
       } else if (sub >= FREE_SHIPPING) {
-        shippingDisplayEl.innerHTML = `<s class="shipping-old-price">59 kr</s> <span class="shipping-free-label">${t('cart_free_shipping')}</span>`;
+        shippingDisplayEl.innerHTML = `<s class="shipping-old-price">${SHIPPING_COST_SE} kr</s> <span class="shipping-free-label">${t('cart_free_shipping')}</span>`;
       } else {
-        shippingDisplayEl.innerHTML = '<span class="shipping-cost">59 kr</span>';
+        shippingDisplayEl.innerHTML = `<span class="shipping-cost">${SHIPPING_COST_SE} kr</span>`;
       }
     }
     const progressEl = document.getElementById('cart-shipping-progress');
@@ -280,33 +296,27 @@ const Cart = (() => {
   async function checkout() {
     if (items.length === 0) return;
 
-    const hasOriginals = items.some(i => i.type === 'original');
     const cb = document.getElementById('cart-terms-checkbox');
-    let blocked = false;
+    const { ok, blockers } = validateCheckout({
+      country: selectedCountry,
+      termsAccepted: !!cb?.checked,
+    });
 
-    if (selectedCountry === '') {
-      const countryRow = document.getElementById('cart-country-row');
-      if (countryRow) {
-        countryRow.classList.remove('cart-terms-error');
-        void countryRow.offsetWidth;
-        countryRow.classList.add('cart-terms-error');
-      }
-      blocked = true;
+    if (!ok) {
+      // Re-triggering the animation needs the class off, a reflow, then on again
+      const flagError = (el) => {
+        if (!el) return;
+        el.classList.remove('cart-terms-error');
+        void el.offsetWidth;
+        el.classList.add('cart-terms-error');
+      };
+
+      if (blockers.includes('country')) flagError(document.getElementById('cart-country-row'));
+      if (blockers.includes('terms')) flagError(cb?.closest('.cart-terms-label'));
+      return;
     }
 
-    if (!cb?.checked) {
-      const label = cb?.closest('.cart-terms-label');
-      if (label) {
-        label.classList.remove('cart-terms-error');
-        void label.offsetWidth;
-        label.classList.add('cart-terms-error');
-      }
-      blocked = true;
-    }
-
-    if (blocked) return;
-
-    const orderItems = items.map(i => ({ item_id: i.id, item_name: i.title, item_category: i.type, price: i.price, quantity: i.qty || 1 }));
+    const orderItems = buildOrderItems(items);
     trackEvent('begin_checkout', { currency: 'SEK', value: total(), items: orderItems });
     sessionStorage.setItem('vc_last_order', JSON.stringify({ value: total(), items: orderItems }));
 

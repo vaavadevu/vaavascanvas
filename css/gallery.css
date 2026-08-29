@@ -1,8 +1,12 @@
 /* ─── Galleri (Masonry) ─── */
+/* Laid out by layoutGallery() in gallery.js, which deals the tiles into these
+   columns in sort order. --gallery-columns is how it asks the stylesheet how
+   many to make, so the breakpoints below stay the single source of truth. */
 #gallery {
-  columns: 4;
-  column-gap: 15px;
-  column-fill: balance;
+  --gallery-columns: 4;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
   padding: 20px;
   width: 100%;
   /* Frame style variables */
@@ -30,20 +34,27 @@
 
 @media (max-width: 1100px) {
   #gallery {
-    columns: 3;
+    --gallery-columns: 3;
   }
 }
 
 @media (max-width: 720px) {
   #gallery {
-    columns: 2;
+    --gallery-columns: 2;
   }
 }
 
 @media (max-width: 480px) {
   #gallery {
-    columns: 2;
+    --gallery-columns: 2;
   }
+}
+
+.gallery-column {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .gallery-item {
@@ -51,7 +62,6 @@
   overflow: hidden;
   width: 100%;
   margin-bottom: 15px;
-  break-inside: avoid;
 }
 
 .gallery-item::after {
@@ -236,8 +246,10 @@
 }
 
 /* ─── Sticky filter bar (desktop) ─── */
+/* Desktop only — on phones and tablets the floating filter button in
+   css/fab.css carries the same controls */
 #gallery-filter-bar {
-  display: none; /* visas bara på desktop via media query */
+  display: none;
   flex-wrap: nowrap;
   gap: 10px;
   justify-content: center;
@@ -248,6 +260,16 @@
   border-bottom: 1px solid var(--accent-green);
 }
 
+/* The filter bar used to be the first thing on the page and carried the
+   offset for the fixed header. With it gone from phones the page has to clear
+   the header itself — responsive.css zeroes main's padding below 961px, and
+   setupFilterBar() only sets its own offset where the bar exists. */
+@media (max-width: 960px) {
+  main.gallery-main {
+    padding-top: calc(var(--header-height) + 12px);
+  }
+}
+
 @media (min-width: 961px) {
   #gallery-filter-bar {
     display: flex;
@@ -255,38 +277,6 @@
     top: 0;
     z-index: 100;
     gap: clamp(20px, 4.5vw, 70px);
-  }
-}
-
-@media (max-width: 960px) {
-  #gallery-filter-bar {
-    display: flex;
-    position: static;
-    top: auto;
-    z-index: auto;
-    gap: 10px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 12px 10px 8px;
-  }
-
-  .filter-button-group {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    white-space: nowrap;
-    scrollbar-width: none;
-  }
-
-  .filter-button-group::-webkit-scrollbar {
-    display: none;
-  }
-
-  .filter-button {
-    white-space: nowrap;
-  }
-
-  #filter-fab {
-    display: none !important;
   }
 }
 
@@ -393,6 +383,13 @@
   display: flex;
 }
 
+/* Sort sits at the right end of the bar and has the longest options, so its
+   panel hangs leftwards rather than off the edge of the screen */
+#filter-sort-dd .filter-dropdown-panel {
+  left: auto;
+  right: 0;
+}
+
 .filter-option {
   background: transparent;
   color: var(--text-dark);
@@ -407,37 +404,6 @@
   white-space: nowrap;
   transition: background 0.15s, color 0.15s;
   text-align: left;
-}
-
-.filter-button-group {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.filter-button {
-  background: white;
-  color: #5a8a6a;
-  border: 2px solid #5a8a6a;
-  padding: 8px 18px;
-  border-radius: 20px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  transition: transform 0.2s, background 0.2s, color 0.2s, border-color 0.2s;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.filter-button:hover {
-  transform: translateY(-1px);
-}
-
-.filter-button.active {
-  background: #5a8a6a;
-  color: white;
 }
 
 .filter-option:hover {

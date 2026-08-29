@@ -81,11 +81,29 @@ function openPageView(index) {
   renderPageViewFrameInfo(painting);
   renderPageViewButtons(painting);
   preloadAdjacentImages();
-  setUrlParam("painting", painting.id);
+  updatePageViewUrl(painting);
   const price = getPaintingEffectivePrice(painting, painting.framedOnly);
   const paintingType = painting.type || TYPE.PAINTING;
   const category = paintingType === TYPE.PAINTING ? 'original' : paintingType;
   trackEvent('view_item', { currency: 'SEK', value: price, items: [{ item_id: painting.id, item_name: painting.title, item_category: category, price }] });
+}
+
+// Browsing on from a work lands on another work, so the address bar, the tab
+// title and the canonical link all have to follow. Without this a visitor who
+// clicked through and then shared the link would be handing out a URL whose
+// preview showed whichever work they happened to start from.
+function updatePageViewUrl(painting) {
+  if (isLegacyViewPage()) {
+    setUrlParam("painting", painting.id);
+    return;
+  }
+
+  document.body.dataset.paintingId = painting.id;
+  window.history.replaceState({}, "", paintingPageUrl(painting));
+  document.title = paintingPageTitle(painting, t(painting.medium));
+
+  const canonical = document.querySelector('link[rel="canonical"]');
+  if (canonical) canonical.href = new URL(paintingPageUrl(painting), window.location.origin).href;
 }
 
 // ── Populate helpers ──────────────────────────────────────────
@@ -99,11 +117,27 @@ function populatePageView(painting) {
   updatePageViewDescription(painting);
   renderPageViewMedium(painting);
   renderPageViewPrice(painting);
-  buildPageViewThumbnails(imgs);
+  buildPageViewThumbnails(imgs, painting);
+  updatePageViewSoldFlag(painting, imgs[0]);
   configurePageViewArrows(imgs);
 }
 
-function buildPageViewThumbnails(imgs) {
+// Products sold one variant at a time (bookmarks) list the gone ones in
+// soldVariants, matched on filename so the path prefix doesn't matter
+function isImageSold(painting, src) {
+  if (!painting || !Array.isArray(painting.soldVariants) || !src) return false;
+  const name = String(src).split('/').pop();
+  return painting.soldVariants.some(variant => String(variant).split('/').pop() === name);
+}
+
+// Marks the big image as sold while browsing, before the buyer opens the picker
+function updatePageViewSoldFlag(painting, src) {
+  const flag = document.getElementById("pageview-sold-flag");
+  if (!flag) return;
+  flag.hidden = !isImageSold(painting, src);
+}
+
+function buildPageViewThumbnails(imgs, painting) {
   const container = document.getElementById("pageview-thumbs");
   container.innerHTML = "";
   if (imgs.length <= 1) return;
@@ -116,7 +150,22 @@ function buildPageViewThumbnails(imgs) {
     thumb.addEventListener("click", () =>
       transitionToPageViewImage(imgs, idx, idx > State.currentImageIndex ? 1 : -1)
     );
-    container.appendChild(thumb);
+
+    if (!isImageSold(painting, src)) {
+      container.appendChild(thumb);
+      return;
+    }
+
+    // Sold variants stay browsable, just visibly unavailable
+    const wrap = document.createElement("span");
+    wrap.className = "pageViewThumbWrap sold";
+    const badge = document.createElement("span");
+    badge.className = "pageViewThumbSold";
+    badge.dataset.i18n = "modal_sold";
+    badge.textContent = t("modal_sold");
+    wrap.appendChild(thumb);
+    wrap.appendChild(badge);
+    container.appendChild(wrap);
   });
 }
 
@@ -154,8 +203,35 @@ function addPaintingToCart(painting, withFrame) {
   Cart.add(cartItem);
 }
 
+// Where a sold work sends the buyer instead of stopping at "Såld". The
+// commission link carries the work along, so the form opens already knowing
+// which motif started the conversation.
+function commissionUrlFor(painting) {
+  return `/pages/commissions.html?type=Commissions&ref=${encodeURIComponent(painting.id)}#footer`;
+}
+
 function renderPageViewButtons(painting) {
   pageViewButtons.innerHTML = "";
+
+  // A sold work is the best proof the art sells, so its page offers a way on
+  // rather than ending in a red "Såld"
+  if (painting.status === STATUS.SOLD) {
+    const commission = document.createElement("a");
+    commission.className = "btn btn-primary pageview-sold-btn";
+    commission.href = commissionUrlFor(painting);
+    commission.dataset.i18n = "pageview_sold_commission_btn";
+    commission.textContent = t("pageview_sold_commission_btn");
+    pageViewButtons.appendChild(commission);
+
+    const notify = document.createElement("button");
+    // Opens the same modal as the footer's bell — see setupModals() in ui.js
+    notify.className = "btn btn-secondary pageview-sold-btn subscribe-open";
+    notify.type = "button";
+    notify.dataset.i18n = "pageview_sold_notify_btn";
+    notify.textContent = t("pageview_sold_notify_btn");
+    pageViewButtons.appendChild(notify);
+    return;
+  }
 
   if (painting.status === STATUS.FOR_SALE && (painting.originalPrice || painting.framedOnly)) {
     if (painting.framedOnly) {
@@ -268,34 +344,52 @@ async function imageExists(src) {
   });
 }
 
+// Built from the catalog so repricing the bookmarks never leaves stale numbers
+// on screen. The picker states both prices ("120 kr styck – 100 kr styck om du
+// köper fler än ett"); the product page already shows the single price above,
+// so it only needs the multi-buy half.
+function getMultiBuyPriceNote(painting, key = 'modal_bookmark_price_note') {
+  const single = painting.originalPrice || painting.framedPrice || 0;
+  const multi = painting.multiBuyPrice;
+  if (!multi || multi >= single) return '';
+
+  return t(key)
+    .replace('{single}', single.toLocaleString('sv-SE'))
+    .replace('{multi}', multi.toLocaleString('sv-SE'));
+}
+
 async function showBookmarkSelectorModal(painting) {
   const imgs = getPaintingImagePaths(painting);
   const variants = imgs.slice(1); // skip cover (index 0)
   const containerId = `bookmark-selector-${painting.id}`;
 
-  const validVariants = [];
+  // Sold variants are already marked while browsing the images, so the picker
+  // lists only what can still be bought
+  const availableVariants = [];
   for (const src of variants) {
+    if (isImageSold(painting, src)) continue;
     if (await imageExists(src)) {
-      validVariants.push(src);
+      availableVariants.push(src);
     }
   }
 
-  if (!validVariants || validVariants.length === 0) {
+  if (availableVariants.length === 0) {
     showToast(t('modal_no_variants'));
     return;
   }
 
-  const soldVariantNames = new Set((painting.soldVariants || []).map((value) => String(value).split('/').pop()));
-  let modal = document.getElementById(containerId);
+  // Rebuilt on every open, so the list, the language and the checkboxes are
+  // never left over from a previous visit
+  document.getElementById(containerId)?.remove();
 
-  if (!modal) {
-    modal = document.createElement('div');
+  const modal = document.createElement('div');
+  {
     modal.id = containerId;
     modal.className = 'bookmark-selector-modal';
     modal.innerHTML = `
       <div class="bookmark-selector-inner">
-        <button type="button" class="modal-back-btn" id="bookmark-modal-back">${t('nav_back')}</button>
         <h3 class="bookmark-selector-title">${t('modal_select_bookmarks_title')}</h3>
+        <p class="bookmark-selector-price-note">${getMultiBuyPriceNote(painting)}</p>
         <div class="bookmark-selector-grid"></div>
         <div class="bookmark-selector-actions">
           <label><input type="checkbox" id="bookmark-select-all" /> ${t('modal_select_all')}</label>
@@ -307,16 +401,13 @@ async function showBookmarkSelectorModal(painting) {
     document.getElementById('modals-container')?.appendChild(modal);
 
     const grid = modal.querySelector('.bookmark-selector-grid');
-    const sellableVariants = validVariants.filter((src) => !soldVariantNames.has(src.split('/').pop()));
 
-    validVariants.forEach((src, idx) => {
+    availableVariants.forEach((src, idx) => {
       const filename = src.split('/').pop();
-      const sold = soldVariantNames.has(filename);
       const cell = document.createElement('label');
-      cell.className = `bookmark-variant${sold ? ' sold' : ''}`;
+      cell.className = 'bookmark-variant';
       cell.innerHTML = `
-        <input type="checkbox" data-idx="${idx}" ${sold ? 'disabled' : ''} />
-        ${sold ? `<span class="bookmark-sold-badge">${t('modal_sold')}</span>` : ''}
+        <input type="checkbox" data-idx="${idx}" />
         <img src="${src}" loading="lazy" alt="${filename}" />
         <div class="variant-label">${filename}</div>
       `;
@@ -325,20 +416,11 @@ async function showBookmarkSelectorModal(painting) {
 
     modal.querySelector('#bookmark-select-all').addEventListener('change', (e) => {
       modal.querySelectorAll('.bookmark-variant input[type="checkbox"]').forEach(cb => {
-        if (!cb.disabled) cb.checked = e.target.checked;
+        cb.checked = e.target.checked;
       });
     });
 
     modal.querySelector('#bookmark-cancel-btn').addEventListener('click', () => hideBookmarkSelectorModal(modal));
-
-    const backBtn = modal.querySelector('#bookmark-modal-back');
-    if (backBtn) {
-      backBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        hideBookmarkSelectorModal(modal);
-        try { history.back(); } catch (_) {}
-      });
-    }
 
     modal.querySelector('#bookmark-add-btn').addEventListener('click', () => {
       const checked = Array.from(modal.querySelectorAll('.bookmark-variant input[type="checkbox"]:checked')).map(cb => parseInt(cb.dataset.idx));
@@ -348,15 +430,19 @@ async function showBookmarkSelectorModal(painting) {
       }
 
       const basePrice = painting.originalPrice || painting.framedPrice || 0;
-      checked.forEach((variantIdx, pos) => {
-        const imgSrc = validVariants[variantIdx];
+      checked.forEach((variantIdx) => {
+        const imgSrc = availableVariants[variantIdx];
         const filename = imgSrc.split('/').pop().replace(/\.[^/.]+$/, '');
-        const price = pos === 0 ? basePrice : Math.round(basePrice * 0.9);
         const cartItem = {
           id: `${painting.id}::${filename}`,
           title: `${painting.title} — ${filename}`,
           type: TYPE.BOOKMARK,
-          price,
+          // Cart.repriceBookmarks settles the real price once it knows how
+          // many bookmarks the cart holds
+          price: basePrice,
+          basePrice,
+          multiBuyPrice: painting.multiBuyPrice ?? basePrice,
+          multiBuyMinQuantity: painting.multiBuyMinQuantity ?? 2,
           image: imgSrc,
         };
         Cart.add(cartItem);
@@ -364,12 +450,6 @@ async function showBookmarkSelectorModal(painting) {
 
       hideBookmarkSelectorModal(modal);
     });
-
-    if (sellableVariants.length === 0) {
-      modal.querySelector('#bookmark-add-btn').disabled = true;
-      modal.querySelector('#bookmark-select-all').disabled = true;
-      showToast(t('modal_no_variants'));
-    }
   }
 
   modal.classList.add('active');
@@ -539,57 +619,42 @@ function renderPageViewFrameInfo(painting) {
 function renderPageViewPrice(painting) {
   pageViewPriceSection.innerHTML = "";
 
-  if (painting.status === STATUS.SOLD) {
+  const addLine = (text, className, color) => {
     const p = document.createElement("p");
-    p.textContent = t("status_sold");
-    p.style.color = "red";
+    p.textContent = text;
+    if (className) p.classList.add(className);
+    if (color) p.style.color = color;
     pageViewPriceSection.appendChild(p);
+    return p;
+  };
+
+  // getPriceModel() decides what belongs here; this function only draws it
+  const model = getPriceModel(painting);
+
+  if (model.status === 'sold') {
+    addLine(t("status_sold"), null, "red");
     return;
   }
 
-  if (painting.status === STATUS.PERSONAL) {
-    const p = document.createElement("p");
-    p.textContent = t("status_personal");
-    pageViewPriceSection.appendChild(p);
+  if (model.status === 'personal') {
+    addLine(t("status_personal"));
     return;
   }
 
-  if (painting.framedOnly && painting.framedPrice) {
-    const salePrice = getPaintingFramedSalePrice(painting) || painting.framedPrice;
-    const price = document.createElement("p");
-    price.textContent = formatPrice(salePrice);
-    price.classList.add("pageview-price");
-    pageViewPriceSection.appendChild(price);
+  if (model.status === 'priced') {
+    addLine(formatPrice(model.price), "pageview-price");
 
-    if (hasPaintingDiscount(painting) && painting.originalPrice) {
-      const oldPrice = document.createElement("p");
-      oldPrice.textContent = formatPrice(painting.framedPrice);
-      oldPrice.classList.add("pageview-old-price");
-      pageViewPriceSection.appendChild(oldPrice);
-
-      const discountNote = document.createElement("p");
-      discountNote.textContent = `-${painting.discountPercent}% ${t('pageview_discount_text')}`;
-      discountNote.classList.add("pageview-discount-note");
-      pageViewPriceSection.appendChild(discountNote);
+    if (model.oldPrice !== null) {
+      addLine(formatPrice(model.oldPrice), "pageview-old-price");
+      addLine(`-${model.discountPercent}% ${t('pageview_discount_text')}`, "pageview-discount-note");
     }
-  } else if (painting.originalPrice) {
-    const salePrice = getPaintingDiscountedPrice(painting);
-    const price = document.createElement("p");
-    price.textContent = formatPrice(salePrice);
-    price.classList.add("pageview-price");
-    pageViewPriceSection.appendChild(price);
+  }
 
-    if (hasPaintingDiscount(painting)) {
-      const oldPrice = document.createElement("p");
-      oldPrice.textContent = formatPrice(painting.originalPrice);
-      oldPrice.classList.add("pageview-old-price");
-      pageViewPriceSection.appendChild(oldPrice);
-
-      const discountNote = document.createElement("p");
-      discountNote.textContent = `-${painting.discountPercent}% ${t('pageview_discount_text')}`;
-      discountNote.classList.add("pageview-discount-note");
-      pageViewPriceSection.appendChild(discountNote);
-    }
+  // Products sold in multiples (bookmarks) state the cheaper per-piece price
+  // here too, so it is visible while browsing and not only inside the picker
+  const multiBuyNote = getMultiBuyPriceNote(painting, 'pageview_multibuy_note');
+  if (multiBuyNote) {
+    addLine(multiBuyNote, "pageview-multibuy-note");
   }
 }
 
@@ -634,6 +699,7 @@ function transitionToPageViewImage(imgs, newIndex, direction) {
   pageViewImg.src = imgs[newIndex];
   resetPageViewZoom();
   updatePageViewThumbHighlight(newIndex);
+  updatePageViewSoldFlag(paintings[State.currentPaintingIndex], imgs[newIndex]);
   State.isTransitioning = false;
 }
 
@@ -654,7 +720,8 @@ function transitionToPageViewPainting(newIndex, direction) {
   renderPageViewMedium(p);
   renderPageViewFrameInfo(p);
   renderPageViewPrice(p);
-  buildPageViewThumbnails(imgs);
+  buildPageViewThumbnails(imgs, p);
+  updatePageViewSoldFlag(p, imgs[0]);
   configurePageViewArrows(imgs);
   renderPageViewButtons(p);
   setUrlParam("painting", p.id);
@@ -955,8 +1022,8 @@ async function initPageView() {
   // Load painting data if not already loaded
   try {
     const [countsRes, metaRes] = await Promise.all([
-      fetch("../images/paintings/counts.json"),
-      fetch("../images/paintings/metadata.json")
+      fetch("/images/paintings/counts.json"),
+      fetch("/images/paintings/metadata.json")
     ]);
 
     if (countsRes.ok) {
@@ -981,51 +1048,34 @@ async function initPageView() {
     }
   }
 
-  // Calculate size scales
-  const parsedSizes = paintings.map(p => {
-    if (p.shape === SHAPE.RECTANGULAR && p.width && p.height) {
-      return p.width * p.height;
-    } else if (p.shape === SHAPE.CIRCLE && p.diameter) {
-      const radius = p.diameter / 2;
-      return Math.PI * radius * radius;
-    }
-    return null;
-  }).filter(a => a !== null);
-
-  if (parsedSizes.length > 0) {
-    const minArea = Math.min(...parsedSizes);
-    const maxArea = Math.max(...parsedSizes);
-    const areaRange = maxArea - minArea;
-
-    paintings.forEach(p => {
-      let area = null;
-      if (p.shape === SHAPE.RECTANGULAR && p.width && p.height) {
-        area = p.width * p.height;
-      } else if (p.shape === SHAPE.CIRCLE && p.diameter) {
-        const radius = p.diameter / 2;
-        area = Math.PI * radius * radius;
-      }
-
-      if (area === null) {
-        p.sizeScale = 1;
-        return;
-      }
-
-      const normalized = areaRange > 0 ? (area - minArea) / areaRange : 0.5;
-      p.sizeScale = 1 + (normalized - 0.5) * 0.4;
-    });
-  }
-
+  assignSizeScales(paintings);
   sortPaintings();
 
-  const params = new URLSearchParams(window.location.search);
-  const paintingId = params.get("painting");
+  const paintingId = resolvePaintingId();
+  if (!paintingId) return;
 
-  if (paintingId) {
-    const index = paintings.findIndex(p => p.id === paintingId);
-    if (index !== -1) {
-      openPageView(index);
-      attachPageViewListeners();
-    }
+  const index = paintings.findIndex(p => p.id === paintingId);
+  if (index === -1) return;
+
+  // /pages/view.html?painting=<id> was the only address a work ever had. It
+  // still works, but it now sends the visitor on to the work's own page so
+  // there is a single URL to share, link to and index.
+  if (isLegacyViewPage()) {
+    window.location.replace(paintingPageUrl(paintings[index]));
+    return;
   }
+
+  openPageView(index);
+  attachPageViewListeners();
+}
+
+// A generated page under /pictures/ names its work in the markup; the legacy
+// view.html carries it in the query string
+function resolvePaintingId() {
+  return document.body.dataset.paintingId
+    || new URLSearchParams(window.location.search).get("painting");
+}
+
+function isLegacyViewPage() {
+  return !document.body.dataset.paintingId;
 }
