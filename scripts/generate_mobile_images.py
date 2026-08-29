@@ -12,10 +12,20 @@ Arbetsflöde:
      - counts.json och metadata.json, alltid från hela katalogen
      - .image-build.json, kvittot på vad varje målning byggdes från
 
+Lera ("images/lera/") hanteras vid sidan av, som en enda platt mapp istället
+för en mapp per djur: alla originalbilder ligger direkt i
+"images/lera/original/" (t.ex. "räv.jpg", "rävjoel.jpg", "kanin.jpg",
+"kaninjoel.jpg", ...) och byggs till "images/lera/desktop/" och
+"images/lera/mobile/" under samma filnamn. Ingen omnumrering till 01/02 här —
+filnamnen är det som paintings.json:s "imageNames" pekar på, så de måste
+behålla sin betydelse. Lera räknas med i kvittot, --check, --plan,
+--accept-current, --all och den vanliga (ingen flagga alls) körningen; den kan
+också byggas ensam med "--only lera".
+
 Lägen:
-  (utan flagga)      bygger bara om målningar vars originalbilder ändrats
-  --only <id>        bygger om en enda målning (kan upprepas)
-  --all              bygger om allt från grunden
+  (utan flagga)      bygger bara om målningar (och lera) vars originalbilder ändrats
+  --only <id>        bygger om en enda målning (kan upprepas). "--only lera" bygger om lera
+  --all              bygger om allt från grunden, inklusive lera
   --check            kontrollerar bara, ändrar ingenting (avslutar 1 vid fel)
   --accept-current   skriver kvittot för allt som redan ligger på disken,
                      utan att bygga om (används en gång, för att komma igång)
@@ -30,7 +40,8 @@ Varför kvittot finns:
 
   counts.json och metadata.json byggs alltid om från hela katalogen. De är
   billiga att räkna fram och är just det som annars tyst hamnar fel när bara
-  en målning byggts om.
+  en målning byggts om. (Lera räknas inte in i dem — de hör till
+  målningsgalleriet, som lera inte är en del av.)
 
 Kräver:
   pip install -r requirements.txt
@@ -101,6 +112,10 @@ MOBILE_MAX_KB    = 300
 
 MANIFEST_NAME = ".image-build.json"
 
+# Kvittonyckeln för lera i manifestet — ligger vid sidan av "paintings",
+# eftersom lera inte är en målning med eget id utan en enda delad mapp
+LERA_KEY = "lera"
+
 # Sa manga rader planen visar innan den sammanfattar resten
 MAX_PLAN_ROWS = 14
 
@@ -142,6 +157,10 @@ def to_rgb_if_needed(img, path):
 def paintings_root(root: Path) -> Path:
     return root / "images" / "paintings"
 
+def lera_folder(root: Path) -> Path:
+    """Den enda, platta lera-mappen: images/lera/, med original/desktop/mobile direkt i den"""
+    return root / "images" / "lera"
+
 def painting_folders(root: Path):
     """Alla målningsmappar, i bokstavsordning"""
     directory = paintings_root(root)
@@ -165,9 +184,12 @@ def file_hash(path: Path) -> str:
             digest.update(chunk)
     return digest.hexdigest()
 
-def source_hashes(painting_folder: Path) -> dict:
-    """Namn → sha256 för målningens originalbilder"""
-    return {img.name: file_hash(img) for img in images_in(painting_folder / "original")}
+def source_hashes(folder: Path) -> dict:
+    """Namn → sha256 för originalbilderna i folder/original/.
+
+    Fungerar både för en per-målning-mapp (images/paintings/<id>/) och för
+    den platta lera-mappen (images/lera/) — bägge har ett "original"-underlag."""
+    return {img.name: file_hash(img) for img in images_in(folder / "original")}
 
 # ── Kvitto (manifest) ────────────────────────────────────────────────────────
 
@@ -196,6 +218,10 @@ def save_manifest(root: Path, manifest: dict):
 def is_empty_painting(painting_folder: Path) -> bool:
     """En mapp utan originalbilder — halvfardig eller bortglomd"""
     return not images_in(painting_folder / "original")
+
+def is_lera_empty(root: Path) -> bool:
+    """Lera utan originalbilder — halvfärdig eller bortglömd"""
+    return not images_in(lera_folder(root) / "original")
 
 
 def stale_kind(painting_folder: Path, manifest: dict):
@@ -241,6 +267,43 @@ def stale_reason(painting_folder: Path, manifest: dict, hashes: dict = None):
     kind = stale_kind(painting_folder, manifest)
     return None if kind is None else kind[1]
 
+
+def lera_stale_reason(root: Path, manifest: dict):
+    """Varför lera-bilderna behöver byggas om, eller None om de är i takt.
+
+    Samma idé som stale_reason(), men för den platta lera-mappen: ingen
+    omnumrering krävs (filnamnen bär mening) och "i takt" betyder att
+    desktop/ och mobile/ innehåller exakt samma filnamn som original/,
+    oavsett ordning."""
+    folder = lera_folder(root)
+    sources = source_hashes(folder)
+
+    if not sources:
+        return None  # tom mapp — hanteras separat, inte som trasig
+
+    if manifest.get("settings") != BUILD_SETTINGS:
+        return "komprimeringsinställningarna har ändrats"
+
+    recorded = manifest.get(LERA_KEY)
+    if recorded is None:
+        return f"{len(sources)} bild(er), aldrig byggd av det här scriptet"
+    if recorded.get("sources") != sources:
+        added = len(sources) - len(recorded.get("sources", {}))
+        if added > 0:
+            return f"{added} bild(er) tillkomna, {len(sources)} totalt"
+        elif added < 0:
+            return f"{-added} bild(er) borttagna, {len(sources)} kvar"
+        else:
+            return f"bilderna har bytts ut, {len(sources)} totalt"
+
+    expected = set(sources.keys())
+    for variant in ("desktop", "mobile"):
+        built = {img.name for img in images_in(folder / variant)}
+        if built != expected:
+            return f"{variant}/ stämmer inte med original/ ({len(built)} av {len(expected)} bilder)"
+
+    return None
+
 # ── Resekvensering ───────────────────────────────────────────────────────────
 
 def resequence_originals(painting_folder: Path):
@@ -262,7 +325,11 @@ def resequence_originals(painting_folder: Path):
 # ── Bearbeta bilder ──────────────────────────────────────────────────────────
 
 def process_image(src: Path, painting_folder: Path):
-    """Komprimera original från original/-mapp och skapa desktop/mobile-versioner"""
+    """Komprimera original från original/-mapp och skapa desktop/mobile-versioner.
+
+    Skriver alltid under src.name, så anropande kod styr namngivningen —
+    per-målning-bygget har redan numrerat om till 01/02 innan det här anropas,
+    medan lera-bygget skickar in originalnamnet oförändrat."""
     orig_kb = src.stat().st_size / 1024
 
     with Image.open(src) as img:
@@ -312,6 +379,28 @@ def build_painting(painting_folder: Path, manifest: dict):
         process_image(src, painting_folder)
 
     manifest["paintings"][painting_folder.name] = {"sources": source_hashes(painting_folder)}
+    return len(originals)
+
+
+def build_lera(root: Path, manifest: dict) -> int:
+    """Bygger om lera-bilderna. Platt mapp, inga undermappar per djur, och
+    ingen omnumrering — 'räv.jpg' ska förbli 'räv.jpg' eftersom paintings.json
+    pekar på det namnet via imageNames."""
+    folder = lera_folder(root)
+
+    for variant in ("desktop", "mobile"):
+        variant_dir = folder / variant
+        variant_dir.mkdir(parents=True, exist_ok=True)
+        for old in variant_dir.glob("*"):
+            if old.is_file():
+                old.unlink()
+
+    originals = images_in(folder / "original")
+    print(f"📁 lera/ ({len(originals)} bild(er))")
+    for src in originals:
+        process_image(src, folder)
+
+    manifest[LERA_KEY] = {"sources": source_hashes(folder)}
     return len(originals)
 
 # ── Generera counts.json ──────────────────────────────────────────────────────
@@ -374,6 +463,13 @@ def check(root: Path, manifest: dict):
             warnings.append(
                 f"{painting_folder.name}: mappen har inga originalbilder — "
                 f"lagg tillbaka dem eller ta bort mappen")
+
+    # Lera kontrolleras för sig — den är inte en av images/paintings-mapparna
+    lera_reason = lera_stale_reason(root, manifest)
+    if lera_reason:
+        problems.append(f"lera: {lera_reason}")
+    if is_lera_empty(root):
+        warnings.append("lera: mappen har inga originalbilder — lagg tillbaka dem eller ta bort mappen")
 
     # Kvarglömda mappar och kvittorader efter borttagna målningar
     for name in sorted(set(manifest["paintings"]) - folder_names):
@@ -438,14 +534,23 @@ def print_plan(root: Path, manifest: dict) -> int:
 
     att_bygga = sum(len(grupper[key]) for key, _ in rubriker)
 
+    # Lera räknas som ett eget, enda objekt i planen
+    lera_reason = None if is_lera_empty(root) else lera_stale_reason(root, manifest)
+    if lera_reason:
+        att_bygga += 1
+
     rader = []
     for key, rubrik in rubriker:
         for name, detalj in grupper[key]:
             rader.append(f"   {rubrik:<18}{name}  ({detalj})")
+    if lera_reason:
+        rader.append(f"   {'ÄNDRAT':<18}lera  ({lera_reason})")
     for name in borttagna:
         rader.append(f"   {'BORTTAGNA':<18}{name}  (mappen finns inte längre)")
     for name in tomma:
         rader.append(f"   {'TOMMA':<18}{name}  (inga originalbilder — läggs inte till)")
+    if is_lera_empty(root):
+        rader.append(f"   {'TOMMA':<18}lera  (inga originalbilder — läggs inte till)")
 
     # Listan star ovanfor menyn, sa den far inte trycka bort den fran skarmen
     print()
@@ -470,9 +575,9 @@ def print_plan(root: Path, manifest: dict) -> int:
 def parse_args():
     parser = argparse.ArgumentParser(description="Bygger desktop- och mobilbilder från original/")
     mode = parser.add_mutually_exclusive_group()
-    mode.add_argument("--all", action="store_true", help="bygg om alla målningar")
+    mode.add_argument("--all", action="store_true", help="bygg om alla målningar (och lera)")
     mode.add_argument("--only", action="append", metavar="ID", default=[],
-                      help="bygg om en enda målning (kan upprepas)")
+                      help="bygg om en enda målning (kan upprepas). 'lera' bygger om lera")
     mode.add_argument("--check", action="store_true", help="kontrollera bara, ändra ingenting")
     mode.add_argument("--plan", action="store_true",
                       help="visa vad en synk skulle göra, utan att göra något")
@@ -525,25 +630,37 @@ def main():
         for painting_folder in folders:
             if is_empty_painting(painting_folder):
                 manifest["paintings"].pop(painting_folder.name, None)
+
+        # Lera: samma idé, men som ett enda kvittoobjekt istället för per mapp
+        lera_hashes = source_hashes(lera_folder(root))
+        if lera_hashes:
+            manifest[LERA_KEY] = {"sources": lera_hashes}
+        else:
+            manifest.pop(LERA_KEY, None)
+
         save_manifest(root, manifest)
-        print(f"\n✅ Kvitto skrivet för {len(manifest['paintings'])} målningar.")
+        print(f"\n✅ Kvitto skrivet för {len(manifest['paintings'])} målningar" +
+              (" och lera" if lera_hashes else "") + ".")
         print("   Nästa körning bygger bara om det som faktiskt ändrats.\n")
         generate_counts_json(root)
         generate_metadata_json(root)
         return 0
 
     # ── Välj vad som ska byggas ──────────────────────────────────────────────
+    build_lera_flag = False
     if args.only:
-        unknown = [name for name in args.only if name not in by_name]
+        unknown = [name for name in args.only if name not in by_name and name != LERA_KEY]
         if unknown:
             print(f"❌ Hittar ingen mapp för: {', '.join(unknown)}")
-            print(f"   Välj bland: {', '.join(sorted(by_name))}")
+            print(f"   Välj bland: {', '.join(sorted(by_name))}, {LERA_KEY}")
             return 1
-        targets = [by_name[name] for name in args.only]
-        print(f"🎯 Bygger om {len(targets)} målning(ar): {', '.join(args.only)}\n")
+        targets = [by_name[name] for name in args.only if name in by_name]
+        build_lera_flag = LERA_KEY in args.only
+        print(f"🎯 Bygger om {len(args.only)} mål: {', '.join(args.only)}\n")
     elif args.all:
         targets = folders
-        print(f"🔁 Bygger om alla {len(targets)} målningar från grunden\n")
+        build_lera_flag = True
+        print(f"🔁 Bygger om alla {len(targets)} målningar (och lera) från grunden\n")
     else:
         print("🔍 Letar efter målningar som ändrats...\n")
         targets = []
@@ -552,16 +669,23 @@ def main():
             if reason:
                 targets.append(painting_folder)
                 tqdm.write(f"   • {painting_folder.name}: {reason}")
-        if not targets:
+        lera_reason = lera_stale_reason(root, manifest)
+        if lera_reason:
+            build_lera_flag = True
+            tqdm.write(f"   • lera: {lera_reason}")
+        if not targets and not build_lera_flag:
             print("\n✅ Inga bilder har ändrats — inget att bygga om.\n")
 
     # ── Bygg ─────────────────────────────────────────────────────────────────
     total_images = 0
-    if targets:
+    if targets or build_lera_flag:
         print(f"\n🆕 Bearbetar originalbilder...\n")
         for painting_folder in targets:
             total_images += build_painting(painting_folder, manifest)
-        print(f"✅ Bildbearbetning klar! ({total_images} bild(er) i {len(targets)} målning(ar))\n")
+        if build_lera_flag:
+            total_images += build_lera(root, manifest)
+        antal_mal = len(targets) + (1 if build_lera_flag else 0)
+        print(f"✅ Bildbearbetning klar! ({total_images} bild(er) i {antal_mal} målning(ar))\n")
 
     # En tom mapp gick aldrig att bygga — kvittoraden for den sager ingenting
     emptied = sorted(f.name for f in folders
@@ -570,6 +694,11 @@ def main():
         del manifest["paintings"][name]
     if emptied:
         print(f"⚠️  {', '.join(emptied)} har inga originalbilder kvar.")
+        print("   Lagg tillbaka bilderna eller ta bort mappen.\n")
+
+    if is_lera_empty(root) and LERA_KEY in manifest:
+        del manifest[LERA_KEY]
+        print("⚠️  lera har inga originalbilder kvar.")
         print("   Lagg tillbaka bilderna eller ta bort mappen.\n")
 
     # Borttagna målningar ska inte ligga kvar i kvittot
@@ -582,7 +711,8 @@ def main():
     save_manifest(root, manifest)
 
     # counts.json och metadata.json byggs alltid om från hela katalogen — det är
-    # de som annars hamnar fel när bara en målning byggts om
+    # de som annars hamnar fel när bara en målning byggts om. (Lera ingår inte
+    # här — den hör inte till målningsgalleriet dessa filer beskriver.)
     print("📊 Genererar counts.json...")
     generate_counts_json(root)
     print()
@@ -603,7 +733,7 @@ def main():
 
     print_warnings(warnings)
     print("=" * 50)
-    print(f"🎉 Allt klart! {len(folders)} målningar stämmer med sina originalbilder.")
+    print(f"🎉 Allt klart! {len(folders)} målningar (och lera) stämmer med sina originalbilder.")
     print("=" * 50)
     return 0
 
