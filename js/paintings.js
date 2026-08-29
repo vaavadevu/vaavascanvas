@@ -465,4 +465,114 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1600
   },
+  {
+    id: "leraRav",
+    title: "Räv",
+    descKey: "desc_leraRav",
+    status: STATUS.SOLD,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    width: 5,
+    height: 10,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 250
+  },
+  {
+    id: "leraBjorn",
+    title: "Björn",
+    descKey: "desc_leraBjorn",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    width: 5,
+    height: 10,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 250
+  },
+  {
+    id: "leraTiger",
+    title: "Tiger",
+    descKey: "desc_leraTiger",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    width: 5,
+    height: 10,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 250
+  },
+  {
+    id: "leraMallard",
+    title: "Mallard",
+    descKey: "desc_leraMallard",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    width: 5,
+    height: 10,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 250
+  },
+  {
+    id: "leraOwl",
+    title: "Uggla",
+    descKey: "desc_leraOwl",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    width: 5,
+    height: 10,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 250
+  },
+  {
+    id: "leraPigeon",
+    title: "Duva",
+    descKey: "desc_leraPigeon",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    width: 5,
+    height: 10,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 250
+  },
+  {
+    id: "leraPiggy",
+    title: "Gris",
+    descKey: "desc_leraPiggy",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    width: 5,
+    height: 10,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 250
+  },
+  {
+    id: "leraRobin",
+    title: "Rödhake",
+    descKey: "desc_leraRobin",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    width: 5,
+    height: 10,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 250
+  },
+  {
+    id: "leraBlame",
+    title: "Blåmes",
+    descKey: "desc_leraBlame",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    width: 5,
+    height: 10,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 250
+  },
+  {
+    id: "leraKanin",
+    title: "Kanin",
+    descKey: "desc_leraKanin",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    width: 5,
+    height: 10,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 250
+  },
 ];

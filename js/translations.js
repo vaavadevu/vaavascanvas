@@ -689,6 +689,52 @@ desc_sommarvila: {
   en: "Personal painting - not for sale.",
 },
 
+  // ── Clay necklaces ────────────────────────────────────────────
+  medium_clay: {
+    sv: "Handgjord lera",
+    en: "Handmade clay",
+  },
+  desc_leraRav: {
+    sv: "Handgjord lufttorkande lera-halsband med räv. Handmålad med akryl, gliding knot för anpassad längd. Unisex.",
+    en: "Handmade air-drying clay necklace with fox. Hand-painted with acrylic, gliding knot for adjustable length. Unisex.",
+  },
+  desc_leraBjorn: {
+    sv: "Handgjord lufttorkande lera-halsband med björn. Handmålad med akryl, gliding knot för anpassad längd. Unisex.",
+    en: "Handmade air-drying clay necklace with bear. Hand-painted with acrylic, gliding knot for adjustable length. Unisex.",
+  },
+  desc_leraTiger: {
+    sv: "Handgjord lufttorkande lera-halsband med tiger. Handmålad med akryl, gliding knot för anpassad längd. Unisex.",
+    en: "Handmade air-drying clay necklace with tiger. Hand-painted with acrylic, gliding knot for adjustable length. Unisex.",
+  },
+  desc_leraMallard: {
+    sv: "Handgjord lufttorkande lera-halsband med gräsand. Handmålad med akryl, gliding knot för anpassad längd. Unisex.",
+    en: "Handmade air-drying clay necklace with mallard. Hand-painted with acrylic, gliding knot for adjustable length. Unisex.",
+  },
+  desc_leraOwl: {
+    sv: "Handgjord lufttorkande lera-halsband med uggla. Handmålad med akryl, gliding knot för anpassad längd. Unisex.",
+    en: "Handmade air-drying clay necklace with owl. Hand-painted with acrylic, gliding knot for adjustable length. Unisex.",
+  },
+  desc_leraPigeon: {
+    sv: "Handgjord lufttorkande lera-halsband med duva. Handmålad med akryl, gliding knot för anpassad längd. Unisex.",
+    en: "Handmade air-drying clay necklace with pigeon. Hand-painted with acrylic, gliding knot for adjustable length. Unisex.",
+  },
+  desc_leraPiggy: {
+    sv: "Handgjord lufttorkande lera-halsband med gris. Handmålad med akryl, gliding knot för anpassad längd. Unisex.",
+    en: "Handmade air-drying clay necklace with pig. Hand-painted with acrylic, gliding knot for adjustable length. Unisex.",
+  },
+  desc_leraRobin: {
+    sv: "Handgjord lufttorkande lera-halsband med rödhake. Handmålad med akryl, gliding knot för anpassad längd. Unisex.",
+    en: "Handmade air-drying clay necklace with robin. Hand-painted with acrylic, gliding knot for adjustable length. Unisex.",
+  },
+  desc_leraBlame: {
+    sv: "Handgjord lufttorkande lera-halsband med blåmes. Handmålad med akryl, gliding knot för anpassad längd. Unisex.",
+    en: "Handmade air-drying clay necklace with blue tit. Hand-painted with acrylic, gliding knot for adjustable length. Unisex.",
+  },
+  desc_leraKanin: {
+    sv: "Handgjord lufttorkande lera-halsband med kanin. Handmålad med akryl, gliding knot för anpassad längd. Unisex.",
+    en: "Handmade air-drying clay necklace with rabbit. Hand-painted with acrylic, gliding knot for adjustable length. Unisex.",
+  },
+
   // ── Cart ──────────────────────────────────────────────────────
   cart_heading: {
     sv: "Varukorg",

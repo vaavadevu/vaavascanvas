@@ -36,6 +36,16 @@ const PAINTINGS = [
   { id: 'bookmarks', originalPrice: 120, status: 'for_sale' },
   { id: 'foreStormen', originalPrice: 1600, status: 'for_sale' },
   { id: 'photobomb', originalPrice: 1600, status: 'for_sale' },
+  { id: 'leraRav', originalPrice: 250, status: 'sold' },
+  { id: 'leraBjorn', originalPrice: 250, status: 'for_sale' },
+  { id: 'leraTiger', originalPrice: 250, status: 'for_sale' },
+  { id: 'leraMallard', originalPrice: 250, status: 'for_sale' },
+  { id: 'leraOwl', originalPrice: 250, status: 'for_sale' },
+  { id: 'leraPigeon', originalPrice: 250, status: 'for_sale' },
+  { id: 'leraPiggy', originalPrice: 250, status: 'for_sale' },
+  { id: 'leraRobin', originalPrice: 250, status: 'for_sale' },
+  { id: 'leraBlame', originalPrice: 250, status: 'for_sale' },
+  { id: 'leraKanin', originalPrice: 250, status: 'for_sale' },
 ];
 
 function hasPaintingDiscount(painting) {
