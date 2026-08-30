@@ -478,10 +478,33 @@ async function runTests() {
       assertEqual(resting.opacity, '1', 'The filter sheet did not open');
       assert(!resting.squeezed, "The filter sheet is squeezed even at the button's resting position");
 
-      // An empty grid leaves a short page, so the footer shoves the button up
-      await page.evaluate(() => { setActiveTypeFilter('clay'); setActiveStatusFilter('sold'); filterGallery(); });
+      // An empty grid leaves a short page, so the footer shoves the button up.
+      // Which filters leave nothing behind changes as works are added and sold,
+      // so hunt for a combination that empties the grid today rather than
+      // naming one that was empty when this was written. If the shop has grown
+      // enough that every combination finds something, empty the grid by hand —
+      // the point of the test is the short page, not the route to it.
+      const emptied = await page.evaluate(() => {
+        const types = ['bookmark', 'clay', 'painting', 'all'];
+        const statuses = ['sold', 'for_sale', 'all'];
+        // The size filter is only offered for paintings and for everything
+        const sizes = ['size_small', 'size_medium', 'size_large', 'size_all'];
+        for (const type of types) {
+          for (const status of statuses) {
+            for (const size of (type === 'all' || type === 'painting') ? sizes : ['size_all']) {
+              setActiveTypeFilter(type);
+              setActiveStatusFilter(status);
+              setActiveSizeFilter(size);
+              if (!document.querySelectorAll('.gallery-item').length) return `${type} / ${status} / ${size}`;
+            }
+          }
+        }
+        layoutGallery([]);
+        return 'no filter empties the grid — laid out an empty grid directly';
+      });
       await page.waitForTimeout(800);
-      assertEqual(await page.locator('.gallery-item').count(), 0, 'Expected the grid to be empty for this test');
+      assertEqual(await page.locator('.gallery-item').count(), 0,
+        `Expected the grid to be empty for this test (tried ${emptied})`);
       await page.evaluate(() => window.scrollTo({ top: 300, behavior: 'instant' }));
       await page.waitForTimeout(600);
       await page.evaluate(() => window.scrollTo({ top: 100, behavior: 'instant' }));
