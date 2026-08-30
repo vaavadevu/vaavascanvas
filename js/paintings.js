@@ -631,8 +631,6 @@ const paintings = [
     height: 34,
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1200,
-    framedPrice: 2100,
-    frameAvailable: true,
     type: TYPE.PAINTING
   },
   {
@@ -1041,7 +1039,7 @@ const paintings = [
     id: "bookmark-piggy",
     title: "Gris",
     descKey: "desc_bookmark",
-    status: STATUS.FOR_SALE,
+    status: STATUS.SOLD,
     medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
     width: 5,
     height: 15,

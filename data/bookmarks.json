@@ -8,7 +8,7 @@
     { "id": "giraffe", "title": "Giraff", "status": "sold" },
     { "id": "mallard", "title": "Gräsand", "status": "for_sale" },
     { "id": "pigeon", "title": "Duva", "status": "sold" },
-    { "id": "piggy", "title": "Gris", "status": "for_sale" },
+    { "id": "piggy", "title": "Gris", "status": "sold" },
     { "id": "pingvin", "title": "Pingvin", "status": "sold" },
     { "id": "rabbit", "title": "Kanin", "status": "sold" },
     { "id": "wilddog", "title": "Afrikansk vildhund", "status": "for_sale" }

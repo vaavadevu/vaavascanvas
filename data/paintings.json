@@ -328,8 +328,7 @@
     "originalPrice": 1200,
     "status": "for_sale",
     "medium": "medium_acrylic_canvas",
-    "frameAvailable": true,
-    "framedPrice": 2100
+    "frameAvailable": false
   },
   {
     "id": "sugenPaEttApple",
