@@ -1,0 +1,12 @@
+{
+  "id": "bookmarks",
+  "title": "Bokmärken",
+  "descKey": "desc_bookmarks",
+  "width": 5,
+  "height": 15,
+  "shape": "rectangular",
+  "originalPrice": 120,
+  "status": "for_sale",
+  "medium": "medium_watercolor_paper_laminated",
+  "type": "bookmark"
+}

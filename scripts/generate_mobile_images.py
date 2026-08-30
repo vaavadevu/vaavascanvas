@@ -142,12 +142,39 @@ def to_rgb_if_needed(img, path):
 def paintings_root(root: Path) -> Path:
     return root / "images" / "paintings"
 
+def clay_root(root: Path) -> Path:
+    return root / "images" / "lera"
+
+def bookmarks_root(root: Path) -> Path:
+    return root / "images" / "bookmarks"
+
 def painting_folders(root: Path):
     """Alla målningsmappar, i bokstavsordning"""
     directory = paintings_root(root)
     if not directory.exists():
         return []
     return [f for f in sorted(directory.iterdir()) if f.is_dir()]
+
+def clay_folders(root: Path):
+    """Alla lerklumpsmappar, i bokstavsordning"""
+    directory = clay_root(root)
+    if not directory.exists():
+        return []
+    return [f for f in sorted(directory.iterdir()) if f.is_dir()]
+
+def bookmarks_files(root: Path):
+    """Alla bokmarksfiler (från original/ eller root), i bokstavsordning"""
+    directory = bookmarks_root(root)
+    if not directory.exists():
+        return []
+    # Bokmarks-original ligger i bookmarks/original/ subdir
+    original_dir = directory / "original"
+    if original_dir.exists():
+        return sorted([
+            p for p in original_dir.glob("*")
+            if p.is_file() and p.suffix.lower() in IMAGE_EXTENSIONS
+        ])
+    return []
 
 def images_in(folder: Path):
     """Bildfilerna i en mapp, i bokstavsordning"""
@@ -174,21 +201,25 @@ def source_hashes(painting_folder: Path) -> dict:
 def load_manifest(root: Path) -> dict:
     manifest_file = paintings_root(root) / MANIFEST_NAME
     if not manifest_file.exists():
-        return {"settings": {}, "paintings": {}}
+        return {"settings": {}, "paintings": {}, "clay": {}, "bookmarks": {}}
     try:
         with open(manifest_file, encoding="utf-8") as f:
             manifest = json.load(f)
     except (json.JSONDecodeError, OSError):
         print(f"⚠️  {MANIFEST_NAME} gick inte att läsa — allt räknas som oförbyggt")
-        return {"settings": {}, "paintings": {}}
+        return {"settings": {}, "paintings": {}, "clay": {}, "bookmarks": {}}
     manifest.setdefault("settings", {})
     manifest.setdefault("paintings", {})
+    manifest.setdefault("clay", {})
+    manifest.setdefault("bookmarks", {})
     return manifest
 
 def save_manifest(root: Path, manifest: dict):
     manifest_file = paintings_root(root) / MANIFEST_NAME
     manifest["settings"] = BUILD_SETTINGS
     manifest["paintings"] = dict(sorted(manifest["paintings"].items()))
+    manifest["clay"] = dict(sorted(manifest["clay"].items()))
+    manifest["bookmarks"] = dict(sorted(manifest["bookmarks"].items()))
     with open(manifest_file, "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2, ensure_ascii=False)
         f.write("\n")
@@ -196,6 +227,14 @@ def save_manifest(root: Path, manifest: dict):
 def is_empty_painting(painting_folder: Path) -> bool:
     """En mapp utan originalbilder — halvfardig eller bortglomd"""
     return not images_in(painting_folder / "original")
+
+def is_empty_clay(clay_folder: Path) -> bool:
+    """En lerklump utan originalbilder"""
+    return not images_in(clay_folder / "original")
+
+def is_empty_bookmarks(root: Path) -> bool:
+    """Bokmarksar utan originalbilder"""
+    return not bookmarks_files(root)
 
 
 def stale_kind(painting_folder: Path, manifest: dict):
@@ -314,10 +353,54 @@ def build_painting(painting_folder: Path, manifest: dict):
     manifest["paintings"][painting_folder.name] = {"sources": source_hashes(painting_folder)}
     return len(originals)
 
+def build_clay(clay_folder: Path, manifest: dict):
+    """Bygger om en lerklump och skriver in den i kvittot"""
+    resequence_originals(clay_folder)
+
+    # Töm desktop/ och mobile/ först
+    for variant in ("desktop", "mobile"):
+        variant_dir = clay_folder / variant
+        variant_dir.mkdir(exist_ok=True)
+        for old in variant_dir.glob("*"):
+            if old.is_file():
+                old.unlink()
+
+    originals = images_in(clay_folder / "original")
+    print(f"🧿 {clay_folder.name}/ ({len(originals)} bild(er))")
+    for src in originals:
+        process_image(src, clay_folder)
+
+    manifest["clay"][clay_folder.name] = {"sources": source_hashes(clay_folder)}
+    return len(originals)
+
+def build_bookmarks(root: Path, manifest: dict):
+    """Bygger om bokmarkarna och skriver in dem i kvittot"""
+    bookmarks_dir = bookmarks_root(root)
+    original_dir = bookmarks_dir / "original"
+    
+    if not original_dir.exists():
+        return 0
+    
+    # Töm desktop/ och mobile/ först
+    for variant in ("desktop", "mobile"):
+        variant_dir = bookmarks_dir / variant
+        variant_dir.mkdir(exist_ok=True)
+        for old in variant_dir.glob("*"):
+            if old.is_file():
+                old.unlink()
+
+    originals = images_in(original_dir)
+    print(f"🔖 bookmarks/ ({len(originals)} bild(er))")
+    for src in originals:
+        process_image(src, bookmarks_dir)
+
+    manifest["bookmarks"]["cover"] = {"sources": {img.name: file_hash(img) for img in originals}}
+    return len(originals)
+
 # ── Generera counts.json ──────────────────────────────────────────────────────
 
 def generate_counts_json(root: Path):
-    """Generate counts.json with image counts for each painting folder"""
+    """Generate counts.json with image counts for each product folder"""
     counts = {}
 
     for painting_folder in tqdm(painting_folders(root), desc="Genererar counts.json", unit="mapp"):
@@ -325,16 +408,23 @@ def generate_counts_json(root: Path):
         if images:
             counts[painting_folder.name] = len(images)
 
+    for clay_folder in tqdm(clay_folders(root), desc="Genererar counts.json (clay)", unit="mapp"):
+        images = images_in(clay_folder / "desktop")
+        if images:
+            counts[clay_folder.name] = len(images)
+
+    bookmarks_images = images_in(bookmarks_root(root) / "desktop")
+    if bookmarks_images:
+        counts["bookmarks"] = len(bookmarks_images)
+
     counts_file = paintings_root(root) / "counts.json"
     with open(counts_file, "w", encoding="utf-8") as f:
         json.dump(counts, f, indent=2, ensure_ascii=False)
 
     print("✅ counts.json uppdaterad!")
 
-# ── Generera metadata.json ────────────────────────────────────────────────────
-
 def generate_metadata_json(root: Path):
-    """Generate metadata.json with aspect ratios for each painting's 01.jpg"""
+    """Generate metadata.json with aspect ratios for each product's first image"""
     metadata = {}
 
     for painting_folder in tqdm(painting_folders(root), desc="Genererar metadata.json", unit="mapp"):
@@ -349,6 +439,27 @@ def generate_metadata_json(root: Path):
         except Exception as e:
             tqdm.write(f"⚠️  Kunde inte läsa {first_image}: {e}")
 
+    for clay_folder in tqdm(clay_folders(root), desc="Genererar metadata.json (clay)", unit="mapp"):
+        first_image = clay_folder / "desktop" / "01.jpg"
+        if not first_image.exists():
+            continue
+
+        try:
+            with Image.open(first_image) as img:
+                width, height = img.size
+                metadata[clay_folder.name] = round(width / height, 4)
+        except Exception as e:
+            tqdm.write(f"⚠️  Kunde inte läsa {first_image}: {e}")
+
+    bookmarks_first = bookmarks_root(root) / "desktop" / "01.jpg"
+    if bookmarks_first.exists():
+        try:
+            with Image.open(bookmarks_first) as img:
+                width, height = img.size
+                metadata["bookmarks"] = round(width / height, 4)
+        except Exception as e:
+            tqdm.write(f"⚠️  Kunde inte läsa {bookmarks_first}: {e}")
+
     metadata_file = paintings_root(root) / "metadata.json"
     with open(metadata_file, "w", encoding="utf-8") as f:
         json.dump(metadata, f, indent=2, ensure_ascii=False)
@@ -361,33 +472,58 @@ def check(root: Path, manifest: dict):
     """(fel, varningar) — fel maste ratas, varningar sags bara till om"""
     problems = []
     warnings = []
+    
+    # Check paintings
     folders = painting_folders(root)
     folder_names = {f.name for f in folders}
 
     for painting_folder in tqdm(folders, desc="Kontrollerar målningar", unit="mapp"):
         reason = stale_reason(painting_folder, manifest)
         if reason:
-            problems.append(f"{painting_folder.name}: {reason}")
+            problems.append(f"Målning {painting_folder.name}: {reason}")
 
     for painting_folder in folders:
         if is_empty_painting(painting_folder):
             warnings.append(
-                f"{painting_folder.name}: mappen har inga originalbilder — "
-                f"lagg tillbaka dem eller ta bort mappen")
+                f"Målning {painting_folder.name}: mappen har inga originalbilder — "
+                f"lägg tillbaka dem eller ta bort mappen")
 
-    # Kvarglömda mappar och kvittorader efter borttagna målningar
     for name in sorted(set(manifest["paintings"]) - folder_names):
-        problems.append(f"{name}: står kvar i {MANIFEST_NAME} men mappen finns inte längre")
+        problems.append(f"Målning {name}: står kvar i {MANIFEST_NAME} men mappen finns inte längre")
 
+    # Check clay
+    clay_folds = clay_folders(root)
+    clay_names = {f.name for f in clay_folds}
+
+    for clay_folder in tqdm(clay_folds, desc="Kontrollerar lerklumpar", unit="mapp"):
+        reason = stale_reason(clay_folder, manifest)
+        if reason:
+            problems.append(f"Clay {clay_folder.name}: {reason}")
+
+    for clay_folder in clay_folds:
+        if is_empty_clay(clay_folder):
+            warnings.append(
+                f"Clay {clay_folder.name}: mappen har inga originalbilder — "
+                f"lägg tillbaka dem eller ta bort mappen")
+
+    for name in sorted(set(manifest.get("clay", {})) - clay_names):
+        problems.append(f"Clay {name}: står kvar i {MANIFEST_NAME} men mappen finns inte längre")
+
+    # Check counts.json and metadata.json
     counts_file = paintings_root(root) / "counts.json"
     metadata_file = paintings_root(root) / "metadata.json"
 
     counts = json.loads(counts_file.read_text(encoding="utf-8")) if counts_file.exists() else {}
     metadata = json.loads(metadata_file.read_text(encoding="utf-8")) if metadata_file.exists() else {}
 
-    for painting_folder in folders:
-        name = painting_folder.name
-        built = len(images_in(painting_folder / "desktop"))
+    all_product_names = folder_names | clay_names
+
+    for name in all_product_names:
+        if name in folder_names:
+            built = len(images_in(paintings_root(root) / name / "desktop"))
+        else:
+            built = len(images_in(clay_root(root) / name / "desktop"))
+
         if built == 0:
             continue
         if counts.get(name) != built:
@@ -395,10 +531,10 @@ def check(root: Path, manifest: dict):
         if name not in metadata:
             problems.append(f"{name}: saknas i metadata.json")
 
-    for name in sorted(set(counts) - folder_names):
-        problems.append(f"{name}: står kvar i counts.json men mappen finns inte längre")
-    for name in sorted(set(metadata) - folder_names):
-        problems.append(f"{name}: står kvar i metadata.json men mappen finns inte längre")
+    for name in sorted(set(counts) - all_product_names):
+        problems.append(f"{name}: står kvar i counts.json men finns inte längre")
+    for name in sorted(set(metadata) - all_product_names):
+        problems.append(f"{name}: står kvar i metadata.json men finns inte längre")
 
     return problems, warnings
 
@@ -491,7 +627,9 @@ def main():
 
     manifest = load_manifest(root)
     folders = painting_folders(root)
+    clay_folds = clay_folders(root)
     by_name = {f.name: f for f in folders}
+    clay_by_name = {f.name: f for f in clay_folds}
 
     # ── Bara visa vad som skulle hända ───────────────────────────────────────
     if args.plan:
@@ -508,81 +646,117 @@ def main():
             print("\n   Kör sync_paintings_images.bat och välj [1] för att rätta till det.")
             print_warnings(warnings)
             return 1
-        print(f"\n✅ Alla {len(folders)} målningar stämmer med sina originalbilder!")
+        total_products = len(folders) + len(clay_folds)
+        print(f"\n✅ Alla {total_products} produkter stämmer med sina originalbilder!")
         print_warnings(warnings)
         return 0
 
     # ── Skriv kvitto utan att bygga om ───────────────────────────────────────
     if args.accept_current:
         print("📝 Skriver kvitto för bilderna som redan ligger på disken...\n")
-        for painting_folder in tqdm(folders, desc="Läser originalbilder", unit="mapp"):
+        for painting_folder in tqdm(folders, desc="Läser målningsbilder", unit="mapp"):
             hashes = source_hashes(painting_folder)
             if hashes:
                 manifest["paintings"][painting_folder.name] = {"sources": hashes}
-        # Tomma mappar och borttagna malningar hor inte hemma i kvittot
+        for clay_folder in tqdm(clay_folds, desc="Läser lerbilder", unit="mapp"):
+            hashes = source_hashes(clay_folder)
+            if hashes:
+                manifest["clay"][clay_folder.name] = {"sources": hashes}
+        # Tomma mappar och borttagna produkter hör inte hemma i kvittot
         for name in set(manifest["paintings"]) - set(by_name):
             del manifest["paintings"][name]
+        for name in set(manifest.get("clay", {})) - set(clay_by_name):
+            del manifest["clay"][name]
         for painting_folder in folders:
             if is_empty_painting(painting_folder):
                 manifest["paintings"].pop(painting_folder.name, None)
+        for clay_folder in clay_folds:
+            if is_empty_clay(clay_folder):
+                manifest["clay"].pop(clay_folder.name, None)
         save_manifest(root, manifest)
-        print(f"\n✅ Kvitto skrivet för {len(manifest['paintings'])} målningar.")
+        total_painted = len(manifest["paintings"])
+        total_clay = len(manifest.get("clay", {}))
+        print(f"\n✅ Kvitto skrivet för {total_painted} målningar och {total_clay} lerklumpar.")
         print("   Nästa körning bygger bara om det som faktiskt ändrats.\n")
         generate_counts_json(root)
         generate_metadata_json(root)
         return 0
 
     # ── Välj vad som ska byggas ──────────────────────────────────────────────
+    targets_paint = []
+    targets_clay = []
+    
     if args.only:
-        unknown = [name for name in args.only if name not in by_name]
+        all_by_name = {**by_name, **clay_by_name}
+        unknown = [name for name in args.only if name not in all_by_name]
         if unknown:
             print(f"❌ Hittar ingen mapp för: {', '.join(unknown)}")
-            print(f"   Välj bland: {', '.join(sorted(by_name))}")
+            all_names = sorted(set(by_name.keys()) | set(clay_by_name.keys()))
+            if all_names:
+                print(f"   Välj bland: {', '.join(all_names)}")
             return 1
-        targets = [by_name[name] for name in args.only]
-        print(f"🎯 Bygger om {len(targets)} målning(ar): {', '.join(args.only)}\n")
+        targets_paint = [by_name[name] for name in args.only if name in by_name]
+        targets_clay = [clay_by_name[name] for name in args.only if name in clay_by_name]
+        total_targets = len(targets_paint) + len(targets_clay)
+        print(f"🎯 Bygger om {total_targets} produkt(er): {', '.join(args.only)}\n")
     elif args.all:
-        targets = folders
-        print(f"🔁 Bygger om alla {len(targets)} målningar från grunden\n")
+        targets_paint = folders
+        targets_clay = clay_folds
+        total_targets = len(targets_paint) + len(targets_clay)
+        print(f"🔁 Bygger om alla {total_targets} produkter från grunden\n")
     else:
-        print("🔍 Letar efter målningar som ändrats...\n")
-        targets = []
-        for painting_folder in tqdm(folders, desc="Jämför med kvittot", unit="mapp"):
+        print("🔍 Letar efter produkter som ändrats...\n")
+        for painting_folder in tqdm(folders, desc="Jämför målningar", unit="mapp"):
             reason = stale_reason(painting_folder, manifest)
             if reason:
-                targets.append(painting_folder)
-                tqdm.write(f"   • {painting_folder.name}: {reason}")
-        if not targets:
+                targets_paint.append(painting_folder)
+                tqdm.write(f"   • Målning {painting_folder.name}: {reason}")
+        for clay_folder in tqdm(clay_folds, desc="Jämför lerklumpar", unit="mapp"):
+            reason = stale_reason(clay_folder, manifest)
+            if reason:
+                targets_clay.append(clay_folder)
+                tqdm.write(f"   • Clay {clay_folder.name}: {reason}")
+        if not targets_paint and not targets_clay:
             print("\n✅ Inga bilder har ändrats — inget att bygga om.\n")
 
     # ── Bygg ─────────────────────────────────────────────────────────────────
     total_images = 0
-    if targets:
+    if targets_paint or targets_clay:
         print(f"\n🆕 Bearbetar originalbilder...\n")
-        for painting_folder in targets:
+        for painting_folder in targets_paint:
             total_images += build_painting(painting_folder, manifest)
-        print(f"✅ Bildbearbetning klar! ({total_images} bild(er) i {len(targets)} målning(ar))\n")
+        for clay_folder in targets_clay:
+            total_images += build_clay(clay_folder, manifest)
+        total_targets = len(targets_paint) + len(targets_clay)
+        print(f"✅ Bildbearbetning klar! ({total_images} bild(er) i {total_targets} produkt(er))\n")
 
-    # En tom mapp gick aldrig att bygga — kvittoraden for den sager ingenting
-    emptied = sorted(f.name for f in folders
-                     if is_empty_painting(f) and f.name in manifest["paintings"])
-    for name in emptied:
-        del manifest["paintings"][name]
-    if emptied:
-        print(f"⚠️  {', '.join(emptied)} har inga originalbilder kvar.")
-        print("   Lagg tillbaka bilderna eller ta bort mappen.\n")
+    # Tomma mappar gick aldrig att bygga — kvittoraden för dem säger ingenting
+    emptied_paint = sorted(f.name for f in folders
+                          if is_empty_painting(f) and f.name in manifest["paintings"])
+    emptied_clay = sorted(f.name for f in clay_folds
+                         if is_empty_clay(f) and f.name in manifest.get("clay", {}))
+    for name in emptied_paint + emptied_clay:
+        manifest["paintings"].pop(name, None)
+        manifest["clay"].pop(name, None)
+    if emptied_paint or emptied_clay:
+        all_emptied = emptied_paint + emptied_clay
+        print(f"⚠️  {', '.join(all_emptied)} har inga originalbilder kvar.")
+        print("   Lägg tillbaka bilderna eller ta bort mappen.\n")
 
-    # Borttagna målningar ska inte ligga kvar i kvittot
-    removed = sorted(set(manifest["paintings"]) - set(by_name))
-    for name in removed:
+    # Borttagna produkter ska inte ligga kvar i kvittot
+    removed_paint = sorted(set(manifest["paintings"]) - set(by_name))
+    removed_clay = sorted(set(manifest.get("clay", {})) - set(clay_by_name))
+    for name in removed_paint:
         del manifest["paintings"][name]
-    if removed:
-        print(f"🗑  Tog bort {', '.join(removed)} ur kvittot (mappen finns inte längre)\n")
+    for name in removed_clay:
+        del manifest["clay"][name]
+    if removed_paint or removed_clay:
+        all_removed = removed_paint + removed_clay
+        print(f"🗑  Tog bort {', '.join(all_removed)} ur kvittot (mappen finns inte längre)\n")
 
     save_manifest(root, manifest)
 
-    # counts.json och metadata.json byggs alltid om från hela katalogen — det är
-    # de som annars hamnar fel när bara en målning byggts om
+    # counts.json och metadata.json byggs alltid om från hela katalogen
     print("📊 Genererar counts.json...")
     generate_counts_json(root)
     print()

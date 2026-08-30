@@ -1,0 +1,92 @@
+[
+  {
+    "id": "rav",
+    "title": "Räv",
+    "descKey": "desc_rav",
+    "width": 5,
+    "height": 10,
+    "originalPrice": 250,
+    "status": "sold"
+  },
+  {
+    "id": "bjorn",
+    "title": "Björn",
+    "descKey": "desc_bjorn",
+    "width": 5,
+    "height": 10,
+    "originalPrice": 250,
+    "status": "for_sale"
+  },
+  {
+    "id": "tiger",
+    "title": "Tiger",
+    "descKey": "desc_tiger",
+    "width": 5,
+    "height": 10,
+    "originalPrice": 250,
+    "status": "for_sale"
+  },
+  {
+    "id": "mallard",
+    "title": "Mallard",
+    "descKey": "desc_mallard",
+    "width": 5,
+    "height": 10,
+    "originalPrice": 250,
+    "status": "for_sale"
+  },
+  {
+    "id": "owl",
+    "title": "Uggla",
+    "descKey": "desc_owl",
+    "width": 5,
+    "height": 10,
+    "originalPrice": 250,
+    "status": "for_sale"
+  },
+  {
+    "id": "pigeon",
+    "title": "Duva",
+    "descKey": "desc_pigeon",
+    "width": 5,
+    "height": 10,
+    "originalPrice": 250,
+    "status": "for_sale"
+  },
+  {
+    "id": "piggy",
+    "title": "Gris",
+    "descKey": "desc_piggy",
+    "width": 5,
+    "height": 10,
+    "originalPrice": 250,
+    "status": "for_sale"
+  },
+  {
+    "id": "robin",
+    "title": "Rödhake",
+    "descKey": "desc_robin",
+    "width": 5,
+    "height": 10,
+    "originalPrice": 250,
+    "status": "for_sale"
+  },
+  {
+    "id": "blame",
+    "title": "Blåmes",
+    "descKey": "desc_blame",
+    "width": 5,
+    "height": 10,
+    "originalPrice": 250,
+    "status": "for_sale"
+  },
+  {
+    "id": "kanin",
+    "title": "Kanin",
+    "descKey": "desc_kanin",
+    "width": 5,
+    "height": 10,
+    "originalPrice": 250,
+    "status": "for_sale"
+  }
+]

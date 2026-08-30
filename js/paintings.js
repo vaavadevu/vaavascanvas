@@ -21,7 +21,8 @@ const SHAPE = {
 // Medium constants
 const MEDIUM = {
   ACRYLIC_CANVAS: "medium_acrylic_canvas",
-  WATERCOLOR_PAPER_LAMINATED: "medium_watercolor_paper_laminated"
+  WATERCOLOR_PAPER_LAMINATED: "medium_watercolor_paper_laminated",
+  CLAY: "medium_clay"
 };
 
 // Size constants
@@ -273,7 +274,8 @@ const paintings = [
     width: 90,
     height: 60,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 3200
+    originalPrice: 3200,
+    type: TYPE.PAINTING
   },
   {
     id: "aldrigEnsam",
@@ -284,7 +286,8 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 600
+    originalPrice: 600,
+    type: TYPE.PAINTING
   },
   {
     id: "operationBaver",
@@ -295,7 +298,8 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 600
+    originalPrice: 600,
+    type: TYPE.PAINTING
   },
   {
     id: "skymningsDrom",
@@ -306,7 +310,8 @@ const paintings = [
     width: 30,
     height: 90,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 2000
+    originalPrice: 2000,
+    type: TYPE.PAINTING
   },
   {
     id: "koslapp",
@@ -319,7 +324,8 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     framedPrice: 3500,
     framedOnly: true,
-    frameAvailable: true
+    frameAvailable: true,
+    type: TYPE.PAINTING
   },
   {
     id: "narhet",
@@ -332,7 +338,8 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     framedPrice: 2500,
     framedOnly: true,
-    frameAvailable: true
+    frameAvailable: true,
+    type: TYPE.PAINTING
   },
   {
     id: "tjuvsmak",
@@ -343,7 +350,8 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 600
+    originalPrice: 600,
+    type: TYPE.PAINTING
   },
   {
     id: "maskrosdrom",
@@ -354,7 +362,8 @@ const paintings = [
     width: 24,
     height: 18,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 600
+    originalPrice: 600,
+    type: TYPE.PAINTING
   },
   {
     id: "frihet",
@@ -365,7 +374,8 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 600
+    originalPrice: 600,
+    type: TYPE.PAINTING
   },
   {
     id: "lodjur",
@@ -376,7 +386,8 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 600
+    originalPrice: 600,
+    type: TYPE.PAINTING
   },
   {
     id: "kattuggla",
@@ -387,7 +398,8 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 600
+    originalPrice: 600,
+    type: TYPE.PAINTING
   },
   {
     id: "tropisktBad",
@@ -398,7 +410,8 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 600
+    originalPrice: 600,
+    type: TYPE.PAINTING
   },
   {
     id: "busungen",
@@ -409,7 +422,8 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 600
+    originalPrice: 600,
+    type: TYPE.PAINTING
   },
   {
     id: "breadwinner",
@@ -420,7 +434,8 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 600
+    originalPrice: 600,
+    type: TYPE.PAINTING
   },
   {
     id: "minMamma",
@@ -433,7 +448,8 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1500,
     framedPrice: 1800,
-    frameAvailable: true
+    frameAvailable: true,
+    type: TYPE.PAINTING
   },
   {
     id: "solvarmeISkogen",
@@ -444,7 +460,8 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1500
+    originalPrice: 1500,
+    type: TYPE.PAINTING
   },
   {
     id: "underHennesVingar",
@@ -455,7 +472,8 @@ const paintings = [
     width: 59,
     height: 42,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1800
+    originalPrice: 1800,
+    type: TYPE.PAINTING
   },
   {
     id: "vidAn",
@@ -466,7 +484,8 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1500
+    originalPrice: 1500,
+    type: TYPE.PAINTING
   },
   {
     id: "enLerigDrom",
@@ -477,7 +496,8 @@ const paintings = [
     width: 59,
     height: 42,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1800
+    originalPrice: 1800,
+    type: TYPE.PAINTING
   },
   {
     id: "efterIde",
@@ -490,7 +510,8 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1500,
     framedPrice: 1800,
-    frameAvailable: true
+    frameAvailable: true,
+    type: TYPE.PAINTING
   },
   {
     id: "sommarstuga",
@@ -501,7 +522,8 @@ const paintings = [
     width: 59,
     height: 42,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1500
+    originalPrice: 1500,
+    type: TYPE.PAINTING
   },
   {
     id: "sommarPaStranden",
@@ -512,7 +534,8 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1500
+    originalPrice: 1500,
+    type: TYPE.PAINTING
   },
   {
     id: "skaViPlockaBlommor",
@@ -523,7 +546,8 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1500
+    originalPrice: 1500,
+    type: TYPE.PAINTING
   },
   {
     id: "varkansla",
@@ -534,7 +558,8 @@ const paintings = [
     width: 59,
     height: 42,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1500
+    originalPrice: 1500,
+    type: TYPE.PAINTING
   },
   {
     id: "vargen",
@@ -545,7 +570,8 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1800
+    originalPrice: 1800,
+    type: TYPE.PAINTING
   },
   {
     id: "skogsvila",
@@ -555,7 +581,8 @@ const paintings = [
     medium: MEDIUM.ACRYLIC_CANVAS,
     diameter: 90,
     shape: SHAPE.CIRCLE,
-    originalPrice: 3000
+    originalPrice: 3000,
+    type: TYPE.PAINTING
   },
   {
     id: "vinterlek",
@@ -566,7 +593,8 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1800
+    originalPrice: 1800,
+    type: TYPE.PAINTING
   },
   {
     id: "sommarvila",
@@ -577,7 +605,8 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1800
+    originalPrice: 1800,
+    type: TYPE.PAINTING
   },
   {
     id: "dagensFynd",
@@ -590,7 +619,8 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1200,
     framedPrice: 2100,
-    frameAvailable: true
+    frameAvailable: true,
+    type: TYPE.PAINTING
   },
   {
     id: "sugenPaEttApple",
@@ -603,7 +633,8 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1800,
     framedPrice: 2000,
-    frameAvailable: true
+    frameAvailable: true,
+    type: TYPE.PAINTING
   },
   {
     id: "varlek",
@@ -616,7 +647,250 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1600,
     framedPrice: 1900,
-    frameAvailable: true
+    frameAvailable: true,
+    type: TYPE.PAINTING
+  },
+  {
+    id: "foreStormen",
+    title: "Före stormen",
+    descKey: "desc_foreStormen",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    width: 42,
+    height: 59,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 1600,
+    type: TYPE.PAINTING
+  },
+  {
+    id: "photobomb",
+    title: "Photobomb",
+    descKey: "desc_photobomb",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    width: 59,
+    height: 42,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 1600,
+    type: TYPE.PAINTING
+  },
+  {
+    id: "rav",
+    title: "Räv",
+    descKey: "desc_rav",
+    status: STATUS.SOLD,
+    medium: MEDIUM.CLAY,
+    width: 5,
+    height: 10,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 250,
+    type: TYPE.CLAY,
+    images: {
+      desktop: [
+        "/images/lera/rav/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/lera/rav/mobile/01.jpg"
+      ]
+    }
+  },
+  {
+    id: "bjorn",
+    title: "Björn",
+    descKey: "desc_bjorn",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.CLAY,
+    width: 5,
+    height: 10,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 250,
+    type: TYPE.CLAY,
+    images: {
+      desktop: [
+        "/images/lera/bjorn/desktop/01.jpg",
+        "/images/lera/bjorn/desktop/02.jpg"
+      ],
+      mobile: [
+        "/images/lera/bjorn/mobile/01.jpg",
+        "/images/lera/bjorn/mobile/02.jpg"
+      ]
+    }
+  },
+  {
+    id: "tiger",
+    title: "Tiger",
+    descKey: "desc_tiger",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.CLAY,
+    width: 5,
+    height: 10,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 250,
+    type: TYPE.CLAY,
+    images: {
+      desktop: [
+        "/images/lera/tiger/desktop/01.jpg",
+        "/images/lera/tiger/desktop/02.jpg"
+      ],
+      mobile: [
+        "/images/lera/tiger/mobile/01.jpg",
+        "/images/lera/tiger/mobile/02.jpg"
+      ]
+    }
+  },
+  {
+    id: "mallard",
+    title: "Mallard",
+    descKey: "desc_mallard",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.CLAY,
+    width: 5,
+    height: 10,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 250,
+    type: TYPE.CLAY,
+    images: {
+      desktop: [
+        "/images/lera/mallard/desktop/01.jpg",
+        "/images/lera/mallard/desktop/02.jpg"
+      ],
+      mobile: [
+        "/images/lera/mallard/mobile/01.jpg",
+        "/images/lera/mallard/mobile/02.jpg"
+      ]
+    }
+  },
+  {
+    id: "owl",
+    title: "Uggla",
+    descKey: "desc_owl",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.CLAY,
+    width: 5,
+    height: 10,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 250,
+    type: TYPE.CLAY,
+    images: {
+      desktop: [
+        "/images/lera/owl/desktop/01.jpg",
+        "/images/lera/owl/desktop/02.jpg"
+      ],
+      mobile: [
+        "/images/lera/owl/mobile/01.jpg",
+        "/images/lera/owl/mobile/02.jpg"
+      ]
+    }
+  },
+  {
+    id: "pigeon",
+    title: "Duva",
+    descKey: "desc_pigeon",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.CLAY,
+    width: 5,
+    height: 10,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 250,
+    type: TYPE.CLAY,
+    images: {
+      desktop: [
+        "/images/lera/pigeon/desktop/01.jpg",
+        "/images/lera/pigeon/desktop/02.jpg"
+      ],
+      mobile: [
+        "/images/lera/pigeon/mobile/01.jpg",
+        "/images/lera/pigeon/mobile/02.jpg"
+      ]
+    }
+  },
+  {
+    id: "piggy",
+    title: "Gris",
+    descKey: "desc_piggy",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.CLAY,
+    width: 5,
+    height: 10,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 250,
+    type: TYPE.CLAY,
+    images: {
+      desktop: [
+        "/images/lera/piggy/desktop/01.jpg",
+        "/images/lera/piggy/desktop/02.jpg"
+      ],
+      mobile: [
+        "/images/lera/piggy/mobile/01.jpg",
+        "/images/lera/piggy/mobile/02.jpg"
+      ]
+    }
+  },
+  {
+    id: "robin",
+    title: "Rödhake",
+    descKey: "desc_robin",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.CLAY,
+    width: 5,
+    height: 10,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 250,
+    type: TYPE.CLAY,
+    images: {
+      desktop: [
+        "/images/lera/robin/desktop/01.jpg",
+        "/images/lera/robin/desktop/02.jpg"
+      ],
+      mobile: [
+        "/images/lera/robin/mobile/01.jpg",
+        "/images/lera/robin/mobile/02.jpg"
+      ]
+    }
+  },
+  {
+    id: "blame",
+    title: "Blåmes",
+    descKey: "desc_blame",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.CLAY,
+    width: 5,
+    height: 10,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 250,
+    type: TYPE.CLAY,
+    images: {
+      desktop: [
+        "/images/lera/blame/desktop/01.jpg",
+        "/images/lera/blame/desktop/02.jpg"
+      ],
+      mobile: [
+        "/images/lera/blame/mobile/01.jpg",
+        "/images/lera/blame/mobile/02.jpg"
+      ]
+    }
+  },
+  {
+    id: "kanin",
+    title: "Kanin",
+    descKey: "desc_kanin",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.CLAY,
+    width: 5,
+    height: 10,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 250,
+    type: TYPE.CLAY,
+    images: {
+      desktop: [
+        "/images/lera/kanin/desktop/01.jpg",
+        "/images/lera/kanin/desktop/02.jpg"
+      ],
+      mobile: [
+        "/images/lera/kanin/mobile/01.jpg",
+        "/images/lera/kanin/mobile/02.jpg"
+      ]
+    }
   },
   {
     id: "bookmarks",
@@ -667,138 +941,6 @@ const paintings = [
         "/images/bookmarks/wilddog.jpg"
       ]
     }
-  },
-  {
-    id: "foreStormen",
-    title: "Före stormen",
-    descKey: "desc_foreStormen",
-    status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
-    width: 42,
-    height: 59,
-    shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600
-  },
-  {
-    id: "photobomb",
-    title: "Photobomb",
-    descKey: "desc_photobomb",
-    status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
-    width: 59,
-    height: 42,
-    shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600
-  },
-  {
-    id: "leraRav",
-    title: "Räv",
-    descKey: "desc_leraRav",
-    status: STATUS.SOLD,
-    medium: MEDIUM.ACRYLIC_CANVAS,
-    width: 5,
-    height: 10,
-    shape: SHAPE.RECTANGULAR,
-    originalPrice: 250
-  },
-  {
-    id: "leraBjorn",
-    title: "Björn",
-    descKey: "desc_leraBjorn",
-    status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
-    width: 5,
-    height: 10,
-    shape: SHAPE.RECTANGULAR,
-    originalPrice: 250
-  },
-  {
-    id: "leraTiger",
-    title: "Tiger",
-    descKey: "desc_leraTiger",
-    status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
-    width: 5,
-    height: 10,
-    shape: SHAPE.RECTANGULAR,
-    originalPrice: 250
-  },
-  {
-    id: "leraMallard",
-    title: "Mallard",
-    descKey: "desc_leraMallard",
-    status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
-    width: 5,
-    height: 10,
-    shape: SHAPE.RECTANGULAR,
-    originalPrice: 250
-  },
-  {
-    id: "leraOwl",
-    title: "Uggla",
-    descKey: "desc_leraOwl",
-    status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
-    width: 5,
-    height: 10,
-    shape: SHAPE.RECTANGULAR,
-    originalPrice: 250
-  },
-  {
-    id: "leraPigeon",
-    title: "Duva",
-    descKey: "desc_leraPigeon",
-    status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
-    width: 5,
-    height: 10,
-    shape: SHAPE.RECTANGULAR,
-    originalPrice: 250
-  },
-  {
-    id: "leraPiggy",
-    title: "Gris",
-    descKey: "desc_leraPiggy",
-    status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
-    width: 5,
-    height: 10,
-    shape: SHAPE.RECTANGULAR,
-    originalPrice: 250
-  },
-  {
-    id: "leraRobin",
-    title: "Rödhake",
-    descKey: "desc_leraRobin",
-    status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
-    width: 5,
-    height: 10,
-    shape: SHAPE.RECTANGULAR,
-    originalPrice: 250
-  },
-  {
-    id: "leraBlame",
-    title: "Blåmes",
-    descKey: "desc_leraBlame",
-    status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
-    width: 5,
-    height: 10,
-    shape: SHAPE.RECTANGULAR,
-    originalPrice: 250
-  },
-  {
-    id: "leraKanin",
-    title: "Kanin",
-    descKey: "desc_leraKanin",
-    status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
-    width: 5,
-    height: 10,
-    shape: SHAPE.RECTANGULAR,
-    originalPrice: 250
   },
 ];
 

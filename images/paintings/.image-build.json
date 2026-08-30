@@ -271,5 +271,67 @@
         "02.jpg": "0a694f2f5a25b812584290471f75fcaa04eb053d7d42e2e4d20e38edeb67dd3f"
       }
     }
-  }
+  },
+  "clay": {
+    "bjorn": {
+      "sources": {
+        "01.jpg": "c2f223b804a566ee04175f82c25945d96d244012f656b5ada336521a2ea21f59",
+        "02.jpg": "256f823a78300829d9a440e77d8cf8ed31de988c27beb7c0244f47b4e0851c75"
+      }
+    },
+    "blame": {
+      "sources": {
+        "01.jpg": "0cd35e210416898b56fded899d797e0df5ecb51a9fb5ba8c724cc7a305791bb0",
+        "02.jpg": "7b2f2900e5800093e42fa7820e92c5b61e899c75f0b609e3eabee91d11ad7bfe"
+      }
+    },
+    "kanin": {
+      "sources": {
+        "01.jpg": "2c3cd73fb6c8613085a4e9066da6cff0c16243df86d03b7089639d5fe45cf7f6",
+        "02.jpg": "94e8a17bf9c379f827cb0660ae14f142cb913cf2115fde0ef991ce9af7efce9a"
+      }
+    },
+    "mallard": {
+      "sources": {
+        "01.jpg": "c122476380127619b5b398a3dce274bab6781ed544f41263715e4bfff7f5c262",
+        "02.jpg": "56b610c7f38ee5e91f47ccaa12454e0079a5aff217cbe9dd615487a7ce63e3c7"
+      }
+    },
+    "owl": {
+      "sources": {
+        "01.jpg": "466eb80dafb9f6c111209a50d3d389f8964ad96d34204aed4baffec4ae05891a",
+        "02.jpg": "f6e79898126d121ef11311e60016f2e04667d3253bd504c1d03ce364fea7c10c"
+      }
+    },
+    "pigeon": {
+      "sources": {
+        "01.jpg": "800b6940231797134ba3cfa24600a38741cb3aee5c62906309dacfd8dd5255a3",
+        "02.jpg": "5423e6f598bbc573edb5c13f78cda9e32c11d91defb83ffa7109a5aede01a179"
+      }
+    },
+    "piggy": {
+      "sources": {
+        "01.jpg": "35ef3b835a4a2e7ff83b51b827b36dd007cb858ec3d2f4f19b2f23e789e62d1f",
+        "02.jpg": "8a5888afc8cb2a3c62ba98f488b4cea69cd88a2d0368b74e88871aa290f3bf00"
+      }
+    },
+    "rav": {
+      "sources": {
+        "01.jpg": "ecb2559203dac1aae2dea2de70ad18fe9df09a6af9ef120a36b4d038b0a1ab8d"
+      }
+    },
+    "robin": {
+      "sources": {
+        "01.jpg": "6baa466ecb4978c9f3e9b7a453f2272aa905809a3449b52d42e6e17e145bacfe",
+        "02.jpg": "5f6886fa9ea35501bdc5ae23403f2912d034d72830c91e8e913ae0827a185ae4"
+      }
+    },
+    "tiger": {
+      "sources": {
+        "01.jpg": "8e3ef74aef330a496101bf448daf8402a14ccefbb1fd81411acd934a6ee995fd",
+        "02.jpg": "3ebad118e6eb6ce62fbb0b3db506a8b5a812123cfcb53fb538335060bdc19cd7"
+      }
+    }
+  },
+  "bookmarks": {}
 }
