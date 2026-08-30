@@ -153,7 +153,12 @@ header.box {
 }
 
 /* ─── Nav ─── */
-nav {
+/* The header's own menu, centred across the header whatever sits either side
+   of it. Scoped to the header: as a bare `nav` this reached every <nav> on the
+   site — it was taking the blog's prev/next links out of the flow and pulling
+   them halfway across the page, and it would do the same to the shop's type
+   row. */
+.stickyHeader nav {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);

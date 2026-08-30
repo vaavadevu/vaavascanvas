@@ -336,62 +336,74 @@
   "bookmarks": {
     "bear": {
       "sources": {
-        "01.jpg": "3f7180fd242458e88b9741195aab50dd4db516ee227be856fb45ac7ef507ef30"
+        "01.jpg": "0d0cf4bc54b1ebdef2f5ab6984363fc9d8c989807108debd79a5bc488ffb60db",
+        "02.jpg": "3f7180fd242458e88b9741195aab50dd4db516ee227be856fb45ac7ef507ef30"
       }
     },
     "cheetah": {
       "sources": {
-        "01.jpg": "ce229c2caed19b166b08946bec5c19e911c188248bcd1a219ecc5848a31e5df9"
+        "01.jpg": "4468518723a44168623b1a57f1506ef3c20f1a7fc1f2b9ad186b33429ceee82f",
+        "02.jpg": "ce229c2caed19b166b08946bec5c19e911c188248bcd1a219ecc5848a31e5df9"
       }
     },
     "chicken1": {
       "sources": {
-        "01.jpg": "16c43db936f10fc33e94c648d7f7e54d8c73b9e169fe58e56365cedd411e2f36"
+        "01.jpg": "da4a3711a8a7af6f42568c576e809117f0b94499aeb5f8b22247e27965bb456f",
+        "02.jpg": "16c43db936f10fc33e94c648d7f7e54d8c73b9e169fe58e56365cedd411e2f36"
       }
     },
     "chicken2": {
       "sources": {
-        "01.jpg": "b52af2b6af16b1a9c1336e5ba8fc3fa14da409cbd1d3e9085e442cffd24d0d24"
+        "01.jpg": "4abe438845bfca0eb8d4ca134a659f9a1db493d2a3b347e0a3b952a37c4ac9c9",
+        "02.jpg": "b52af2b6af16b1a9c1336e5ba8fc3fa14da409cbd1d3e9085e442cffd24d0d24"
       }
     },
     "cow": {
       "sources": {
-        "01.jpg": "8be2e894e82548c4eeefff7d22f046042ce723917a516baf97beb631dba82891"
+        "01.jpg": "a38f66b0f0537ae5df3e6d067e215aaf1a299682df7b35e48d6f6b118a916d5b",
+        "02.jpg": "8be2e894e82548c4eeefff7d22f046042ce723917a516baf97beb631dba82891"
       }
     },
     "giraffe": {
       "sources": {
-        "01.jpg": "a714cdde7bfae3a1931c193f7e93e64deae970f6071ccdb27e1bfef34eddd305"
+        "01.jpg": "17cbdd043cb0f526d06ba1b8f2e3419f9f16aa094f8b9f9df7ce44d0def8e283",
+        "02.jpg": "a714cdde7bfae3a1931c193f7e93e64deae970f6071ccdb27e1bfef34eddd305"
       }
     },
     "mallard": {
       "sources": {
-        "01.jpg": "8704a6f3747addcb7ede6c4884a1d9396f1a455bef1bba68f04ca96c3b15ee38"
+        "01.jpg": "40fbe0fda6da5fc29f5719b869cce1e61e0de8ee6f3c1aa75cdfb783dafe9a1c",
+        "02.jpg": "8704a6f3747addcb7ede6c4884a1d9396f1a455bef1bba68f04ca96c3b15ee38"
       }
     },
     "pigeon": {
       "sources": {
-        "01.jpg": "b4e483df3bf0e1a4b963d088d6295ca789f53040c8b819c76e750f09096177a2"
+        "01.jpg": "e080ff4b546eb0c59fe38c9b17202a954c4e8564774fba243625030cf293b7bf",
+        "02.jpg": "b4e483df3bf0e1a4b963d088d6295ca789f53040c8b819c76e750f09096177a2"
       }
     },
     "piggy": {
       "sources": {
-        "01.jpg": "702171900b3ad37a7b405e43b71c27c853f7eccb932eb2f476c632e7031f9f0c"
+        "01.jpg": "2b628b02e77ef63f0d4a2387dde394c50d903f5767109807e28810ebb91d1f51",
+        "02.jpg": "702171900b3ad37a7b405e43b71c27c853f7eccb932eb2f476c632e7031f9f0c"
       }
     },
     "pingvin": {
       "sources": {
-        "01.jpg": "dd198b017326c980f18ba407d38a63232f17106e69bda0ad3c2294e404fd48b2"
+        "01.jpg": "396ed92b1404702b6c53bdd5f6fc40bb44bec020a3b47806b284a43ff357ba2b",
+        "02.jpg": "dd198b017326c980f18ba407d38a63232f17106e69bda0ad3c2294e404fd48b2"
       }
     },
     "rabbit": {
       "sources": {
-        "01.jpg": "ed88691735a84a8a19365c8f7772c0f54fa18d22ee429b5e0e5dc41c0dc2cf58"
+        "01.jpg": "2bf135a570e8a013a1baee490a29f49d285143f720b6a1e7f485c5b218f112dd",
+        "02.jpg": "ed88691735a84a8a19365c8f7772c0f54fa18d22ee429b5e0e5dc41c0dc2cf58"
       }
     },
     "wilddog": {
       "sources": {
-        "01.jpg": "a28a27df04639529f8b6627f46c7e06dea91d18476be870e7bf5a44c43b3da0c"
+        "01.jpg": "40d008070033f9c81f7af6a87330768b2e3619e9b34f35fa46c3dbceb3561ed1",
+        "02.jpg": "a28a27df04639529f8b6627f46c7e06dea91d18476be870e7bf5a44c43b3da0c"
       }
     }
   }

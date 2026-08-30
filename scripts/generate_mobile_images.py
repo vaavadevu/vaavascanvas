@@ -148,6 +148,9 @@ def clay_root(root: Path) -> Path:
 def bookmarks_root(root: Path) -> Path:
     return root / "images" / "bookmarks"
 
+def hero_root(root: Path) -> Path:
+    return root / "images" / "hero"
+
 def painting_folders(root: Path):
     """Alla målningsmappar, i bokstavsordning"""
     directory = paintings_root(root)
@@ -161,6 +164,13 @@ def clay_folders(root: Path):
     if not directory.exists():
         return []
     return [f for f in sorted(directory.iterdir()) if f.is_dir()]
+
+def hero_folders(root: Path):
+    """Startsidans hero-bild. Den är en enda mapp och inte en vara i katalogen,
+    men originalet ska byggas om och bevisas som alla andra bilder — så den går
+    genom samma slingor, i en lista med en mapp i."""
+    folder = hero_root(root)
+    return [folder] if folder.exists() else []
 
 def bookmark_folders(root: Path):
     """Alla bokmärkesmappar, i bokstavsordning"""
@@ -204,17 +214,18 @@ def source_hashes(painting_folder: Path) -> dict:
 def load_manifest(root: Path) -> dict:
     manifest_file = paintings_root(root) / MANIFEST_NAME
     if not manifest_file.exists():
-        return {"settings": {}, "paintings": {}, "clay": {}, "bookmarks": {}}
+        return {"settings": {}, "paintings": {}, "clay": {}, "bookmarks": {}, "hero": {}}
     try:
         with open(manifest_file, encoding="utf-8") as f:
             manifest = json.load(f)
     except (json.JSONDecodeError, OSError):
         print(f"⚠️  {MANIFEST_NAME} gick inte att läsa — allt räknas som oförbyggt")
-        return {"settings": {}, "paintings": {}, "clay": {}, "bookmarks": {}}
+        return {"settings": {}, "paintings": {}, "clay": {}, "bookmarks": {}, "hero": {}}
     manifest.setdefault("settings", {})
     manifest.setdefault("paintings", {})
     manifest.setdefault("clay", {})
     manifest.setdefault("bookmarks", {})
+    manifest.setdefault("hero", {})
     return manifest
 
 def save_manifest(root: Path, manifest: dict):
@@ -223,6 +234,7 @@ def save_manifest(root: Path, manifest: dict):
     manifest["paintings"] = dict(sorted(manifest["paintings"].items()))
     manifest["clay"] = dict(sorted(manifest["clay"].items()))
     manifest["bookmarks"] = dict(sorted(manifest["bookmarks"].items()))
+    manifest["hero"] = dict(sorted(manifest["hero"].items()))
     with open(manifest_file, "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2, ensure_ascii=False)
         f.write("\n")
@@ -238,6 +250,10 @@ def is_empty_clay(clay_folder: Path) -> bool:
 def is_empty_bookmark(bookmark_folder: Path) -> bool:
     """Ett bokmärke utan originalbilder"""
     return not images_in(bookmark_folder / "original")
+
+def is_empty_hero(hero_folder: Path) -> bool:
+    """Hero-mappen utan originalbild"""
+    return not images_in(hero_folder / "original")
 
 
 def stale_kind(painting_folder: Path, manifest: dict, section: str = "paintings"):
@@ -289,21 +305,52 @@ def stale_reason(painting_folder: Path, manifest: dict, section: str = "painting
 
 # ── Resekvensering ───────────────────────────────────────────────────────────
 
+def free_path(folder: Path, base: str, suffix: str) -> Path:
+    """En sökväg i mappen som ingen fil upptar — basnamnet om det är ledigt,
+    annars med en siffra tillagd. Ett mellannamn som redan finns (en rest från
+    en avbruten körning) får aldrig skrivas över: det är någons bild."""
+    candidate = folder / f"{base}{suffix}"
+    n = 0
+    while candidate.exists():
+        n += 1
+        candidate = folder / f"{base}-{n}{suffix}"
+    return candidate
+
+
 def resequence_originals(painting_folder: Path):
     """Numrerar om original/ till 01, 02, 03… och gör ändelsen gemen"""
     originals = images_in(painting_folder / "original")
     if not originals:
         return
 
+    # Redan numrerade bilder behåller sin plats, resten läggs efter dem i
+    # bokstavsordning. Utan det avgör filnamnet ensamt vilken bild som blir
+    # 01 — och "01 - Copy.jpg", som Windows döper en inklistrad kopia till,
+    # sorterar före "01.jpg" och tar över omslaget från bilden man valde.
+    numbered = [p for p in originals if len(p.stem) == 2 and p.stem.isdigit()]
+    unnumbered = [p for p in originals if p not in numbered]
+    numbered.sort(key=lambda p: int(p.stem))
+    originals = numbered + unnumbered
+
+    # Två vändor: allt flyttas undan först och tillbaka sedan.
+    #
+    # En bild i taget rakt till sin slutplats fungerar bara så länge platsen
+    # råkar vara ledig. Ligger 01.jpg redan där när en annan bild ska bli
+    # 01.jpg avbryts körningen mitt i omdöpningen, och den halvflyttade bilden
+    # blir liggande som __tmp_01.jpg. Den filen räknas sedan som ett original
+    # i sin egen rätt, så nästa körning kraschar på samma sätt igen — mappen
+    # går inte att bygga förrän någon rensar för hand.
+    #
+    # Mellannamnen behövs ändå: Windows filsystem är skiftlägesokänsligt, så
+    # 01.JPG → 01.jpg är inte alltid en tillåten omdöpning.
+    staged = []
     for idx, img_path in enumerate(originals, start=1):
-        new_path = img_path.parent / f"{idx:02d}{img_path.suffix.lower()}"
-        if img_path == new_path:
-            continue
-        # Via ett mellannamn: Windows filsystem är skiftlägesokänsligt, så
-        # 01.JPG → 01.jpg är annars inte alltid en tillåten omdöpning
-        temp_path = img_path.parent / f"__tmp_{idx:02d}{img_path.suffix.lower()}"
+        temp_path = free_path(img_path.parent, f"__tmp_{idx:02d}", img_path.suffix.lower())
         img_path.rename(temp_path)
-        temp_path.rename(new_path)
+        staged.append(temp_path)
+
+    for idx, temp_path in enumerate(staged, start=1):
+        temp_path.rename(temp_path.parent / f"{idx:02d}{temp_path.suffix.lower()}")
 
 # ── Bearbeta bilder ──────────────────────────────────────────────────────────
 

@@ -32,9 +32,21 @@
   --frame-outer-shadow: 0 3px 10px rgba(181, 153, 112, 0.3);
 }
 
+/* Bookmarks are long and narrow, so more of them fit across (see
+   updateGalleryColumnWidth in gallery.js) — but not as many as would fit. A
+   tile a third as wide as it is tall stops being worth looking at somewhere
+   under 180px across, so these counts keep it near that at every width. */
+#gallery.gallery--narrow {
+  --gallery-columns: 6;
+}
+
 @media (max-width: 1100px) {
   #gallery {
     --gallery-columns: 3;
+  }
+
+  #gallery.gallery--narrow {
+    --gallery-columns: 5;
   }
 }
 
@@ -42,10 +54,18 @@
   #gallery {
     --gallery-columns: 2;
   }
+
+  #gallery.gallery--narrow {
+    --gallery-columns: 3;
+  }
 }
 
 @media (max-width: 480px) {
   #gallery {
+    --gallery-columns: 2;
+  }
+
+  #gallery.gallery--narrow {
     --gallery-columns: 2;
   }
 }
@@ -94,6 +114,14 @@
 
 .gallery-item img:hover {
   transform: scale(1.1);
+}
+
+/* Clay and bookmarks are each held to one shape (see gallery.js), so every
+   tile in a row of them is the same height. The photo fills its frame — the
+   shape it is held to is the shape it very nearly already is, so what this
+   trims is a few pixels off an end, not a picture. */
+.gallery-item--uniform img {
+  object-fit: cover;
 }
 
 .gallery-item--circle {
@@ -248,34 +276,95 @@
 /* ─── Sticky filter bar (desktop) ─── */
 /* Desktop only — on phones and tablets the floating filter button in
    css/fab.css carries the same controls */
-#gallery-filter-bar {
-  display: none;
-  flex-wrap: nowrap;
-  gap: 10px;
-  justify-content: center;
-  padding: 10px 20px;
+/* ── The band under the header ─────────────────────────────────
+   Which kind of work is being shown, and the filters that apply to it. They
+   travel together under the fixed header: setupFilterBar() measures the band
+   and moves the page down to clear it. Below 961px the filter bar drops out
+   (the floating button carries it) and the band is the type row alone. */
+
+#shop-bands {
+  position: sticky;
+  top: 0;
+  z-index: 100;
   background: var(--bg-light);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease, opacity 0.2s ease;
   border-bottom: 1px solid var(--accent-green);
 }
 
-/* The filter bar used to be the first thing on the page and carried the
-   offset for the fixed header. With it gone from phones the page has to clear
-   the header itself — responsive.css zeroes main's padding below 961px, and
-   setupFilterBar() only sets its own offset where the bar exists. */
-@media (max-width: 960px) {
-  main.gallery-main {
-    padding-top: calc(var(--header-height) + 12px);
-  }
+#shop-type-bar {
+  display: flex;
+  gap: clamp(4px, 2vw, 24px);
+  justify-content: center;
+  align-items: center;
+  padding: 8px 12px;
+  /* Enough kinds to outgrow a phone one day: they scroll rather than wrap,
+     so the band keeps its height */
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+#shop-type-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.shop-type-btn {
+  flex: 0 0 auto;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: var(--text-dark);
+  font-family: 'Quicksand', sans-serif;
+  font-size: clamp(0.85rem, 2.6vw, 1rem);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.shop-type-btn:hover {
+  color: var(--accent-green);
+}
+
+.shop-type-btn.active {
+  background: var(--accent-green);
+  color: var(--text-light);
+}
+
+#gallery-filter-bar {
+  display: none;
+  flex-wrap: nowrap;
+  gap: 10px;
+  justify-content: center;
+  padding: 10px 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* On the overview there is no grid for them to filter */
+body.shop-overview #gallery-filter-bar,
+body.shop-overview #filter-fab {
+  display: none !important;
+}
+
+body.shop-overview #gallery-wrapper {
+  display: none;
+}
+
+body:not(.shop-overview) #gallery-overview {
+  display: none;
+}
+
+/* The page title introduces the shop, which is what the overview is. Once a
+   kind has been chosen the row under the header already says what is on
+   screen, and the heading only pushes the works further down. */
+body:not(.shop-overview) .page-title {
+  display: none;
 }
 
 @media (min-width: 961px) {
   #gallery-filter-bar {
     display: flex;
-    position: sticky;
-    top: 0;
-    z-index: 100;
     gap: clamp(20px, 4.5vw, 70px);
   }
 }
@@ -413,4 +502,148 @@
 .filter-option.active {
   background: var(--accent-green);
   color: var(--text-light);
+}
+
+/* ── The overview ──────────────────────────────────────────────
+   What the shop shows before a kind has been chosen: a row per kind and the
+   way into each, so a visitor meets three invitations rather than one grid of
+   everything the studio has ever made. */
+
+/* The same 20px gutter #gallery keeps, so a row of works lines up with the
+   grid it opens into */
+#gallery-overview {
+  padding: 20px;
+}
+
+.overview-row {
+  margin-bottom: clamp(32px, 5vw, 56px);
+}
+
+.overview-row:last-child {
+  margin-bottom: 0;
+}
+
+.overview-row-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.overview-row-heading {
+  margin: 0;
+  font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+}
+
+.overview-row-link {
+  flex: 0 0 auto;
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--accent-green);
+  font-family: inherit;
+  font-size: clamp(0.85rem, 2.5vw, 1rem);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.overview-row-link:hover {
+  opacity: 0.7;
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(8px, 1.5vw, 18px);
+  align-items: start;
+}
+
+.overview-card {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+}
+
+.overview-card-frame {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: clamp(150px, 19vw, 260px);
+  /* Only as wide as the picture in it, so anything pinned to a corner lands on
+     a corner of the picture — and nothing can spill onto the card beside it */
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+/* The corner ribbon needs a tile's width to read as a ribbon, and a bookmark
+   card is a third of one. Here the same "Såld" is a pill on the picture. */
+.overview-card-frame .sold-badge {
+  top: auto;
+  right: 6px;
+  bottom: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.6rem;
+  letter-spacing: 1px;
+  transform: none;
+  box-shadow: none;
+}
+
+.overview-card img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  display: block;
+  border-radius: 6px;
+  transition: transform 0.25s ease;
+}
+
+/* Held to the piece's real proportions, filling them from the middle of the
+   photo rather than being squashed into them */
+.overview-card img.overview-card-img--cropped {
+  height: 100%;
+  width: auto;
+  object-fit: cover;
+}
+
+.overview-card:hover img {
+  transform: translateY(-3px);
+}
+
+.overview-card-label {
+  display: block;
+  margin-top: 6px;
+  text-align: center;
+  font-size: clamp(0.8rem, 2.2vw, 0.95rem);
+}
+
+/* Fewer cards rather than a second row: the point of a row is that it reads
+   as one glance at what a kind holds */
+@media (max-width: 1100px) {
+  .overview-grid .overview-card:nth-child(n + 4) {
+    display: none;
+  }
+
+  .overview-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .overview-grid .overview-card:nth-child(n + 3) {
+    display: none;
+  }
+
+  .overview-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

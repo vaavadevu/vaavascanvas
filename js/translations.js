@@ -201,6 +201,37 @@ const keys = {
     en: "Bookmark",
   },
 
+  // ── The shop's kinds ───────────────────────────────────────
+  // The row under the header, and the headings on the overview it opens on
+  shop_type_all: {
+    sv: "Allt",
+    en: "Everything",
+  },
+  shop_type_paintings: {
+    sv: "Målningar",
+    en: "Paintings",
+  },
+  shop_type_clay: {
+    sv: "Lera",
+    en: "Clay",
+  },
+  shop_type_bookmarks: {
+    sv: "Bokmärken",
+    en: "Bookmarks",
+  },
+  shop_see_paintings: {
+    sv: "Se målningar →",
+    en: "See paintings →",
+  },
+  shop_see_clay: {
+    sv: "Se lera →",
+    en: "See clay →",
+  },
+  shop_see_bookmarks: {
+    sv: "Se bokmärken →",
+    en: "See bookmarks →",
+  },
+
   // ── Sort orders ────────────────────────────────────────────
   filter_sort_label: {
     sv: "Sortera",

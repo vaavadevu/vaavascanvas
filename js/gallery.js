@@ -90,16 +90,35 @@ let galleryTiles = new Map();
 // taller than wide, the shape most of the catalog is
 const DEFAULT_TILE_RATIO = 0.8;
 
+// A painting's photo is the painting, so its tile is whatever shape the work
+// is — every painting a different rectangle, as they are on a wall.
+//
+// Clay and bookmarks are photographs *of* a piece, all taken the same way, and
+// a grid of them should read as a set: one shape, every tile the same height.
+// The photos are near enough already (the clay all 2:3, the bookmarks all
+// about 1:3), so they are held to exactly one ratio rather than to whatever
+// each crop happened to come out at.
+const UNIFORM_TILE_RATIOS = {
+  [TYPE.CLAY]: 2 / 3,
+  [TYPE.BOOKMARK]: 1 / 3,
+};
+
+function uniformTileRatio(painting) {
+  return UNIFORM_TILE_RATIOS[painting.type || TYPE.PAINTING] || null;
+}
+
 // Tiles are placed before their images load, so the height is estimated from
 // the recorded aspect ratio, falling back on the piece's own measurements.
 // The unit is one column width — only how the columns compare matters.
 function estimateTileHeight(painting) {
+  const uniform = uniformTileRatio(painting);
+  if (uniform) return 1 / uniform;
+
   const isPainting = (painting.type || TYPE.PAINTING) === TYPE.PAINTING;
   const ratio = painting.aspectRatio
     || (painting.shape === SHAPE.CIRCLE ? 1 : 0)
     // A painting's photo is the painting, so its measurements are the shape of
-    // the tile too. A product shot — the bookmark cover, showing a row of
-    // them — is not, so that falls through to the default instead.
+    // the tile too.
     || (isPainting && painting.width && painting.height ? painting.width / painting.height : 0)
     || DEFAULT_TILE_RATIO;
   return 1 / ratio;
@@ -182,7 +201,11 @@ function createGalleryItem(painting) {
   img.src = paths[0];
   img.alt = painting.title;
 
-  if (painting.aspectRatio) {
+  const uniformRatio = uniformTileRatio(painting);
+  if (uniformRatio) {
+    item.classList.add("gallery-item--uniform");
+    img.style.aspectRatio = uniformRatio;
+  } else if (painting.aspectRatio) {
     img.style.aspectRatio = painting.aspectRatio;
   } else if (painting.shape === SHAPE.CIRCLE) {
     img.style.aspectRatio = "1 / 1";
@@ -315,21 +338,12 @@ const SORT_LABEL_KEYS = {
   [GALLERY_SORT.SIZE_DESC]:  "filter_sort_size_desc",
 };
 
-const TYPE_LABEL_KEYS = {
-  all:       "filter_type_label",
-  painting:  "filter_type_painting",
-  clay:      "filter_type_clay",
-  bookmark:  "filter_type_bookmark",
-};
-
 function updateFilterLabels() {
   const statusLabel = document.getElementById("filter-status-label");
   const sizeLabel   = document.getElementById("filter-size-label");
-  const typeLabel   = document.getElementById("filter-type-label");
   const sortLabel   = document.getElementById("filter-sort-label");
   if (statusLabel) statusLabel.textContent = t(STATUS_LABEL_KEYS[activeStatusFilter]);
   if (sizeLabel)   sizeLabel.textContent   = t(SIZE_LABEL_KEYS[activeSizeFilter]);
-  if (typeLabel)   typeLabel.textContent   = t(TYPE_LABEL_KEYS[activeTypeFilter]);
   if (sortLabel)   sortLabel.textContent   = t(SORT_LABEL_KEYS[activeSortOrder]);
 }
 
@@ -353,8 +367,6 @@ function attachFilterListeners() {
       const filter = btn.dataset.filter;
       if (btn.classList.contains("size-filter")) {
         setActiveSizeFilter(filter);
-      } else if (btn.classList.contains("type-filter")) {
-        setActiveTypeFilter(filter);
       } else if (btn.classList.contains("status-filter")) {
         setActiveStatusFilter(filter);
       } else if (btn.classList.contains("sort-filter")) {
@@ -440,20 +452,14 @@ function setActiveSizeFilter(filter) {
 
 function setActiveTypeFilter(filter) {
   activeTypeFilter = filter;
-  document.querySelectorAll(".fab-filter-btn.type-filter").forEach(b => {
-    b.classList.toggle("active", b.dataset.filter === filter);
+  document.querySelectorAll(".shop-type-btn").forEach(b => {
+    const isActive = b.dataset.type === filter;
+    b.classList.toggle("active", isActive);
+    b.setAttribute("aria-current", isActive ? "true" : "false");
   });
-  document.querySelectorAll("#filter-type-dd .filter-option").forEach(b => {
-    b.classList.toggle("active", b.dataset.filter === filter);
-  });
-  const typeDd = document.getElementById("filter-type-dd");
-  if (typeDd) {
-    typeDd.classList.toggle("has-filter", filter !== "all");
-    typeDd.classList.remove("open");
-    typeDd.querySelector(".filter-dropdown-trigger")?.setAttribute("aria-expanded", "false");
-  }
 
-  const showSizeFilter = filter === "all" || filter === "painting";
+  // Only paintings are sorted into sizes; a bookmark is a bookmark
+  const showSizeFilter = filter === TYPE.PAINTING;
   updateSizeFilterVisibility(showSizeFilter);
   if (!showSizeFilter) {
     setActiveSizeFilter("size_all");
@@ -462,6 +468,144 @@ function setActiveTypeFilter(filter) {
   updateFilterLabels();
   filterGallery();
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// ── The overview ──────────────────────────────────────────────
+//
+// "Allt" is not a grid of everything. Arriving at the shop used to mean
+// meeting all 55 works at once — a painting, a clay bird and a 120 kr bookmark
+// side by side, sorted against each other. Instead each kind gets a row of its
+// own and a way in, the way the homepage introduces the catalogue.
+
+const OVERVIEW_ROWS = [
+  { type: TYPE.PAINTING, headingKey: "shop_type_paintings", linkKey: "shop_see_paintings" },
+  { type: TYPE.CLAY,     headingKey: "shop_type_clay",      linkKey: "shop_see_clay" },
+  { type: TYPE.BOOKMARK, headingKey: "shop_type_bookmarks", linkKey: "shop_see_bookmarks" },
+];
+
+// What a wide screen fits. The stylesheet drops the last cards as the window
+// narrows, so a row stays a row rather than wrapping into a block.
+const OVERVIEW_ROW_SIZE = 4;
+
+// Available work comes first, because that is what there is to sell. The order
+// within it is the gallery's own shuffle, so the sample differs by visit
+// instead of showing the same four faces to everyone forever.
+function overviewPicks(type) {
+  const ofType = paintings.filter(p => (p.type || TYPE.PAINTING) === type);
+  const available = ofType.filter(p => p.status === STATUS.FOR_SALE);
+  const rest = ofType.filter(p => p.status !== STATUS.FOR_SALE);
+  return [...available, ...rest].slice(0, OVERVIEW_ROW_SIZE);
+}
+
+// The shape the piece is in real life, for the kinds whose photograph is a
+// picture *of* the piece rather than the piece itself. Only bookmarks: a
+// painting's photo is the painting, and a clay pendant is worn in its photo
+// rather than laid out flat.
+function paintingPhysicalRatio(painting) {
+  if ((painting.type || TYPE.PAINTING) !== TYPE.BOOKMARK) return null;
+  if (!painting.width || !painting.height) return null;
+  return `${painting.width} / ${painting.height}`;
+}
+
+function overviewCard(painting) {
+  const card = document.createElement("a");
+  card.className = "overview-card";
+  card.href = paintingPageUrl(painting);
+
+  const img = document.createElement("img");
+  img.loading = "lazy";
+  img.src = getPaintingImagePaths(painting)[0];
+  img.alt = painting.title;
+
+  // A bookmark is 5 × 15 cm, and that is the shape it should be met in. Some
+  // of the photos are already cut to it; the older ones are near-square shots
+  // of one lying on a cloth, and shown whole they read as a picture of the
+  // cloth. Those are cropped to the middle, where the bookmark is.
+  //
+  // Nothing else is cropped to a shape it is not: for a painting the picture
+  // is the work, so it keeps its own proportions.
+  const physicalRatio = paintingPhysicalRatio(painting);
+  if (physicalRatio) {
+    img.style.aspectRatio = physicalRatio;
+    img.classList.add("overview-card-img--cropped");
+  } else if (painting.aspectRatio) {
+    img.style.aspectRatio = painting.aspectRatio;
+  } else if (painting.shape === SHAPE.CIRCLE) {
+    img.style.aspectRatio = "1 / 1";
+  }
+
+  img.addEventListener("error", () => { img.src = "/images/devika.jpg"; });
+
+  const label = document.createElement("span");
+  label.className = "overview-card-label";
+  label.textContent = painting.title;
+
+  // A box of a fixed height that the picture sits at the bottom of. Works come
+  // in every shape, and left to themselves the cards end at four different
+  // heights with their titles scattered down the row. Nothing is cropped to
+  // make them match — the picture is the work — so they share a floor instead.
+  const frame = document.createElement("span");
+  frame.className = "overview-card-frame";
+  frame.appendChild(img);
+  if (painting.status === STATUS.SOLD) addSoldBadge(frame);
+
+  card.appendChild(frame);
+  card.appendChild(label);
+  return card;
+}
+
+function renderShopOverview() {
+  const container = document.getElementById("gallery-overview");
+  if (!container) return;
+  container.innerHTML = "";
+
+  OVERVIEW_ROWS.forEach(row => {
+    const picks = overviewPicks(row.type);
+    // A kind with nothing in it gets no row at all — a heading over an
+    // empty strip would be worse than saying nothing
+    if (picks.length === 0) return;
+
+    const section = document.createElement("section");
+    section.className = "overview-row";
+
+    const heading = document.createElement("h2");
+    heading.className = "overview-row-heading";
+    heading.textContent = t(row.headingKey);
+
+    const link = document.createElement("button");
+    link.type = "button";
+    link.className = "overview-row-link";
+    link.textContent = t(row.linkKey);
+    link.addEventListener("click", () => setActiveTypeFilter(row.type));
+
+    const header = document.createElement("div");
+    header.className = "overview-row-header";
+    header.appendChild(heading);
+    header.appendChild(link);
+
+    const grid = document.createElement("div");
+    grid.className = "overview-grid";
+    picks.forEach(painting => grid.appendChild(overviewCard(painting)));
+
+    section.appendChild(header);
+    section.appendChild(grid);
+    container.appendChild(section);
+  });
+}
+
+function showingOverview() {
+  return activeTypeFilter === "all";
+}
+
+// The filters below the type row apply to a grid. On the overview there is no
+// grid to apply them to, so the whole band goes with it — a "Storlek" control
+// that changes nothing on screen reads as broken.
+function applyShopMode() {
+  document.body.classList.toggle("shop-overview", showingOverview());
+  if (showingOverview()) renderShopOverview();
+  // The band above just changed height, and main clears it by measurement
+  window._syncShopBands?.();
+  window._syncFilterFab?.();
 }
 
 function setActiveSortOrder(order) {
@@ -506,7 +650,26 @@ function paintingMatchesFilters(painting) {
   return statusMatch && typeMatch && sizeMatch;
 }
 
+// A bookmark is a third as wide as it is tall. At the width a painting gets,
+// its tile would be three rows deep — so bookmarks are dealt into narrower
+// columns, twice as many across, and come out the height of any other tile.
+function updateGalleryColumnWidth() {
+  const galleryElement = document.getElementById("gallery");
+  if (!galleryElement) return;
+  galleryElement.classList.toggle("gallery--narrow", activeTypeFilter === TYPE.BOOKMARK);
+}
+
 function filterGallery() {
+  applyShopMode();
+  updateGalleryColumnWidth();
+  // The overview shows works of its own. Leaving the last kind's tiles standing
+  // in the grid behind it would keep them in the page — hidden, still loaded,
+  // and still there to be found by anything reading the document.
+  if (showingOverview()) {
+    layoutGallery([]);
+    return;
+  }
+
   const visiblePaintings = paintings.filter(paintingMatchesFilters);
   layoutGallery(visiblePaintings);
 
@@ -600,6 +763,11 @@ function setupFab() {
     popup.style.maxHeight = Math.min(window.innerHeight * 0.72, 560, room) + "px";
   };
 
+  // Called again whenever the shop switches between the overview and a grid:
+  // the hidden grid measures as scrolled-past, which parks the button under an
+  // inline display:none that nothing but a scroll would ever clear
+  window._syncFilterFab = () => updatePosition();
+
   const updatePosition = () => {
     const galleryWrapper = document.getElementById("gallery-wrapper");
     if (galleryWrapper && galleryWrapper.getBoundingClientRect().bottom <= 0) {
@@ -681,39 +849,35 @@ function closeFab() {
 // ── Sticky filter bar (desktop) ───────────────────────────────
 
 function setupFilterBar() {
-  const bar = document.getElementById("gallery-filter-bar");
-  if (!bar) return;
+  const bands = document.getElementById("shop-bands");
+  if (!bands) return;
 
   const headerContainer = document.getElementById("header-container");
   let headerH = 0;
 
-  // The bar only exists from 961px up (below that the floating button carries
-  // the filters), so both of these leave the page alone on smaller screens and
-  // main keeps the plain header offset it gets from base.css
-  const isDesktopBar = () => window.innerWidth >= 961;
-
+  // The band is sticky, so it still takes its place in the flow and main
+  // already starts below it. What main has to clear is the header, which is
+  // fixed and takes none — counting the band as well left a hole the size of
+  // the band under it.
   const updateMainPadding = () => {
     const mainEl = document.querySelector("main");
     if (!mainEl) return;
-    mainEl.style.paddingTop = isDesktopBar()
-      ? headerH + bar.offsetHeight + 16 + "px"
-      : "";
+    mainEl.style.paddingTop = headerH + 16 + "px";
   };
 
-  const setBarTransform = (show) => {
-    if (!isDesktopBar()) return;
-    bar.style.transform = show ? `translateY(${headerH}px)` : "translateY(-2px)";
+  const setBandsTransform = (show) => {
+    bands.style.transform = show ? `translateY(${headerH}px)` : "translateY(-2px)";
   };
 
-  window._syncFilterBar = setBarTransform;
+  window._syncFilterBar = setBandsTransform;
 
   const init = () => {
     if (!headerContainer || headerContainer.offsetHeight === 0) return;
     headerH = headerContainer.getBoundingClientRect().height;
     const isVisible = headerContainer.classList.contains("visible");
-    bar.style.transition = "none";
-    setBarTransform(isVisible);
-    requestAnimationFrame(() => { bar.style.transition = ""; });
+    bands.style.transition = "none";
+    setBandsTransform(isVisible);
+    requestAnimationFrame(() => { bands.style.transition = ""; });
     updateMainPadding();
   };
 
@@ -724,11 +888,19 @@ function setupFilterBar() {
   setTimeout(init, 700);
   window.addEventListener("resize", init);
 
+  // Switching kind changes how tall the band is — the size control comes and
+  // goes with paintings — and the page below it has to move with it
+  window._syncShopBands = () => { init(); };
+
+  // Scrolled past everything the band applies to, it fades out of the way.
+  // Which "everything" that is depends on what the shop is showing.
   const updateVisibility = () => {
-    const galleryWrapper = document.getElementById("gallery-wrapper");
-    const pastGallery = galleryWrapper && galleryWrapper.getBoundingClientRect().bottom <= 0;
-    bar.style.opacity = pastGallery ? "0" : "";
-    bar.style.pointerEvents = pastGallery ? "none" : "";
+    const shown = document.body.classList.contains("shop-overview")
+      ? document.getElementById("gallery-overview")
+      : document.getElementById("gallery-wrapper");
+    const pastContent = shown && shown.getBoundingClientRect().bottom <= 0;
+    bands.style.opacity = pastContent ? "0" : "";
+    bands.style.pointerEvents = pastContent ? "none" : "";
   };
   window.addEventListener("scroll", () => requestAnimationFrame(updateVisibility), { passive: true });
   setTimeout(updateVisibility, 300);
