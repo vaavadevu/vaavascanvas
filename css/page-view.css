@@ -611,9 +611,11 @@ button.pageview-sold-btn.btn-secondary {
   content: "✓ ";
 }
 
+/* Narrow columns, because every pick in here is a bookmark and a bookmark is
+   a third as wide as it is tall */
 .more-bookmarks-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
   gap: 12px;
   margin-bottom: 20px;
 }
@@ -638,9 +640,10 @@ button.pageview-sold-btn.btn-secondary {
   transform: translateY(-2px);
 }
 
+/* The shape is set per pick, from the piece's own measurements. Held to a
+   square and filled, all a buyer saw of a bookmark was a band across it. */
 .more-bookmarks-pick img {
   width: 100%;
-  aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: 6px;
 }
@@ -653,13 +656,18 @@ button.pageview-sold-btn.btn-secondary {
   font-weight: 600;
 }
 
+/* Stacked rather than side by side: the columns are a bookmark wide, and
+   "100 kr 120 kr" on one line does not fit in one */
 .more-bookmarks-pick-price {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   font-size: 0.8rem;
+  line-height: 1.3;
   opacity: 0.75;
 }
 
 .more-bookmarks-pick-price-old {
-  margin-left: 4px;
   text-decoration: line-through;
   opacity: 0.6;
 }
@@ -700,7 +708,7 @@ button.pageview-sold-btn.btn-secondary {
   }
 
   .more-bookmarks-grid {
-    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
     gap: 8px;
   }
 

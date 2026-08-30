@@ -88,11 +88,23 @@ test('The size is part of the key', () => {
     'Two sizes of one product must not share a key');
 });
 
-test('Originals and bookmarks are one of a kind, other products are not', () => {
+// Everything the shop sells is the only one of itself: the canvas, the fired
+// clay piece and the hand-painted bookmark all exist once. Only a repeatable
+// product — a print, were there ever one — takes a quantity.
+test('Everything handmade is one of a kind', () => {
   assertEqual(isUniqueItem({ type: 'original' }), true, 'Originals are one of a kind');
+  assertEqual(isUniqueItem({ type: 'clay' }), true, 'Clay pieces are one of a kind');
   assertEqual(isUniqueItem({ type: 'bookmark' }), true, 'Bookmarks are one of a kind');
-  assertEqual(isUniqueItem({ type: 'shop' }), false, 'Shop products are repeatable');
-  assertEqual(isUniqueItem({ type: 'clay' }), false, 'Clay products are repeatable');
+  assertEqual(isUniqueItem({ type: 'shop' }), false, 'A repeatable product still takes a quantity');
+});
+
+test('A second copy of a one-of-a-kind piece is refused, not counted up', () => {
+  ['original', 'clay', 'bookmark'].forEach(type => {
+    const item = { id: 'a-piece', type };
+    const inCart = [{ ...item, key: cartItemKey(item), qty: 1 }];
+    assertEqual(resolveAdd(inCart, item).action, 'duplicate',
+      `Adding a second ${type} should be refused, not raise a quantity`);
+  });
 });
 
 test('Frame variants collapse to the same painting', () => {

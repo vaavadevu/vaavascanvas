@@ -406,5 +406,12 @@
         "02.jpg": "a28a27df04639529f8b6627f46c7e06dea91d18476be870e7bf5a44c43b3da0c"
       }
     }
+  },
+  "hero": {
+    "hero": {
+      "sources": {
+        "01.jpg": "bcda0a9e26975932a4d34c8facb5905296738cfa2f8fd96b70078719798ebb86"
+      }
+    }
   }
 }

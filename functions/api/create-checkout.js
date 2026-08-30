@@ -107,8 +107,12 @@ const SHIPPING_COST_EU = 149;
 
 const EU_COUNTRIES = ['AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','HU','IE','IT','LT','LU','LV','MT','NL','PL','PT','RO','SE','SI','SK'];
 
+// Paintings and clay are priced from the same catalog. Only a painting can be
+// framed, and no clay id ends in "-framed", so the two share this.
+const PRICED_FROM_CATALOG = ['original', 'clay'];
+
 function resolvePrice(item) {
-  if (item.type !== 'original') {
+  if (!PRICED_FROM_CATALOG.includes(item.type)) {
     return null;
   }
 
@@ -154,7 +158,16 @@ export async function onRequestPost(context) {
 
     const line_items = [];
     let subtotal = 0;
-    const claimedBookmarks = new Set();
+
+    // Every piece in the shop is the only one of itself, so each may appear in
+    // an order once and with no quantity. The cart enforces that too, but the
+    // cart is a thing the buyer holds — this is the copy that decides.
+    // Framed and unframed are the same physical painting under two ids, so
+    // both count as the same claim.
+    const claimed = new Set();
+    const claimOf = item => (typeof item.id === 'string' && item.id.endsWith('-framed')
+      ? item.id.slice(0, -7)
+      : item.id);
 
     // The per-piece price depends on how many bookmarks the whole order holds,
     // so it is settled before any line item is priced. Invalid bookmarks reject
@@ -169,12 +182,14 @@ export async function onRequestPost(context) {
     );
 
     for (const item of items) {
-      // Each bookmark is one physical piece: no quantities, no duplicates,
-      // and never one that has already been sold
+      const claim = claimOf(item);
+      if (claimed.has(claim)) return invalidItem(item);
+      claimed.add(claim);
+
+      // A bookmark is priced by how many the order holds, not by the catalog
       if (item.type === 'bookmark') {
         const bookmark = resolveBookmark(item);
-        if (!bookmark || claimedBookmarks.has(item.id)) return invalidItem(item);
-        claimedBookmarks.add(item.id);
+        if (!bookmark) return invalidItem(item);
 
         const price = bookmarkUnitPrice;
         subtotal += price;
@@ -197,20 +212,22 @@ export async function onRequestPost(context) {
       const price = resolvePrice(item);
       if (price === null) return invalidItem(item);
 
-      const qty = Math.max(1, Math.floor(item.qty || 1));
-      subtotal += price * qty;
+      subtotal += price;
 
+      const isClay = item.type === 'clay';
       line_items.push({
         price_data: {
           currency: 'sek',
           product_data: {
-            name: `${item.title} – Original målning`,
-            description: 'Signerat original på duk. Leverans inom Sverige.',
+            name: isClay ? `${item.title} – Keramik` : `${item.title} – Original målning`,
+            description: isClay
+              ? 'Handgjord keramik. Leverans inom Sverige.'
+              : 'Signerat original på duk. Leverans inom Sverige.',
             ...(item.image ? { images: [item.image] } : {}),
           },
           unit_amount: price * 100,
         },
-        quantity: qty,
+        quantity: 1,
       });
     }
 

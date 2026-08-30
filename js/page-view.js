@@ -291,7 +291,8 @@ function showMoreBookmarksModal(justAdded) {
     cell.type = "button";
     cell.className = "more-bookmarks-pick";
     cell.innerHTML = `
-      <img src="${getPaintingImagePaths(bookmark)[0]}" loading="lazy" alt="${bookmark.title}" />
+      <img src="${getPaintingImagePaths(bookmark)[0]}" loading="lazy" alt="${bookmark.title}"
+           style="aspect-ratio: ${paintingPhysicalRatio(bookmark) || "1 / 1"}" />
       <span class="more-bookmarks-pick-title">${bookmark.title}</span>
       <span class="more-bookmarks-pick-price">
         ${formatPrice(price)}

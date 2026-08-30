@@ -245,6 +245,7 @@ async function runTests() {
   const soldBookmark = Object.entries(bookmarks.variants).find(([, e]) => e.status === 'sold')?.[0];
 
   const original = (id, extra = {}) => ({ id, title: 'Test', type: 'original', price: 9999, ...extra });
+  const clay = (id, extra = {}) => ({ id, title: 'Test', type: 'clay', price: 9999, ...extra });
   const bookmark = (id, extra = {}) => ({ id, title: 'Test', type: 'bookmark', price: 9999, ...extra });
 
   console.log(colors.blue + '[1] PRICE AUTHORITY' + colors.reset);
@@ -263,12 +264,15 @@ async function runTests() {
       'Charged the client\'s price instead of the catalog price for a bookmark');
   });
 
-  await test('Quantities are floored to whole positive numbers', async () => {
-    const result = await checkout(onRequestPost, [original(forSale.id, { qty: 2.7 })]);
-    assertEqual(result.products[0].quantity, 2, 'Fractional quantity was not floored');
-
-    const negative = await checkout(onRequestPost, [original(forSale.id, { qty: -5 })]);
-    assertEqual(negative.products[0].quantity, 1, 'Negative quantity was not clamped to 1');
+  // Quantities used to be honoured, floored to a whole number. Nothing in the
+  // shop comes in more than one, so whatever a cart claims, one is what is
+  // sold — see "one of a kind" below.
+  await test('A quantity in the payload changes nothing', async () => {
+    for (const qty of [2.7, -5, 0, 99]) {
+      const result = await checkout(onRequestPost, [original(forSale.id, { qty })]);
+      assert(!result.error, `Unexpected rejection for qty ${qty}: ${result.error}`);
+      assertEqual(result.products[0].quantity, 1, `qty ${qty} was not reduced to one piece`);
+    }
   });
 
   console.log(colors.blue + '\n[2] SOLD INVENTORY IS UNBUYABLE' + colors.reset);
@@ -356,6 +360,78 @@ async function runTests() {
     assert(!result.error, `Unexpected rejection: ${result.error}`);
     assertEqual(result.products[0].quantity, 1, 'Bookmark quantity above 1 was accepted');
   });
+
+  console.log(colors.blue + '\n[3b] ONE OF A KIND' + colors.reset);
+
+  // Every piece in the shop is the only one of itself. The cart hides the +/-
+  // for them and refuses a second copy, but the cart is a thing the buyer
+  // holds — an order that asks for four of one painting has to be refused
+  // here, or four people are promised the same canvas.
+  const forSaleClay = serverPaintings.find(p =>
+    p.status === 'for_sale' && p.originalPrice === 250 && !p.framedOnly);
+
+  await test('Clay can be bought at all', async () => {
+    assert(forSaleClay, 'No for-sale clay piece in the catalog to test with');
+    const result = await checkout(onRequestPost, [clay(forSaleClay.id)]);
+    assert(!result.error, `A clay piece was refused: ${result.error}`);
+    assertEqual(result.products[0].amount, forSaleClay.originalPrice,
+      'Clay was charged something other than the catalog price');
+  });
+
+  await test('Clay is priced from the catalog, not from the cart', async () => {
+    const result = await checkout(onRequestPost, [clay(forSaleClay.id, { price: 1 })]);
+    assert(!result.error, `Unexpected rejection: ${result.error}`);
+    assertEqual(result.products[0].amount, forSaleClay.originalPrice,
+      "Charged the client's price instead of the catalog price for clay");
+  });
+
+  await test('Sold clay is rejected', async () => {
+    const soldClay = serverPaintings.find(p => p.status === 'sold' && p.originalPrice === 250);
+    assert(soldClay, 'No sold clay piece in the catalog to test with');
+    const result = await checkout(onRequestPost, [clay(soldClay.id)]);
+    assertEqual(result.status, 400, `Sold clay "${soldClay.id}" was accepted for checkout`);
+  });
+
+  for (const [label, item] of [
+    ['A painting', () => original(forSale.id, { qty: 4 })],
+    ['A clay piece', () => clay(forSaleClay.id, { qty: 4 })],
+    ['A bookmark', () => bookmark(availableBookmarks[0], { qty: 4 })],
+  ]) {
+    await test(`${label} is sold one at a time, whatever quantity is asked for`, async () => {
+      const result = await checkout(onRequestPost, [item()]);
+      assert(!result.error, `Unexpected rejection: ${result.error}`);
+      assertEqual(result.products.length, 1, 'Expected a single line');
+      assertEqual(result.products[0].quantity, 1,
+        `${label} was ordered in a quantity above 1`);
+    });
+  }
+
+  for (const [label, item] of [
+    ['painting', () => original(forSale.id)],
+    ['clay piece', () => clay(forSaleClay.id)],
+    ['bookmark', () => bookmark(availableBookmarks[0])],
+  ]) {
+    await test(`The same ${label} cannot be listed twice in one order`, async () => {
+      const result = await checkout(onRequestPost, [item(), item()]);
+      assertEqual(result.status, 400,
+        `The same ${label} was accepted twice — there is only one of it`);
+    });
+  }
+
+  await test('A painting cannot be ordered framed and unframed at once', async () => {
+    // Both ids are the same physical canvas
+    const framable = serverPaintings.find(p =>
+      p.status === 'for_sale' && p.frameAvailable && !p.framedOnly);
+    assert(framable, 'No framable for-sale painting in the catalog to test with');
+
+    const result = await checkout(onRequestPost, [
+      original(framable.id),
+      original(`${framable.id}-framed`),
+    ]);
+    assertEqual(result.status, 400, 'The same canvas was accepted twice, once with a frame');
+  });
+
+  console.log(colors.blue + '\n[3c] TYPE CONFUSION' + colors.reset);
 
   await test('A bookmark cannot be smuggled through as an original', async () => {
     // The two paths price differently: an original pays its own price, a

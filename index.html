@@ -16,7 +16,7 @@
   <meta property="og:url" content="https://vaavascanvas.se/" />
   <meta property="og:title" content="Devika – Akrylmålningar &amp; Svensk Konst | Vaavascanvas" />
   <meta property="og:description" content="Devika är en svensk konstnär och illustratör. Utforska akrylmålningar inspirerade av natur, djur och känsla – till salu och som beställningsverk." />
-  <meta property="og:image" content="https://vaavascanvas.se/images/paintings/herrOchFruAndersson/desktop/02.jpg" />
+  <meta property="og:image" content="https://vaavascanvas.se/images/hero/desktop/01.jpg" />
   <meta property="og:locale" content="sv_SE" />
   <meta property="og:site_name" content="Vaavascanvas" />
 
@@ -24,7 +24,7 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Devika – Akrylmålningar &amp; Svensk Konst | Vaavascanvas" />
   <meta name="twitter:description" content="Devika är en svensk konstnär och illustratör. Utforska akrylmålningar inspirerade av natur, djur och känsla." />
-  <meta name="twitter:image" content="https://vaavascanvas.se/images/paintings/herrOchFruAndersson/desktop/02.jpg" />
+  <meta name="twitter:image" content="https://vaavascanvas.se/images/hero/desktop/01.jpg" />
 
   <!-- hreflang -->
   <link rel="alternate" hreflang="sv" href="https://vaavascanvas.se/" />
@@ -99,12 +99,21 @@
   <main class="index-main">
 
     <section class="hero">
-      <source media="(max-width: 768px)" srcset="images/paintings/herrOchFruAndersson/mobile/02.jpg">
-      <img class="hero-img" src="images/paintings/herrOchFruAndersson/desktop/02.jpg" alt="Herr och fru Andersson" />
+      <!-- Toppbilden bor för sig i images/hero/. Lägg en ny bild i
+           images/hero/original/01.jpg och kör sync_paintings_images.bat, så
+           byggs desktop- och mobilversionerna om.
+
+           <source> säger bara något inuti <picture> — utan den låg raden här
+           och gjorde ingenting, och telefoner hämtade desktopbilden. -->
+      <picture>
+        <source media="(max-width: 768px)" srcset="/images/hero/mobile/01.jpg">
+        <img class="hero-img" src="/images/hero/desktop/01.jpg"
+             alt="Devika framför en vägg med sina målningar på en utställning" />
+      </picture>
       <div class="hero-text">
         <h2 data-i18n="hero_title">Konst skapad<br>med hjärtat</h2>
         <p data-i18n="hero_sub">"Akrylmålningar inspirerade av naturen och djur."</p>
-        <a href="/pictures/" class="hero-cta" data-i18n="hero_cta">Se mina målningar</a>
+        <a href="/pictures/" class="hero-cta" data-i18n="hero_cta">Gå till butiken</a>
       </div>
       <div class="hero-scroll">
         <div class="hero-scroll-line"></div>

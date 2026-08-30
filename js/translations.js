@@ -106,8 +106,8 @@ const keys = {
     en: "Acrylic paintings inspired by nature and animals.",
   },
   hero_cta: {
-    sv: "Se mina målningar",
-    en: "See my paintings",
+    sv: "Gå till butiken",
+    en: "Go to the shop",
   },
   hero_scroll: {
     sv: "Scrolla",

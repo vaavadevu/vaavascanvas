@@ -387,64 +387,34 @@ def process_image(src: Path, painting_folder: Path):
         mob_w, mob_h = mob_img.size
         print(f"   Mobil:   {mob_w}×{mob_h}px  {mob_kb:.0f}kb  (kvalitet {mob_q})\n")
 
-def build_painting(painting_folder: Path, manifest: dict):
-    """Bygger om en målning och skriver in den i kvittot"""
-    resequence_originals(painting_folder)
+# Målning, lerklump, bokmärke och hero byggs likadant — samma original/, samma
+# desktop/ och mobile/ bredvid den. Det som skiljer är vilken avdelning i
+# kvittot bygget skrivs in i, och vilken symbol som står framför namnet.
+BUILD_KINDS = {
+    "paintings": "📁",
+    "clay":      "🧿",
+    "bookmarks": "🔖",
+    "hero":      "🖼",
+}
+
+def build_folder(folder: Path, manifest: dict, section: str):
+    """Bygger om en mapp och skriver in den i kvittot"""
+    resequence_originals(folder)
 
     # Töm desktop/ och mobile/ först, annars blir borttagna bilder kvar
     for variant in ("desktop", "mobile"):
-        variant_dir = painting_folder / variant
+        variant_dir = folder / variant
         variant_dir.mkdir(exist_ok=True)
         for old in variant_dir.glob("*"):
             if old.is_file():
                 old.unlink()
 
-    originals = images_in(painting_folder / "original")
-    print(f"📁 {painting_folder.name}/ ({len(originals)} bild(er))")
+    originals = images_in(folder / "original")
+    print(f"{BUILD_KINDS[section]} {folder.name}/ ({len(originals)} bild(er))")
     for src in originals:
-        process_image(src, painting_folder)
+        process_image(src, folder)
 
-    manifest["paintings"][painting_folder.name] = {"sources": source_hashes(painting_folder)}
-    return len(originals)
-
-def build_clay(clay_folder: Path, manifest: dict):
-    """Bygger om en lerklump och skriver in den i kvittot"""
-    resequence_originals(clay_folder)
-
-    # Töm desktop/ och mobile/ först
-    for variant in ("desktop", "mobile"):
-        variant_dir = clay_folder / variant
-        variant_dir.mkdir(exist_ok=True)
-        for old in variant_dir.glob("*"):
-            if old.is_file():
-                old.unlink()
-
-    originals = images_in(clay_folder / "original")
-    print(f"🧿 {clay_folder.name}/ ({len(originals)} bild(er))")
-    for src in originals:
-        process_image(src, clay_folder)
-
-    manifest["clay"][clay_folder.name] = {"sources": source_hashes(clay_folder)}
-    return len(originals)
-
-def build_bookmark(bookmark_folder: Path, manifest: dict):
-    """Bygger om ett bokmärke och skriver in det i kvittot"""
-    resequence_originals(bookmark_folder)
-
-    # Töm desktop/ och mobile/ först
-    for variant in ("desktop", "mobile"):
-        variant_dir = bookmark_folder / variant
-        variant_dir.mkdir(exist_ok=True)
-        for old in variant_dir.glob("*"):
-            if old.is_file():
-                old.unlink()
-
-    originals = images_in(bookmark_folder / "original")
-    print(f"🔖 {bookmark_folder.name}/ ({len(originals)} bild(er))")
-    for src in originals:
-        process_image(src, bookmark_folder)
-
-    manifest["bookmarks"][bookmark_folder.name] = {"sources": source_hashes(bookmark_folder)}
+    manifest[section][folder.name] = {"sources": source_hashes(folder)}
     return len(originals)
 
 # ── Generera counts.json ──────────────────────────────────────────────────────
@@ -581,6 +551,21 @@ def check(root: Path, manifest: dict):
     for name in sorted(set(manifest.get("bookmarks", {})) - bookmark_names):
         problems.append(f"Bokmärke {name}: står kvar i {MANIFEST_NAME} men mappen finns inte längre")
 
+    # Check hero
+    hero_folds = hero_folders(root)
+
+    for hero_folder in hero_folds:
+        reason = stale_reason(hero_folder, manifest, "hero")
+        if reason:
+            problems.append(f"Hero: {reason}")
+        if is_empty_hero(hero_folder):
+            warnings.append(
+                "Hero: images/hero/original/ har ingen bild — "
+                "startsidans toppbild kommer inte att synas")
+
+    for name in sorted(set(manifest.get("hero", {})) - {f.name for f in hero_folds}):
+        problems.append(f"Hero {name}: står kvar i {MANIFEST_NAME} men mappen finns inte längre")
+
     # Check counts.json and metadata.json
     counts_file = paintings_root(root) / "counts.json"
     metadata_file = paintings_root(root) / "metadata.json"
@@ -630,6 +615,7 @@ def print_plan(root: Path, manifest: dict) -> int:
         ("paintings", painting_folders(root), ""),
         ("clay",      clay_folders(root),     ""),
         ("bookmarks", bookmark_folders(root), BOOKMARK_ID_PREFIX),
+        ("hero",      hero_folders(root),     ""),
     ]
     grupper = {"ny": [], "andrad": [], "omnumreras": [], "ofullstandig": [], "installningar": []}
     tomma = []
@@ -712,11 +698,13 @@ def main():
     folders = painting_folders(root)
     clay_folds = clay_folders(root)
     bookmark_folds = bookmark_folders(root)
+    hero_folds = hero_folders(root)
     by_name = {f.name: f for f in folders}
     clay_by_name = {f.name: f for f in clay_folds}
     # Bokmärkena går under sitt katalognamn här, eftersom mappnamnet ensamt
     # kan syfta på en lerklump lika gärna som på ett bokmärke
     bookmark_by_id = {bookmark_id(f): f for f in bookmark_folds}
+    hero_by_name = {f.name: f for f in hero_folds}
 
     # ── Bara visa vad som skulle hända ───────────────────────────────────────
     if args.plan:
@@ -733,7 +721,7 @@ def main():
             print("\n   Kör sync_paintings_images.bat och välj [1] för att rätta till det.")
             print_warnings(warnings)
             return 1
-        total_products = len(folders) + len(clay_folds) + len(bookmark_folds)
+        total_products = len(folders) + len(clay_folds) + len(bookmark_folds) + len(hero_folds)
         print(f"\n✅ Alla {total_products} produkter stämmer med sina originalbilder!")
         print_warnings(warnings)
         return 0
@@ -753,6 +741,10 @@ def main():
             hashes = source_hashes(bookmark_folder)
             if hashes:
                 manifest["bookmarks"][bookmark_folder.name] = {"sources": hashes}
+        for hero_folder in hero_folds:
+            hashes = source_hashes(hero_folder)
+            if hashes:
+                manifest["hero"][hero_folder.name] = {"sources": hashes}
         # Tomma mappar och borttagna produkter hör inte hemma i kvittot
         for name in set(manifest["paintings"]) - set(by_name):
             del manifest["paintings"][name]
@@ -760,6 +752,8 @@ def main():
             del manifest["clay"][name]
         for name in set(manifest.get("bookmarks", {})) - {f.name for f in bookmark_folds}:
             del manifest["bookmarks"][name]
+        for name in set(manifest.get("hero", {})) - set(hero_by_name):
+            del manifest["hero"][name]
         for painting_folder in folders:
             if is_empty_painting(painting_folder):
                 manifest["paintings"].pop(painting_folder.name, None)
@@ -769,6 +763,9 @@ def main():
         for bookmark_folder in bookmark_folds:
             if is_empty_bookmark(bookmark_folder):
                 manifest["bookmarks"].pop(bookmark_folder.name, None)
+        for hero_folder in hero_folds:
+            if is_empty_hero(hero_folder):
+                manifest["hero"].pop(hero_folder.name, None)
         save_manifest(root, manifest)
         total_painted = len(manifest["paintings"])
         total_clay = len(manifest.get("clay", {}))
@@ -784,9 +781,10 @@ def main():
     targets_paint = []
     targets_clay = []
     targets_bookmark = []
+    targets_hero = []
 
     if args.only:
-        all_by_name = {**by_name, **clay_by_name, **bookmark_by_id}
+        all_by_name = {**by_name, **clay_by_name, **bookmark_by_id, **hero_by_name}
         unknown = [name for name in args.only if name not in all_by_name]
         if unknown:
             print(f"❌ Hittar ingen mapp för: {', '.join(unknown)}")
@@ -797,13 +795,17 @@ def main():
         targets_paint = [by_name[name] for name in args.only if name in by_name]
         targets_clay = [clay_by_name[name] for name in args.only if name in clay_by_name]
         targets_bookmark = [bookmark_by_id[name] for name in args.only if name in bookmark_by_id]
-        total_targets = len(targets_paint) + len(targets_clay) + len(targets_bookmark)
+        targets_hero = [hero_by_name[name] for name in args.only if name in hero_by_name]
+        total_targets = (len(targets_paint) + len(targets_clay)
+                         + len(targets_bookmark) + len(targets_hero))
         print(f"🎯 Bygger om {total_targets} produkt(er): {', '.join(args.only)}\n")
     elif args.all:
         targets_paint = folders
         targets_clay = clay_folds
         targets_bookmark = bookmark_folds
-        total_targets = len(targets_paint) + len(targets_clay) + len(targets_bookmark)
+        targets_hero = hero_folds
+        total_targets = (len(targets_paint) + len(targets_clay)
+                         + len(targets_bookmark) + len(targets_hero))
         print(f"🔁 Bygger om alla {total_targets} produkter från grunden\n")
     else:
         print("🔍 Letar efter produkter som ändrats...\n")
@@ -822,20 +824,28 @@ def main():
             if reason:
                 targets_bookmark.append(bookmark_folder)
                 tqdm.write(f"   • Bokmärke {bookmark_folder.name}: {reason}")
-        if not targets_paint and not targets_clay and not targets_bookmark:
+        for hero_folder in hero_folds:
+            reason = stale_reason(hero_folder, manifest, "hero")
+            if reason:
+                targets_hero.append(hero_folder)
+                tqdm.write(f"   • Hero: {reason}")
+        if not targets_paint and not targets_clay and not targets_bookmark and not targets_hero:
             print("\n✅ Inga bilder har ändrats — inget att bygga om.\n")
 
     # ── Bygg ─────────────────────────────────────────────────────────────────
     total_images = 0
-    if targets_paint or targets_clay or targets_bookmark:
+    if targets_paint or targets_clay or targets_bookmark or targets_hero:
         print(f"\n🆕 Bearbetar originalbilder...\n")
         for painting_folder in targets_paint:
-            total_images += build_painting(painting_folder, manifest)
+            total_images += build_folder(painting_folder, manifest, "paintings")
         for clay_folder in targets_clay:
-            total_images += build_clay(clay_folder, manifest)
+            total_images += build_folder(clay_folder, manifest, "clay")
         for bookmark_folder in targets_bookmark:
-            total_images += build_bookmark(bookmark_folder, manifest)
-        total_targets = len(targets_paint) + len(targets_clay) + len(targets_bookmark)
+            total_images += build_folder(bookmark_folder, manifest, "bookmarks")
+        for hero_folder in targets_hero:
+            total_images += build_folder(hero_folder, manifest, "hero")
+        total_targets = (len(targets_paint) + len(targets_clay)
+                         + len(targets_bookmark) + len(targets_hero))
         print(f"✅ Bildbearbetning klar! ({total_images} bild(er) i {total_targets} produkt(er))\n")
 
     # Tomma mappar gick aldrig att bygga — kvittoraden för dem säger ingenting
@@ -845,14 +855,18 @@ def main():
                          if is_empty_clay(f) and f.name in manifest.get("clay", {}))
     emptied_bookmark = sorted(f.name for f in bookmark_folds
                              if is_empty_bookmark(f) and f.name in manifest.get("bookmarks", {}))
+    emptied_hero = sorted(f.name for f in hero_folds
+                         if is_empty_hero(f) and f.name in manifest.get("hero", {}))
     for name in emptied_paint:
         manifest["paintings"].pop(name, None)
     for name in emptied_clay:
         manifest["clay"].pop(name, None)
     for name in emptied_bookmark:
         manifest["bookmarks"].pop(name, None)
-    if emptied_paint or emptied_clay or emptied_bookmark:
-        all_emptied = emptied_paint + emptied_clay + emptied_bookmark
+    for name in emptied_hero:
+        manifest["hero"].pop(name, None)
+    if emptied_paint or emptied_clay or emptied_bookmark or emptied_hero:
+        all_emptied = emptied_paint + emptied_clay + emptied_bookmark + emptied_hero
         print(f"⚠️  {', '.join(all_emptied)} har inga originalbilder kvar.")
         print("   Lägg tillbaka bilderna eller ta bort mappen.\n")
 
@@ -860,14 +874,17 @@ def main():
     removed_paint = sorted(set(manifest["paintings"]) - set(by_name))
     removed_clay = sorted(set(manifest.get("clay", {})) - set(clay_by_name))
     removed_bookmark = sorted(set(manifest.get("bookmarks", {})) - {f.name for f in bookmark_folds})
+    removed_hero = sorted(set(manifest.get("hero", {})) - set(hero_by_name))
     for name in removed_paint:
         del manifest["paintings"][name]
     for name in removed_clay:
         del manifest["clay"][name]
     for name in removed_bookmark:
         del manifest["bookmarks"][name]
-    if removed_paint or removed_clay or removed_bookmark:
-        all_removed = removed_paint + removed_clay + removed_bookmark
+    for name in removed_hero:
+        del manifest["hero"][name]
+    if removed_paint or removed_clay or removed_bookmark or removed_hero:
+        all_removed = removed_paint + removed_clay + removed_bookmark + removed_hero
         print(f"🗑  Tog bort {', '.join(all_removed)} ur kvittot (mappen finns inte längre)\n")
 
     save_manifest(root, manifest)
