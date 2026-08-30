@@ -66,6 +66,8 @@ const BOOKMARKS = {
     'bookmark-pingvin': { title: 'Pingvin', status: 'sold', image: '/images/bookmarks/pingvin/desktop/01.jpg' },
     'bookmark-rabbit': { title: 'Kanin', status: 'sold', image: '/images/bookmarks/rabbit/desktop/01.jpg' },
     'bookmark-wilddog': { title: 'Afrikansk vildhund', status: 'for_sale', image: '/images/bookmarks/wilddog/desktop/01.jpg' },
+    'bookmark-bear': { title: 'Björn', status: 'for_sale', image: '/images/bookmarks/bear/desktop/01.jpg' },
+    'bookmark-cow': { title: 'Ko', status: 'sold', image: '/images/bookmarks/cow/desktop/01.jpg' },
   },
 };
 

@@ -11,6 +11,8 @@
     { "id": "piggy", "title": "Gris", "status": "sold" },
     { "id": "pingvin", "title": "Pingvin", "status": "sold" },
     { "id": "rabbit", "title": "Kanin", "status": "sold" },
-    { "id": "wilddog", "title": "Afrikansk vildhund", "status": "for_sale" }
+    { "id": "wilddog", "title": "Afrikansk vildhund", "status": "for_sale" }, 
+    { "id": "bear", "title": "Björn", "status": "for_sale" },
+    { "id": "cow", "title": "Ko", "status": "sold" }
   ]
 }

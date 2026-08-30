@@ -334,6 +334,11 @@
     }
   },
   "bookmarks": {
+    "bear": {
+      "sources": {
+        "01.jpg": "3f7180fd242458e88b9741195aab50dd4db516ee227be856fb45ac7ef507ef30"
+      }
+    },
     "cheetah": {
       "sources": {
         "01.jpg": "ce229c2caed19b166b08946bec5c19e911c188248bcd1a219ecc5848a31e5df9"
@@ -347,6 +352,11 @@
     "chicken2": {
       "sources": {
         "01.jpg": "b52af2b6af16b1a9c1336e5ba8fc3fa14da409cbd1d3e9085e442cffd24d0d24"
+      }
+    },
+    "cow": {
+      "sources": {
+        "01.jpg": "8be2e894e82548c4eeefff7d22f046042ce723917a516baf97beb631dba82891"
       }
     },
     "giraffe": {

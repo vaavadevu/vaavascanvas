@@ -408,4 +408,18 @@
     <priority>0.8</priority>
   </url>
 
+  <url>
+    <loc>https://vaavascanvas.se/pictures/bookmark-bear.html</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://vaavascanvas.se/pictures/bookmark-cow.html</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
 </urlset>

@@ -1123,6 +1123,50 @@ const paintings = [
       ]
     }
   },
+  {
+    id: "bookmark-bear",
+    title: "Björn",
+    descKey: "desc_bookmark",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
+    width: 5,
+    height: 15,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 120,
+    type: TYPE.BOOKMARK,
+    multiBuyPrice: 100,
+    multiBuyMinQuantity: 2,
+    images: {
+      desktop: [
+        "/images/bookmarks/bear/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/bookmarks/bear/mobile/01.jpg"
+      ]
+    }
+  },
+  {
+    id: "bookmark-cow",
+    title: "Ko",
+    descKey: "desc_bookmark",
+    status: STATUS.SOLD,
+    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
+    width: 5,
+    height: 15,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 120,
+    type: TYPE.BOOKMARK,
+    multiBuyPrice: 100,
+    multiBuyMinQuantity: 2,
+    images: {
+      desktop: [
+        "/images/bookmarks/cow/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/bookmarks/cow/mobile/01.jpg"
+      ]
+    }
+  },
 ];
 
 // ── Node export tail (ignored by the browser) ─────────────────
