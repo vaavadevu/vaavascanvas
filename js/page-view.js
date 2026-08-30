@@ -117,27 +117,20 @@ function populatePageView(painting) {
   updatePageViewDescription(painting);
   renderPageViewMedium(painting);
   renderPageViewPrice(painting);
-  buildPageViewThumbnails(imgs, painting);
-  updatePageViewSoldFlag(painting, imgs[0]);
+  buildPageViewThumbnails(imgs);
+  updatePageViewSoldFlag(painting);
   configurePageViewArrows(imgs);
 }
 
-// Products sold one variant at a time (bookmarks) list the gone ones in
-// soldVariants, matched on filename so the path prefix doesn't matter
-function isImageSold(painting, src) {
-  if (!painting || !Array.isArray(painting.soldVariants) || !src) return false;
-  const name = String(src).split('/').pop();
-  return painting.soldVariants.some(variant => String(variant).split('/').pop() === name);
-}
-
-// Marks the big image as sold while browsing, before the buyer opens the picker
-function updatePageViewSoldFlag(painting, src) {
+// The badge in the corner of the big image, the same one the gallery tile
+// carries
+function updatePageViewSoldFlag(painting) {
   const flag = document.getElementById("pageview-sold-flag");
   if (!flag) return;
-  flag.hidden = !isImageSold(painting, src);
+  flag.hidden = painting.status !== STATUS.SOLD;
 }
 
-function buildPageViewThumbnails(imgs, painting) {
+function buildPageViewThumbnails(imgs) {
   const container = document.getElementById("pageview-thumbs");
   container.innerHTML = "";
   if (imgs.length <= 1) return;
@@ -150,22 +143,7 @@ function buildPageViewThumbnails(imgs, painting) {
     thumb.addEventListener("click", () =>
       transitionToPageViewImage(imgs, idx, idx > State.currentImageIndex ? 1 : -1)
     );
-
-    if (!isImageSold(painting, src)) {
-      container.appendChild(thumb);
-      return;
-    }
-
-    // Sold variants stay browsable, just visibly unavailable
-    const wrap = document.createElement("span");
-    wrap.className = "pageViewThumbWrap sold";
-    const badge = document.createElement("span");
-    badge.className = "pageViewThumbSold";
-    badge.dataset.i18n = "modal_sold";
-    badge.textContent = t("modal_sold");
-    wrap.appendChild(thumb);
-    wrap.appendChild(badge);
-    container.appendChild(wrap);
+    container.appendChild(thumb);
   });
 }
 
@@ -200,7 +178,150 @@ function addPaintingToCart(painting, withFrame) {
     });
   }
 
+  if (itemType === TYPE.BOOKMARK) {
+    Object.assign(cartItem, bookmarkCartTerms(painting));
+
+    // Bookmarks are cheaper by the piece once you buy more than one, and the
+    // buyer has no way of knowing that from the one page they are on. Adding
+    // one is the moment to say so and show what else there is — with the
+    // drawer held back, so the offer is not made behind it.
+    if (bookmarksLeftToBuy(painting).length > 0) {
+      Cart.add(cartItem, { openDrawer: false });
+      showMoreBookmarksModal(painting);
+      return;
+    }
+  }
+
   Cart.add(cartItem);
+}
+
+// ── "Would you like another?" ─────────────────────────────────
+//
+// Every bookmark still for sale that is not already in the cart. `justAdded`
+// is left out too, because it has only just gone in and the cart may not have
+// been asked about it yet.
+function bookmarksLeftToBuy(justAdded) {
+  if (typeof paintings === "undefined" || typeof Cart === "undefined") return [];
+
+  return paintings.filter(p =>
+    p.type === TYPE.BOOKMARK &&
+    p.status === STATUS.FOR_SALE &&
+    p.id !== justAdded?.id &&
+    !Cart.has(p.id));
+}
+
+function bookmarksInCart() {
+  if (typeof paintings === "undefined" || typeof Cart === "undefined") return 0;
+  return paintings.filter(p => p.type === TYPE.BOOKMARK && Cart.has(p.id)).length;
+}
+
+// The cart item for a bookmark picked out of the offer rather than from its
+// own page, so both routes put the same thing in the cart
+function bookmarkCartItem(painting) {
+  return {
+    id: painting.id,
+    title: painting.title,
+    type: TYPE.BOOKMARK,
+    price: getPaintingEffectivePrice(painting, false),
+    image: getPaintingImagePaths(painting)[0],
+    ...bookmarkCartTerms(painting),
+  };
+}
+
+function hideMoreBookmarksModal() {
+  const modal = document.getElementById("more-bookmarks-modal");
+  if (!modal) return;
+  modal.remove();
+  document.body.style.overflow = "";
+  document.removeEventListener("keydown", moreBookmarksEscape);
+}
+
+function moreBookmarksEscape(e) {
+  if (e.key === "Escape") hideMoreBookmarksModal();
+}
+
+// Rebuilt from scratch on every open and after every pick, so the list, the
+// prices and the language are never left over from the last time
+function showMoreBookmarksModal(justAdded) {
+  hideMoreBookmarksModal();
+
+  const remaining = bookmarksLeftToBuy(justAdded);
+  if (remaining.length === 0) {
+    Cart.openCart();
+    return;
+  }
+
+  const terms = bookmarkCartTerms(justAdded);
+  const enough = bookmarksInCart() >= terms.multiBuyMinQuantity;
+  const offer = enough
+    ? t("bookmark_more_discount_active").replace("{multi}", terms.multiBuyPrice.toLocaleString("sv-SE"))
+    : t("bookmark_more_offer")
+        .replace("{multi}", terms.multiBuyPrice.toLocaleString("sv-SE"))
+        .replace("{single}", terms.basePrice.toLocaleString("sv-SE"));
+
+  const modal = document.createElement("div");
+  modal.id = "more-bookmarks-modal";
+  modal.className = "more-bookmarks-modal";
+  modal.innerHTML = `
+    <div class="more-bookmarks-inner" role="dialog" aria-modal="true" aria-labelledby="more-bookmarks-title">
+      <button type="button" class="more-bookmarks-close" aria-label="${t("bookmark_more_close_label")}">&times;</button>
+      <h3 class="more-bookmarks-title" id="more-bookmarks-title">${t("bookmark_more_title")}</h3>
+      <p class="more-bookmarks-added">${t("bookmark_more_added").replace("{title}", justAdded.title)}</p>
+      <p class="more-bookmarks-offer${enough ? " is-active" : ""}">${offer}</p>
+      <div class="more-bookmarks-grid"></div>
+      <div class="more-bookmarks-actions">
+        <button type="button" class="btn btn-secondary" id="more-bookmarks-done">${t("bookmark_more_done_btn")}</button>
+        <button type="button" class="btn btn-primary" id="more-bookmarks-cart">${t("bookmark_more_cart_btn")}</button>
+      </div>
+    </div>
+  `;
+
+  const grid = modal.querySelector(".more-bookmarks-grid");
+  const alreadyIn = bookmarksInCart();
+
+  remaining.forEach(bookmark => {
+    // What this one would actually cost if it were picked — taking it may be
+    // what tips the whole cart onto the cheaper per-piece price, and a tile
+    // still reading 120 kr under "you have the reduced price" would be a lie
+    const pick = bookmarkCartTerms(bookmark);
+    const discounted = alreadyIn + 1 >= pick.multiBuyMinQuantity;
+    const price = discounted ? pick.multiBuyPrice : pick.basePrice;
+
+    const cell = document.createElement("button");
+    cell.type = "button";
+    cell.className = "more-bookmarks-pick";
+    cell.innerHTML = `
+      <img src="${getPaintingImagePaths(bookmark)[0]}" loading="lazy" alt="${bookmark.title}" />
+      <span class="more-bookmarks-pick-title">${bookmark.title}</span>
+      <span class="more-bookmarks-pick-price">
+        ${formatPrice(price)}
+        ${price < pick.basePrice ? `<span class="more-bookmarks-pick-price-old">${formatPrice(pick.basePrice)}</span>` : ""}
+      </span>
+    `;
+    // Picking one adds it and asks the same question again, so a buyer can
+    // take several without the offer disappearing after the first
+    cell.addEventListener("click", () => {
+      Cart.add(bookmarkCartItem(bookmark), { openDrawer: false });
+      showMoreBookmarksModal(bookmark);
+    });
+    grid.appendChild(cell);
+  });
+
+  modal.querySelector("#more-bookmarks-done").addEventListener("click", hideMoreBookmarksModal);
+  modal.querySelector(".more-bookmarks-close").addEventListener("click", hideMoreBookmarksModal);
+  modal.querySelector("#more-bookmarks-cart").addEventListener("click", () => {
+    hideMoreBookmarksModal();
+    Cart.openCart();
+  });
+  // Clicking the dimmed page behind the panel closes it, as it does elsewhere
+  modal.addEventListener("click", e => {
+    if (e.target === modal) hideMoreBookmarksModal();
+  });
+
+  (document.getElementById("modals-container") || document.body).appendChild(modal);
+  document.body.style.overflow = "hidden";
+  document.addEventListener("keydown", moreBookmarksEscape);
+  requestAnimationFrame(() => modal.classList.add("active"));
 }
 
 // Where a sold work sends the buyer instead of stopping at "Såld". The
@@ -310,154 +431,34 @@ function renderPageViewButtons(painting) {
       const frameRadios = pageViewButtons.querySelectorAll('input[type="radio"]');
       frameRadios.forEach(radio => radio.addEventListener('change', updateBuyButtonLabel));
 
-      // Special handling for bookmarks: open variant selector allowing multiple picks
-      if (painting.type === TYPE.BOOKMARK) {
-        buyBtn.addEventListener('click', () => showBookmarkSelectorModal(painting));
-      } else {
-        buyBtn.addEventListener("click", () => {
-          if (painting.framedOnly) {
-            addPaintingToCart(painting, true);
-          } else if (painting.frameAvailable && window.innerWidth <= 960) {
-            showFrameSelectorModal(painting);
-          } else if (painting.frameAvailable) {
-            const selectedRadio = pageViewButtons.querySelector('input[type="radio"]:checked');
-            const withFrame = selectedRadio?.value === "with";
-            addPaintingToCart(painting, withFrame);
-          } else {
-            addPaintingToCart(painting, false);
-          }
-        });
-      }
+      buyBtn.addEventListener("click", () => {
+        if (painting.framedOnly) {
+          addPaintingToCart(painting, true);
+        } else if (painting.frameAvailable && window.innerWidth <= 960) {
+          showFrameSelectorModal(painting);
+        } else if (painting.frameAvailable) {
+          const selectedRadio = pageViewButtons.querySelector('input[type="radio"]:checked');
+          const withFrame = selectedRadio?.value === "with";
+          addPaintingToCart(painting, withFrame);
+        } else {
+          addPaintingToCart(painting, false);
+        }
+      });
     }
     pageViewButtons.appendChild(buyBtn);
   }
 
 }
 
-// ── Bookmark selector modal ───────────────────────────────────
-async function imageExists(src) {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.onload = () => resolve(true);
-    img.onerror = () => resolve(false);
-    img.src = src;
-  });
-}
-
-// Built from the catalog so repricing the bookmarks never leaves stale numbers
-// on screen. The picker states both prices ("120 kr styck – 100 kr styck om du
-// köper fler än ett"); the product page already shows the single price above,
-// so it only needs the multi-buy half.
-function getMultiBuyPriceNote(painting, key = 'modal_bookmark_price_note') {
+// Bookmarks cost less per piece once you buy more than one, so the price
+// section says so. Built from the catalogue, so repricing them never leaves a
+// stale number on screen.
+function getMultiBuyPriceNote(painting) {
   const single = painting.originalPrice || painting.framedPrice || 0;
   const multi = painting.multiBuyPrice;
   if (!multi || multi >= single) return '';
 
-  return t(key)
-    .replace('{single}', single.toLocaleString('sv-SE'))
-    .replace('{multi}', multi.toLocaleString('sv-SE'));
-}
-
-async function showBookmarkSelectorModal(painting) {
-  const imgs = getPaintingImagePaths(painting);
-  const variants = imgs.slice(1); // skip cover (index 0)
-  const containerId = `bookmark-selector-${painting.id}`;
-
-  // Sold variants are already marked while browsing the images, so the picker
-  // lists only what can still be bought
-  const availableVariants = [];
-  for (const src of variants) {
-    if (isImageSold(painting, src)) continue;
-    if (await imageExists(src)) {
-      availableVariants.push(src);
-    }
-  }
-
-  if (availableVariants.length === 0) {
-    showToast(t('modal_no_variants'));
-    return;
-  }
-
-  // Rebuilt on every open, so the list, the language and the checkboxes are
-  // never left over from a previous visit
-  document.getElementById(containerId)?.remove();
-
-  const modal = document.createElement('div');
-  {
-    modal.id = containerId;
-    modal.className = 'bookmark-selector-modal';
-    modal.innerHTML = `
-      <div class="bookmark-selector-inner">
-        <h3 class="bookmark-selector-title">${t('modal_select_bookmarks_title')}</h3>
-        <p class="bookmark-selector-price-note">${getMultiBuyPriceNote(painting)}</p>
-        <div class="bookmark-selector-grid"></div>
-        <div class="bookmark-selector-actions">
-          <label><input type="checkbox" id="bookmark-select-all" /> ${t('modal_select_all')}</label>
-          <button class="btn btn-primary" id="bookmark-add-btn">${t('modal_add_selected_to_cart')}</button>
-          <button class="btn btn-secondary" id="bookmark-cancel-btn">${t('modal_cancel')}</button>
-        </div>
-      </div>
-    `;
-    document.getElementById('modals-container')?.appendChild(modal);
-
-    const grid = modal.querySelector('.bookmark-selector-grid');
-
-    availableVariants.forEach((src, idx) => {
-      const filename = src.split('/').pop();
-      const cell = document.createElement('label');
-      cell.className = 'bookmark-variant';
-      cell.innerHTML = `
-        <input type="checkbox" data-idx="${idx}" />
-        <img src="${src}" loading="lazy" alt="${filename}" />
-        <div class="variant-label">${filename}</div>
-      `;
-      grid.appendChild(cell);
-    });
-
-    modal.querySelector('#bookmark-select-all').addEventListener('change', (e) => {
-      modal.querySelectorAll('.bookmark-variant input[type="checkbox"]').forEach(cb => {
-        cb.checked = e.target.checked;
-      });
-    });
-
-    modal.querySelector('#bookmark-cancel-btn').addEventListener('click', () => hideBookmarkSelectorModal(modal));
-
-    modal.querySelector('#bookmark-add-btn').addEventListener('click', () => {
-      const checked = Array.from(modal.querySelectorAll('.bookmark-variant input[type="checkbox"]:checked')).map(cb => parseInt(cb.dataset.idx));
-      if (checked.length === 0) {
-        showToast(t('modal_select_at_least_one'));
-        return;
-      }
-
-      const basePrice = painting.originalPrice || painting.framedPrice || 0;
-      checked.forEach((variantIdx) => {
-        const imgSrc = availableVariants[variantIdx];
-        const filename = imgSrc.split('/').pop().replace(/\.[^/.]+$/, '');
-        const cartItem = {
-          id: `${painting.id}::${filename}`,
-          title: `${painting.title} — ${filename}`,
-          type: TYPE.BOOKMARK,
-          // Cart.repriceBookmarks settles the real price once it knows how
-          // many bookmarks the cart holds
-          price: basePrice,
-          basePrice,
-          multiBuyPrice: painting.multiBuyPrice ?? basePrice,
-          multiBuyMinQuantity: painting.multiBuyMinQuantity ?? 2,
-          image: imgSrc,
-        };
-        Cart.add(cartItem);
-      });
-
-      hideBookmarkSelectorModal(modal);
-    });
-  }
-
-  modal.classList.add('active');
-}
-
-function hideBookmarkSelectorModal(modal) {
-  if (!modal) return;
-  modal.classList.remove('active');
+  return t('pageview_multibuy_note').replace('{multi}', multi.toLocaleString('sv-SE'));
 }
 
 function showFrameSelectorModal(painting) {
@@ -652,7 +653,7 @@ function renderPageViewPrice(painting) {
 
   // Products sold in multiples (bookmarks) state the cheaper per-piece price
   // here too, so it is visible while browsing and not only inside the picker
-  const multiBuyNote = getMultiBuyPriceNote(painting, 'pageview_multibuy_note');
+  const multiBuyNote = getMultiBuyPriceNote(painting);
   if (multiBuyNote) {
     addLine(multiBuyNote, "pageview-multibuy-note");
   }

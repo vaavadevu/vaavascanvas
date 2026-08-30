@@ -234,14 +234,6 @@ const wrapper = document.createElement('div');
     buyBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       const paintingType = painting.type || TYPE.PAINTING;
-
-      // Bookmarks are sold per variant — send the buyer to the picker instead
-      // of guessing which one they meant
-      if (paintingType === TYPE.BOOKMARK) {
-        window.location.href = paintingPageUrl(painting);
-        return;
-      }
-
       const itemType = paintingType === TYPE.PAINTING ? 'original' : paintingType;
       const cartItem = {
         id: painting.framedOnly ? `${painting.id}-framed` : painting.id,
@@ -260,6 +252,10 @@ const wrapper = document.createElement('div');
           basePrice: getPaintingDiscountedPrice(painting) || painting.originalPrice || painting.framedPrice,
           framedPrice: painting.framedPrice ? getPaintingFramedSalePrice(painting) : null,
         });
+      }
+
+      if (itemType === TYPE.BOOKMARK) {
+        Object.assign(cartItem, bookmarkCartTerms(painting));
       }
 
       Cart.add(cartItem);

@@ -264,13 +264,40 @@ const keys = {
     sv: "Såld",
     en: "Sold",
   },
-  modal_bookmark_price_note: {
-    sv: "{single} kr styck – {multi} kr styck om du köper fler än ett",
-    en: "{single} kr each – {multi} kr each when you buy more than one",
-  },
   pageview_multibuy_note: {
     sv: "{multi} kr styck om du köper fler än ett",
     en: "{multi} kr each when you buy more than one",
+  },
+
+  // Shown after a bookmark goes in the cart: what else there is, and what a
+  // second one is worth
+  bookmark_more_title: {
+    sv: "Vill du ha fler bokmärken?",
+    en: "Would you like more bookmarks?",
+  },
+  bookmark_more_added: {
+    sv: "\u201d{title}\u201d ligger i varukorgen.",
+    en: "\u201c{title}\u201d is in your cart.",
+  },
+  bookmark_more_offer: {
+    sv: "Köper du fler än ett kostar alla {multi} kr styck istället för {single} kr.",
+    en: "Buy more than one and they are {multi} kr each instead of {single} kr.",
+  },
+  bookmark_more_discount_active: {
+    sv: "Du har rabatterat pris — {multi} kr styck.",
+    en: "You have the reduced price — {multi} kr each.",
+  },
+  bookmark_more_done_btn: {
+    sv: "Nej tack",
+    en: "No thanks",
+  },
+  bookmark_more_cart_btn: {
+    sv: "Till varukorgen",
+    en: "Go to cart",
+  },
+  bookmark_more_close_label: {
+    sv: "Stäng",
+    en: "Close",
   },
   modal_buy_btn: {
     sv: "Lägg i varukorg",
@@ -680,37 +707,15 @@ desc_sommarvila: {
   en: "A dreamy dusk with a flamingo resting on one leg in the calm water, surrounded by soft pastel colors and a sense of tranquility.",
 },
   
-  desc_bookmarks: {
-    sv: "En samling handmålade bokmärken. För närvarande finns få varianter – snart kommer fler! Klicka för att se varianter och välj det du vill köpa.",
-    en: "A collection of hand-painted bookmarks. Currently only a few variants are available — more designs coming soon! Click to view variants and choose the one to buy.",
-  },
-  modal_no_variants: {
-    sv: "Inga bokmärken tillgängliga just nu.",
-    en: "No bookmarks available right now.",
+  // Every bookmark shares this description: what tells them apart is the
+  // motif, which the photo already shows
+  desc_bookmark: {
+    sv: "Handmålat bokmärke på akvarellpapper, laminerat så att det håller. Varje bokmärke är målat för hand och finns i ett enda exemplar.",
+    en: "A hand-painted bookmark on watercolour paper, laminated to last. Each one is painted by hand and exists only once.",
   },
   clay_empty_notice: {
     sv: "Den här sidan är tom just nu — fler keramikprodukter kommer snart!",
     en: "This page is empty right now — more ceramic products will be added soon!",
-  },
-  modal_select_bookmarks_title: {
-    sv: "Välj bokmärken",
-    en: "Select bookmarks",
-  },
-  modal_add_selected_to_cart: {
-    sv: "Lägg till valda i varukorgen",
-    en: "Add selected to cart",
-  },
-  modal_select_all: {
-    sv: "Markera alla",
-    en: "Select all",
-  },
-  modal_cancel: {
-    sv: "Avbryt",
-    en: "Cancel",
-  },
-  modal_select_at_least_one: {
-    sv: "Vänligen välj minst ett bokmärke",
-    en: "Please select at least one bookmark",
   },
 
   desc_dagensFynd: {

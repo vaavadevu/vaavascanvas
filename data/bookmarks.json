@@ -1,19 +1,16 @@
 {
-  "imageDir": "/images/bookmarks/",
-  "imageExtension": ".jpg",
-  "cover": "cover",
   "multiBuyPrice": 100,
   "multiBuyMinQuantity": 2,
   "variants": [
-    { "id": "cheetah", "status": "sold" },
-    { "id": "chicken1", "status": "sold" },
-    { "id": "chicken2", "status": "for_sale" },
-    { "id": "giraffe", "status": "sold" },
-    { "id": "mallard", "status": "for_sale" },
-    { "id": "pigeon", "status": "sold" },
-    { "id": "piggy", "status": "for_sale" },
-    { "id": "pingvin", "status": "sold" },
-    { "id": "rabbit", "status": "sold" },
-    { "id": "wilddog", "status": "for_sale" }
+    { "id": "cheetah", "title": "Gepard", "status": "sold" },
+    { "id": "chicken1", "title": "Tupp", "status": "sold" },
+    { "id": "chicken2", "title": "Höna", "status": "for_sale" },
+    { "id": "giraffe", "title": "Giraff", "status": "sold" },
+    { "id": "mallard", "title": "Gräsand", "status": "for_sale" },
+    { "id": "pigeon", "title": "Duva", "status": "sold" },
+    { "id": "piggy", "title": "Gris", "status": "for_sale" },
+    { "id": "pingvin", "title": "Pingvin", "status": "sold" },
+    { "id": "rabbit", "title": "Kanin", "status": "sold" },
+    { "id": "wilddog", "title": "Afrikansk vildhund", "status": "for_sale" }
   ]
 }

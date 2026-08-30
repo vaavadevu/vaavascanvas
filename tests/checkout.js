@@ -240,12 +240,12 @@ async function runTests() {
   const forSale = serverPaintings.find(p => p.status === 'for_sale' && p.originalPrice && !p.framedOnly);
   const sold = serverPaintings.find(p => p.status === 'sold');
   const availableBookmarks = Object.entries(bookmarks.variants)
-    .filter(([, status]) => status === 'for_sale')
+    .filter(([, entry]) => entry.status === 'for_sale')
     .map(([id]) => id);
-  const soldBookmark = Object.entries(bookmarks.variants).find(([, s]) => s === 'sold')?.[0];
+  const soldBookmark = Object.entries(bookmarks.variants).find(([, e]) => e.status === 'sold')?.[0];
 
   const original = (id, extra = {}) => ({ id, title: 'Test', type: 'original', price: 9999, ...extra });
-  const bookmark = (id, extra = {}) => ({ id: `bookmarks::${id}`, title: 'Test', type: 'bookmark', price: 9999, ...extra });
+  const bookmark = (id, extra = {}) => ({ id, title: 'Test', type: 'bookmark', price: 9999, ...extra });
 
   console.log(colors.blue + '[1] PRICE AUTHORITY' + colors.reset);
 
@@ -303,8 +303,8 @@ async function runTests() {
     const unknown = await checkout(onRequestPost, [original('no-such-painting')]);
     assertEqual(unknown.status, 400, 'Unknown painting id was accepted');
 
-    const unknownVariant = await checkout(onRequestPost, [bookmark('no-such-bookmark')]);
-    assertEqual(unknownVariant.status, 400, 'Unknown bookmark variant was accepted');
+    const unknownBookmark = await checkout(onRequestPost, [bookmark('bookmark-no-such-animal')]);
+    assertEqual(unknownBookmark.status, 400, 'Unknown bookmark was accepted');
   });
 
   console.log(colors.blue + '\n[3] BOOKMARK RULES' + colors.reset);
@@ -343,6 +343,7 @@ async function runTests() {
   });
 
   await test('The same bookmark cannot be ordered twice', async () => {
+    // Every bookmark is one physical piece — there is no second copy to sell
     const result = await checkout(onRequestPost, [
       bookmark(availableBookmarks[0]),
       bookmark(availableBookmarks[0]),
@@ -356,23 +357,27 @@ async function runTests() {
     assertEqual(result.products[0].quantity, 1, 'Bookmark quantity above 1 was accepted');
   });
 
-  await test('The bookmark set cannot be bought as a single product', async () => {
-    const asOriginal = await checkout(onRequestPost, [original(bookmarks.id)]);
-    assertEqual(asOriginal.status, 400, 'The whole bookmark set was sellable as one original');
-
-    const withoutVariant = await checkout(onRequestPost, [
-      { id: bookmarks.id, title: 'Test', type: 'bookmark', price: 120 },
-    ]);
-    assertEqual(withoutVariant.status, 400, 'A bookmark without a variant was accepted');
+  await test('A bookmark cannot be smuggled through as an original', async () => {
+    // The two paths price differently: an original pays its own price, a
+    // bookmark pays the multi-buy rate the drawer showed
+    const result = await checkout(onRequestPost, [original(availableBookmarks[0])]);
+    assertEqual(result.status, 400, 'A bookmark was accepted as an original painting');
   });
 
-  await test('Bookmark images are absolute URLs Stripe can fetch', async () => {
-    const result = await checkout(onRequestPost, [bookmark(availableBookmarks[0])]);
-    const image = result.products[0].images[0];
+  await test('Bookmark line items carry the piece, not the set', async () => {
+    const id = availableBookmarks[0];
+    const result = await checkout(onRequestPost, [bookmark(id)]);
+    assert(!result.error, `Unexpected rejection: ${result.error}`);
+
+    const line = result.products[0];
+    assert(line.name.includes(bookmarks.variants[id].title),
+      `The Stripe line should name the bookmark, got: ${line.name}`);
+
+    const image = line.images[0];
     assert(image && /^https?:\/\//.test(image),
       `Bookmark image must be an absolute URL for Stripe, got: ${image}`);
-    assert(image.endsWith(bookmarks.imageExtension),
-      `Bookmark image should use the catalog extension, got: ${image}`);
+    assert(image.endsWith(bookmarks.variants[id].image),
+      `The Stripe line should show this bookmark's own picture, got: ${image}`);
   });
 
   console.log(colors.blue + '\n[4] SHIPPING' + colors.reset);

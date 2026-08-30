@@ -47,26 +47,25 @@ const PAINTINGS = [
   { id: 'kanin', originalPrice: 250, status: 'for_sale' },
 ];
 
-// Bookmark inventory — one entry per physical bookmark, generated from
-// data/bookmarks.json by scripts/build-paintings.js
+// Bookmark inventory — one entry per physical bookmark, keyed by the same id
+// the catalogue and the cart use. Generated from data/bookmarks.json by
+// scripts/build-paintings.js. Bookmarks are kept out of PAINTINGS because
+// their per-piece price depends on how many of them the order holds.
 const BOOKMARKS = {
-  id: 'bookmarks',
   price: 120,
   multiBuyPrice: 100,
   multiBuyMinQuantity: 2,
-  imageDir: '/images/bookmarks/',
-  imageExtension: '.jpg',
   variants: {
-    'cheetah': 'sold',
-    'chicken1': 'sold',
-    'chicken2': 'for_sale',
-    'giraffe': 'sold',
-    'mallard': 'for_sale',
-    'pigeon': 'sold',
-    'piggy': 'for_sale',
-    'pingvin': 'sold',
-    'rabbit': 'sold',
-    'wilddog': 'for_sale',
+    'bookmark-cheetah': { title: 'Gepard', status: 'sold', image: '/images/bookmarks/cheetah/desktop/01.jpg' },
+    'bookmark-chicken1': { title: 'Tupp', status: 'sold', image: '/images/bookmarks/chicken1/desktop/01.jpg' },
+    'bookmark-chicken2': { title: 'Höna', status: 'for_sale', image: '/images/bookmarks/chicken2/desktop/01.jpg' },
+    'bookmark-giraffe': { title: 'Giraff', status: 'sold', image: '/images/bookmarks/giraffe/desktop/01.jpg' },
+    'bookmark-mallard': { title: 'Gräsand', status: 'for_sale', image: '/images/bookmarks/mallard/desktop/01.jpg' },
+    'bookmark-pigeon': { title: 'Duva', status: 'sold', image: '/images/bookmarks/pigeon/desktop/01.jpg' },
+    'bookmark-piggy': { title: 'Gris', status: 'for_sale', image: '/images/bookmarks/piggy/desktop/01.jpg' },
+    'bookmark-pingvin': { title: 'Pingvin', status: 'sold', image: '/images/bookmarks/pingvin/desktop/01.jpg' },
+    'bookmark-rabbit': { title: 'Kanin', status: 'sold', image: '/images/bookmarks/rabbit/desktop/01.jpg' },
+    'bookmark-wilddog': { title: 'Afrikansk vildhund', status: 'for_sale', image: '/images/bookmarks/wilddog/desktop/01.jpg' },
   },
 };
 
@@ -118,16 +117,13 @@ function resolvePrice(item) {
   return getPaintingEffectivePrice(painting, isFramed || painting.framedOnly) ?? null;
 }
 
-// Bookmark cart ids carry the variant: `bookmarks::cheetah`
-function resolveBookmarkVariant(item) {
+// The cart carries a bookmark under its catalogue id, `bookmark-cheetah`,
+// the same as any other piece
+function resolveBookmark(item) {
   if (typeof item.id !== 'string') return null;
-  const separator = item.id.indexOf('::');
-  if (separator === -1) return null;
-  if (item.id.slice(0, separator) !== BOOKMARKS.id) return null;
-
-  const variant = item.id.slice(separator + 2);
-  if (BOOKMARKS.variants[variant] !== 'for_sale') return null;
-  return variant;
+  const bookmark = BOOKMARKS.variants[item.id];
+  if (!bookmark || bookmark.status !== 'for_sale') return null;
+  return bookmark;
 }
 
 // Buying several at once drops every bookmark to the lower per-piece price
@@ -174,9 +170,9 @@ export async function onRequestPost(context) {
       // Each bookmark is one physical piece: no quantities, no duplicates,
       // and never one that has already been sold
       if (item.type === 'bookmark') {
-        const variant = resolveBookmarkVariant(item);
-        if (!variant || claimedBookmarks.has(variant)) return invalidItem(item);
-        claimedBookmarks.add(variant);
+        const bookmark = resolveBookmark(item);
+        if (!bookmark || claimedBookmarks.has(item.id)) return invalidItem(item);
+        claimedBookmarks.add(item.id);
 
         const price = bookmarkUnitPrice;
         subtotal += price;
@@ -185,9 +181,9 @@ export async function onRequestPost(context) {
           price_data: {
             currency: 'sek',
             product_data: {
-              name: `Bokmärke – ${variant}`,
+              name: `Bokmärke – ${bookmark.title}`,
               description: 'Handgjort bokmärke. Leverans inom Sverige.',
-              images: [`${origin}${BOOKMARKS.imageDir}${variant}${BOOKMARKS.imageExtension}`],
+              images: [`${origin}${bookmark.image}`],
             },
             unit_amount: price * 100,
           },

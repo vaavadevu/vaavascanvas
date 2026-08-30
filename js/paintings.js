@@ -128,6 +128,19 @@ function getPaintingEffectivePrice(painting, withFrame = false) {
   return getPaintingDiscountedPrice(painting);
 }
 
+// What a bookmark costs depends on how many of them the cart ends up holding,
+// so a bookmark carries the terms of that offer with it into the cart.
+// applyBookmarkPricing() in js/cart-math.js settles the per-piece price from
+// them, and the server works the same sum out again in create-checkout.js.
+function bookmarkCartTerms(painting) {
+  const basePrice = getPaintingDiscountedPrice(painting) ?? painting.originalPrice;
+  return {
+    basePrice,
+    multiBuyPrice: painting.multiBuyPrice ?? basePrice,
+    multiBuyMinQuantity: painting.multiBuyMinQuantity ?? 2,
+  };
+}
+
 // What the product page should show in its price section, worked out without
 // touching the DOM so tests/painting-model.js can check it directly:
 //
@@ -893,9 +906,53 @@ const paintings = [
     }
   },
   {
-    id: "bookmarks",
-    title: "Bokmärken",
-    descKey: "desc_bookmarks",
+    id: "bookmark-cheetah",
+    title: "Gepard",
+    descKey: "desc_bookmark",
+    status: STATUS.SOLD,
+    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
+    width: 5,
+    height: 15,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 120,
+    type: TYPE.BOOKMARK,
+    multiBuyPrice: 100,
+    multiBuyMinQuantity: 2,
+    images: {
+      desktop: [
+        "/images/bookmarks/cheetah/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/bookmarks/cheetah/mobile/01.jpg"
+      ]
+    }
+  },
+  {
+    id: "bookmark-chicken1",
+    title: "Tupp",
+    descKey: "desc_bookmark",
+    status: STATUS.SOLD,
+    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
+    width: 5,
+    height: 15,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 120,
+    type: TYPE.BOOKMARK,
+    multiBuyPrice: 100,
+    multiBuyMinQuantity: 2,
+    images: {
+      desktop: [
+        "/images/bookmarks/chicken1/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/bookmarks/chicken1/mobile/01.jpg"
+      ]
+    }
+  },
+  {
+    id: "bookmark-chicken2",
+    title: "Höna",
+    descKey: "desc_bookmark",
     status: STATUS.FOR_SALE,
     medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
     width: 5,
@@ -905,40 +962,166 @@ const paintings = [
     type: TYPE.BOOKMARK,
     multiBuyPrice: 100,
     multiBuyMinQuantity: 2,
-    soldVariants: [
-      "/images/bookmarks/cheetah.jpg",
-      "/images/bookmarks/chicken1.jpg",
-      "/images/bookmarks/giraffe.jpg",
-      "/images/bookmarks/pigeon.jpg",
-      "/images/bookmarks/pingvin.jpg",
-      "/images/bookmarks/rabbit.jpg"
-    ],
     images: {
       desktop: [
-        "/images/bookmarks/cover.jpg",
-        "/images/bookmarks/cheetah.jpg",
-        "/images/bookmarks/chicken1.jpg",
-        "/images/bookmarks/chicken2.jpg",
-        "/images/bookmarks/giraffe.jpg",
-        "/images/bookmarks/mallard.jpg",
-        "/images/bookmarks/pigeon.jpg",
-        "/images/bookmarks/piggy.jpg",
-        "/images/bookmarks/pingvin.jpg",
-        "/images/bookmarks/rabbit.jpg",
-        "/images/bookmarks/wilddog.jpg"
+        "/images/bookmarks/chicken2/desktop/01.jpg"
       ],
       mobile: [
-        "/images/bookmarks/cover.jpg",
-        "/images/bookmarks/cheetah.jpg",
-        "/images/bookmarks/chicken1.jpg",
-        "/images/bookmarks/chicken2.jpg",
-        "/images/bookmarks/giraffe.jpg",
-        "/images/bookmarks/mallard.jpg",
-        "/images/bookmarks/pigeon.jpg",
-        "/images/bookmarks/piggy.jpg",
-        "/images/bookmarks/pingvin.jpg",
-        "/images/bookmarks/rabbit.jpg",
-        "/images/bookmarks/wilddog.jpg"
+        "/images/bookmarks/chicken2/mobile/01.jpg"
+      ]
+    }
+  },
+  {
+    id: "bookmark-giraffe",
+    title: "Giraff",
+    descKey: "desc_bookmark",
+    status: STATUS.SOLD,
+    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
+    width: 5,
+    height: 15,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 120,
+    type: TYPE.BOOKMARK,
+    multiBuyPrice: 100,
+    multiBuyMinQuantity: 2,
+    images: {
+      desktop: [
+        "/images/bookmarks/giraffe/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/bookmarks/giraffe/mobile/01.jpg"
+      ]
+    }
+  },
+  {
+    id: "bookmark-mallard",
+    title: "Gräsand",
+    descKey: "desc_bookmark",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
+    width: 5,
+    height: 15,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 120,
+    type: TYPE.BOOKMARK,
+    multiBuyPrice: 100,
+    multiBuyMinQuantity: 2,
+    images: {
+      desktop: [
+        "/images/bookmarks/mallard/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/bookmarks/mallard/mobile/01.jpg"
+      ]
+    }
+  },
+  {
+    id: "bookmark-pigeon",
+    title: "Duva",
+    descKey: "desc_bookmark",
+    status: STATUS.SOLD,
+    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
+    width: 5,
+    height: 15,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 120,
+    type: TYPE.BOOKMARK,
+    multiBuyPrice: 100,
+    multiBuyMinQuantity: 2,
+    images: {
+      desktop: [
+        "/images/bookmarks/pigeon/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/bookmarks/pigeon/mobile/01.jpg"
+      ]
+    }
+  },
+  {
+    id: "bookmark-piggy",
+    title: "Gris",
+    descKey: "desc_bookmark",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
+    width: 5,
+    height: 15,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 120,
+    type: TYPE.BOOKMARK,
+    multiBuyPrice: 100,
+    multiBuyMinQuantity: 2,
+    images: {
+      desktop: [
+        "/images/bookmarks/piggy/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/bookmarks/piggy/mobile/01.jpg"
+      ]
+    }
+  },
+  {
+    id: "bookmark-pingvin",
+    title: "Pingvin",
+    descKey: "desc_bookmark",
+    status: STATUS.SOLD,
+    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
+    width: 5,
+    height: 15,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 120,
+    type: TYPE.BOOKMARK,
+    multiBuyPrice: 100,
+    multiBuyMinQuantity: 2,
+    images: {
+      desktop: [
+        "/images/bookmarks/pingvin/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/bookmarks/pingvin/mobile/01.jpg"
+      ]
+    }
+  },
+  {
+    id: "bookmark-rabbit",
+    title: "Kanin",
+    descKey: "desc_bookmark",
+    status: STATUS.SOLD,
+    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
+    width: 5,
+    height: 15,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 120,
+    type: TYPE.BOOKMARK,
+    multiBuyPrice: 100,
+    multiBuyMinQuantity: 2,
+    images: {
+      desktop: [
+        "/images/bookmarks/rabbit/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/bookmarks/rabbit/mobile/01.jpg"
+      ]
+    }
+  },
+  {
+    id: "bookmark-wilddog",
+    title: "Afrikansk vildhund",
+    descKey: "desc_bookmark",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
+    width: 5,
+    height: 15,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 120,
+    type: TYPE.BOOKMARK,
+    multiBuyPrice: 100,
+    multiBuyMinQuantity: 2,
+    images: {
+      desktop: [
+        "/images/bookmarks/wilddog/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/bookmarks/wilddog/mobile/01.jpg"
       ]
     }
   },
@@ -964,6 +1147,7 @@ if (typeof module !== 'undefined' && module.exports) {
     getPaintingDiscountedPrice,
     getPaintingFramedSalePrice,
     getPaintingEffectivePrice,
+    bookmarkCartTerms,
     getPriceModel,
     paintingArea,
     assignSizeScales,

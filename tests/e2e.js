@@ -303,11 +303,15 @@ async function runTests() {
 
         const grid = await page.evaluate(() => {
           setActiveSortOrder('sort_price_asc');
-          const order = paintings.filter(paintingMatchesFilters).map(p => p.title);
+          const order = paintings.filter(paintingMatchesFilters).map(p => getPaintingImagePaths(p)[0]);
           const columns = [...document.querySelectorAll('.gallery-column')]
-            .map(column => [...column.children].map(tile => order.indexOf(tile.querySelector('img').alt)));
+            .map(column => [...column.children]
+              .map(tile => order.indexOf(tile.querySelector('img').getAttribute('src'))));
           return { order, columns };
         });
+
+        const unplaced = grid.columns.flat().filter(position => position === -1).length;
+        assertEqual(unplaced, 0, 'Some tiles could not be matched to a painting in the sort order');
 
         assert(grid.columns.length > 1, `Expected more than one column at ${width}px`);
 
@@ -813,6 +817,69 @@ async function runTests() {
       assertEqual(after.stored[0].price, before.stored[0].price, 'The stored price changed across the reload');
       assertEqual(after.badge, '1', 'The cart badge does not show the restored item');
       assert(after.badgeVisible, 'The cart badge is hidden even though the cart has an item');
+
+      await page.evaluate(() => localStorage.removeItem('vc_cart'));
+      await page.close();
+    });
+
+    // Bookmarks cost less by the piece when you buy more than one, and a buyer
+    // on one bookmark's page can see neither that nor the other nine. The panel
+    // that opens once one is in the cart is the only place that says so, so it
+    // has to offer what is left, price it as it would really be charged, and
+    // hold the drawer back until it has been answered.
+    await test('Adding a bookmark offers the others at the multi-buy price', async () => {
+      const forSale = paintings.filter(p => p.type === 'bookmark' && p.status === 'for_sale');
+      assert(forSale.length >= 2,
+        'Need at least two bookmarks for sale to test the multi-buy offer');
+
+      const first = forSale[0];
+      const page = await browser.newPage();
+      await page.goto(`${baseUrl}${paintingPageUrl(first)}`, { waitUntil: 'networkidle' });
+      await page.evaluate(() => localStorage.removeItem('vc_cart'));
+
+      await page.waitForSelector('button.pageview-buy-btn', { timeout: 10000 });
+      await page.locator('button.pageview-buy-btn').click();
+      await page.waitForSelector('#more-bookmarks-modal', { timeout: 5000 });
+      await page.waitForTimeout(300);
+
+      const offered = await page.evaluate(() => ({
+        picks: document.querySelectorAll('.more-bookmarks-pick').length,
+        offer: document.querySelector('.more-bookmarks-offer')?.textContent.trim(),
+        drawerOpen: !!document.querySelector('#cart-drawer.open'),
+        stored: JSON.parse(localStorage.getItem('vc_cart') || '[]').length,
+      }));
+
+      assertEqual(offered.picks, forSale.length - 1,
+        'The panel should offer every other bookmark that is still for sale');
+      assert(offered.offer && /\d/.test(offered.offer),
+        'The panel does not say what buying more than one is worth');
+      assert(!offered.drawerOpen,
+        'The cart drawer opened over the offer instead of waiting for an answer');
+      assertEqual(offered.stored, 1, 'The bookmark did not reach the cart');
+
+      // Taking a second one is what unlocks the cheaper price, so both lines
+      // have to end up at it
+      await page.locator('.more-bookmarks-pick').first().click();
+      await page.waitForTimeout(500);
+
+      const after = await page.evaluate(() => ({
+        stored: JSON.parse(localStorage.getItem('vc_cart') || '[]'),
+        picks: document.querySelectorAll('.more-bookmarks-pick').length,
+      }));
+
+      assertEqual(after.stored.length, 2, 'Picking a bookmark from the panel did not add it');
+      assertEqual(after.picks, forSale.length - 2,
+        'The bookmark just taken is still being offered');
+      after.stored.forEach(item => {
+        assertEqual(item.price, item.multiBuyPrice,
+          `${item.id} is still at the single-piece price after a second bookmark went in`);
+      });
+
+      // And the panel hands the buyer on to the cart
+      await page.locator('#more-bookmarks-cart').click();
+      await page.waitForSelector('#cart-drawer.open', { timeout: 5000 });
+      assertEqual(await page.locator('#more-bookmarks-modal').count(), 0,
+        'The offer stayed on screen after going to the cart');
 
       await page.evaluate(() => localStorage.removeItem('vc_cart'));
       await page.close();

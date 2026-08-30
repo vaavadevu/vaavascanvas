@@ -8,11 +8,13 @@ const { buildPaintingPages } = require('./build-painting-pages');
 // Read the paintings data from separate files and merge them
 const paintingsPath = path.join(__dirname, '..', 'data', 'paintings.json');
 const clayPath = path.join(__dirname, '..', 'data', 'clay.json');
+// The fields every bookmark shares — size, price, medium. What tells them
+// apart lives in data/bookmarks.json.
 const bookmarksDataPath = path.join(__dirname, '..', 'data', 'bookmarks-data.json');
 
 const paintingsData = JSON.parse(fs.readFileSync(paintingsPath, 'utf8'));
 const clayData = JSON.parse(fs.readFileSync(clayPath, 'utf8'));
-const bookmarksDataProduct = JSON.parse(fs.readFileSync(bookmarksDataPath, 'utf8'));
+const bookmarkDefaults = JSON.parse(fs.readFileSync(bookmarksDataPath, 'utf8'));
 
 // Apply defaults based on file source - paintings default to acrylic canvas
 paintingsData.forEach(painting => {
@@ -73,35 +75,39 @@ clayData.forEach(clay => {
   }
 });
 
-// Merge all data sources
-paintingsData.push(...clayData);
-paintingsData.push(bookmarksDataProduct);
-
-// Read the per-variant bookmark inventory — the source of truth for which
-// individual bookmarks are still available
+// Read the bookmarks — one entry per physical bookmark
 const bookmarksPath = path.join(__dirname, '..', 'data', 'bookmarks.json');
 const bookmarksData = JSON.parse(fs.readFileSync(bookmarksPath, 'utf8'));
 
-const bookmarkImagePath = id => `${bookmarksData.imageDir}${id}${bookmarksData.imageExtension}`;
-const bookmarkSoldVariants = bookmarksData.variants
-  .filter(v => v.status === 'sold')
-  .map(v => bookmarkImagePath(v.id));
-const bookmarkImageList = [
-  bookmarkImagePath(bookmarksData.cover),
-  ...bookmarksData.variants.map(v => bookmarkImagePath(v.id)),
-];
-const allBookmarksSold = bookmarksData.variants.every(v => v.status === 'sold');
+// A bookmark is a work like any other: its own tile in the shop, its own page,
+// its own place in the cart. It used to be a single "Bokmärken" product whose
+// images were the variants, which meant a buyer had to open it and pick one
+// from a modal before anything could be bought.
+//
+// The catalogue cannot go by the folder name alone — "mallard" is both a clay
+// piece and a bookmark — so each one is "bookmark-<folder>". The same prefix
+// is in scripts/generate_mobile_images.py, which names their image folders.
+const BOOKMARK_ID_PREFIX = 'bookmark-';
+const bookmarkId = variant => `${BOOKMARK_ID_PREFIX}${variant.id}`;
+const bookmarkImagePath = (variant, size) =>
+  `/images/bookmarks/${variant.id}/${size}/01.jpg`;
 
-// Fold the bookmark inventory into the bookmark product entry so the rest of
-// the pipeline sees one shape
-paintingsData.forEach(painting => {
-  if (painting.type !== 'bookmark') return;
-  if (allBookmarksSold) painting.status = 'sold';
-  painting.multiBuyPrice = bookmarksData.multiBuyPrice;
-  painting.multiBuyMinQuantity = bookmarksData.multiBuyMinQuantity;
-  painting.soldVariants = bookmarkSoldVariants;
-  painting.images = { desktop: bookmarkImageList, mobile: bookmarkImageList };
-});
+const bookmarkItems = bookmarksData.variants.map(variant => ({
+  ...bookmarkDefaults,
+  id: bookmarkId(variant),
+  title: variant.title,
+  status: variant.status,
+  multiBuyPrice: bookmarksData.multiBuyPrice,
+  multiBuyMinQuantity: bookmarksData.multiBuyMinQuantity,
+  images: {
+    desktop: [bookmarkImagePath(variant, 'desktop')],
+    mobile: [bookmarkImagePath(variant, 'mobile')],
+  },
+}));
+
+// Merge all data sources
+paintingsData.push(...clayData);
+paintingsData.push(...bookmarkItems);
 
 // Transform each painting object to the server format. Bookmarks are priced
 // per variant and get their own catalog below.
@@ -178,23 +184,21 @@ ${formattedPaintings}
 
 checkoutContent = checkoutContent.replace(paintingsRegex, newPaintingsArray);
 
-// Replace the BOOKMARKS catalog so the server can price and reject variants itself
-const bookmarkProduct = paintingsData.find(p => p.type === 'bookmark');
-if (!bookmarkProduct) {
-  throw new Error('No painting entry with type "bookmark" found in paintings.json');
+// Replace the BOOKMARKS catalog so the server can price and reject bookmarks
+// itself. They are kept apart from PAINTINGS because their per-piece price
+// depends on how many of them the order holds.
+if (bookmarkItems.length === 0) {
+  throw new Error('data/bookmarks.json lists no bookmarks');
 }
 
-const variantEntries = bookmarksData.variants
-  .map(v => `    '${v.id}': '${v.status}',`)
+const variantEntries = bookmarkItems
+  .map(b => `    '${b.id}': { title: '${b.title}', status: '${b.status}', image: '${b.images.desktop[0]}' },`)
   .join('\n');
 
 const newBookmarksCatalog = `const BOOKMARKS = {
-  id: '${bookmarkProduct.id}',
-  price: ${bookmarkProduct.originalPrice},
+  price: ${bookmarkDefaults.originalPrice},
   multiBuyPrice: ${bookmarksData.multiBuyPrice},
   multiBuyMinQuantity: ${bookmarksData.multiBuyMinQuantity},
-  imageDir: '${bookmarksData.imageDir}',
-  imageExtension: '${bookmarksData.imageExtension}',
   variants: {
 ${variantEntries}
   },
@@ -278,7 +282,6 @@ const clientPaintings = paintingsData.map(painting => {
     clientPainting.multiBuyPrice = painting.multiBuyPrice;
     clientPainting.multiBuyMinQuantity = painting.multiBuyMinQuantity;
   }
-  if (painting.soldVariants) clientPainting.soldVariants = indentJson(painting.soldVariants);
   if (painting.images) clientPainting.images = indentJson(painting.images);
 
   return clientPainting;

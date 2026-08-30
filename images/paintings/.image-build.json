@@ -333,5 +333,56 @@
       }
     }
   },
-  "bookmarks": {}
+  "bookmarks": {
+    "cheetah": {
+      "sources": {
+        "01.jpg": "ce229c2caed19b166b08946bec5c19e911c188248bcd1a219ecc5848a31e5df9"
+      }
+    },
+    "chicken1": {
+      "sources": {
+        "01.jpg": "16c43db936f10fc33e94c648d7f7e54d8c73b9e169fe58e56365cedd411e2f36"
+      }
+    },
+    "chicken2": {
+      "sources": {
+        "01.jpg": "b52af2b6af16b1a9c1336e5ba8fc3fa14da409cbd1d3e9085e442cffd24d0d24"
+      }
+    },
+    "giraffe": {
+      "sources": {
+        "01.jpg": "a714cdde7bfae3a1931c193f7e93e64deae970f6071ccdb27e1bfef34eddd305"
+      }
+    },
+    "mallard": {
+      "sources": {
+        "01.jpg": "8704a6f3747addcb7ede6c4884a1d9396f1a455bef1bba68f04ca96c3b15ee38"
+      }
+    },
+    "pigeon": {
+      "sources": {
+        "01.jpg": "b4e483df3bf0e1a4b963d088d6295ca789f53040c8b819c76e750f09096177a2"
+      }
+    },
+    "piggy": {
+      "sources": {
+        "01.jpg": "702171900b3ad37a7b405e43b71c27c853f7eccb932eb2f476c632e7031f9f0c"
+      }
+    },
+    "pingvin": {
+      "sources": {
+        "01.jpg": "dd198b017326c980f18ba407d38a63232f17106e69bda0ad3c2294e404fd48b2"
+      }
+    },
+    "rabbit": {
+      "sources": {
+        "01.jpg": "ed88691735a84a8a19365c8f7772c0f54fa18d22ee429b5e0e5dc41c0dc2cf58"
+      }
+    },
+    "wilddog": {
+      "sources": {
+        "01.jpg": "a28a27df04639529f8b6627f46c7e06dea91d18476be870e7bf5a44c43b3da0c"
+      }
+    }
+  }
 }
