@@ -15,9 +15,15 @@ function cartItemKey(item) {
   return `${item.id}-${item.size || 'original'}`;
 }
 
-// One-of-a-kind pieces: a second copy can never be ordered
+// One-of-a-kind pieces: a second copy can never be ordered. Everything in the
+// shop is one — a painting, a clay piece, a bookmark — each is the only one
+// there is, so none of them takes a quantity. The cart hides the +/- for these
+// and refuses a second copy; create-checkout.js refuses one again, because the
+// cart is the buyer's to edit.
+const UNIQUE_ITEM_TYPES = ['original', 'clay', 'bookmark'];
+
 function isUniqueItem(item) {
-  return item.type === 'original' || item.type === 'bookmark';
+  return UNIQUE_ITEM_TYPES.includes(item.type);
 }
 
 // Framed and unframed are the same physical painting under two ids
@@ -84,6 +90,7 @@ function buildOrderItems(items) {
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     cartItemKey,
+    UNIQUE_ITEM_TYPES,
     isUniqueItem,
     paintingBaseId,
     withoutFrameVariants,

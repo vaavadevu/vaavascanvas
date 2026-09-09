@@ -274,16 +274,61 @@ async function runTests() {
 
     console.log(colors.blue + '\n[3] GALLERY & MODAL TESTS (Paintings Page)' + colors.reset);
 
-    // Test 5: Full gallery renders on paintings page
-    await test(`Gallery renders all ${paintings.length} paintings`, async () => {
-      const page = await browser.newPage();
+    // Test 5: The shop opens on a row per kind rather than one mixed grid
+    await test('The shop opens on an overview of every kind', async () => {
+      const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
       await page.goto(`${baseUrl}${SHOP_URL}`, { waitUntil: 'networkidle' });
+      await page.waitForSelector('.overview-row', { timeout: 10000 });
 
-      // Wait for gallery to load
-      await page.waitForSelector('.gallery-item', { timeout: 10000 });
+      const kinds = [...new Set(paintings.map(p => p.type || 'painting'))];
+      const overview = await page.evaluate(() => ({
+        rows: document.querySelectorAll('.overview-row').length,
+        links: document.querySelectorAll('.overview-row-link').length,
+        cards: document.querySelectorAll('.overview-card').length,
+        tiles: document.querySelectorAll('.gallery-item').length,
+        typeButtons: [...document.querySelectorAll('.shop-type-btn')].map(b => b.dataset.type),
+        active: document.querySelector('.shop-type-btn.active')?.dataset.type,
+        barShown: document.getElementById('gallery-filter-bar').getBoundingClientRect().height > 0,
+      }));
 
-      const galleryItems = await page.locator('.gallery-item').count();
-      assertEqual(galleryItems, paintings.length, `Gallery item count mismatch`);
+      assertEqual(overview.rows, kinds.length,
+        'Every kind of work in the catalogue should get a row of its own');
+      assertEqual(overview.links, kinds.length, 'Every row needs its way into that kind');
+      assert(overview.cards > 0, 'The overview rows are empty');
+      assertEqual(overview.tiles, 0, 'The mixed grid is still being laid out behind the overview');
+      assertEqual(overview.active, 'all', '"Allt" should be the kind the shop opens on');
+      assertEqual(overview.typeButtons.join(','), ['all', ...kinds].join(','),
+        'The row under the header should offer "Allt" and every kind in the catalogue');
+      assert(!overview.barShown,
+        'The filters are showing on the overview, where there is no grid for them to filter');
+
+      await page.close();
+    });
+
+    // Every work is reachable: the kinds between them account for the catalogue
+    await test(`The kinds add up to all ${paintings.length} works`, async () => {
+      const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+      await page.goto(`${baseUrl}${SHOP_URL}`, { waitUntil: 'networkidle' });
+      await page.waitForSelector('.overview-row', { timeout: 10000 });
+
+      const counts = {};
+      for (const kind of [...new Set(paintings.map(p => p.type || 'painting'))]) {
+        await page.evaluate(k => setActiveTypeFilter(k), kind);
+        await page.waitForTimeout(400);
+        counts[kind] = await page.locator('.gallery-item').count();
+      }
+
+      const total = Object.values(counts).reduce((sum, n) => sum + n, 0);
+      assertEqual(total, paintings.length,
+        `The kinds show ${total} works between them, the catalogue holds ${paintings.length}: ` +
+        JSON.stringify(counts));
+
+      // And "Allt" goes back to the overview rather than to a grid of everything
+      await page.evaluate(() => setActiveTypeFilter('all'));
+      await page.waitForTimeout(400);
+      assertEqual(await page.locator('.gallery-item').count(), 0,
+        '"Allt" laid out a grid instead of returning to the overview');
+      assert(await page.locator('.overview-row').count() > 0, '"Allt" did not bring the overview back');
 
       await page.close();
     });
@@ -299,15 +344,21 @@ async function runTests() {
       await test(`Sorted tiles read across the grid, not down it (${label})`, async () => {
         const page = await browser.newPage({ viewport: { width, height: 900 } });
         await page.goto(`${baseUrl}${SHOP_URL}`, { waitUntil: 'networkidle' });
-        await page.waitForSelector('.gallery-item', { timeout: 10000 });
+        await page.waitForSelector('.overview-row', { timeout: 10000 });
 
         const grid = await page.evaluate(() => {
+          // The shop opens on the overview; the grid belongs to a kind
+          setActiveTypeFilter('painting');
           setActiveSortOrder('sort_price_asc');
-          const order = paintings.filter(paintingMatchesFilters).map(p => p.title);
+          const order = paintings.filter(paintingMatchesFilters).map(p => getPaintingImagePaths(p)[0]);
           const columns = [...document.querySelectorAll('.gallery-column')]
-            .map(column => [...column.children].map(tile => order.indexOf(tile.querySelector('img').alt)));
+            .map(column => [...column.children]
+              .map(tile => order.indexOf(tile.querySelector('img').getAttribute('src'))));
           return { order, columns };
         });
+
+        const unplaced = grid.columns.flat().filter(position => position === -1).length;
+        assertEqual(unplaced, 0, 'Some tiles could not be matched to a painting in the sort order');
 
         assert(grid.columns.length > 1, `Expected more than one column at ${width}px`);
 
@@ -340,35 +391,45 @@ async function runTests() {
       await test(`Exactly one set of filter controls shows on ${label}`, async () => {
         const page = await browser.newPage({ viewport: { width, height: 900 } });
         await page.goto(`${baseUrl}${SHOP_URL}`, { waitUntil: 'networkidle' });
-        await page.waitForSelector('.gallery-item', { timeout: 10000 });
+        await page.waitForSelector('.overview-row', { timeout: 10000 });
+
+        // The filters belong to a kind, so one has to be showing for them to
+        await page.evaluate(() => setActiveTypeFilter('painting'));
+        await page.waitForTimeout(400);
 
         assertEqual(await page.locator('#gallery-filter-bar').isVisible(), bar,
           `The filter bar should ${bar ? '' : 'not '}show at ${width}px`);
         assertEqual(await page.locator('#filter-fab').isVisible(), fab,
           `The floating filter button should ${fab ? '' : 'not '}show at ${width}px`);
 
-        // Nothing may hide behind the fixed header either way
+        // The row of kinds is the one control every screen gets
+        assert(await page.locator('#shop-type-bar').isVisible(),
+          `The row of kinds is not reachable at ${width}px`);
+
+        // And nothing may hide behind the header and the band below it
         const clear = await page.evaluate(() => {
-          const header = document.getElementById('header-container').getBoundingClientRect();
-          const title = document.querySelector('.page-title').getBoundingClientRect();
-          return title.top >= header.bottom;
+          const bands = document.getElementById('shop-bands').getBoundingClientRect();
+          const firstTile = document.querySelector('.gallery-item').getBoundingClientRect();
+          return firstTile.top >= bands.bottom;
         });
-        assert(clear, `The page title is tucked under the fixed header at ${width}px`);
+        assert(clear, `The first work is tucked under the header at ${width}px`);
 
         await page.close();
       });
     }
 
-    // Test 5c2: The bar's four controls sit on one row at the narrowest width
-    // that still shows it, with every filter set to its longest label
-    await test('The filter bar keeps its four controls on one row at 961px', async () => {
+    // Test 5c2: The bar's controls sit on one row at the narrowest width that
+    // still shows it, with every filter set to its longest label. The kind of
+    // work is no longer among them — that row sits above, under the header.
+    await test('The filter bar keeps its controls on one row at 961px', async () => {
       const page = await browser.newPage({ viewport: { width: 961, height: 900 } });
       await page.goto(`${baseUrl}${SHOP_URL}`, { waitUntil: 'networkidle' });
-      await page.waitForSelector('.gallery-item', { timeout: 10000 });
+      await page.waitForSelector('.overview-row', { timeout: 10000 });
 
       const row = await page.evaluate(() => {
-        setActiveStatusFilter('for_sale');
+        // Paintings are the kind that shows every control, sizes included
         setActiveTypeFilter('painting');
+        setActiveStatusFilter('for_sale');
         setActiveSizeFilter('size_large');
         setActiveSortOrder('sort_size_desc');
 
@@ -385,7 +446,7 @@ async function runTests() {
         };
       });
 
-      assertEqual(row.count, 4, 'Expected four filter controls in the bar');
+      assertEqual(row.count, 3, 'Expected three filter controls in the bar');
       assertEqual(row.rows, 1, 'The filter controls wrapped onto more than one row');
       assertEqual(row.offScreen, 0, 'A filter control hangs off the right of the screen');
       assertEqual(row.clipped.join(', '), '', 'A filter label had to be cut short: ' + row.clipped.join(', '));
@@ -400,6 +461,10 @@ async function runTests() {
     await test('The floating filter button filters the grid on a phone', async () => {
       const page = await browser.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true });
       await page.goto(`${baseUrl}${SHOP_URL}`, { waitUntil: 'networkidle' });
+      await page.waitForSelector('.overview-row', { timeout: 10000 });
+
+      // Paintings: the kind with the most works, and the only one with sizes
+      await page.evaluate(() => setActiveTypeFilter('painting'));
       await page.waitForSelector('.gallery-item', { timeout: 10000 });
 
       // Past the top of the page, where the static filter bar is long gone
@@ -424,7 +489,7 @@ async function runTests() {
         };
       });
       assertEqual(sheet.opacity, '1', 'The filter sheet did not open');
-      assertEqual(sheet.groups.length, 4, `Expected four filter groups, got: ${sheet.groups.join(', ')}`);
+      assertEqual(sheet.groups.length, 3, `Expected three filter groups, got: ${sheet.groups.join(', ')}`);
       assert(sheet.onScreen, 'The filter sheet opens partly off the screen');
 
       await page.click('.fab-filter-btn.status-filter[data-filter="sold"]');
@@ -436,7 +501,8 @@ async function runTests() {
         barLabel: document.getElementById('filter-status-label').textContent,
       }));
       assert(!result.stillOpen, 'The sheet should close once a filter is picked');
-      assertEqual(result.shown, paintings.filter(p => p.status === 'sold').length,
+      assertEqual(result.shown,
+        paintings.filter(p => p.status === 'sold' && (p.type || 'painting') === 'painting').length,
         'Picking "Sålda" in the sheet did not filter the grid to the sold paintings');
       assertEqual(result.barLabel, 'Sålda', 'The bar at the top did not follow the choice made in the sheet');
 
@@ -449,6 +515,9 @@ async function runTests() {
     await test('The filter sheet opens at full size wherever the button has drifted to', async () => {
       const page = await browser.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true });
       await page.goto(`${baseUrl}${SHOP_URL}`, { waitUntil: 'networkidle' });
+      await page.waitForSelector('.overview-row', { timeout: 10000 });
+
+      await page.evaluate(() => setActiveTypeFilter('painting'));
       await page.waitForSelector('.gallery-item', { timeout: 10000 });
 
       const openAndMeasure = async () => {
@@ -478,10 +547,36 @@ async function runTests() {
       assertEqual(resting.opacity, '1', 'The filter sheet did not open');
       assert(!resting.squeezed, "The filter sheet is squeezed even at the button's resting position");
 
-      // An empty grid leaves a short page, so the footer shoves the button up
-      await page.evaluate(() => { setActiveTypeFilter('clay'); setActiveStatusFilter('sold'); filterGallery(); });
+      // An empty grid leaves a short page, so the footer shoves the button up.
+      // Which filters leave nothing behind changes as works are added and sold,
+      // so hunt for a combination that empties the grid today rather than
+      // naming one that was empty when this was written. If the shop has grown
+      // enough that every combination finds something, empty the grid by hand —
+      // the point of the test is the short page, not the route to it.
+      const emptied = await page.evaluate(() => {
+        // "all" is the overview, which has no grid to empty — the hunt is for a
+        // kind whose filters leave nothing behind
+        const types = ['bookmark', 'clay', 'painting'];
+        const statuses = ['sold', 'for_sale', 'all'];
+        // The size filter is only offered for paintings
+        const sizes = ['size_small', 'size_medium', 'size_large', 'size_all'];
+        for (const type of types) {
+          for (const status of statuses) {
+            for (const size of type === 'painting' ? sizes : ['size_all']) {
+              setActiveTypeFilter(type);
+              setActiveStatusFilter(status);
+              setActiveSizeFilter(size);
+              if (!document.querySelectorAll('.gallery-item').length) return `${type} / ${status} / ${size}`;
+            }
+          }
+        }
+        setActiveTypeFilter('painting');
+        layoutGallery([]);
+        return 'no filter empties the grid — laid out an empty grid directly';
+      });
       await page.waitForTimeout(800);
-      assertEqual(await page.locator('.gallery-item').count(), 0, 'Expected the grid to be empty for this test');
+      assertEqual(await page.locator('.gallery-item').count(), 0,
+        `Expected the grid to be empty for this test (tried ${emptied})`);
       await page.evaluate(() => window.scrollTo({ top: 300, behavior: 'instant' }));
       await page.waitForTimeout(600);
       await page.evaluate(() => window.scrollTo({ top: 100, behavior: 'instant' }));
@@ -790,6 +885,69 @@ async function runTests() {
       assertEqual(after.stored[0].price, before.stored[0].price, 'The stored price changed across the reload');
       assertEqual(after.badge, '1', 'The cart badge does not show the restored item');
       assert(after.badgeVisible, 'The cart badge is hidden even though the cart has an item');
+
+      await page.evaluate(() => localStorage.removeItem('vc_cart'));
+      await page.close();
+    });
+
+    // Bookmarks cost less by the piece when you buy more than one, and a buyer
+    // on one bookmark's page can see neither that nor the other nine. The panel
+    // that opens once one is in the cart is the only place that says so, so it
+    // has to offer what is left, price it as it would really be charged, and
+    // hold the drawer back until it has been answered.
+    await test('Adding a bookmark offers the others at the multi-buy price', async () => {
+      const forSale = paintings.filter(p => p.type === 'bookmark' && p.status === 'for_sale');
+      assert(forSale.length >= 2,
+        'Need at least two bookmarks for sale to test the multi-buy offer');
+
+      const first = forSale[0];
+      const page = await browser.newPage();
+      await page.goto(`${baseUrl}${paintingPageUrl(first)}`, { waitUntil: 'networkidle' });
+      await page.evaluate(() => localStorage.removeItem('vc_cart'));
+
+      await page.waitForSelector('button.pageview-buy-btn', { timeout: 10000 });
+      await page.locator('button.pageview-buy-btn').click();
+      await page.waitForSelector('#more-bookmarks-modal', { timeout: 5000 });
+      await page.waitForTimeout(300);
+
+      const offered = await page.evaluate(() => ({
+        picks: document.querySelectorAll('.more-bookmarks-pick').length,
+        offer: document.querySelector('.more-bookmarks-offer')?.textContent.trim(),
+        drawerOpen: !!document.querySelector('#cart-drawer.open'),
+        stored: JSON.parse(localStorage.getItem('vc_cart') || '[]').length,
+      }));
+
+      assertEqual(offered.picks, forSale.length - 1,
+        'The panel should offer every other bookmark that is still for sale');
+      assert(offered.offer && /\d/.test(offered.offer),
+        'The panel does not say what buying more than one is worth');
+      assert(!offered.drawerOpen,
+        'The cart drawer opened over the offer instead of waiting for an answer');
+      assertEqual(offered.stored, 1, 'The bookmark did not reach the cart');
+
+      // Taking a second one is what unlocks the cheaper price, so both lines
+      // have to end up at it
+      await page.locator('.more-bookmarks-pick').first().click();
+      await page.waitForTimeout(500);
+
+      const after = await page.evaluate(() => ({
+        stored: JSON.parse(localStorage.getItem('vc_cart') || '[]'),
+        picks: document.querySelectorAll('.more-bookmarks-pick').length,
+      }));
+
+      assertEqual(after.stored.length, 2, 'Picking a bookmark from the panel did not add it');
+      assertEqual(after.picks, forSale.length - 2,
+        'The bookmark just taken is still being offered');
+      after.stored.forEach(item => {
+        assertEqual(item.price, item.multiBuyPrice,
+          `${item.id} is still at the single-piece price after a second bookmark went in`);
+      });
+
+      // And the panel hands the buyer on to the cart
+      await page.locator('#more-bookmarks-cart').click();
+      await page.waitForSelector('#cart-drawer.open', { timeout: 5000 });
+      assertEqual(await page.locator('#more-bookmarks-modal').count(), 0,
+        'The offer stayed on screen after going to the cart');
 
       await page.evaluate(() => localStorage.removeItem('vc_cart'));
       await page.close();

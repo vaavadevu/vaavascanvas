@@ -87,8 +87,10 @@
   transform: translateY(-8px) rotate(-45deg);
 }
 
-  /* Själva navigeringen som dyker upp */
- nav {
+  /* Själva navigeringen som dyker upp. Scoped to the header for the same
+     reason as in header.css: as a bare `nav` this turned every <nav> on the
+     site into a slide-in drawer parked off the left edge. */
+ .stickyHeader nav {
   position: fixed;
   top: 70px; /* samma höjd som din header */
   left: -100%;
@@ -106,7 +108,7 @@
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-nav.active {
+.stickyHeader nav.active {
   left: 0;
   opacity: 1;
   visibility: visible;

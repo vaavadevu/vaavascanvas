@@ -21,7 +21,8 @@ const SHAPE = {
 // Medium constants
 const MEDIUM = {
   ACRYLIC_CANVAS: "medium_acrylic_canvas",
-  WATERCOLOR_PAPER_LAMINATED: "medium_watercolor_paper_laminated"
+  WATERCOLOR_PAPER_LAMINATED: "medium_watercolor_paper_laminated",
+  CLAY: "medium_clay"
 };
 
 // Size constants
@@ -125,6 +126,19 @@ function getPaintingEffectivePrice(painting, withFrame = false) {
     return getPaintingFramedSalePrice(painting) ?? getPaintingDiscountedPrice(painting);
   }
   return getPaintingDiscountedPrice(painting);
+}
+
+// What a bookmark costs depends on how many of them the cart ends up holding,
+// so a bookmark carries the terms of that offer with it into the cart.
+// applyBookmarkPricing() in js/cart-math.js settles the per-piece price from
+// them, and the server works the same sum out again in create-checkout.js.
+function bookmarkCartTerms(painting) {
+  const basePrice = getPaintingDiscountedPrice(painting) ?? painting.originalPrice;
+  return {
+    basePrice,
+    multiBuyPrice: painting.multiBuyPrice ?? basePrice,
+    multiBuyMinQuantity: painting.multiBuyMinQuantity ?? 2,
+  };
 }
 
 // What the product page should show in its price section, worked out without
@@ -273,7 +287,8 @@ const paintings = [
     width: 90,
     height: 60,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 3200
+    originalPrice: 3200,
+    type: TYPE.PAINTING
   },
   {
     id: "aldrigEnsam",
@@ -284,7 +299,8 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 600
+    originalPrice: 600,
+    type: TYPE.PAINTING
   },
   {
     id: "operationBaver",
@@ -295,7 +311,8 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 600
+    originalPrice: 600,
+    type: TYPE.PAINTING
   },
   {
     id: "skymningsDrom",
@@ -306,7 +323,8 @@ const paintings = [
     width: 30,
     height: 90,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 2000
+    originalPrice: 2000,
+    type: TYPE.PAINTING
   },
   {
     id: "koslapp",
@@ -319,7 +337,8 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     framedPrice: 3500,
     framedOnly: true,
-    frameAvailable: true
+    frameAvailable: true,
+    type: TYPE.PAINTING
   },
   {
     id: "narhet",
@@ -332,7 +351,8 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     framedPrice: 2500,
     framedOnly: true,
-    frameAvailable: true
+    frameAvailable: true,
+    type: TYPE.PAINTING
   },
   {
     id: "tjuvsmak",
@@ -343,7 +363,8 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 600
+    originalPrice: 600,
+    type: TYPE.PAINTING
   },
   {
     id: "maskrosdrom",
@@ -354,7 +375,8 @@ const paintings = [
     width: 24,
     height: 18,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 600
+    originalPrice: 600,
+    type: TYPE.PAINTING
   },
   {
     id: "frihet",
@@ -365,7 +387,8 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 600
+    originalPrice: 600,
+    type: TYPE.PAINTING
   },
   {
     id: "lodjur",
@@ -376,7 +399,8 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 600
+    originalPrice: 600,
+    type: TYPE.PAINTING
   },
   {
     id: "kattuggla",
@@ -387,7 +411,8 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 600
+    originalPrice: 600,
+    type: TYPE.PAINTING
   },
   {
     id: "tropisktBad",
@@ -398,7 +423,8 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 600
+    originalPrice: 600,
+    type: TYPE.PAINTING
   },
   {
     id: "busungen",
@@ -409,7 +435,8 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 600
+    originalPrice: 600,
+    type: TYPE.PAINTING
   },
   {
     id: "breadwinner",
@@ -420,7 +447,8 @@ const paintings = [
     width: 18,
     height: 24,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 600
+    originalPrice: 600,
+    type: TYPE.PAINTING
   },
   {
     id: "minMamma",
@@ -433,7 +461,8 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1500,
     framedPrice: 1800,
-    frameAvailable: true
+    frameAvailable: true,
+    type: TYPE.PAINTING
   },
   {
     id: "solvarmeISkogen",
@@ -444,7 +473,8 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1500
+    originalPrice: 1500,
+    type: TYPE.PAINTING
   },
   {
     id: "underHennesVingar",
@@ -455,7 +485,8 @@ const paintings = [
     width: 59,
     height: 42,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1800
+    originalPrice: 1800,
+    type: TYPE.PAINTING
   },
   {
     id: "vidAn",
@@ -466,7 +497,8 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1500
+    originalPrice: 1500,
+    type: TYPE.PAINTING
   },
   {
     id: "enLerigDrom",
@@ -477,7 +509,8 @@ const paintings = [
     width: 59,
     height: 42,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1800
+    originalPrice: 1800,
+    type: TYPE.PAINTING
   },
   {
     id: "efterIde",
@@ -490,7 +523,8 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1500,
     framedPrice: 1800,
-    frameAvailable: true
+    frameAvailable: true,
+    type: TYPE.PAINTING
   },
   {
     id: "sommarstuga",
@@ -501,7 +535,8 @@ const paintings = [
     width: 59,
     height: 42,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1500
+    originalPrice: 1500,
+    type: TYPE.PAINTING
   },
   {
     id: "sommarPaStranden",
@@ -512,7 +547,8 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1500
+    originalPrice: 1500,
+    type: TYPE.PAINTING
   },
   {
     id: "skaViPlockaBlommor",
@@ -523,7 +559,8 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1500
+    originalPrice: 1500,
+    type: TYPE.PAINTING
   },
   {
     id: "varkansla",
@@ -534,7 +571,8 @@ const paintings = [
     width: 59,
     height: 42,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1500
+    originalPrice: 1500,
+    type: TYPE.PAINTING
   },
   {
     id: "vargen",
@@ -545,7 +583,8 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1800
+    originalPrice: 1800,
+    type: TYPE.PAINTING
   },
   {
     id: "skogsvila",
@@ -555,7 +594,8 @@ const paintings = [
     medium: MEDIUM.ACRYLIC_CANVAS,
     diameter: 90,
     shape: SHAPE.CIRCLE,
-    originalPrice: 3000
+    originalPrice: 3000,
+    type: TYPE.PAINTING
   },
   {
     id: "vinterlek",
@@ -566,7 +606,8 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1800
+    originalPrice: 1800,
+    type: TYPE.PAINTING
   },
   {
     id: "sommarvila",
@@ -577,7 +618,8 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1800
+    originalPrice: 1800,
+    type: TYPE.PAINTING
   },
   {
     id: "dagensFynd",
@@ -589,8 +631,7 @@ const paintings = [
     height: 34,
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1200,
-    framedPrice: 2100,
-    frameAvailable: true
+    type: TYPE.PAINTING
   },
   {
     id: "sugenPaEttApple",
@@ -603,7 +644,8 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1800,
     framedPrice: 2000,
-    frameAvailable: true
+    frameAvailable: true,
+    type: TYPE.PAINTING
   },
   {
     id: "varlek",
@@ -616,57 +658,8 @@ const paintings = [
     shape: SHAPE.RECTANGULAR,
     originalPrice: 1600,
     framedPrice: 1900,
-    frameAvailable: true
-  },
-  {
-    id: "bookmarks",
-    title: "Bokmärken",
-    descKey: "desc_bookmarks",
-    status: STATUS.FOR_SALE,
-    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
-    width: 5,
-    height: 15,
-    shape: SHAPE.RECTANGULAR,
-    originalPrice: 120,
-    type: TYPE.BOOKMARK,
-    multiBuyPrice: 100,
-    multiBuyMinQuantity: 2,
-    soldVariants: [
-      "/images/bookmarks/cheetah.jpg",
-      "/images/bookmarks/chicken1.jpg",
-      "/images/bookmarks/giraffe.jpg",
-      "/images/bookmarks/pigeon.jpg",
-      "/images/bookmarks/pingvin.jpg",
-      "/images/bookmarks/rabbit.jpg"
-    ],
-    images: {
-      desktop: [
-        "/images/bookmarks/cover.jpg",
-        "/images/bookmarks/cheetah.jpg",
-        "/images/bookmarks/chicken1.jpg",
-        "/images/bookmarks/chicken2.jpg",
-        "/images/bookmarks/giraffe.jpg",
-        "/images/bookmarks/mallard.jpg",
-        "/images/bookmarks/pigeon.jpg",
-        "/images/bookmarks/piggy.jpg",
-        "/images/bookmarks/pingvin.jpg",
-        "/images/bookmarks/rabbit.jpg",
-        "/images/bookmarks/wilddog.jpg"
-      ],
-      mobile: [
-        "/images/bookmarks/cover.jpg",
-        "/images/bookmarks/cheetah.jpg",
-        "/images/bookmarks/chicken1.jpg",
-        "/images/bookmarks/chicken2.jpg",
-        "/images/bookmarks/giraffe.jpg",
-        "/images/bookmarks/mallard.jpg",
-        "/images/bookmarks/pigeon.jpg",
-        "/images/bookmarks/piggy.jpg",
-        "/images/bookmarks/pingvin.jpg",
-        "/images/bookmarks/rabbit.jpg",
-        "/images/bookmarks/wilddog.jpg"
-      ]
-    }
+    frameAvailable: true,
+    type: TYPE.PAINTING
   },
   {
     id: "foreStormen",
@@ -677,7 +670,8 @@ const paintings = [
     width: 42,
     height: 59,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600
+    originalPrice: 1600,
+    type: TYPE.PAINTING
   },
   {
     id: "photobomb",
@@ -688,117 +682,490 @@ const paintings = [
     width: 59,
     height: 42,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 1600
+    originalPrice: 1600,
+    type: TYPE.PAINTING
   },
   {
-    id: "leraRav",
+    id: "rav",
     title: "Räv",
-    descKey: "desc_leraRav",
+    descKey: "desc_rav",
     status: STATUS.SOLD,
-    medium: MEDIUM.ACRYLIC_CANVAS,
+    medium: MEDIUM.CLAY,
     width: 5,
     height: 10,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 250
+    originalPrice: 250,
+    type: TYPE.CLAY,
+    images: {
+      desktop: [
+        "/images/lera/rav/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/lera/rav/mobile/01.jpg"
+      ]
+    }
   },
   {
-    id: "leraBjorn",
+    id: "bjorn",
     title: "Björn",
-    descKey: "desc_leraBjorn",
+    descKey: "desc_bjorn",
     status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
+    medium: MEDIUM.CLAY,
     width: 5,
     height: 10,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 250
+    originalPrice: 250,
+    type: TYPE.CLAY,
+    images: {
+      desktop: [
+        "/images/lera/bjorn/desktop/01.jpg",
+        "/images/lera/bjorn/desktop/02.jpg"
+      ],
+      mobile: [
+        "/images/lera/bjorn/mobile/01.jpg",
+        "/images/lera/bjorn/mobile/02.jpg"
+      ]
+    }
   },
   {
-    id: "leraTiger",
+    id: "tiger",
     title: "Tiger",
-    descKey: "desc_leraTiger",
+    descKey: "desc_tiger",
     status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
+    medium: MEDIUM.CLAY,
     width: 5,
     height: 10,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 250
+    originalPrice: 250,
+    type: TYPE.CLAY,
+    images: {
+      desktop: [
+        "/images/lera/tiger/desktop/01.jpg",
+        "/images/lera/tiger/desktop/02.jpg"
+      ],
+      mobile: [
+        "/images/lera/tiger/mobile/01.jpg",
+        "/images/lera/tiger/mobile/02.jpg"
+      ]
+    }
   },
   {
-    id: "leraMallard",
+    id: "mallard",
     title: "Mallard",
-    descKey: "desc_leraMallard",
+    descKey: "desc_mallard",
     status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
+    medium: MEDIUM.CLAY,
     width: 5,
     height: 10,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 250
+    originalPrice: 250,
+    type: TYPE.CLAY,
+    images: {
+      desktop: [
+        "/images/lera/mallard/desktop/01.jpg",
+        "/images/lera/mallard/desktop/02.jpg"
+      ],
+      mobile: [
+        "/images/lera/mallard/mobile/01.jpg",
+        "/images/lera/mallard/mobile/02.jpg"
+      ]
+    }
   },
   {
-    id: "leraOwl",
+    id: "owl",
     title: "Uggla",
-    descKey: "desc_leraOwl",
+    descKey: "desc_owl",
     status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
+    medium: MEDIUM.CLAY,
     width: 5,
     height: 10,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 250
+    originalPrice: 250,
+    type: TYPE.CLAY,
+    images: {
+      desktop: [
+        "/images/lera/owl/desktop/01.jpg",
+        "/images/lera/owl/desktop/02.jpg"
+      ],
+      mobile: [
+        "/images/lera/owl/mobile/01.jpg",
+        "/images/lera/owl/mobile/02.jpg"
+      ]
+    }
   },
   {
-    id: "leraPigeon",
+    id: "pigeon",
     title: "Duva",
-    descKey: "desc_leraPigeon",
+    descKey: "desc_pigeon",
     status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
+    medium: MEDIUM.CLAY,
     width: 5,
     height: 10,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 250
+    originalPrice: 250,
+    type: TYPE.CLAY,
+    images: {
+      desktop: [
+        "/images/lera/pigeon/desktop/01.jpg",
+        "/images/lera/pigeon/desktop/02.jpg"
+      ],
+      mobile: [
+        "/images/lera/pigeon/mobile/01.jpg",
+        "/images/lera/pigeon/mobile/02.jpg"
+      ]
+    }
   },
   {
-    id: "leraPiggy",
+    id: "piggy",
     title: "Gris",
-    descKey: "desc_leraPiggy",
+    descKey: "desc_piggy",
     status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
+    medium: MEDIUM.CLAY,
     width: 5,
     height: 10,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 250
+    originalPrice: 250,
+    type: TYPE.CLAY,
+    images: {
+      desktop: [
+        "/images/lera/piggy/desktop/01.jpg",
+        "/images/lera/piggy/desktop/02.jpg"
+      ],
+      mobile: [
+        "/images/lera/piggy/mobile/01.jpg",
+        "/images/lera/piggy/mobile/02.jpg"
+      ]
+    }
   },
   {
-    id: "leraRobin",
+    id: "robin",
     title: "Rödhake",
-    descKey: "desc_leraRobin",
+    descKey: "desc_robin",
     status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
+    medium: MEDIUM.CLAY,
     width: 5,
     height: 10,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 250
+    originalPrice: 250,
+    type: TYPE.CLAY,
+    images: {
+      desktop: [
+        "/images/lera/robin/desktop/01.jpg",
+        "/images/lera/robin/desktop/02.jpg"
+      ],
+      mobile: [
+        "/images/lera/robin/mobile/01.jpg",
+        "/images/lera/robin/mobile/02.jpg"
+      ]
+    }
   },
   {
-    id: "leraBlame",
+    id: "blame",
     title: "Blåmes",
-    descKey: "desc_leraBlame",
+    descKey: "desc_blame",
     status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
+    medium: MEDIUM.CLAY,
     width: 5,
     height: 10,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 250
+    originalPrice: 250,
+    type: TYPE.CLAY,
+    images: {
+      desktop: [
+        "/images/lera/blame/desktop/01.jpg",
+        "/images/lera/blame/desktop/02.jpg"
+      ],
+      mobile: [
+        "/images/lera/blame/mobile/01.jpg",
+        "/images/lera/blame/mobile/02.jpg"
+      ]
+    }
   },
   {
-    id: "leraKanin",
+    id: "kanin",
     title: "Kanin",
-    descKey: "desc_leraKanin",
+    descKey: "desc_kanin",
     status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
+    medium: MEDIUM.CLAY,
     width: 5,
     height: 10,
     shape: SHAPE.RECTANGULAR,
-    originalPrice: 250
+    originalPrice: 250,
+    type: TYPE.CLAY,
+    images: {
+      desktop: [
+        "/images/lera/kanin/desktop/01.jpg",
+        "/images/lera/kanin/desktop/02.jpg"
+      ],
+      mobile: [
+        "/images/lera/kanin/mobile/01.jpg",
+        "/images/lera/kanin/mobile/02.jpg"
+      ]
+    }
+  },
+  {
+    id: "bookmark-cheetah",
+    title: "Gepard",
+    descKey: "desc_bookmark",
+    status: STATUS.SOLD,
+    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
+    width: 5,
+    height: 15,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 120,
+    type: TYPE.BOOKMARK,
+    multiBuyPrice: 100,
+    multiBuyMinQuantity: 2,
+    images: {
+      desktop: [
+        "/images/bookmarks/cheetah/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/bookmarks/cheetah/mobile/01.jpg"
+      ]
+    }
+  },
+  {
+    id: "bookmark-chicken1",
+    title: "Tupp",
+    descKey: "desc_bookmark",
+    status: STATUS.SOLD,
+    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
+    width: 5,
+    height: 15,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 120,
+    type: TYPE.BOOKMARK,
+    multiBuyPrice: 100,
+    multiBuyMinQuantity: 2,
+    images: {
+      desktop: [
+        "/images/bookmarks/chicken1/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/bookmarks/chicken1/mobile/01.jpg"
+      ]
+    }
+  },
+  {
+    id: "bookmark-chicken2",
+    title: "Höna",
+    descKey: "desc_bookmark",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
+    width: 5,
+    height: 15,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 120,
+    type: TYPE.BOOKMARK,
+    multiBuyPrice: 100,
+    multiBuyMinQuantity: 2,
+    images: {
+      desktop: [
+        "/images/bookmarks/chicken2/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/bookmarks/chicken2/mobile/01.jpg"
+      ]
+    }
+  },
+  {
+    id: "bookmark-giraffe",
+    title: "Giraff",
+    descKey: "desc_bookmark",
+    status: STATUS.SOLD,
+    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
+    width: 5,
+    height: 15,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 120,
+    type: TYPE.BOOKMARK,
+    multiBuyPrice: 100,
+    multiBuyMinQuantity: 2,
+    images: {
+      desktop: [
+        "/images/bookmarks/giraffe/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/bookmarks/giraffe/mobile/01.jpg"
+      ]
+    }
+  },
+  {
+    id: "bookmark-mallard",
+    title: "Gräsand",
+    descKey: "desc_bookmark",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
+    width: 5,
+    height: 15,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 120,
+    type: TYPE.BOOKMARK,
+    multiBuyPrice: 100,
+    multiBuyMinQuantity: 2,
+    images: {
+      desktop: [
+        "/images/bookmarks/mallard/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/bookmarks/mallard/mobile/01.jpg"
+      ]
+    }
+  },
+  {
+    id: "bookmark-pigeon",
+    title: "Duva",
+    descKey: "desc_bookmark",
+    status: STATUS.SOLD,
+    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
+    width: 5,
+    height: 15,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 120,
+    type: TYPE.BOOKMARK,
+    multiBuyPrice: 100,
+    multiBuyMinQuantity: 2,
+    images: {
+      desktop: [
+        "/images/bookmarks/pigeon/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/bookmarks/pigeon/mobile/01.jpg"
+      ]
+    }
+  },
+  {
+    id: "bookmark-piggy",
+    title: "Gris",
+    descKey: "desc_bookmark",
+    status: STATUS.SOLD,
+    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
+    width: 5,
+    height: 15,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 120,
+    type: TYPE.BOOKMARK,
+    multiBuyPrice: 100,
+    multiBuyMinQuantity: 2,
+    images: {
+      desktop: [
+        "/images/bookmarks/piggy/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/bookmarks/piggy/mobile/01.jpg"
+      ]
+    }
+  },
+  {
+    id: "bookmark-pingvin",
+    title: "Pingvin",
+    descKey: "desc_bookmark",
+    status: STATUS.SOLD,
+    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
+    width: 5,
+    height: 15,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 120,
+    type: TYPE.BOOKMARK,
+    multiBuyPrice: 100,
+    multiBuyMinQuantity: 2,
+    images: {
+      desktop: [
+        "/images/bookmarks/pingvin/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/bookmarks/pingvin/mobile/01.jpg"
+      ]
+    }
+  },
+  {
+    id: "bookmark-rabbit",
+    title: "Kanin",
+    descKey: "desc_bookmark",
+    status: STATUS.SOLD,
+    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
+    width: 5,
+    height: 15,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 120,
+    type: TYPE.BOOKMARK,
+    multiBuyPrice: 100,
+    multiBuyMinQuantity: 2,
+    images: {
+      desktop: [
+        "/images/bookmarks/rabbit/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/bookmarks/rabbit/mobile/01.jpg"
+      ]
+    }
+  },
+  {
+    id: "bookmark-wilddog",
+    title: "Afrikansk vildhund",
+    descKey: "desc_bookmark",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
+    width: 5,
+    height: 15,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 120,
+    type: TYPE.BOOKMARK,
+    multiBuyPrice: 100,
+    multiBuyMinQuantity: 2,
+    images: {
+      desktop: [
+        "/images/bookmarks/wilddog/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/bookmarks/wilddog/mobile/01.jpg"
+      ]
+    }
+  },
+  {
+    id: "bookmark-bear",
+    title: "Björn",
+    descKey: "desc_bookmark",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
+    width: 5,
+    height: 15,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 120,
+    type: TYPE.BOOKMARK,
+    multiBuyPrice: 100,
+    multiBuyMinQuantity: 2,
+    images: {
+      desktop: [
+        "/images/bookmarks/bear/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/bookmarks/bear/mobile/01.jpg"
+      ]
+    }
+  },
+  {
+    id: "bookmark-cow",
+    title: "Ko",
+    descKey: "desc_bookmark",
+    status: STATUS.SOLD,
+    medium: MEDIUM.WATERCOLOR_PAPER_LAMINATED,
+    width: 5,
+    height: 15,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 120,
+    type: TYPE.BOOKMARK,
+    multiBuyPrice: 100,
+    multiBuyMinQuantity: 2,
+    images: {
+      desktop: [
+        "/images/bookmarks/cow/desktop/01.jpg"
+      ],
+      mobile: [
+        "/images/bookmarks/cow/mobile/01.jpg"
+      ]
+    }
   },
 ];
 
@@ -822,6 +1189,7 @@ if (typeof module !== 'undefined' && module.exports) {
     getPaintingDiscountedPrice,
     getPaintingFramedSalePrice,
     getPaintingEffectivePrice,
+    bookmarkCartTerms,
     getPriceModel,
     paintingArea,
     assignSizeScales,

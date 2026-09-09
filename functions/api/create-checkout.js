@@ -30,43 +30,44 @@ const PAINTINGS = [
   { id: 'skogsvila', originalPrice: 3000, status: 'sold' },
   { id: 'vinterlek', originalPrice: 1800, status: 'sold' },
   { id: 'sommarvila', originalPrice: 1800, status: 'for_sale' },
-  { id: 'dagensFynd', originalPrice: 1200, framedPrice: 2100, frameAvailable: true, status: 'for_sale' },
+  { id: 'dagensFynd', originalPrice: 1200, status: 'for_sale' },
   { id: 'sugenPaEttApple', originalPrice: 1800, framedPrice: 2000, frameAvailable: true, status: 'for_sale' },
   { id: 'varlek', originalPrice: 1600, framedPrice: 1900, frameAvailable: true, status: 'for_sale' },
   { id: 'foreStormen', originalPrice: 1600, status: 'for_sale' },
   { id: 'photobomb', originalPrice: 1600, status: 'for_sale' },
-  { id: 'leraRav', originalPrice: 250, status: 'sold' },
-  { id: 'leraBjorn', originalPrice: 250, status: 'for_sale' },
-  { id: 'leraTiger', originalPrice: 250, status: 'for_sale' },
-  { id: 'leraMallard', originalPrice: 250, status: 'for_sale' },
-  { id: 'leraOwl', originalPrice: 250, status: 'for_sale' },
-  { id: 'leraPigeon', originalPrice: 250, status: 'for_sale' },
-  { id: 'leraPiggy', originalPrice: 250, status: 'for_sale' },
-  { id: 'leraRobin', originalPrice: 250, status: 'for_sale' },
-  { id: 'leraBlame', originalPrice: 250, status: 'for_sale' },
-  { id: 'leraKanin', originalPrice: 250, status: 'for_sale' },
+  { id: 'rav', originalPrice: 250, status: 'sold' },
+  { id: 'bjorn', originalPrice: 250, status: 'for_sale' },
+  { id: 'tiger', originalPrice: 250, status: 'for_sale' },
+  { id: 'mallard', originalPrice: 250, status: 'for_sale' },
+  { id: 'owl', originalPrice: 250, status: 'for_sale' },
+  { id: 'pigeon', originalPrice: 250, status: 'for_sale' },
+  { id: 'piggy', originalPrice: 250, status: 'for_sale' },
+  { id: 'robin', originalPrice: 250, status: 'for_sale' },
+  { id: 'blame', originalPrice: 250, status: 'for_sale' },
+  { id: 'kanin', originalPrice: 250, status: 'for_sale' },
 ];
 
-// Bookmark inventory — one entry per physical bookmark, generated from
-// data/bookmarks.json by scripts/build-paintings.js
+// Bookmark inventory — one entry per physical bookmark, keyed by the same id
+// the catalogue and the cart use. Generated from data/bookmarks.json by
+// scripts/build-paintings.js. Bookmarks are kept out of PAINTINGS because
+// their per-piece price depends on how many of them the order holds.
 const BOOKMARKS = {
-  id: 'bookmarks',
   price: 120,
   multiBuyPrice: 100,
   multiBuyMinQuantity: 2,
-  imageDir: '/images/bookmarks/',
-  imageExtension: '.jpg',
   variants: {
-    'cheetah': 'sold',
-    'chicken1': 'sold',
-    'chicken2': 'for_sale',
-    'giraffe': 'sold',
-    'mallard': 'for_sale',
-    'pigeon': 'sold',
-    'piggy': 'for_sale',
-    'pingvin': 'sold',
-    'rabbit': 'sold',
-    'wilddog': 'for_sale',
+    'bookmark-cheetah': { title: 'Gepard', status: 'sold', image: '/images/bookmarks/cheetah/desktop/01.jpg' },
+    'bookmark-chicken1': { title: 'Tupp', status: 'sold', image: '/images/bookmarks/chicken1/desktop/01.jpg' },
+    'bookmark-chicken2': { title: 'Höna', status: 'for_sale', image: '/images/bookmarks/chicken2/desktop/01.jpg' },
+    'bookmark-giraffe': { title: 'Giraff', status: 'sold', image: '/images/bookmarks/giraffe/desktop/01.jpg' },
+    'bookmark-mallard': { title: 'Gräsand', status: 'for_sale', image: '/images/bookmarks/mallard/desktop/01.jpg' },
+    'bookmark-pigeon': { title: 'Duva', status: 'sold', image: '/images/bookmarks/pigeon/desktop/01.jpg' },
+    'bookmark-piggy': { title: 'Gris', status: 'sold', image: '/images/bookmarks/piggy/desktop/01.jpg' },
+    'bookmark-pingvin': { title: 'Pingvin', status: 'sold', image: '/images/bookmarks/pingvin/desktop/01.jpg' },
+    'bookmark-rabbit': { title: 'Kanin', status: 'sold', image: '/images/bookmarks/rabbit/desktop/01.jpg' },
+    'bookmark-wilddog': { title: 'Afrikansk vildhund', status: 'for_sale', image: '/images/bookmarks/wilddog/desktop/01.jpg' },
+    'bookmark-bear': { title: 'Björn', status: 'for_sale', image: '/images/bookmarks/bear/desktop/01.jpg' },
+    'bookmark-cow': { title: 'Ko', status: 'sold', image: '/images/bookmarks/cow/desktop/01.jpg' },
   },
 };
 
@@ -106,8 +107,12 @@ const SHIPPING_COST_EU = 149;
 
 const EU_COUNTRIES = ['AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','HU','IE','IT','LT','LU','LV','MT','NL','PL','PT','RO','SE','SI','SK'];
 
+// Paintings and clay are priced from the same catalog. Only a painting can be
+// framed, and no clay id ends in "-framed", so the two share this.
+const PRICED_FROM_CATALOG = ['original', 'clay'];
+
 function resolvePrice(item) {
-  if (item.type !== 'original') {
+  if (!PRICED_FROM_CATALOG.includes(item.type)) {
     return null;
   }
 
@@ -118,16 +123,13 @@ function resolvePrice(item) {
   return getPaintingEffectivePrice(painting, isFramed || painting.framedOnly) ?? null;
 }
 
-// Bookmark cart ids carry the variant: `bookmarks::cheetah`
-function resolveBookmarkVariant(item) {
+// The cart carries a bookmark under its catalogue id, `bookmark-cheetah`,
+// the same as any other piece
+function resolveBookmark(item) {
   if (typeof item.id !== 'string') return null;
-  const separator = item.id.indexOf('::');
-  if (separator === -1) return null;
-  if (item.id.slice(0, separator) !== BOOKMARKS.id) return null;
-
-  const variant = item.id.slice(separator + 2);
-  if (BOOKMARKS.variants[variant] !== 'for_sale') return null;
-  return variant;
+  const bookmark = BOOKMARKS.variants[item.id];
+  if (!bookmark || bookmark.status !== 'for_sale') return null;
+  return bookmark;
 }
 
 // Buying several at once drops every bookmark to the lower per-piece price
@@ -156,7 +158,16 @@ export async function onRequestPost(context) {
 
     const line_items = [];
     let subtotal = 0;
-    const claimedBookmarks = new Set();
+
+    // Every piece in the shop is the only one of itself, so each may appear in
+    // an order once and with no quantity. The cart enforces that too, but the
+    // cart is a thing the buyer holds — this is the copy that decides.
+    // Framed and unframed are the same physical painting under two ids, so
+    // both count as the same claim.
+    const claimed = new Set();
+    const claimOf = item => (typeof item.id === 'string' && item.id.endsWith('-framed')
+      ? item.id.slice(0, -7)
+      : item.id);
 
     // The per-piece price depends on how many bookmarks the whole order holds,
     // so it is settled before any line item is priced. Invalid bookmarks reject
@@ -171,12 +182,14 @@ export async function onRequestPost(context) {
     );
 
     for (const item of items) {
-      // Each bookmark is one physical piece: no quantities, no duplicates,
-      // and never one that has already been sold
+      const claim = claimOf(item);
+      if (claimed.has(claim)) return invalidItem(item);
+      claimed.add(claim);
+
+      // A bookmark is priced by how many the order holds, not by the catalog
       if (item.type === 'bookmark') {
-        const variant = resolveBookmarkVariant(item);
-        if (!variant || claimedBookmarks.has(variant)) return invalidItem(item);
-        claimedBookmarks.add(variant);
+        const bookmark = resolveBookmark(item);
+        if (!bookmark) return invalidItem(item);
 
         const price = bookmarkUnitPrice;
         subtotal += price;
@@ -185,9 +198,9 @@ export async function onRequestPost(context) {
           price_data: {
             currency: 'sek',
             product_data: {
-              name: `Bokmärke – ${variant}`,
+              name: `Bokmärke – ${bookmark.title}`,
               description: 'Handgjort bokmärke. Leverans inom Sverige.',
-              images: [`${origin}${BOOKMARKS.imageDir}${variant}${BOOKMARKS.imageExtension}`],
+              images: [`${origin}${bookmark.image}`],
             },
             unit_amount: price * 100,
           },
@@ -199,20 +212,22 @@ export async function onRequestPost(context) {
       const price = resolvePrice(item);
       if (price === null) return invalidItem(item);
 
-      const qty = Math.max(1, Math.floor(item.qty || 1));
-      subtotal += price * qty;
+      subtotal += price;
 
+      const isClay = item.type === 'clay';
       line_items.push({
         price_data: {
           currency: 'sek',
           product_data: {
-            name: `${item.title} – Original målning`,
-            description: 'Signerat original på duk. Leverans inom Sverige.',
+            name: isClay ? `${item.title} – Keramik` : `${item.title} – Original målning`,
+            description: isClay
+              ? 'Handgjord keramik. Leverans inom Sverige.'
+              : 'Signerat original på duk. Leverans inom Sverige.',
             ...(item.image ? { images: [item.image] } : {}),
           },
           unit_amount: price * 100,
         },
-        quantity: qty,
+        quantity: 1,
       });
     }
 

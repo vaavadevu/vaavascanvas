@@ -19,12 +19,41 @@ const Cart = (() => {
   // Recomputed on every change so the cart total matches what
   // create-checkout.js independently calculates for the same cart
   function repriceBookmarks() {
-    // Prefer the catalog over whatever an older build stored in localStorage
+    // Any bookmark will do: the multi-buy terms belong to bookmarks as a group,
+    // not to one of them. Prefer the catalog over whatever an older build
+    // stored in localStorage.
     const product = (typeof paintings !== 'undefined' && Array.isArray(paintings))
       ? paintings.find(p => p.type === 'bookmark')
       : null;
 
     applyBookmarkPricing(items, product);
+  }
+
+  // Bookmarks were once one product with the variant tacked onto the id
+  // ("bookmarks::cheetah"); each is now a piece of its own ("bookmark-cheetah").
+  // A cart saved before that would be rejected at checkout as an unknown item,
+  // so the old ids are translated on the way in.
+  function migrateLegacyBookmarkIds() {
+    let migrated = false;
+
+    items.forEach(item => {
+      if (item.type !== 'bookmark' || typeof item.id !== 'string') return;
+      if (!item.id.startsWith('bookmarks::')) return;
+      migrated = true;
+
+      item.id = `bookmark-${item.id.slice('bookmarks::'.length)}`;
+      item.key = cartItemKey(item);
+
+      const replacement = (typeof paintings !== 'undefined' && Array.isArray(paintings))
+        ? paintings.find(p => p.id === item.id)
+        : null;
+      if (replacement) {
+        item.title = replacement.title;
+        item.image = replacement.images?.desktop?.[0] ?? item.image;
+      }
+    });
+
+    return migrated;
   }
 
   function save() {
@@ -33,6 +62,12 @@ const Cart = (() => {
     render();
     updateBadge();
     document.dispatchEvent(new CustomEvent('cartupdate'));
+  }
+
+  // Whether this exact piece is already in the cart. One-of-a-kind items can
+  // only be in it once, so this is how a page knows what is left to offer.
+  function has(id) {
+    return items.some(i => i.id === id);
   }
 
   function hasOriginal(baseId) {
@@ -51,7 +86,7 @@ const Cart = (() => {
     }
   }
 
-  function add(item) {
+  function add(item, { openDrawer = true } = {}) {
     const outcome = resolveAdd(items, item);
 
     // Nothing to add — the piece is one of a kind and already in the cart
@@ -78,7 +113,7 @@ const Cart = (() => {
       items: buildOrderItems([{ ...item, qty: 1 }]),
     });
     save();
-    openCart();
+    if (openDrawer) openCart();
     showToast(`"${item.title}" ${t('cart_toast_added')}`);
   }
 
@@ -353,6 +388,7 @@ const Cart = (() => {
   }
 
   function init() {
+    if (migrateLegacyBookmarkIds()) save();
     updateBadge();
 
     window.addEventListener('languagechange', () => render());
@@ -407,7 +443,7 @@ const Cart = (() => {
     }
   }
 
-  return { add, remove, updateQty, toggleFrame, openCart, closeCart, checkout, init, count, updateBadge, hasOriginal, onCountryChange };
+  return { add, remove, updateQty, toggleFrame, openCart, closeCart, checkout, init, count, updateBadge, has, hasOriginal, onCountryChange };
 })();
 
 // Toast notification

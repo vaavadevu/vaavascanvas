@@ -396,16 +396,15 @@ test('Painting mediums are declared and translated', () => {
   });
 });
 
-// Bookmark ids carry no extension — the image path is imageDir + id + imageExtension
-function bookmarkImagePath(id) {
-  return `${bookmarksData.imageDir}${id}${bookmarksData.imageExtension}`;
-}
+// A bookmark's images live in images/bookmarks/<id>/, the same shape as a
+// painting's or a clay piece's, and it goes by "bookmark-<id>" in the catalogue
+// — the folder name alone would not do, since "mallard" is a clay piece too
+const BOOKMARK_ID_PREFIX = 'bookmark-';
+const bookmarkCatalogId = id => `${BOOKMARK_ID_PREFIX}${id}`;
+const bookmarkImageDir = id => path.join(__dirname, '..', 'images', 'bookmarks', id);
+const bookmarkImagePath = (id, size) => `/images/bookmarks/${id}/${size}/01.jpg`;
 
 test('bookmarks.json is a valid inventory', () => {
-  assert(bookmarksData.imageDir && bookmarksData.imageDir.startsWith('/') && bookmarksData.imageDir.endsWith('/'),
-    'bookmarks.json needs an absolute imageDir ending in "/", e.g. "/images/bookmarks/"');
-  assert(bookmarksData.imageExtension && bookmarksData.imageExtension.startsWith('.'),
-    'bookmarks.json needs an imageExtension like ".jpg"');
   assert(Array.isArray(bookmarksData.variants) && bookmarksData.variants.length > 0,
     'bookmarks.json needs a non-empty variants array');
   assert(typeof bookmarksData.multiBuyPrice === 'number' && bookmarksData.multiBuyPrice > 0,
@@ -416,89 +415,64 @@ test('bookmarks.json is a valid inventory', () => {
   const root = path.join(__dirname, '..');
   const seen = new Set();
 
-  [bookmarksData.cover, ...bookmarksData.variants.map(v => v.id)].forEach(id => {
-    assert(id, 'bookmarks.json has a variant with no id');
-    assert(!/[./\\]/.test(id),
-      `Bookmark id "${id}" must be a bare name — no extension or path, the build adds "${bookmarksData.imageExtension}"`);
-    assert(!seen.has(id), `bookmarks.json lists "${id}" twice`);
-    seen.add(id);
-    const onDisk = path.join(root, bookmarkImagePath(id).replace(/^\//, ''));
-    assert(fs.existsSync(onDisk), `bookmarks.json references missing image: ${bookmarkImagePath(id)}`);
-  });
-
   bookmarksData.variants.forEach(v => {
+    assert(v.id, 'bookmarks.json has a bookmark with no id');
+    assert(!/[./\\]/.test(v.id),
+      `Bookmark id "${v.id}" must be a bare name — it is the name of its image folder`);
+    assert(!seen.has(v.id), `bookmarks.json lists "${v.id}" twice`);
+    seen.add(v.id);
+
+    // The title is what a buyer sees on the tile, in the cart and in search
+    // results, so a bookmark without one would ship nameless
+    assert(v.title && v.title.trim(),
+      `Bookmark "${v.id}" has no title — it would be listed without a name`);
+
     assert(v.status === 'sold' || v.status === 'for_sale',
       `Bookmark "${v.id}" has invalid status "${v.status}" — use "sold" or "for_sale"`);
-  });
 
-  assert(!bookmarksData.variants.some(v => v.id === bookmarksData.cover),
-    'The cover image must not also be listed as a purchasable variant');
+    ['original', 'desktop', 'mobile'].forEach(size => {
+      const onDisk = path.join(root, bookmarkImagePath(v.id, size).replace(/^\//, ''));
+      assert(fs.existsSync(onDisk),
+        `bookmarks.json references missing image: ${bookmarkImagePath(v.id, size)}` +
+        (size === 'original' ? '' : ' (run sync_paintings_images.bat)'));
+    });
+  });
 });
 
-test('Every bookmark image on disk is listed in bookmarks.json', () => {
-  const dir = path.join(__dirname, '..', bookmarksData.imageDir.replace(/^\//, ''));
-  const listed = new Set(
-    [bookmarksData.cover, ...bookmarksData.variants.map(v => v.id)]
-      .map(id => id + bookmarksData.imageExtension)
-  );
+test('Every bookmark image folder is listed in bookmarks.json', () => {
+  const dir = path.join(__dirname, '..', 'images', 'bookmarks');
+  const listed = new Set(bookmarksData.variants.map(v => v.id));
 
-  fs.readdirSync(dir)
-    .filter(f => /\.(jpe?g|png|webp)$/i.test(f))
-    .forEach(file => {
-      assert(listed.has(file),
-        `images/bookmarks/${file} is not listed in bookmarks.json — it can never be bought or marked sold` +
-        (file.endsWith(bookmarksData.imageExtension) ? '' : ` (only ${bookmarksData.imageExtension} files are supported)`));
+  fs.readdirSync(dir, { withFileTypes: true })
+    .filter(entry => entry.isDirectory())
+    .forEach(entry => {
+      assert(listed.has(entry.name),
+        `images/bookmarks/${entry.name}/ is not listed in bookmarks.json — it can never be bought or marked sold`);
     });
 });
 
 test('Generated bookmark data matches bookmarks.json', () => {
-  const product = paintings.find(p => p.type === 'bookmark');
-  assert(product, 'No painting entry with type "bookmark" in paintings.js');
+  const bookmarks = paintings.filter(p => p.type === 'bookmark');
+  assertEqual(bookmarks.length, bookmarksData.variants.length,
+    `paintings.js has ${bookmarks.length} bookmarks, bookmarks.json lists ${bookmarksData.variants.length} — run npm run build`);
 
-  const expectedImages = [bookmarksData.cover, ...bookmarksData.variants.map(v => v.id)]
-    .map(bookmarkImagePath);
-  const expectedSold = bookmarksData.variants
-    .filter(v => v.status === 'sold')
-    .map(v => bookmarkImagePath(v.id));
+  bookmarksData.variants.forEach(v => {
+    const bookmark = bookmarks.find(p => p.id === bookmarkCatalogId(v.id));
+    assert(bookmark, `No entry for bookmark "${v.id}" in paintings.js — run npm run build`);
 
-  assertEqual(JSON.stringify(product.images?.desktop), JSON.stringify(expectedImages),
-    'paintings.js bookmark images are stale — run npm run build');
-  assertEqual(JSON.stringify(product.images?.mobile), JSON.stringify(expectedImages),
-    'paintings.js bookmark images are stale — run npm run build');
-  assertEqual(JSON.stringify(product.soldVariants), JSON.stringify(expectedSold),
-    'paintings.js bookmark soldVariants are stale — run npm run build');
-  assertEqual(product.multiBuyPrice, bookmarksData.multiBuyPrice,
-    'paintings.js bookmark multi-buy price is stale — run npm run build');
-  assertEqual(product.multiBuyMinQuantity, bookmarksData.multiBuyMinQuantity,
-    'paintings.js bookmark multi-buy threshold is stale — run npm run build');
-  assert(product.multiBuyPrice < product.originalPrice,
-    `The multi-buy price (${product.multiBuyPrice}) must be below the single price (${product.originalPrice}), ` +
-    'otherwise buying more costs more');
-
-  const allSold = bookmarksData.variants.every(v => v.status === 'sold');
-  assertEqual(product.status, allSold ? 'sold' : 'for_sale',
-    allSold
-      ? 'Every bookmark is sold but the product is still for sale — run npm run build'
-      : 'Bookmarks are still available but the product is marked sold — run npm run build');
-});
-
-test('Bookmark soldVariants only reference existing bookmark files', () => {
-  paintings.forEach(p => {
-    if (!p.soldVariants) return;
-    assert(Array.isArray(p.soldVariants), `Painting ${p.id} soldVariants must be an array`);
-
-    const imageNames = new Set();
-    if (p.images && Array.isArray(p.images.desktop)) {
-      p.images.desktop.forEach(src => {
-        const file = src.split('/').pop();
-        if (file) imageNames.add(file);
-      });
-    }
-
-    p.soldVariants.forEach(variant => {
-      const file = variant.split('/').pop();
-      assert(imageNames.has(file), `Painting ${p.id} sold variant "${variant}" does not exist in bookmark images`);
-    });
+    assertEqual(bookmark.title, v.title, `Bookmark "${v.id}" has a stale title — run npm run build`);
+    assertEqual(bookmark.status, v.status, `Bookmark "${v.id}" has a stale status — run npm run build`);
+    assertEqual(JSON.stringify(bookmark.images?.desktop), JSON.stringify([bookmarkImagePath(v.id, 'desktop')]),
+      `Bookmark "${v.id}" has stale desktop images — run npm run build`);
+    assertEqual(JSON.stringify(bookmark.images?.mobile), JSON.stringify([bookmarkImagePath(v.id, 'mobile')]),
+      `Bookmark "${v.id}" has stale mobile images — run npm run build`);
+    assertEqual(bookmark.multiBuyPrice, bookmarksData.multiBuyPrice,
+      `Bookmark "${v.id}" has a stale multi-buy price — run npm run build`);
+    assertEqual(bookmark.multiBuyMinQuantity, bookmarksData.multiBuyMinQuantity,
+      `Bookmark "${v.id}" has a stale multi-buy threshold — run npm run build`);
+    assert(bookmark.multiBuyPrice < bookmark.originalPrice,
+      `The multi-buy price (${bookmark.multiBuyPrice}) must be below the single price (${bookmark.originalPrice}), ` +
+      'otherwise buying more costs more');
   });
 });
 
@@ -738,6 +712,17 @@ test('metadata.json aspect ratios match the images on disk', () => {
   const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
   const wrong = [];
 
+  // Paintings, clay and bookmarks all keep their images in a folder of their
+  // own; only where that folder lives differs
+  const imageFolderFor = id => {
+    if (id.startsWith(BOOKMARK_ID_PREFIX)) {
+      return bookmarkImageDir(id.slice(BOOKMARK_ID_PREFIX.length));
+    }
+    const painting = path.join(paintingsImageDir, id);
+    if (fs.existsSync(painting)) return painting;
+    return path.join(__dirname, '..', 'images', 'lera', id);
+  };
+
   imageFolderIds().forEach(id => {
     const first = path.join(paintingsImageDir, id, 'desktop', '01.jpg');
     if (!fs.existsSync(first)) return;
@@ -757,7 +742,7 @@ test('metadata.json aspect ratios match the images on disk', () => {
   });
 
   Object.keys(metadata).forEach(id => {
-    if (!fs.existsSync(path.join(paintingsImageDir, id))) {
+    if (!fs.existsSync(imageFolderFor(id))) {
       wrong.push(`${id}: listed in metadata.json but the folder is gone`);
     }
   });
@@ -1100,35 +1085,39 @@ test('Checkout bookmark catalog matches bookmarks.json', () => {
   const product = paintings.find(p => p.type === 'bookmark');
 
   assert(catalog.bookmarks, 'Could not find BOOKMARKS catalog in create-checkout.js');
-  assertEqual(catalog.bookmarks.id, product.id,
-    'BOOKMARKS.id does not match the bookmark product id in paintings.js');
   assertEqual(catalog.bookmarks.price, product.originalPrice,
     `Bookmark price mismatch: catalog=${catalog.bookmarks.price}, paintings.js=${product.originalPrice}`);
   assertEqual(catalog.bookmarks.multiBuyPrice, bookmarksData.multiBuyPrice,
     'BOOKMARKS.multiBuyPrice is stale — run npm run build');
   assertEqual(catalog.bookmarks.multiBuyMinQuantity, bookmarksData.multiBuyMinQuantity,
     'BOOKMARKS.multiBuyMinQuantity is stale — run npm run build');
-  assertEqual(catalog.bookmarks.imageDir, bookmarksData.imageDir,
-    'BOOKMARKS.imageDir is stale — run npm run build');
-  assertEqual(catalog.bookmarks.imageExtension, bookmarksData.imageExtension,
-    'BOOKMARKS.imageExtension is stale — run npm run build');
 
+  // The catalog is keyed by the id the cart sends, so a mismatch here is the
+  // difference between a bookmark being sellable and being rejected as unknown
   bookmarksData.variants.forEach(v => {
-    assertEqual(catalog.bookmarks.variants[v.id], v.status,
-      `Bookmark "${v.id}" is "${v.status}" in bookmarks.json but "${catalog.bookmarks.variants[v.id]}" in the checkout catalog — run npm run build`);
+    const entry = catalog.bookmarks.variants[bookmarkCatalogId(v.id)];
+    assert(entry, `Bookmark "${v.id}" is missing from the checkout catalog — run npm run build`);
+    assertEqual(entry.status, v.status,
+      `Bookmark "${v.id}" is "${v.status}" in bookmarks.json but "${entry.status}" in the checkout catalog — run npm run build`);
+    assertEqual(entry.title, v.title,
+      `Bookmark "${v.id}" has a stale title in the checkout catalog — run npm run build`);
+    assertEqual(entry.image, bookmarkImagePath(v.id, 'desktop'),
+      `Bookmark "${v.id}" has a stale image in the checkout catalog — Stripe would show the wrong picture`);
   });
 
   Object.keys(catalog.bookmarks.variants).forEach(id => {
-    assert(bookmarksData.variants.some(v => v.id === id),
+    assert(bookmarksData.variants.some(v => bookmarkCatalogId(v.id) === id),
       `Checkout catalog has unknown bookmark "${id}" — remove it or add it to bookmarks.json`);
   });
 });
 
-test('Bookmarks are never sellable as a whole product', () => {
+test('Bookmarks are priced by the bookmark catalog, not as originals', () => {
+  // A bookmark in PAINTINGS would be priced as a one-off, skipping the
+  // multi-buy sum the drawer showed the buyer
   const catalogIds = catalog.paintings.map(p => p.id);
   paintings.filter(p => p.type === 'bookmark').forEach(p => {
     assert(!catalogIds.includes(p.id),
-      `"${p.id}" is in the PAINTINGS catalog — that would let the whole set be bought as one original`);
+      `"${p.id}" is in the PAINTINGS catalog — it would be priced as a one-off original`);
   });
 });
 
@@ -1402,16 +1391,17 @@ test('Shop page structured data matches the catalog', () => {
     'The shop page lists a different number of products than the catalog holds');
 
   listed.forEach(entry => {
-    const painting = paintings.find(p => p.title === entry.name);
-    assert(painting, 'The shop page advertises "' + entry.name + '", which is not in paintings.json');
+    const painting = paintings.find(p => SITE + paintingPageUrl(p) === entry.url);
+    assert(painting, 'The shop page advertises "' + entry.name + '" at ' + entry.url +
+      ', which is not a work page in paintings.json');
+    assertEqual(entry.name, painting.title,
+      'The shop page advertises ' + entry.url + ' under the wrong name');
     assertEqual(entry.offers.availability, expectedAvailability(painting),
       'The shop page advertises the wrong availability for "' + entry.name + '"');
-    assertEqual(entry.url, SITE + paintingPageUrl(painting),
-      'The shop page links "' + entry.name + '" to the wrong page');
   });
 
   paintings.forEach(painting => {
-    assert(listed.some(entry => entry.name === painting.title),
+    assert(listed.some(entry => entry.url === SITE + paintingPageUrl(painting)),
       'The shop page does not list "' + painting.title + '"');
   });
 });
@@ -1452,14 +1442,6 @@ test('Every work page leads somewhere else', () => {
 
     assert(new Set(links).size === links.length,
       painting.id + ': lists the same work twice under "Fler verk"');
-
-    // Bookmarks have no measured image ratio, so a thumbnail of them falls
-    // back to their physical 5x15 cm and renders as a sliver
-    const bookmarks = paintings.filter(p => p.type === 'bookmark').map(p => paintingPageUrl(p));
-    bookmarks.forEach(href => {
-      assert(!links.includes(href),
-        painting.id + ': shows a bookmark under "Fler verk", which has no artwork proportions');
-    });
   });
 });
 

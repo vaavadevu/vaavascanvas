@@ -230,13 +230,10 @@ function priceSectionHtml(painting) {
 // offer the same six. Walking the catalogue in order keeps it deterministic —
 // a rebuild that changed nothing must not rewrite 34 files.
 //
-// Bookmarks stay out, as they do on the homepage: they are a run of small
-// printed pieces rather than a single artwork, they carry no measured image
-// ratio, and their physical 5×15 cm shape makes a thumbnail three times taller
-// than it is wide.
+// Bookmarks are among them: each one is a piece of its own, photographed like
+// the rest. Only the homepage's three featured cards leave them out.
 function relatedWorks(painting, all, count = 6) {
-  const others = all.filter(other =>
-    other.id !== painting.id && other.type !== TYPE.BOOKMARK);
+  const others = all.filter(other => other.id !== painting.id);
   const from = all.indexOf(painting);
   const rotated = others.map((_, i) => others[(from + i) % others.length]);
 
@@ -504,6 +501,11 @@ function imageAspectRatios() {
 function aspectRatioFor(painting, ratios) {
   if (ratios[painting.id]) return String(ratios[painting.id]);
   if (painting.shape === SHAPE.CIRCLE) return '1 / 1';
+  // A painting's photo is the painting, so its measurements are the shape of
+  // the picture too. A bookmark is photographed lying on a table, so its
+  // 5×15 cm say nothing about the shape of the photo — the measured ratio
+  // above is the only thing that does.
+  if (painting.type === TYPE.BOOKMARK) return null;
   if (painting.width && painting.height) return `${painting.width} / ${painting.height}`;
   return null;
 }
@@ -512,6 +514,7 @@ function aspectRatioFor(painting, ratios) {
 function aspectRatioValue(painting, ratios) {
   if (ratios[painting.id]) return Number(ratios[painting.id]);
   if (painting.shape === SHAPE.CIRCLE) return 1;
+  if (painting.type === TYPE.BOOKMARK) return 1;
   if (painting.width && painting.height) return painting.width / painting.height;
   return 1;
 }
