@@ -11,6 +11,129 @@ function formatDate(date, locale = "sv-SE") {
 
 const blogPosts = [
   {
+    id: "min-allra-forsta-vernissage",
+
+    title: "Min allra första vernissage 🎨✨",
+    titleEn: "My Very First Exhibition Opening 🎨✨",
+
+    seoTitle: "Min allra första vernissage | Vaavas Canvas",
+    seoTitleEn: "My Very First Exhibition Opening | Vaavas Canvas",
+
+    seoDescription:
+      "En personlig berättelse om min allra första vernissage, att våga visa min konst och möta människor i min lilla värld.",
+    seoDescriptionEn:
+      "A personal story about my very first exhibition opening, finding the courage to show my art, and sharing my little world with others.",
+
+    date: "2026-09-09",
+    author: "Devika",
+
+    excerpt:
+      "Jag hade min allra första vernissage. Det var nervöst, surrealistiskt och mycket större än jag hade kunnat föreställa mig.",
+    excerptEn:
+      "I had my very first exhibition opening. It was nerve-racking, surreal, and so much bigger than I could have imagined.",
+
+    content: `
+      <p>Jag hade min allra första vernissage! 🥹</p>
+
+      <p>Va, alltså… det är helt ofattbart.</p>
+
+      <p>Att få ställa ut mina målningar och faktiskt visa djuren jag målar för andra människor, på en riktig lokal, känns fortfarande lite surrealistiskt. 🐑🐄🐻 Jag tror inte riktigt att jag hade förstått vad det skulle innebära förrän jag faktiskt stod där.</p>
+
+      <p>Inför vernissagen var jag så nervös. 😭 Jag hade lagt ut eventet och försökt berätta om det, men samtidigt gick en liten tanke runt i huvudet:</p>
+
+      <p>”Tänk om ingen kommer?”</p>
+
+      <p>Det är en ganska speciell känsla att skapa konst som är så personlig och sedan bjuda in andra människor att komma och titta på den. Plötsligt är det inte bara mina målningar längre. Någon annan ska stå framför dem och bilda sin egen uppfattning. Kanske känna någonting. Kanske inte alls känna det jag själv kände när jag målade dem. 🥹</p>
+
+      <p>Men så kom folk. 🤍</p>
+
+      <p>Människor som hade sett eventet, människor som ville se mina målningar och människor som tog sig tid att komma och vara där. Det var kanske inte jättemånga, men det betydde så otroligt mycket för mig. 🥹✨</p>
+
+      <p>Att stå i lokalen och se mina målningar på väggarna var nästan svårt att ta in. Jag har suttit hemma och målat de här djuren, ibland utan att ens veta vart målningarna skulle ta vägen. Och plötsligt hängde de där framför mig, tillsammans, som en liten värld som jag hade skapat. 🌿🐑🐄</p>
+
+      <figure class="blog-inline-image">
+        <img src="/images/blogg/7.jpeg" alt="Målningar från Devikas första vernissage" />
+        <figcaption>Från min allra första vernissage</figcaption>
+      </figure>
+
+      <p>Det var också något väldigt fint i att få prata med människor om målningarna. Att få berätta varför jag målar djur, vad de betyder för mig och varför jag vill att de ska få ta plats i min konst. 🐾🎨</p>
+
+      <p>Jag hade målat tavlorna.<br>Jag hade vågat visa dem.<br>Jag hade ordnat en utställning.<br>Och jag stod där och pratade om min konst.</p>
+
+      <p>Det kanske låter som en självklar sak när man skriver det så här, men för mig är det faktiskt jättestort. 🤍</p>
+
+      <p>Jag började måla mycket som ett sätt att få ur mig saker, och med tiden har djuren blivit en så viktig del av det jag vill förmedla. Att nu få visa dem i ett galleriliknande sammanhang, utanför mitt eget hem och min egen skärm, känns som ett stort steg. 🌱✨</p>
+
+      <p>Och kanske är det just det jag tar med mig mest från min första vernissage:</p>
+
+      <p>Att det faktiskt går att våga, även när man är livrädd. 🥹</p>
+
+      <p>Det här var bara min första.</p>
+
+      <p>Och jag hoppas verkligen att det inte blir den sista. 🎨🐄🐑🐻✨</p>
+
+      <p>Tack till alla som kom, tittade, pratade med mig, stöttade mig och gjorde min allra första vernissage till något jag kommer att minnas länge. 🤍</p>
+
+      <p>Tack för att ni tog er tid att komma och möta min lilla värld. 🐾🌿</p>
+
+      <p>– Devika</p>
+    `,
+
+    contentEn: `
+      <p>I had my very first exhibition opening! 🥹</p>
+
+      <p>I mean… it feels completely unreal.</p>
+
+      <p>Being able to exhibit my paintings and actually show the animals I paint to other people, in a real venue, still feels a little surreal. 🐑🐄🐻 I don't think I truly understood what it would mean until I was standing there.</p>
+
+      <p>I was so nervous before the opening. 😭 I had shared the event and tried to tell people about it, but at the same time, one little thought kept circling in my head:</p>
+
+      <p>“What if nobody comes?”</p>
+
+      <p>It is a very particular feeling to create art that is so personal and then invite other people to come and look at it. Suddenly, the paintings are no longer only mine. Someone else is going to stand in front of them and form their own opinion. Maybe feel something. Maybe not feel at all what I felt when I painted them. 🥹</p>
+
+      <p>But then people came. 🤍</p>
+
+      <p>People who had seen the event, people who wanted to see my paintings, and people who took the time to come and be there. There may not have been very many, but it meant so incredibly much to me. 🥹✨</p>
+
+      <p>Standing in the venue and seeing my paintings on the walls was almost difficult to take in. I have sat at home painting these animals, sometimes without even knowing where the paintings would end up. And suddenly they were hanging there in front of me, together, like a little world I had created. 🌿🐑🐄</p>
+
+      <figure class="blog-inline-image">
+        <img src="/images/blogg/7.jpeg" alt="Paintings from Devika's first exhibition opening" />
+        <figcaption>From my very first exhibition opening</figcaption>
+      </figure>
+
+      <p>There was also something very beautiful about getting to talk to people about the paintings. Being able to explain why I paint animals, what they mean to me, and why I want them to have a place in my art. 🐾🎨</p>
+
+      <p>I had painted the pictures.<br>I had dared to show them.<br>I had organised an exhibition.<br>And I stood there talking about my art.</p>
+
+      <p>It may sound like an obvious thing when written down like this, but for me it is actually huge. 🤍</p>
+
+      <p>I started painting as a way to get things out, and over time animals have become such an important part of what I want to express. Getting to show them in a gallery-like setting, outside my own home and my own screen, feels like a big step. 🌱✨</p>
+
+      <p>And perhaps that is what I will take with me most from my first exhibition opening:</p>
+
+      <p>That it really is possible to be brave, even when you are terrified. 🥹</p>
+
+      <p>This was only my first.</p>
+
+      <p>And I truly hope it will not be my last. 🎨🐄🐑🐻✨</p>
+
+      <p>Thank you to everyone who came, looked, talked with me, supported me, and made my very first exhibition opening something I will remember for a long time. 🤍</p>
+
+      <p>Thank you for taking the time to come and meet my little world. 🐾🌿</p>
+
+      <p>– Devika</p>
+    `,
+
+    image: "/images/blogg/6.jpg",
+    alt: "Devikas allra första vernissage",
+    imageCaption: "Min allra första vernissage",
+    imageCaptionEn: "My very first exhibition opening",
+
+    tags: ["vernissage", "konst", "personligt"],
+  },
+  {
     id: "why-animals-shiro",
 
     // Titles

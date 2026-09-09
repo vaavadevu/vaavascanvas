@@ -28,6 +28,10 @@ const keys = {
   sv: "Beställningar",
   en: "Commissions",
 },
+  nav_post_club: {
+    sv: "Postklubb",
+    en: "Post club",
+  },
   nav_blog: {
     sv: "Blogg",
     en: "Blog",
@@ -43,6 +47,111 @@ const keys = {
   nav_cart: {
     sv: "Varukorg",
     en: "Cart",
+  },
+
+  post_club_kicker: {
+    sv: "En fysisk postklubb för djurälskare",
+    en: "A physical mail club for animal lovers",
+  },
+  post_club_title: {
+    sv: "Djurvänners Post Club",
+    en: "Animal Lovers Post Club",
+  },
+  post_club_intro: {
+    sv: "Små konstkort med djurmotiv, skapade med hjärta och skickade hem till dig.",
+    en: "Small art cards with animal motifs, made with heart and sent to your home.",
+  },
+  post_club_waitlist_copy: {
+    sv: "Klubben är under planering. Skriv upp dig på väntelistan så får du veta när den öppnar.",
+    en: "The club is in the planning stage. Join the waitlist to hear when it opens.",
+  },
+  post_club_price_label: {
+    sv: "Preliminärt medlemspris",
+    en: "Estimated membership price",
+  },
+  post_club_price: {
+    sv: "100 kr",
+    en: "SEK 100",
+  },
+  post_club_includes_title: {
+    sv: "Det här ingår",
+    en: "What is included",
+  },
+  post_club_item_print: {
+    sv: "Ett konsttryck i A5-format på fine art-papper eller fotopapper",
+    en: "One A5 print on fine art paper or photo paper",
+  },
+  post_club_item_signed: {
+    sv: "Osignerat",
+    en: "Unsigned",
+  },
+  post_club_item_bookmark: {
+    sv: "Ett bokmärke",
+    en: "One bookmark",
+  },
+  post_club_item_stickers: {
+    sv: "Två stickers",
+    en: "Two stickers",
+  },
+  post_club_item_letter: {
+    sv: "Ett brev",
+    en: "One letter",
+  },
+  post_club_item_card: {
+    sv: "Ett tackkort",
+    en: "One thank-you card",
+  },
+  post_club_item_envelope: {
+    sv: "Ett kuvert",
+    en: "One envelope",
+  },
+  post_club_availability: {
+    sv: "För närvarande endast inom Sverige. Brevet kommer att finnas på svenska eller engelska.",
+    en: "Currently available in Sweden only. The letter will be available in Swedish or English.",
+  },
+  post_club_form_title: {
+    sv: "Skriv upp dig på väntelistan",
+    en: "Join the waitlist",
+  },
+  post_club_name_label: {
+    sv: "Namn",
+    en: "Name",
+  },
+  post_club_name_placeholder: {
+    sv: "Ditt namn",
+    en: "Your name",
+  },
+  post_club_email_label: {
+    sv: "E-post",
+    en: "Email",
+  },
+  post_club_email_placeholder: {
+    sv: "din@email.com",
+    en: "your@email.com",
+  },
+  post_club_consent: {
+    sv: "Jag godkänner att mina uppgifter sparas för information om Djurvänners Post Club.",
+    en: "I agree that my details may be stored for information about Animal Lovers Post Club.",
+  },
+  post_club_privacy: {
+    sv: "Uppgifterna används bara för väntelistan och lämnas inte ut. Du kan be att få dem raderade genom att kontakta info@vaavascanvas.se.",
+    en: "Your details are only used for the waitlist and are not shared. You can request deletion by contacting info@vaavascanvas.se.",
+  },
+  post_club_submit: {
+    sv: "Anmäl mig",
+    en: "Join the waitlist",
+  },
+  post_club_status_sending: {
+    sv: "Skickar...",
+    en: "Sending...",
+  },
+  post_club_status_success: {
+    sv: "Tack! Du står nu på väntelistan.",
+    en: "Thank you! You are now on the waitlist.",
+  },
+  post_club_status_error: {
+    sv: "Något gick fel. Försök igen eller kontakta info@vaavascanvas.se.",
+    en: "Something went wrong. Please try again or contact info@vaavascanvas.se.",
   },
 
   pictures_title: {
@@ -62,10 +171,6 @@ const keys = {
   portfolio_outro: {
     sv: "Gillar du något du ser? En del av verken ovan går att köpa. <a href='/pictures/'>Se hela galleriet</a> eller <a href='/pages/commissions.html'>beställ en commission</a>.",
     en: "Like something you see? Some of the works above are for sale. <a href='/pictures/'>See the full gallery</a> or <a href='/pages/commissions.html'>order a commission</a>.",
-  },
-  medium_oilpastel: {
-    sv: "Oljepastell",
-    en: "Oil pastel",
   },
   medium_acrylic: {
     sv: "Akryl",

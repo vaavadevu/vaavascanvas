@@ -92,19 +92,12 @@
   gap: 24px;
 }
 
-#oilpastel-masonry {
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-}
-
 @media (max-width: 880px) {
   .masonry {
     grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
     gap: 18px;
   }
 
-  #oilpastel-masonry {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  }
 }
 
 @media (max-width: 540px) {

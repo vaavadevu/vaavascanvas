@@ -590,6 +590,18 @@ function writeSitemap(paintings) {
     { loc: `${SITE}/pages/commissions.html`, changefreq: 'monthly', priority: '0.8' },
     { loc: `${SITE}/pages/portfolio.html`, changefreq: 'monthly', priority: '0.6' },
     { loc: `${SITE}/pages/blog.html`, changefreq: 'weekly', priority: '0.6' },
+    { loc: `${SITE}/pages/post-club.html`, changefreq: 'monthly', priority: '0.7' },
+    ...[
+      'min-allra-forsta-vernissage',
+      'why-animals-shiro',
+      'from-geology-to-painting',
+      'began-to-survive',
+      'when-i-feel-bad-at-painting',
+    ].map(id => ({
+      loc: `${SITE}/pages/blog-post.html?post=${id}`,
+      changefreq: 'monthly',
+      priority: '0.6',
+    })),
   ];
 
   const workPages = paintings.map(painting => ({

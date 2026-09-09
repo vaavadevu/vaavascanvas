@@ -3,7 +3,6 @@
 // lightbox follows the selected language
 const portfolioMediums = {
   akryl: { id: 'akryl', labelKey: 'medium_acrylic', folder: 'akryl' },
-  oljapastell: { id: 'oilpastel', labelKey: 'medium_oilpastel', folder: 'oljapastell' },
   akvarell: { id: 'akvarell', labelKey: 'medium_watercolor', folder: 'akvarell' },
   digitalt: { id: 'digital', labelKey: 'medium_digital', folder: 'digitalt' }
 };
