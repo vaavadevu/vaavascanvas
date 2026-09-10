@@ -1,7 +1,9 @@
 .post-club-main {
-  min-height: calc(100vh - var(--header-offset, 100px));
+  min-height: calc(100vh - var(--header-offset, var(--header-height)));
   max-width: 980px;
-  padding: clamp(70px, 10vw, 130px) 24px 90px;
+  /* Clear the fixed header on its own — this page loads a trimmed script set,
+     so the JS that pads main to the header height never runs here */
+  padding: calc(var(--header-offset, var(--header-height)) + clamp(24px, 4vw, 34px)) 24px 90px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(320px, 440px);
   gap: clamp(40px, 8vw, 110px);
@@ -148,7 +150,7 @@
   .post-club-main {
     grid-template-columns: 1fr;
     gap: 34px;
-    padding-top: 60px;
+    padding-top: calc(var(--header-offset, var(--header-height)) + 24px);
   }
 
   .post-club-intro h1 { font-size: 3rem; }
