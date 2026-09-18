@@ -625,8 +625,8 @@ const keys = {
     en: "Shipping within Sweden",
   },
   shipping_sweden_p: {
-    sv: "59 kr för frakt på alla beställningar under 599 kr. Fri frakt över 599 kr. Leveranstid 1–3 arbetsdagar via PostNord.",
-    en: "59 SEK shipping on all orders under 599 SEK. Free shipping over 599 SEK. Delivery time 1–3 business days via PostNord.",
+    sv: "59 kr för frakt på alla beställningar under 499 kr. Fri frakt över 499 kr. Leveranstid 1–3 arbetsdagar via PostNord.",
+    en: "59 SEK shipping on all orders under 499 SEK. Free shipping over 499 SEK. Delivery time 1–3 business days via PostNord.",
   },
   shipping_europe_h: {
     sv: "Frakt inom EU",

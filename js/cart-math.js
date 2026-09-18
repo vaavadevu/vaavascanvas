@@ -10,7 +10,7 @@
 
 // Shipping rates — must stay in sync with functions/api/create-checkout.js,
 // which recalculates them server-side (tests/validate.js enforces this)
-const FREE_SHIPPING_THRESHOLD = 599;
+const FREE_SHIPPING_THRESHOLD = 499;
 const SHIPPING_COST_SE = 59;
 const SHIPPING_COST_EU = 149;
 

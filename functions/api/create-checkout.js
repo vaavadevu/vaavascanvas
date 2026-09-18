@@ -102,7 +102,7 @@ function getPaintingEffectivePrice(painting, withFrame = false) {
   return getPaintingDiscountedPrice(painting);
 }
 
-const FREE_SHIPPING_THRESHOLD = 599;
+const FREE_SHIPPING_THRESHOLD = 499;
 const SHIPPING_COST_SE = 59;
 const SHIPPING_COST_EU = 149;
 
