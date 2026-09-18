@@ -233,7 +233,7 @@ export async function onRequestPost(context) {
             name: isClay ? `${item.title} – Keramik` : `${item.title} – Original målning`,
             description: isClay
               ? 'Handgjord keramik. Leverans inom Sverige.'
-              : 'Signerat original på duk. Leverans inom Sverige.',
+              : 'Signerad originalmålning. Leverans inom Sverige.',
             ...(image ? { images: [image] } : {}),
           },
           unit_amount: price * 100,
