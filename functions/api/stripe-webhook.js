@@ -21,6 +21,17 @@ export async function onRequestPost(context) {
     const session = stripeEvent.data.object;
     const shipping = session.shipping_details;
 
+    if (session.metadata?.orderType === 'post-club') {
+      console.log('Post club order received:', {
+        sessionId: session.id,
+        customerEmail: session.customer_email,
+        name: session.metadata.name,
+        shippingAddress: shipping,
+        totalAmount: session.amount_total / 100,
+      });
+      return Response.json({ received: true });
+    }
+
     let items = [];
     try {
       items = JSON.parse(session.metadata.items || '[]');

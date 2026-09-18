@@ -61,9 +61,9 @@ const keys = {
     sv: "Små konstkort med djurmotiv, skapade med hjärta och skickade hem till dig.",
     en: "Small art cards with animal motifs, made with heart and sent to your home.",
   },
-  post_club_waitlist_copy: {
-    sv: "Klubben är under planering. Skriv upp dig på väntelistan så får du veta när den öppnar.",
-    en: "The club is in the planning stage. Join the waitlist to hear when it opens.",
+  post_club_order_copy: {
+    sv: "Beställ ett brev och få konst samt små överraskningar hemskickade till din adress.",
+    en: "Order a letter and receive art and small surprises sent to your home.",
   },
   post_club_price_label: {
     sv: "Preliminärt medlemspris",
@@ -110,8 +110,8 @@ const keys = {
     en: "Currently available in Sweden only. The letter will be available in Swedish or English.",
   },
   post_club_form_title: {
-    sv: "Skriv upp dig på väntelistan",
-    en: "Join the waitlist",
+    sv: "Jag vill ha ett brev hemskickat",
+    en: "I want a letter sent to me",
   },
   post_club_name_label: {
     sv: "Namn",
@@ -130,24 +130,24 @@ const keys = {
     en: "your@email.com",
   },
   post_club_consent: {
-    sv: "Jag godkänner att mina uppgifter sparas för information om Djurvänners Post Club.",
-    en: "I agree that my details may be stored for information about Animal Lovers Post Club.",
+    sv: "Jag vill ha brevet hemskickat och godkänner att Stripe samlar in min leveransadress för ordern.",
+    en: "I want the letter sent to me and agree that Stripe collects my shipping address for this order.",
   },
   post_club_privacy: {
-    sv: "Uppgifterna används bara för väntelistan och lämnas inte ut. Du kan be att få dem raderade genom att kontakta info@vaavascanvas.se.",
-    en: "Your details are only used for the waitlist and are not shared. You can request deletion by contacting info@vaavascanvas.se.",
+    sv: "Du fyller i leveransadressen hos Stripe i nästa steg. Betalningen är 100 kr och brevet skickas inom Sverige.",
+    en: "You will enter your shipping address with Stripe in the next step. Payment is SEK 100 and shipping is within Sweden.",
   },
   post_club_submit: {
-    sv: "Anmäl mig",
-    en: "Join the waitlist",
+    sv: "Fortsätt till betalning",
+    en: "Continue to payment",
   },
   post_club_status_sending: {
-    sv: "Skickar...",
-    en: "Sending...",
+    sv: "Öppnar betalningen...",
+    en: "Opening payment...",
   },
   post_club_status_success: {
-    sv: "Tack! Du står nu på väntelistan.",
-    en: "Thank you! You are now on the waitlist.",
+    sv: "Tack! Betalningen är klar och brevet skickas hem till dig.",
+    en: "Thank you! Payment is complete and the letter will be sent to you.",
   },
   post_club_status_error: {
     sv: "Något gick fel. Försök igen eller kontakta info@vaavascanvas.se.",
@@ -968,6 +968,10 @@ desc_sommarvila: {
   desc_kanin: {
     sv: "Handgjord lufttorkande lera-halsband med kanin. Handmålad med akryl, gliding knot för anpassad längd. Unisex.",
     en: "Handmade air-drying clay necklace with rabbit. Hand-painted with acrylic, gliding knot for adjustable length. Unisex.",
+  },
+  desc_solrosKossan: {
+    sv: "En gullig kossa som står bland solrosor på en sommaräng.",
+    en: "A cute little cow that stands among sunflowers on a summer meadow.",
   },
 
   // ── Cart ──────────────────────────────────────────────────────

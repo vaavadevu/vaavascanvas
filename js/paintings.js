@@ -686,6 +686,18 @@ const paintings = [
     type: TYPE.PAINTING
   },
   {
+    id: "solrosKossan",
+    title: "Solroskossan",
+    descKey: "desc_solrosKossan",
+    status: STATUS.FOR_SALE,
+    medium: MEDIUM.ACRYLIC_CANVAS,
+    width: 17.6,
+    height: 25,
+    shape: SHAPE.RECTANGULAR,
+    originalPrice: 500,
+    type: TYPE.PAINTING
+  },
+  {
     id: "rav",
     title: "Räv",
     descKey: "desc_rav",

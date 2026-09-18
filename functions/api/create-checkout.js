@@ -35,6 +35,7 @@ const PAINTINGS = [
   { id: 'varlek', originalPrice: 1600, framedPrice: 1900, frameAvailable: true, status: 'for_sale' },
   { id: 'foreStormen', originalPrice: 1600, status: 'for_sale' },
   { id: 'photobomb', originalPrice: 1600, status: 'for_sale' },
+  { id: 'solrosKossan', originalPrice: 500, status: 'for_sale' },
   { id: 'rav', originalPrice: 250, status: 'sold' },
   { id: 'bjorn', originalPrice: 250, status: 'for_sale' },
   { id: 'tiger', originalPrice: 250, status: 'for_sale' },
