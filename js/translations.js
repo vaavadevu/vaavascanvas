@@ -728,6 +728,10 @@ const keys = {
     sv: "Akryl på duk",
     en: "Acrylic on canvas",
   },
+   medium_acrylic_canvas_panel: {
+    sv: "Akryl på pannå",
+    en: "Acrylic on canvas panel",
+  },
   medium_watercolor_paper_laminated: {
     sv: "Akvarell på papper, laminerat",
     en: "Watercolor on paper, laminated",
