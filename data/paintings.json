@@ -386,7 +386,7 @@
     "height": 25,
     "shape": "rectangular",
     "originalPrice": 500,
-    "status": "for_sale",
+    "status": "sold",
     "medium": "medium_acrylic_canvas_panel"
   }
 ]
