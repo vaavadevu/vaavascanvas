@@ -21,6 +21,7 @@ const SHAPE = {
 // Medium constants
 const MEDIUM = {
   ACRYLIC_CANVAS: "medium_acrylic_canvas",
+  ACRYLIC_CANVAS_PANEL: "medium_acrylic_canvas_panel",
   WATERCOLOR_PAPER_LAMINATED: "medium_watercolor_paper_laminated",
   CLAY: "medium_clay"
 };
@@ -689,8 +690,8 @@ const paintings = [
     id: "solrosKossan",
     title: "Solroskossan",
     descKey: "desc_solrosKossan",
-    status: STATUS.FOR_SALE,
-    medium: MEDIUM.ACRYLIC_CANVAS,
+    status: STATUS.SOLD,
+    medium: MEDIUM.ACRYLIC_CANVAS_PANEL,
     width: 17.6,
     height: 25,
     shape: SHAPE.RECTANGULAR,
