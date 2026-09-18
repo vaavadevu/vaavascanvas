@@ -440,6 +440,29 @@ async function runTests() {
     assertEqual(result.status, 400, 'A bookmark was accepted as an original painting');
   });
 
+  await test('A painting image is sent to Stripe as an absolute URL', async () => {
+    // The cart carries root-relative paths; Stripe fetches the picture itself
+    // and rejects the whole session if the URL is not absolute
+    const result = await checkout(onRequestPost, [
+      original(forSale.id, { image: '/images/paintings/test/desktop/01.jpg' }),
+    ]);
+    assert(!result.error, `Unexpected rejection: ${result.error}`);
+
+    const image = result.products[0].images[0];
+    assert(image && /^https?:\/\//.test(image),
+      `Painting image must be an absolute URL for Stripe, got: ${image}`);
+  });
+
+  await test('An unusable painting image is dropped, not sent to Stripe', async () => {
+    // A bad image is not worth failing a sale over
+    const result = await checkout(onRequestPost, [
+      original(forSale.id, { image: 'javascript:void(0)' }),
+    ]);
+    assert(!result.error, `Unexpected rejection: ${result.error}`);
+    assertEqual(result.products[0].images.length, 0,
+      'A non-URL image was passed through to Stripe');
+  });
+
   await test('Bookmark line items carry the piece, not the set', async () => {
     const id = availableBookmarks[0];
     const result = await checkout(onRequestPost, [bookmark(id)]);

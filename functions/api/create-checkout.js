@@ -177,6 +177,15 @@ export async function onRequestPost(context) {
       items.filter(item => item.type === 'bookmark').length
     );
 
+    // Stripe fetches the picture itself, so it needs an absolute URL — the cart
+    // carries root-relative paths. Anything else the client sends is dropped
+    // rather than allowed to fail the whole order.
+    const productImage = (path) => {
+      if (typeof path !== 'string') return null;
+      if (path.startsWith('/')) return `${origin}${path}`;
+      return /^https?:\/\//.test(path) ? path : null;
+    };
+
     const invalidItem = item => Response.json(
       { error: `Invalid item: ${item.id} (${item.type}${item.size ? ', ' + item.size : ''})` },
       { status: 400 }
@@ -216,6 +225,7 @@ export async function onRequestPost(context) {
       subtotal += price;
 
       const isClay = item.type === 'clay';
+      const image = productImage(item.image);
       line_items.push({
         price_data: {
           currency: 'sek',
@@ -224,7 +234,7 @@ export async function onRequestPost(context) {
             description: isClay
               ? 'Handgjord keramik. Leverans inom Sverige.'
               : 'Signerat original på duk. Leverans inom Sverige.',
-            ...(item.image ? { images: [item.image] } : {}),
+            ...(image ? { images: [image] } : {}),
           },
           unit_amount: price * 100,
         },
