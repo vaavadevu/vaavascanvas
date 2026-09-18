@@ -12,22 +12,24 @@ function translated(key, fallback) {
   return typeof t === "function" ? t(key) : fallback;
 }
 
+const checkoutResult = new URLSearchParams(window.location.search).get("postClub");
+if (checkoutResult === "success") {
+  setStatus(translated("post_club_status_success", "Tack! Betalningen är klar och brevet skickas hem till dig."), "success");
+} else if (checkoutResult === "cancelled") {
+  setStatus(translated("post_club_status_cancelled", "Betalningen avbröts. Du kan försöka igen när du vill."), "error");
+}
+
 form?.addEventListener("submit", async event => {
   event.preventDefault();
-  if (!form.reportValidity()) return;
-
-  const data = new FormData(form);
-  const name = String(data.get("name") || "").trim();
-  const email = String(data.get("email") || "").trim().toLowerCase();
 
   submitButton.disabled = true;
-  setStatus(translated("post_club_status_sending", "Skickar..."), "pending");
+  setStatus(translated("post_club_status_sending", "Öppnar betalningen..."), "pending");
 
   try {
     const response = await fetch("/api/create-post-club-checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email })
+      body: JSON.stringify({})
     });
     const result = await response.json();
 

@@ -28,17 +28,17 @@
       <p class="post-club-kicker" data-i18n="post_club_kicker">En fysisk postklubb för djurälskare</p>
       <h1 data-i18n="post_club_title">Djurvänners Post Club</h1>
       <p class="post-club-lead" data-i18n="post_club_intro">Små konstkort med djurmotiv, skapade med hjärta och skickade hem till dig.</p>
-      <p data-i18n="post_club_order_copy">Beställ ett brev och få konst samt små överraskningar hemskickade till din adress.</p>
+      <p data-i18n="post_club_order_copy">Beställ ett brev och få konst samt små överraskningar hemskickade till din adress. Första månaden är temat kor.</p>
       <div class="post-club-details">
         <div>
-          <p class="post-club-price-label" data-i18n="post_club_price_label">Preliminärt medlemspris</p>
+          <p class="post-club-price-label" data-i18n="post_club_price_label">Medlemspris per månad</p>
           <p class="post-club-price" data-i18n="post_club_price">100 kr</p>
         </div>
         <div>
           <h2 data-i18n="post_club_includes_title">Det här ingår</h2>
           <ul>
             <li data-i18n="post_club_item_print">Ett konsttryck i A5-format på fine art-papper eller fotopapper</li>
-            <li data-i18n="post_club_item_signed">Osignerat</li>
+            <li data-i18n="post_club_item_first_month">Första månaden: kor</li>
             <li data-i18n="post_club_item_bookmark">Ett bokmärke</li>
             <li data-i18n="post_club_item_stickers">Två stickers</li>
             <li data-i18n="post_club_item_letter">Ett brev</li>
@@ -51,22 +51,10 @@
     </section>
 
     <section class="post-club-form-section" aria-labelledby="post-club-form-title">
-      <h2 id="post-club-form-title" data-i18n="post_club_form_title">Jag vill ha ett brev hemskickat</h2>
+      <h2 id="post-club-form-title" data-i18n="post_club_form_title">Till betalning</h2>
       <form id="post-club-form" class="post-club-form" novalidate>
-        <div class="formGroup">
-          <label for="post-club-name" data-i18n="post_club_name_label">Namn</label>
-          <input type="text" id="post-club-name" name="name" autocomplete="name" required maxlength="120" data-i18n-ph="post_club_name_placeholder" placeholder="Ditt namn" />
-        </div>
-        <div class="formGroup">
-          <label for="post-club-email" data-i18n="post_club_email_label">E-post</label>
-          <input type="email" id="post-club-email" name="email" autocomplete="email" required maxlength="254" data-i18n-ph="post_club_email_placeholder" placeholder="din@email.com" />
-        </div>
-        <label class="checkbox-label post-club-consent">
-          <input type="checkbox" id="post-club-consent" name="consent" required />
-          <span data-i18n="post_club_consent">Jag vill ha brevet hemskickat och godkänner att Stripe samlar in min leveransadress för ordern.</span>
-        </label>
-        <p class="post-club-privacy" data-i18n="post_club_privacy">Uppgifterna används bara för väntelistan och lämnas inte ut. Du kan be att få dem raderade genom att kontakta info@vaavascanvas.se.</p>
-        <button type="submit" class="submitBtn" data-i18n="post_club_submit">Fortsätt till betalning</button>
+        <p class="post-club-privacy" data-i18n="post_club_privacy">Stripe samlar in namn, e-post och leveransadress i nästa steg. Betalningen är 100 kr och brevet skickas inom Sverige.</p>
+        <button type="submit" class="submitBtn" data-i18n="post_club_submit">Till betalning</button>
         <p id="post-club-status" class="post-club-status" role="status" aria-live="polite"></p>
       </form>
     </section>

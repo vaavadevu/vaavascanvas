@@ -62,12 +62,12 @@ const keys = {
     en: "Small art cards with animal motifs, made with heart and sent to your home.",
   },
   post_club_order_copy: {
-    sv: "Beställ ett brev och få konst samt små överraskningar hemskickade till din adress.",
-    en: "Order a letter and receive art and small surprises sent to your home.",
+    sv: "Beställ ett brev och få konst samt små överraskningar hemskickade till din adress. Första månaden är temat kor.",
+    en: "Order a letter and receive art and small surprises sent to your home. The first month features cows.",
   },
   post_club_price_label: {
-    sv: "Preliminärt medlemspris",
-    en: "Estimated membership price",
+    sv: "Medlemspris per månad",
+    en: "Membership price per month",
   },
   post_club_price: {
     sv: "100 kr",
@@ -81,9 +81,9 @@ const keys = {
     sv: "Ett konsttryck i A5-format på fine art-papper eller fotopapper",
     en: "One A5 print on fine art paper or photo paper",
   },
-  post_club_item_signed: {
-    sv: "Osignerat",
-    en: "Unsigned",
+  post_club_item_first_month: {
+    sv: "Första månaden: kor",
+    en: "First month: cows",
   },
   post_club_item_bookmark: {
     sv: "Ett bokmärke",
@@ -110,8 +110,8 @@ const keys = {
     en: "Currently available in Sweden only. The letter will be available in Swedish or English.",
   },
   post_club_form_title: {
-    sv: "Jag vill ha ett brev hemskickat",
-    en: "I want a letter sent to me",
+    sv: "Till betalning",
+    en: "Proceed to payment",
   },
   post_club_name_label: {
     sv: "Namn",
@@ -134,12 +134,12 @@ const keys = {
     en: "I want the letter sent to me and agree that Stripe collects my shipping address for this order.",
   },
   post_club_privacy: {
-    sv: "Du fyller i leveransadressen hos Stripe i nästa steg. Betalningen är 100 kr och brevet skickas inom Sverige.",
-    en: "You will enter your shipping address with Stripe in the next step. Payment is SEK 100 and shipping is within Sweden.",
+    sv: "Stripe samlar in namn, e-post och leveransadress i nästa steg. Betalningen är 100 kr och brevet skickas inom Sverige.",
+    en: "Stripe collects your name, email and shipping address in the next step. Payment is SEK 100 and shipping is within Sweden.",
   },
   post_club_submit: {
-    sv: "Fortsätt till betalning",
-    en: "Continue to payment",
+    sv: "Till betalning",
+    en: "Proceed to payment",
   },
   post_club_status_sending: {
     sv: "Öppnar betalningen...",
@@ -148,6 +148,10 @@ const keys = {
   post_club_status_success: {
     sv: "Tack! Betalningen är klar och brevet skickas hem till dig.",
     en: "Thank you! Payment is complete and the letter will be sent to you.",
+  },
+  post_club_status_cancelled: {
+    sv: "Betalningen avbröts. Du kan försöka igen när du vill.",
+    en: "Payment was cancelled. You can try again whenever you like.",
   },
   post_club_status_error: {
     sv: "Något gick fel. Försök igen eller kontakta info@vaavascanvas.se.",

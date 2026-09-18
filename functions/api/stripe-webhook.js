@@ -25,7 +25,6 @@ export async function onRequestPost(context) {
       console.log('Post club order received:', {
         sessionId: session.id,
         customerEmail: session.customer_email,
-        name: session.metadata.name,
         shippingAddress: shipping,
         totalAmount: session.amount_total / 100,
       });
