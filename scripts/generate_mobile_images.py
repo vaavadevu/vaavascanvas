@@ -903,6 +903,7 @@ def main():
     targets_clay = []
     targets_bookmark = []
     targets_hero = []
+    build_lera_flag = False
 
     if args.only:
         all_by_name = {**by_name, **clay_by_name, **bookmark_by_id, **hero_by_name}
