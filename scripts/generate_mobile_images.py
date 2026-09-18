@@ -936,9 +936,6 @@ def main():
         for painting_folder in tqdm(folders, desc="Jämför målningar", unit="mapp"):
             reason = stale_reason(painting_folder, manifest, "paintings")
             if reason:
-        for painting_folder in tqdm(folders, desc="Jämför målningar", unit="mapp"):
-            reason = stale_reason(painting_folder, manifest, "paintings")
-            if reason:
                 targets_paint.append(painting_folder)
                 tqdm.write(f"   • Målning {painting_folder.name}: {reason}")
         lera_reason = lera_stale_reason(root, manifest)
@@ -961,8 +958,6 @@ def main():
                 targets_hero.append(hero_folder)
                 tqdm.write(f"   • Hero: {reason}")
         if not targets_paint and not targets_clay and not targets_bookmark and not targets_hero and not build_lera_flag:
-            print("\n✅ Inga bilder har ändrats — inget att bygga om.\n")
-
             print("\n✅ Inga bilder har ändrats — inget att bygga om.\n")
 
     # ── Bygg ─────────────────────────────────────────────────────────────────
