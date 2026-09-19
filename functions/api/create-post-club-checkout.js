@@ -64,7 +64,13 @@ export async function onRequestPost(context) {
           currency: 'sek',
           product_data: {
             name: 'Djurvänners Postklubb',
-            description: 'Ett konsttryck i A5 på fotopapper, ett laminerat bokmärke, två stickers och ett brev om kvartalets djur. Nytt tema varje kvartal. Frakt inom Sverige ingår.',
+            // Kassan visar ett engångsbelopp, eftersom prenumerationen skapas
+            // först av webhooken. Den här texten är därför enda stället där
+            // kunden får veta att beloppet återkommer.
+            description: `Medlemskap som förnyas var tredje månad, ${POST_CLUB_PRICE / 100} kr per gång. `
+              + 'Varje brev innehåller ett konsttryck i A5 på fotopapper, ett laminerat bokmärke, '
+              + 'två stickers och ett brev om kvartalets djur. Nytt tema varje kvartal. '
+              + 'Frakt inom Sverige ingår. Avsluta när du vill – info@vaavascanvas.se.',
           },
           unit_amount: POST_CLUB_PRICE,
         },
