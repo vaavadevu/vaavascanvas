@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Djurvänners Post Club — Vaavascanvas</title>
-  <meta name="description" content="Beställ Djurvänners Post Club och få ett brev med konst och små överraskningar hemskickat." />
+  <title>Djurvänners Postklubb — Vaavascanvas</title>
+  <meta name="description" content="Beställ Djurvänners Postklubb och få ett brev med konst och små överraskningar hemskickat." />
   <link rel="canonical" href="https://vaavascanvas.se/pages/post-club.html" />
   <link rel="icon" type="image/png" href="../images/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,41 +24,63 @@
   <div id="header-container"></div>
 
   <main class="post-club-main">
-    <section class="post-club-intro">
-      <p class="post-club-kicker" data-i18n="post_club_kicker">En fysisk postklubb för djurälskare</p>
-      <h1 data-i18n="post_club_title">Djurvänners Post Club</h1>
-      <p class="post-club-lead" data-i18n="post_club_intro">Små konstkort med djurmotiv, skapade med hjärta och skickade hem till dig.</p>
-      <p data-i18n="post_club_order_copy">Beställ ett brev och få konst samt små överraskningar hemskickade till din adress. Första månaden är temat kor.</p>
-      <div class="post-club-details">
-        <div>
-          <p class="post-club-price-label" data-i18n="post_club_price_label">Medlemspris per månad</p>
-          <p class="post-club-price" data-i18n="post_club_price">100 kr</p>
-        </div>
-        <div>
-          <h2 data-i18n="post_club_includes_title">Det här ingår</h2>
+    <section class="post-club-top">
+      <h1 data-i18n="post_club_title">Djurvänners Postklubb</h1>
+      <p class="post-club-lead" data-i18n="post_club_intro">Små konstkort med djurmotiv, skapade med hjärta och skickade hem till dig fyra gånger om året – med ett nytt tema varje kvartal.</p>
+    </section>
+
+    <section class="post-club-showcase" id="post-club-quarter" aria-labelledby="post-club-quarter-title" hidden>
+      <figure class="post-club-feature" id="post-club-feature"></figure>
+      <div class="post-club-quarter-info">
+        <p class="post-club-label" data-i18n="post_club_quarter_eyebrow">Det här kvartalet</p>
+        <h2 id="post-club-quarter-title"></h2>
+        <p class="post-club-quarter-ship" id="post-club-quarter-ship"></p>
+        <p class="post-club-quarter-blurb" id="post-club-quarter-blurb"></p>
+        <ul class="post-club-thumbs" id="post-club-thumbs"></ul>
+        <div class="post-club-includes">
+          <h2 id="post-club-includes-title" data-i18n="post_club_includes_title">Det här ingår</h2>
           <ul>
-            <li data-i18n="post_club_item_print">Ett konsttryck i A5-format på fine art-papper eller fotopapper</li>
-            <li data-i18n="post_club_item_first_month">Första månaden: kor</li>
-            <li data-i18n="post_club_item_bookmark">Ett bokmärke</li>
+            <li data-i18n="post_club_item_print">Ett konsttryck i A5-format på fotopapper</li>
+            <li data-i18n="post_club_item_bookmark">Ett laminerat bokmärke</li>
             <li data-i18n="post_club_item_stickers">Två stickers</li>
-            <li data-i18n="post_club_item_letter">Ett brev</li>
-            <li data-i18n="post_club_item_card">Ett tackkort</li>
-            <li data-i18n="post_club_item_envelope">Ett kuvert</li>
+            <li data-i18n="post_club_item_letter">Ett brev om kvartalets djur, med några roliga fakta</li>
           </ul>
-          <p class="post-club-availability" data-i18n="post_club_availability">För närvarande endast inom Sverige. Brevet kommer att finnas på svenska eller engelska.</p>
         </div>
       </div>
     </section>
 
-    <section class="post-club-form-section" aria-labelledby="post-club-form-title">
-      <h2 id="post-club-form-title" data-i18n="post_club_form_title">Till betalning</h2>
-      <form id="post-club-form" class="post-club-form" novalidate>
-        <p class="post-club-privacy" data-i18n="post_club_privacy">Stripe samlar in namn, e-post och leveransadress i nästa steg. Betalningen är 100 kr och brevet skickas inom Sverige.</p>
-        <button type="submit" class="submitBtn" data-i18n="post_club_submit">Till betalning</button>
-        <p id="post-club-status" class="post-club-status" role="status" aria-live="polite"></p>
-      </form>
+    <section class="post-club-join" aria-label="Bli medlem">
+      <div class="post-club-buy">
+        <p class="post-club-label" data-i18n="post_club_price_label">Medlemspris var tredje månad</p>
+        <p class="post-club-price" data-i18n="post_club_price">109 kr</p>
+        <form id="post-club-form" class="post-club-form" novalidate>
+          <button type="submit" class="submitBtn" data-i18n="post_club_submit">Till betalning</button>
+          <p id="post-club-status" class="post-club-status" role="status" aria-live="polite"></p>
+        </form>
+        <ul class="post-club-terms" id="post-club-terms"></ul>
+      </div>
+    </section>
+
+    <section class="post-club-timeline-section" aria-labelledby="post-club-timeline-title">
+      <h2 id="post-club-timeline-title" data-i18n="post_club_timeline_title">Brev för brev</h2>
+      <p class="post-club-timeline-hint" id="post-club-timeline-hint" data-i18n="post_club_timeline_hint" hidden>Bläddra åt vänster för att se vad som har skickats ut tidigare.</p>
+      <ol class="post-club-timeline" id="post-club-timeline"></ol>
     </section>
   </main>
+
+  <div class="post-club-jump" id="post-club-jump">
+    <button type="button" id="post-club-jump-button" data-i18n="post_club_jump">Bli medlem – 109 kr</button>
+  </div>
+
+  <div class="post-club-lightbox" id="post-club-lightbox" role="dialog" aria-modal="true" aria-labelledby="post-club-lightbox-caption" hidden>
+    <button type="button" class="post-club-lightbox-close" id="post-club-lightbox-close" aria-label="Stäng" data-i18n-aria="post_club_lightbox_close">&times;</button>
+    <button type="button" class="post-club-lightbox-nav prev" id="post-club-lightbox-prev" aria-label="Föregående" data-i18n-aria="post_club_lightbox_prev">&#8249;</button>
+    <figure class="post-club-lightbox-figure">
+      <img id="post-club-lightbox-img" alt="" />
+      <figcaption id="post-club-lightbox-caption"></figcaption>
+    </figure>
+    <button type="button" class="post-club-lightbox-nav next" id="post-club-lightbox-next" aria-label="Nästa" data-i18n-aria="post_club_lightbox_next">&#8250;</button>
+  </div>
 
   <footer id="footer" class="post-club-footer">
     <p>© 2026 Devika – Vaavascanvas</p>
@@ -67,6 +89,7 @@
 
   <script src="../js/translations.js"></script>
   <script src="../js/i18n.js"></script>
+  <script src="../js/utilities.js"></script>
   <script src="../js/ui.js"></script>
   <script src="../js/script.js"></script>
   <script type="module" src="../js/post-club.js"></script>

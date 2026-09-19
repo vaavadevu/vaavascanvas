@@ -1,0 +1,29 @@
+{
+  "price": 109,
+  "chargeDay": 25,
+  "shipMonths": [1, 4, 7, 10],
+  "imageBase": "../images/post-club/",
+  "quarters": [
+    {
+      "id": "2026-10",
+      "ship": "2026-10",
+      "theme": { "sv": "Kor", "en": "Cows" },
+      "blurb": {
+        "sv": "Höstens brev handlar om kor – lugna blickar, dimmiga hagar och lite lera om mulen.",
+        "en": "The autumn letter is all about cows – calm eyes, misty pastures and a little mud on the muzzle."
+      },
+      "images": [
+        { "file": "overview.jpg", "label": { "sv": "Allt som ingår", "en": "Everything included" } },
+        { "file": "print.jpg", "label": { "sv": "Konsttryck i A5", "en": "A5 art print" } },
+        { "file": "bookmark.jpg", "label": { "sv": "Bokmärke", "en": "Bookmark" } },
+        { "file": "stickers.jpg", "label": { "sv": "Två stickers", "en": "Two stickers" } }
+      ]
+    },
+    {
+      "id": "2027-01",
+      "ship": "2027-01",
+      "secret": true,
+      "images": []
+    }
+  ]
+}

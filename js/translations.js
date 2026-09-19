@@ -49,93 +49,117 @@ const keys = {
     en: "Cart",
   },
 
-  post_club_kicker: {
-    sv: "En fysisk postklubb för djurälskare",
-    en: "A physical mail club for animal lovers",
+  promo_post_club_copy: {
+    sv: "Ett brev med konst, ett laminerat bokmärke och stickers hem i brevlådan fyra gånger om året.",
+    en: "A letter with art, a laminated bookmark and stickers in your mailbox four times a year.",
+  },
+  promo_post_club_quarter: {
+    sv: "Det här kvartalet: {theme}, i brevlådan första veckan i {month}.",
+    en: "This quarter: {theme}, in your mailbox the first week of {month}.",
+  },
+  promo_post_club_link: {
+    sv: "Läs mer om postklubben →",
+    en: "More about the post club →",
   },
   post_club_title: {
-    sv: "Djurvänners Post Club",
+    sv: "Djurvänners Postklubb",
     en: "Animal Lovers Post Club",
   },
   post_club_intro: {
-    sv: "Små konstkort med djurmotiv, skapade med hjärta och skickade hem till dig.",
-    en: "Small art cards with animal motifs, made with heart and sent to your home.",
-  },
-  post_club_order_copy: {
-    sv: "Beställ ett brev och få konst samt små överraskningar hemskickade till din adress. Första månaden är temat kor.",
-    en: "Order a letter and receive art and small surprises sent to your home. The first month features cows.",
+    sv: "Små konstkort med djurmotiv, skapade med hjärta och skickade hem till dig fyra gånger om året – med ett nytt tema varje kvartal.",
+    en: "Small art cards with animal motifs, made with heart and sent to your home four times a year – with a new theme every quarter.",
   },
   post_club_price_label: {
-    sv: "Medlemspris per månad",
-    en: "Membership price per month",
+    sv: "Medlemspris var tredje månad",
+    en: "Membership price every three months",
   },
   post_club_price: {
-    sv: "100 kr",
-    en: "SEK 100",
+    sv: "109 kr",
+    en: "SEK 109",
   },
   post_club_includes_title: {
     sv: "Det här ingår",
     en: "What is included",
   },
   post_club_item_print: {
-    sv: "Ett konsttryck i A5-format på fine art-papper eller fotopapper",
-    en: "One A5 print on fine art paper or photo paper",
-  },
-  post_club_item_first_month: {
-    sv: "Första månaden: kor",
-    en: "First month: cows",
+    sv: "Ett konsttryck i A5-format på fotopapper",
+    en: "One A5 print on photo paper",
   },
   post_club_item_bookmark: {
-    sv: "Ett bokmärke",
-    en: "One bookmark",
+    sv: "Ett laminerat bokmärke",
+    en: "One laminated bookmark",
   },
   post_club_item_stickers: {
     sv: "Två stickers",
     en: "Two stickers",
   },
   post_club_item_letter: {
-    sv: "Ett brev",
-    en: "One letter",
+    sv: "Ett brev om kvartalets djur, med några roliga fakta",
+    en: "A letter about the animal of the quarter, with a few fun facts",
   },
-  post_club_item_card: {
-    sv: "Ett tackkort",
-    en: "One thank-you card",
+  post_club_quarter_eyebrow: {
+    sv: "Det här kvartalet",
+    en: "This quarter",
   },
-  post_club_item_envelope: {
-    sv: "Ett kuvert",
-    en: "One envelope",
+  post_club_quarter_ship: {
+    sv: "Skickas första veckan i {month}",
+    en: "Ships the first week of {month}",
   },
-  post_club_availability: {
-    sv: "För närvarande endast inom Sverige. Brevet kommer att finnas på svenska eller engelska.",
-    en: "Currently available in Sweden only. The letter will be available in Swedish or English.",
+  post_club_image_pending: {
+    sv: "Bild kommer snart",
+    en: "Photo coming soon",
   },
-  post_club_form_title: {
-    sv: "Till betalning",
-    en: "Proceed to payment",
+  post_club_timeline_title: {
+    sv: "Brev för brev",
+    en: "Letter by letter",
   },
-  post_club_name_label: {
-    sv: "Namn",
-    en: "Name",
+  post_club_timeline_hint: {
+    sv: "Bläddra åt vänster för att se vad som har skickats ut tidigare.",
+    en: "Scroll left to see what has been sent out before.",
   },
-  post_club_name_placeholder: {
-    sv: "Ditt namn",
-    en: "Your name",
+  post_club_timeline_sent: {
+    sv: "Skickat",
+    en: "Sent",
   },
-  post_club_email_label: {
-    sv: "E-post",
-    en: "Email",
+  post_club_timeline_current: {
+    sv: "Det här kvartalet",
+    en: "This quarter",
   },
-  post_club_email_placeholder: {
-    sv: "din@email.com",
-    en: "your@email.com",
+  post_club_timeline_upcoming: {
+    sv: "Kommande",
+    en: "Upcoming",
   },
-  post_club_consent: {
-    sv: "Jag vill ha brevet hemskickat och godkänner att Stripe samlar in min leveransadress för ordern.",
-    en: "I want the letter sent to me and agree that Stripe collects my shipping address for this order.",
+  post_club_timeline_secret: {
+    sv: "Temat avslöjas snart",
+    en: "Theme revealed soon",
   },
-  post_club_privacy: {
-    sv: "Stripe samlar in namn, e-post och leveransadress i nästa steg. Betalningen är 100 kr och brevet skickas inom Sverige.",
-    en: "Stripe collects your name, email and shipping address in the next step. Payment is SEK 100 and shipping is within Sweden.",
+  post_club_lightbox_close: {
+    sv: "Stäng",
+    en: "Close",
+  },
+  post_club_lightbox_prev: {
+    sv: "Föregående bild",
+    en: "Previous image",
+  },
+  post_club_lightbox_next: {
+    sv: "Nästa bild",
+    en: "Next image",
+  },
+  post_club_terms_now: {
+    sv: "Du betalar {price} kr direkt när du går med och brevet skickas första veckan i {month}.",
+    en: "You pay SEK {price} when you join and your letter ships the first week of {month}.",
+  },
+  post_club_terms_next: {
+    sv: "Nästa dragning {nextCharge}, sedan var tredje månad. Avsluta när du vill – mejla info@vaavascanvas.se.",
+    en: "Next payment {nextCharge}, then every three months. Cancel whenever you like – email info@vaavascanvas.se.",
+  },
+  post_club_terms_fine: {
+    sv: "Endast inom Sverige. Stripe samlar in namn, e-post och adress i nästa steg.",
+    en: "Sweden only. Stripe collects your name, email and address in the next step.",
+  },
+  post_club_jump: {
+    sv: "Bli medlem – 109 kr",
+    en: "Join – SEK 109",
   },
   post_club_submit: {
     sv: "Till betalning",

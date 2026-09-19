@@ -34,11 +34,13 @@ async function buildComponents() {
       const isPortfolio = window.location.pathname.includes("portfolio");
       const isCommissions = window.location.pathname.includes("commissions");
       const isBlog = window.location.pathname.includes("blog");
+      const isPostClub = window.location.pathname.includes("post-club");
       if (isIndex) document.querySelector('a[href="/##top"]')?.classList.add("active");
       if (isPictures) document.querySelector('a[href="/pictures/"]')?.classList.add("active");
       if (isPortfolio) document.querySelector('a[href="/pages/portfolio.html"]')?.classList.add("active");
       if (isCommissions) document.querySelector('a[href="/pages/commissions.html"]')?.classList.add("active");
       if (isBlog) document.querySelector('a[href="/pages/blog.html"]')?.classList.add("active");
+      if (isPostClub) document.querySelector('a[href="/pages/post-club.html"]')?.classList.add("active");
 
 
       setupMobileMenu();

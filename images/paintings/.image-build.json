@@ -419,5 +419,15 @@
         "01.jpg": "bcda0a9e26975932a4d34c8facb5905296738cfa2f8fd96b70078719798ebb86"
       }
     }
+  },
+  "post-club": {
+    "2026-10": {
+      "sources": {
+        "bookmark.jpg": "9a1e11123b0bf09327453f35da91707877b34472bcf53b7c5d5051318809353e",
+        "overview.jpg": "b0fa926bc471d19ebc4110c0fd84ef882f52855eef0bafce2029892ddc6d9941",
+        "print.jpg": "b32e2de995f6d61d9bc12b7dcbd961420f14108155e007faa890a754119d6f8a",
+        "stickers.jpg": "0482057dc63d1f65e1aeeefd7443af5173a3dc6a42dba440a0c0931fa5b98447"
+      }
+    }
   }
 }

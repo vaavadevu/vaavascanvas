@@ -1,6 +1,6 @@
 import Stripe from 'stripe';
 
-const POST_CLUB_PRICE = 10000;
+const POST_CLUB_PRICE = 10900;
 
 export async function onRequestPost(context) {
   try {
@@ -12,8 +12,8 @@ export async function onRequestPost(context) {
         price_data: {
           currency: 'sek',
           product_data: {
-            name: 'Djurvänners Post Club',
-            description: 'Djurvänners Post Club: ett brev med konst, bokmärke, stickers och små överraskningar. Första månaden har temat kor. Leverans inom Sverige.',
+            name: 'Djurvänners Postklubb',
+            description: 'Djurvänners Postklubb: ett brev med konst, bokmärke, stickers och små överraskningar. Ett nytt tema varje kvartal. Leverans inom Sverige.',
           },
           unit_amount: POST_CLUB_PRICE,
         },

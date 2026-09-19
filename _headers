@@ -33,3 +33,7 @@
 # Read at runtime by portfolio-loader.js to build the portfolio grid
 /data/portfolio-manifest.json
   Cache-Control: public, max-age=0, must-revalidate
+
+# Read at runtime by post-club.js to build the quarter section and the timeline
+/data/post-club.json
+  Cache-Control: public, max-age=0, must-revalidate

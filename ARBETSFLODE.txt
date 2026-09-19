@@ -126,6 +126,65 @@ Nytt medium kräver två handgrepp.
    varukorgen visade. Texten kunden läser står dessutom i
    js\translations.js och components\shipping-modal.html.
 
+
+LÄGGA TILL ETT NYTT KVARTAL I POSTKLUBBEN
+-----------------------------------------
+
+Postklubbens sida läser data\post-club.json. Sidan räknar själv ut vilket
+kvartal som är aktuellt: brev skickas första veckan i januari, april, juli
+och oktober, och betalningen dras den 25:e månaden innan. Går man med efter
+den 25:e hamnar man i nästa kvartal.
+
+1. Lägg fotona i images\post-club\<år>-<månad>\original\, till exempel
+   images\post-club\2027-01\original\. Filnamnen bestämmer du själv och de
+   behålls som de är - till skillnad från tavlorna numreras de inte om,
+   eftersom data\post-club.json pekar på dem vid namn.
+
+   Första bilden i listan blir sidans stora toppbild. En kvadratisk bild
+   som visar allt som ingår i brevet passar bäst där; den visas i sina egna
+   proportioner medan de mindre rutorna beskärs kvadratiskt.
+
+2. Kör sync_paintings_images.bat och välj [1].
+
+   Scriptet bygger desktop\ och mobile\ bredvid original\, precis som för
+   tavlorna. Sidan väljer mobilbilden under 960 px bredd. Lägg aldrig in
+   bilder direkt i desktop\ eller mobile\ - de töms vid varje bygge.
+
+3. Lägg till kvartalet i listan "quarters" i data\post-club.json:
+
+      {
+        "id": "2027-01",
+        "ship": "2027-01",
+        "theme": { "sv": "Rävar", "en": "Foxes" },
+        "blurb": { "sv": "...", "en": "..." },
+        "images": [
+          { "file": "overview.jpg",
+            "label": { "sv": "Allt som ingår", "en": "Everything included" } }
+        ]
+      }
+
+   id och ship är samma sträng: året och månaden brevet skickas ut, och
+   samma namn som mappen under images\post-club\. "file" är bara filnamnet.
+
+4. Vill du visa att ett kvartal är på gång utan att avslöja temat, hoppa
+   över theme, blurb och images och skriv "secret": true i stället. Sidan
+   skriver då "Temat avslöjas snart".
+
+5. Kör tests\run-all-tests.bat, committa och pusha.
+
+Tidigare kvartal står kvar i filen. De hamnar automatiskt till vänster i
+tidslinjen längst ner på sidan, märkta "Skickat".
+
+Bilder som inte finns ännu visar rutan "Bild kommer snart" i stället för
+att gå sönder, så du kan lägga in ett kvartal innan fotona är klara.
+
+Priset står på två ställen.
+
+   js\translations.js (post_club_price) och POST_CLUB_PRICE i
+   functions\api\create-post-club-checkout.js - det sista är det Stripe
+   faktiskt debiterar. Texten under knappen hämtar siffran från "price" i
+   data\post-club.json.
+
 Det som inte är pushat finns inte live.
 
    Sajten ligger på Cloudflare Pages och byggs om vid push.
