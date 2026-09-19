@@ -21,6 +21,15 @@ function lang() {
   return window.currentLang || "sv";
 }
 
+// Read before rendering: the success line names the month the letter goes out,
+// which is only known once the quarter data has loaded.
+const checkoutResult = new URLSearchParams(window.location.search).get("postClub");
+if (checkoutResult === "success") {
+  setStatus(translated("post_club_status_success", "Tack! Betalningen är klar."), "success");
+} else if (checkoutResult === "cancelled") {
+  setStatus(translated("post_club_status_cancelled", "Betalningen avbröts. Du kan försöka igen när du vill."), "error");
+}
+
 function localised(value) {
   if (!value) return "";
   return value[lang()] || value.sv || "";
@@ -291,6 +300,7 @@ function renderTerms(quarter) {
   const lines = [
     translated("post_club_terms_now", "Du betalar {price} kr direkt när du går med och brevet skickas första veckan i {month}.", values),
     translated("post_club_terms_next", "Nästa dragning {nextCharge}, sedan var tredje månad.", values),
+    translated("post_club_terms_return", "Du har 14 dagars ångerrätt.", values),
     translated("post_club_terms_fine", "Endast inom Sverige.", values),
   ];
 
@@ -299,6 +309,14 @@ function renderTerms(quarter) {
     item.textContent = line;
     return item;
   }));
+}
+
+function renderStatus(quarter) {
+  if (checkoutResult !== "success" || !quarter) return;
+  const month = monthName(shipDate(quarter.id));
+  const thanks = translated("post_club_status_success", "Tack! Betalningen är klar.");
+  const shipping = translated("post_club_status_shipping", "Ditt brev skickas första veckan i {month}.", { month });
+  setStatus(`${thanks} ${shipping}`, "success");
 }
 
 function applyAriaLabels() {
@@ -318,6 +336,7 @@ function render() {
   renderQuarter(current);
   renderTimeline(quarters, current);
   renderTerms(current);
+  renderStatus(current);
   applyAriaLabels();
 }
 
@@ -383,13 +402,6 @@ function setupJumpButton() {
 setupJumpButton();
 
 /* ── Checkout ────────────────────────────────────────────────── */
-
-const checkoutResult = new URLSearchParams(window.location.search).get("postClub");
-if (checkoutResult === "success") {
-  setStatus(translated("post_club_status_success", "Tack! Betalningen är klar och brevet skickas hem till dig."), "success");
-} else if (checkoutResult === "cancelled") {
-  setStatus(translated("post_club_status_cancelled", "Betalningen avbröts. Du kan försöka igen när du vill."), "error");
-}
 
 form?.addEventListener("submit", async event => {
   event.preventDefault();

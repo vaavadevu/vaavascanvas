@@ -153,9 +153,13 @@ const keys = {
     sv: "Nästa dragning {nextCharge}, sedan var tredje månad. Avsluta när du vill – mejla info@vaavascanvas.se.",
     en: "Next payment {nextCharge}, then every three months. Cancel whenever you like – email info@vaavascanvas.se.",
   },
+  post_club_terms_return: {
+    sv: "Du har 14 dagars ångerrätt från att brevet kommit fram – mejla info@vaavascanvas.se.",
+    en: "You have 14 days to change your mind once the letter arrives – email info@vaavascanvas.se.",
+  },
   post_club_terms_fine: {
-    sv: "Endast inom Sverige. Stripe samlar in namn, e-post och adress i nästa steg.",
-    en: "Sweden only. Stripe collects your name, email and address in the next step.",
+    sv: "Endast inom Sverige, frakten ingår i priset. Stripe samlar in namn, e-post och adress i nästa steg.",
+    en: "Sweden only, postage included. Stripe collects your name, email and address in the next step.",
   },
   post_club_jump: {
     sv: "Bli medlem – 109 kr",
@@ -170,8 +174,12 @@ const keys = {
     en: "Opening payment...",
   },
   post_club_status_success: {
-    sv: "Tack! Betalningen är klar och brevet skickas hem till dig.",
-    en: "Thank you! Payment is complete and the letter will be sent to you.",
+    sv: "Tack! Betalningen är klar.",
+    en: "Thank you! Payment is complete.",
+  },
+  post_club_status_shipping: {
+    sv: "Ditt brev skickas första veckan i {month}.",
+    en: "Your letter ships the first week of {month}.",
   },
   post_club_status_cancelled: {
     sv: "Betalningen avbröts. Du kan försöka igen när du vill.",

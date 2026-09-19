@@ -13,7 +13,7 @@ export async function onRequestPost(context) {
           currency: 'sek',
           product_data: {
             name: 'Djurvänners Postklubb',
-            description: 'Djurvänners Postklubb: ett brev med konst, bokmärke, stickers och små överraskningar. Ett nytt tema varje kvartal. Leverans inom Sverige.',
+            description: 'Ett konsttryck i A5 på fotopapper, ett laminerat bokmärke, två stickers och ett brev om kvartalets djur. Nytt tema varje kvartal. Frakt inom Sverige ingår.',
           },
           unit_amount: POST_CLUB_PRICE,
         },
