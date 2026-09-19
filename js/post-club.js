@@ -1,5 +1,5 @@
 const CHARGE_DAY = 25;
-const PRICE_FALLBACK = 109;
+const PRICE_FALLBACK = 149;
 
 const form = document.getElementById("post-club-form");
 const status = document.getElementById("post-club-status");
@@ -50,6 +50,13 @@ function chargeDate(id) {
   return new Date(year, month - 2, CHARGE_DAY);
 }
 
+// The whole charge day still counts as in time; the 26th is when you are late.
+// functions/api/create-post-club-checkout.js draws the same line.
+function cutoff(id) {
+  const [year, month] = id.split("-").map(Number);
+  return new Date(year, month - 2, CHARGE_DAY + 1);
+}
+
 function addMonths(date, months) {
   return new Date(date.getFullYear(), date.getMonth() + months, date.getDate());
 }
@@ -77,7 +84,7 @@ function nextShipId(now = new Date()) {
   for (let year = now.getFullYear(); year <= now.getFullYear() + 2; year++) {
     for (const month of months) {
       const id = `${year}-${String(month).padStart(2, "0")}`;
-      if (chargeDate(id) > now) return id;
+      if (cutoff(id) > now) return id;
     }
   }
   return null;

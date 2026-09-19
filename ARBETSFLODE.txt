@@ -178,12 +178,78 @@ tidslinjen längst ner på sidan, märkta "Skickat".
 Bilder som inte finns ännu visar rutan "Bild kommer snart" i stället för
 att gå sönder, så du kan lägga in ett kvartal innan fotona är klara.
 
-Priset står på två ställen.
+Priset står på flera ställen - se avsnittet om prenumerationen nedan.
 
-   js\translations.js (post_club_price) och POST_CLUB_PRICE i
-   functions\api\create-post-club-checkout.js - det sista är det Stripe
-   faktiskt debiterar. Texten under knappen hämtar siffran från "price" i
-   data\post-club.json.
+
+SÄTTA UPP POSTKLUBBENS PRENUMERATION I STRIPE
+---------------------------------------------
+
+Anmälan och de återkommande dragningarna sker i två steg. Kunden betalar
+109 kr direkt i kassan, kortet sparas, och webhooken skapar sedan en
+prenumeration vars första dragning ligger på den 25:e månaden före nästa
+brev. Checkout kan inte göra båda delarna i ett svep - motiveringen står i
+functions\api\create-post-club-checkout.js.
+
+Engångsjobb innan det kan gå live:
+
+1. Skapa priset i Stripe (Produkter -> Lägg till produkt):
+
+      Namn:      Djurvänners Postklubb
+      Pris:      109 kr
+      Fakturering: Återkommande, var tredje månad
+
+   Kopiera pris-ID:t, det börjar med price_.
+
+2. Lägg in det som miljövariabel i Cloudflare Pages, under
+   Settings -> Environment variables, för både Production och Preview:
+
+      STRIPE_POST_CLUB_PRICE_ID = price_...
+
+   Saknas den skapas ingen prenumeration. Webhooken svarar då med fel så
+   att Stripe försöker igen i upp till tre dygn - hinner du lägga in
+   variabeln inom den tiden rättar det sig av sig självt.
+
+3. Lägg till de här händelserna på webhooken i Stripe
+   (Utvecklare -> Webhooks -> din endpoint):
+
+      checkout.session.completed      (finns redan)
+      invoice.paid                    <- signalen att packa ett brev
+      invoice.payment_failed          <- kortet gick inte igenom
+      customer.subscription.deleted   <- någon har gått ur
+
+Testa innan du går live:
+
+   Kör hela kedjan i Stripes testläge med ett testkort (4242 4242 4242 4242)
+   och kontrollera tre saker i Stripe-dashboarden efteråt:
+
+      - att 109 kr faktiskt drogs vid anmälan
+      - att det finns en prenumeration med status "trialing"
+      - att nästa faktureringsdatum är den 25:e i rätt månad
+
+   För att se att den andra dragningen fungerar utan att vänta i tre
+   månader: skapa medlemmen under en testklocka (Stripe -> Test clocks) och
+   spola fram tiden förbi den 25:e. Då syns om fakturan skapas, om kortet
+   dras och om invoice.paid kommer fram till webhooken.
+
+Vad som står var:
+
+   Priset står på tre ställen som måste hållas lika: POST_CLUB_PRICE i
+   functions\api\create-post-club-checkout.js (det som dras vid anmälan),
+   priset i Stripe (det som dras var tredje månad) och post_club_price i
+   js\translations.js (det sidan visar). Glider de isär betalar kunden
+   något annat än vad som stod.
+
+   Datumreglerna finns i två kopior: js\post-club.js räknar fram det sidan
+   visar, functions\api\create-post-club-checkout.js det Stripe debiterar.
+   tests\checkout.js jämför dem mot en tabell med kända datum, så ett test
+   går sönder om bara den ena ändras.
+
+Loggarna är tills vidare din orderlista.
+
+   Det finns inget mejlutskick när en dragning gått igenom. Raden
+   "Post club payment received - letter due" hamnar i Cloudflares loggar
+   (Workers & Pages -> din sida -> Logs). Tills något bättre finns är det
+   där du ser vilka brev som ska packas - eller i Stripe, under Betalningar.
 
 Det som inte är pushat finns inte live.
 

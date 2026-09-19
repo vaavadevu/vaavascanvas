@@ -121,6 +121,30 @@ async function loadCheckoutFunction() {
   }
 }
 
+const postClubPath = path.join(__dirname, '../functions/api/create-post-club-checkout.js');
+
+async function loadPostClubFunction() {
+  const source = fs.readFileSync(postClubPath, 'utf8');
+  const importLine = /^import Stripe from 'stripe';$/m;
+
+  if (!importLine.test(source)) {
+    throw new Error(
+      'Could not find the Stripe import in create-post-club-checkout.js — this test stubs it ' +
+      'out by rewriting that line, so update the test if the import changed'
+    );
+  }
+
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'vc-post-club-'));
+  const stubbedPath = path.join(tempDir, 'create-post-club-checkout.mjs');
+  fs.writeFileSync(stubbedPath, source.replace(importLine, STRIPE_STUB));
+
+  try {
+    return await import(`file://${stubbedPath.replace(/\\/g, '/')}`);
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+}
+
 // Runs the function the way Cloudflare would and returns a flat result
 async function checkout(onRequestPost, items, country = 'SE') {
   globalThis.__lastStripeSession = null;
@@ -581,6 +605,66 @@ async function runTests() {
     assert(mismatches.length === 0,
       'Pricing logic has drifted between js/paintings.js and functions/api/create-checkout.js:\n  ' +
       mismatches.join('\n  '));
+  });
+
+  // ── Postklubben ─────────────────────────────────────────────────
+  //
+  // Datumen nedan är exakt de sidan visar — de kontrollerades i webbläsaren när
+  // schemat byggdes. Glider funktionen från dem lovar sidan en dragning som
+  // aldrig sker, eller så dras pengar en dag kunden inte fått veta om.
+
+  const postClub = await loadPostClubFunction();
+
+  const schedule = [
+    // går med       får brevet   första dragningen efter anmälan
+    ['2026-09-19', '2026-10', '2026-12-25'],
+    ['2026-09-25', '2026-10', '2026-12-25'],
+    ['2026-09-26', '2027-01', '2027-03-25'],
+    ['2026-12-20', '2027-01', '2027-03-25'],
+    ['2026-12-26', '2027-04', '2027-06-25'],
+  ];
+
+  await test('Post club shipment follows the 25th cutoff', () => {
+    const wrong = schedule
+      .map(([joined, shipment]) => {
+        const actual = postClub.nextShipmentId(new Date(joined + 'T10:00:00Z'));
+        return actual === shipment ? null : `joined ${joined}: expected ${shipment}, got ${actual}`;
+      })
+      .filter(Boolean);
+
+    assert(wrong.length === 0, 'Wrong shipment for a new member:\n  ' + wrong.join('\n  '));
+  });
+
+  await test('Post club charges again on the 25th, three months on', () => {
+    const wrong = schedule
+      .map(([joined, , charge]) => {
+        const seconds = postClub.nextChargeSeconds(new Date(joined + 'T10:00:00Z'));
+        const actual = new Date(seconds * 1000).toISOString().slice(0, 10);
+        return actual === charge ? null : `joined ${joined}: expected ${charge}, got ${actual}`;
+      })
+      .filter(Boolean);
+
+    assert(wrong.length === 0, 'Wrong next charge date:\n  ' + wrong.join('\n  '));
+  });
+
+  await test('Post club checkout saves the card and passes the schedule on', async () => {
+    globalThis.__lastStripeSession = null;
+
+    await postClub.onRequestPost({
+      env: { STRIPE_SECRET_KEY: 'sk_test_stub' },
+      request: { url: 'https://vaavascanvas.se/api/create-post-club-checkout' }
+    });
+
+    const session = globalThis.__lastStripeSession;
+    assert(session, 'No Stripe session was created');
+    assertEqual(session.mode, 'payment', 'Post club checkout should charge once up front');
+    assertEqual(session.payment_intent_data?.setup_future_usage, 'off_session',
+      'The card must be saved, or the webhook has nothing to charge in three months');
+    assertEqual(session.metadata?.orderType, 'post-club', 'Wrong orderType in metadata');
+    assert(session.metadata?.firstShipment,
+      'The webhook needs firstShipment to know which letter was paid for');
+    assert(Number(session.metadata?.nextChargeAt) > Date.now() / 1000,
+      'nextChargeAt must be a future timestamp — it becomes the subscription trial_end');
   });
 
   console.log('\n' + colors.blue + '═══════════════════════════════════════════════════════════' + colors.reset);

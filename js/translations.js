@@ -74,8 +74,8 @@ const keys = {
     en: "Membership price every three months",
   },
   post_club_price: {
-    sv: "109 kr",
-    en: "SEK 109",
+    sv: "149 kr",
+    en: "SEK 149",
   },
   post_club_includes_title: {
     sv: "Det här ingår",
@@ -162,8 +162,8 @@ const keys = {
     en: "Sweden only, postage included. Stripe collects your name, email and address in the next step.",
   },
   post_club_jump: {
-    sv: "Bli medlem – 109 kr",
-    en: "Join – SEK 109",
+    sv: "Bli medlem – 149 kr",
+    en: "Join – SEK 149",
   },
   post_club_submit: {
     sv: "Till betalning",
