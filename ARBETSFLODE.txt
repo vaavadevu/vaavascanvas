@@ -1,0 +1,131 @@
+VAAVASCANVAS - ARBETSFLÖDE
+==========================
+
+
+LÄGGA TILL EN NY TAVLA
+----------------------
+
+1. Skapa mappen images\paintings\<id>\original\ och lägg fotona där.
+
+   <id> blir tavlans id och en del av bildernas adress. Bara a-z, A-Z,
+   0-9, - och _, och det måste börja med en bokstav. Inga mellanslag,
+   inga å/ä/ö. Vi skriver dem i camelCase: solrosKossan.
+
+   Bilden som heter 01 blir omslaget - miniatyren i butiken, bilden i
+   varukorgen och bilden som visas när sidan delas. Vill du styra vilken
+   det blir, döp den till 01 innan du kör. Övriga filnamn spelar ingen
+   roll, scriptet numrerar om dem.
+
+2. Kör sync_paintings_images.bat och välj [1].
+
+3. Fyll i det som scriptet lade in som placeholder:
+
+   - data\paintings.json: title, width och height i cm, originalPrice i
+     kronor. Posten har en _todo-rad som säger vad som saknas.
+     Ta bort _todo-raden när allt stämmer.
+   - js\translations.js: beskrivningen desc_<id>, på både svenska och
+     engelska. Den står som "TODO:".
+
+4. Kör build_paintings_data.bat.
+
+   VIKTIGT: det här steget är lätt att missa. Synk-scriptet i steg 2
+   byggde innan du fyllt i något, så titel, pris och mått når inte
+   sidorna förrän du bygger en gång till.
+
+5. Kör tests\run-all-tests.bat.
+
+6. Committa och pusha.
+
+
+MARKERA ETT VERK SOM SÅLT
+-------------------------
+
+1. Ändra "status" till "sold" för verket i data\paintings.json.
+2. Kör build_paintings_data.bat.
+3. Kör tests\run-all-tests.bat.
+4. Committa och pusha.
+
+Giltiga värden: "for_sale", "sold", "personal".
+
+
+ÄNDRA PRIS ELLER INFORMATION OM EN TAVLA SOM REDAN FINNS
+--------------------------------------------------------
+
+Samma fyra steg som ovan: ändra, bygg, testa, pusha. Det som skiljer är
+var uppgiften bor.
+
+I data\paintings.json:
+
+   originalPrice      priset i kronor
+   framedPrice        priset med ram
+   frameAvailable     true om den går att få med ram
+   framedOnly         true om den bara säljs med ram
+   discountPercent    rea, t.ex. 20 för 20 procent av
+   title              titeln som visas
+   width / height     måtten i cm (eller diameter om den är rund)
+   medium             material - se "Nytt medium" nedan
+   featured           1, 2 eller 3 = plats på startsidan
+
+I js\translations.js:
+
+   desc_<id>          beskrivningen, på svenska och engelska
+
+Vill du byta ut eller lägga till en bild: lägg den i
+images\paintings\<id>\original\ och kör sync_paintings_images.bat
+istället för build_paintings_data.bat. Resten är sig likt.
+
+Döp aldrig om mappen under images\paintings\. Mappnamnet är verkets id
+och avgör adressen till sidan - solrosKossan blir
+/pictures/solros-kossan.html. Byter du namn försvinner den gamla sidan,
+gamla länkar slutar fungera och verket behandlas som nytt, utan pris och
+beskrivning. Titeln går däremot att ändra fritt, den påverkar inte
+adressen.
+
+Keramik ligger i data\clay.json och bokmärken i data\bookmarks.json,
+samma flöde.
+
+
+DET VIKTIGASTE ATT VETA
+-----------------------
+
+Ändra aldrig en genererad fil för hand.
+
+   Allt som beskriver ett verk bor i data\*.json. Bygget läser där och
+   skriver om js\paintings.js, functions\api\create-checkout.js, alla
+   sidor under pictures\, index.html och sitemap.xml. Ändrar du i någon
+   av dem försvinner ändringen vid nästa bygge - eller ser ut att
+   fungera lokalt medan det som ligger live säger något annat.
+
+   Så hände det när Solroskossan såldes: js\paintings.js ändrades för
+   hand, bygget kördes aldrig, och produktsidan fortsatte annonsera
+   "InStock" mot Google.
+
+   Undantag som redigeras för hand: konstantblocken högst upp i
+   js\paintings.js (STATUS, MEDIUM, SHAPE, TYPE) och hela
+   js\translations.js.
+
+Tar du bort en bildmapp försvinner verket ur data\paintings.json.
+
+   Nästa synk raderar posten. Det gäller också en mapp som bara råkat
+   flyttas eller döpas om. Scriptet skriver ut vad det tar bort, med
+   titel och pris, så det syns innan filen sparas. Gick det fel:
+   git checkout data\paintings.json
+
+Nytt medium kräver två handgrepp.
+
+   Byter du "medium" till något som inte använts förut kraschar bygget.
+   Lägg till konstanten i MEDIUM-blocket i js\paintings.js och nyckeln
+   med sv och en i js\translations.js. Först därefter kan
+   data\paintings.json peka på värdet.
+
+Ändrar du frakten måste två filer hållas lika.
+
+   Tröskeln för fri frakt och fraktpriserna står i js\cart-math.js (det
+   varukorgen visar) och functions\api\create-checkout.js (det Stripe
+   debiterar). Glider de isär debiteras kunden något annat än vad
+   varukorgen visade. Texten kunden läser står dessutom i
+   js\translations.js och components\shipping-modal.html.
+
+Det som inte är pushat finns inte live.
+
+   Sajten ligger på Cloudflare Pages och byggs om vid push.
