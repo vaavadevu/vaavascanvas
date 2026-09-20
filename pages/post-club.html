@@ -19,6 +19,8 @@
   <link rel="stylesheet" href="../css/cart.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css" />
+  <script src="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.umd.js"></script>
+  <script defer src="/js/cookie-consent-init.js"></script>
 </head>
 <body id="top">
   <div id="header-container"></div>
@@ -82,16 +84,48 @@
     <button type="button" class="post-club-lightbox-nav next" id="post-club-lightbox-next" aria-label="Nästa" data-i18n-aria="post_club_lightbox_next">&#8250;</button>
   </div>
 
-  <footer id="footer" class="post-club-footer">
-    <p>© 2026 Devika – Vaavascanvas</p>
-    <a href="mailto:info@vaavascanvas.se">info@vaavascanvas.se</a>
+  <footer id="footer">
+    <div class="footerContent">
+      <div class="footerAbout">
+        <img src="../images/devika.jpg" alt="Devika" class="footerImg" />
+        <h2 data-i18n="footer_about_heading">Hej, Devika här!</h2>
+        <p data-i18n="footer_about_p1">Jag är konstnär och illustratör baserad i Sverige.</p>
+        <p data-i18n="footer_about_p2">Genom min konst vill jag skapa närvaro och igenkänning.</p>
+        <div class="footerLinks">
+          <a href="https://www.instagram.com/vaavascanvas/" target="_blank">
+            <i class="fa fa-instagram"></i> @vaavascanvas
+          </a>
+          <a href="mailto:info@vaavascanvas.se">
+            <i class="fa fa-envelope"></i> info@vaavascanvas.se
+          </a>
+        </div>
+        <button class="subscribe-btn" id="subscribeBtn" data-i18n="footer_subscribe_btn">
+          🔔 Prenumerera på nyheter
+        </button>
+      </div>
+      <div class="footerDivider"></div>
+      <div class="footerFormSection" id="formContainer"></div>
+    </div>
+    <div class="footerBottom">
+      <p class="footerCopy" data-i18n="footer_copy">© 2026 Devika – All rights reserved</p>
+      <div class="footerCopyLinks">
+        <a href="javascript:void(0)" onclick="CookieConsent.showPreferences()" data-i18n="cookie_settings_link">Cookieinställningar</a>
+      </div>
+    </div>
   </footer>
 
   <script src="../js/translations.js"></script>
   <script src="../js/i18n.js"></script>
+  <script src="../js/paintings.js"></script>
+  <script src="../js/state.js"></script>
+  <script src="../js/gallery.js"></script>
   <script src="../js/utilities.js"></script>
+  <script src="../js/contact.js"></script>
   <script src="../js/ui.js"></script>
   <script src="../js/script.js"></script>
+  <script src="../js/cart-math.js"></script>
+  <script src="../js/cart-rules.js"></script>
+  <script src="../js/cart.js"></script>
   <script type="module" src="../js/post-club.js"></script>
 </body>
 </html>

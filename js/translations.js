@@ -205,8 +205,8 @@ const keys = {
     en: "A selection of my work across different mediums — acrylic, oil pastel and digital. Some are for sale, others live only here.",
   },
   portfolio_outro: {
-    sv: "Gillar du något du ser? En del av verken ovan går att köpa. <a href='/pictures/'>Se hela galleriet</a> eller <a href='/pages/commissions.html'>beställ en commission</a>.",
-    en: "Like something you see? Some of the works above are for sale. <a href='/pictures/'>See the full gallery</a> or <a href='/pages/commissions.html'>order a commission</a>.",
+    sv: "Gillar du något du ser? En del av verken ovan går att köpa. <a href='/pictures/'>Se hela butiken</a> eller <a href='/pages/commissions.html'>beställ en commission</a>.",
+    en: "Like something you see? Some of the works above are for sale. <a href='/pictures/'>See the whole shop</a> or <a href='/pages/commissions.html'>order a commission</a>.",
   },
   medium_acrylic: {
     sv: "Akryl",
@@ -1024,12 +1024,12 @@ desc_sommarvila: {
     en: "Your cart is empty",
   },
   cart_empty_copy: {
-    sv: "Lägg till dina favoritmålningar eller något spännande från galleriet.",
-    en: "Add your favorite paintings or something exciting from the gallery.",
+    sv: "Lägg till dina favoritmålningar eller något spännande från butiken.",
+    en: "Add your favorite paintings or something exciting from the shop.",
   },
   cart_empty_link: {
-    sv: "Till galleriet",
-    en: "Go to gallery",
+    sv: "Till butiken",
+    en: "Go to the shop",
   },
   cart_total_label: {
     sv: "Totalt",

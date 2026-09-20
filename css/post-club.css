@@ -538,19 +538,6 @@ p.post-club-timeline-month {
   font-size: 32px;
 }
 
-/* ─── Sidfot ─── */
-
-.post-club-footer {
-  display: flex;
-  justify-content: center;
-  gap: 18px;
-  padding: 24px;
-  font-size: 0.85rem;
-}
-
-.post-club-footer p { margin: 0; font-size: inherit; }
-.post-club-footer a { color: var(--text-link); }
-
 @keyframes post-club-rise {
   from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
@@ -583,5 +570,4 @@ p.post-club-timeline-month {
   .post-club-lightbox-nav { position: fixed; bottom: 22px; }
   .post-club-lightbox-nav.prev { left: 22px; }
   .post-club-lightbox-nav.next { right: 22px; }
-  .post-club-footer { flex-direction: column; align-items: center; gap: 4px; }
 }

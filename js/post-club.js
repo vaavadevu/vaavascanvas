@@ -380,22 +380,6 @@ function render() {
   applyAriaLabels();
 }
 
-// script.js applies the saved language from its own init, but that init throws
-// on this page — it expects helpers this page deliberately does not load.
-if (typeof initLanguage === "function" && !window.currentLang) initLanguage();
-
-// ui.js fetches the header after that, so its links are still untranslated —
-// apply the language once more when they arrive.
-const headerContainer = document.getElementById("header-container");
-if (headerContainer && typeof setLanguage === "function") {
-  const headerWatch = new MutationObserver(() => {
-    if (!headerContainer.querySelector("[data-i18n]")) return;
-    headerWatch.disconnect();
-    setLanguage(window.currentLang || "sv");
-  });
-  headerWatch.observe(headerContainer, { childList: true, subtree: true });
-}
-
 fetch("../data/post-club.json")
   .then(response => response.json())
   .then(json => {
