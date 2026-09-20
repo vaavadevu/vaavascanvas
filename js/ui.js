@@ -29,18 +29,7 @@ async function buildComponents() {
       if (cartDrawer) document.body.appendChild(cartDrawer);
       if (cartOverlay) document.body.appendChild(cartOverlay);
 
-      const isIndex = window.location.pathname.includes("index") || window.location.pathname === "/";
-      const isPictures = window.location.pathname.includes("pictures");
-      const isPortfolio = window.location.pathname.includes("portfolio");
-      const isCommissions = window.location.pathname.includes("commissions");
-      const isBlog = window.location.pathname.includes("blog");
-      const isPostClub = window.location.pathname.includes("post-club");
-      if (isIndex) document.querySelector('a[href="/##top"]')?.classList.add("active");
-      if (isPictures) document.querySelector('a[href="/pictures/"]')?.classList.add("active");
-      if (isPortfolio) document.querySelector('a[href="/pages/portfolio.html"]')?.classList.add("active");
-      if (isCommissions) document.querySelector('a[href="/pages/commissions.html"]')?.classList.add("active");
-      if (isBlog) document.querySelector('a[href="/pages/blog.html"]')?.classList.add("active");
-      if (isPostClub) document.querySelector('a[href="/pages/post-club.html"]')?.classList.add("active");
+      activateNavLink(navLinkForPath());
 
 
       setupMobileMenu();
@@ -222,44 +211,51 @@ function setupScrollWatcher() {
     if (!footer) return;
 
     const footerInView = footer.getBoundingClientRect().top <= window.innerHeight / 2;
-    const isViewPage = isWorkPage();
-    const isPictures = window.location.pathname.includes("pictures");
-    const isCommissions = window.location.pathname.includes("commissions");
-    const isBlog = window.location.pathname.includes("blog");
-    const isPortfolio = window.location.pathname.includes("portfolio");
 
-    // Determine which nav link to highlight
-    let currentQuery;
-    if (footerInView) {
-      currentQuery = "#footer";
-    } else if (isViewPage) {
-      currentQuery = null;
-    } else if (isPictures) {
-      currentQuery = "/pictures/";
-    } else if (isCommissions) {
-      currentQuery = "/pages/commissions.html";
-    } else if (isBlog) {
-      currentQuery = "/pages/blog.html";
-    } 
-    else if (isPortfolio) {
-      currentQuery = "/pages/portfolio.html";
-    }
-    else {
-      currentQuery = "/#top";
-    }
-
-    if (currentQuery) {
-      activateNavQuery(currentQuery);
-    } else {
-      document.querySelectorAll("nav a").forEach(a => a.classList.remove("active"));
-    }
+    activateNavLink(footerInView
+      ? document.querySelector('#nav-menu .link-list a[href="#footer"]')
+      : navLinkForPath());
   });
 }
 
-function activateNavQuery(queryName) {
+// Vilken navlänk som hör till sidan man står på. Matchar mot länkarnas egna
+// adresser i stället för mot en lista över sidor, så en ny rubrik i headern
+// markeras utan att den här filen behöver ändras.
+//
+// Längsta träff vinner: /pictures/ fångar ett verks egen sida, /pages/blog.html
+// fångar också blog-post.html.
+function navLinkForPath(pathname = window.location.pathname) {
+  let best = null;
+  let bestLength = -1;
+
+  document.querySelectorAll("#nav-menu .link-list a").forEach(link => {
+    const href = link.getAttribute("href") || "";
+    if (href.startsWith("#")) return;  // #footer hanteras för sig
+
+    const target = href.split("#")[0].replace(/index\.html$/, "");
+
+    if (target === "" || target === "/") {
+      // Startsidan ska bara träffa startsidan, aldrig som prefix
+      if ((pathname === "/" || pathname === "/index.html") && bestLength < 0) {
+        best = link;
+        bestLength = 0;
+      }
+      return;
+    }
+
+    const prefix = target.replace(/\.html$/, "");
+    if (pathname.startsWith(prefix) && prefix.length > bestLength) {
+      best = link;
+      bestLength = prefix.length;
+    }
+  });
+
+  return best;
+}
+
+function activateNavLink(link) {
   document.querySelectorAll("nav a").forEach(a => a.classList.remove("active"));
-  const link = document.querySelector(`a[href="${queryName}"]`);
-  if (link) link.classList.add("active");
+  link?.classList.add("active");
 }
 
 function setupModals() {
