@@ -150,8 +150,8 @@ const keys = {
     en: "You pay SEK {price} when you join and your letter ships the first week of {month}.",
   },
   post_club_terms_next: {
-    sv: "Nästa dragning {nextCharge}, sedan var tredje månad. Avsluta när du vill – mejla info@vaavascanvas.se.",
-    en: "Next payment {nextCharge}, then every three months. Cancel whenever you like – email info@vaavascanvas.se.",
+    sv: "Därefter dras {price} kr automatiskt den {nextCharge}, och sedan var tredje månad tills du säger upp. Avsluta när du vill – mejla info@vaavascanvas.se.",
+    en: "After that SEK {price} is charged automatically on {nextCharge}, and every three months until you cancel. Cancel whenever you like – email info@vaavascanvas.se.",
   },
   post_club_terms_return: {
     sv: "Du har 14 dagars ångerrätt från att brevet kommit fram – mejla info@vaavascanvas.se.",
@@ -166,8 +166,8 @@ const keys = {
     en: "Join – SEK 149",
   },
   post_club_submit: {
-    sv: "Till betalning",
-    en: "Proceed to payment",
+    sv: "Bli medlem",
+    en: "Become a member",
   },
   post_club_status_sending: {
     sv: "Öppnar betalningen...",
