@@ -18,12 +18,6 @@
         { "file": "bookmark.jpg", "label": { "sv": "Bokmärke", "en": "Bookmark" } },
         { "file": "stickers.jpg", "label": { "sv": "Två stickers", "en": "Two stickers" } }
       ]
-    },
-    {
-      "id": "2027-01",
-      "ship": "2027-01",
-      "secret": true,
-      "images": []
     }
   ]
 }

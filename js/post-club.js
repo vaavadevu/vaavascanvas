@@ -90,6 +90,18 @@ function nextShipId(now = new Date()) {
   return null;
 }
 
+// Kvartalet efter ett givet, enligt kalendern.
+function followingShipId(id) {
+  const months = [...(data?.shipMonths || [1, 4, 7, 10])].sort((a, b) => a - b);
+  const [year, month] = id.split("-").map(Number);
+  const index = months.indexOf(month);
+  if (index === -1) return null;
+
+  const next = months[(index + 1) % months.length];
+  const nextYear = next > month ? year : year + 1;
+  return `${nextYear}-${String(next).padStart(2, "0")}`;
+}
+
 function currentQuarter(quarters) {
   const id = nextShipId();
   return quarters.find(q => q.id === id) || { id, secret: true, images: [] };
@@ -231,7 +243,7 @@ function renderQuarter(quarter) {
   section.hidden = false;
 }
 
-function timelineCard(quarter, current) {
+function timelineCard(quarter, current, isNextUp) {
   const card = document.createElement("li");
   card.className = "post-club-timeline-card";
 
@@ -261,6 +273,12 @@ function timelineCard(quarter, current) {
   const media = document.createElement("div");
   media.className = "post-club-timeline-media";
   const images = imagesOf(quarter);
+  if (quarter.secret) {
+    card.classList.add("is-secret");
+    card.append(badge, month);
+    if (isNextUp) card.append(theme);
+    return card;
+  }
   if (images.length) {
     const button = document.createElement("button");
     button.type = "button";
@@ -285,7 +303,10 @@ function renderTimeline(quarters, current) {
   const list = document.getElementById("post-club-timeline");
   if (!list || !current) return;
 
-  list.replaceChildren(...quarters.map(quarter => timelineCard(quarter, current)));
+  const currentIndex = quarters.findIndex(q => q.id === current.id);
+  list.replaceChildren(...quarters.map((quarter, index) =>
+    timelineCard(quarter, current, index === currentIndex + 1)
+  ));
   const currentCard = list.querySelector(".is-current");
   if (currentCard) list.scrollLeft = currentCard.offsetLeft - list.offsetLeft;
 
@@ -333,11 +354,23 @@ function applyAriaLabels() {
   });
 }
 
+const UPCOMING_ON_TIMELINE = 3;
+
 function render() {
   if (!data) return;
   const quarters = [...data.quarters];
   const current = currentQuarter(quarters);
-  if (!quarters.some(q => q.id === current.id)) quarters.push(current);
+
+  // Kommande kvartal behöver inte stå i datafilen — de följer av kalendern,
+  // och visar att brevet kommer igen även innan temat är bestämt.
+  let id = current.id;
+  for (let i = 0; i <= UPCOMING_ON_TIMELINE; i++) {
+    if (id && !quarters.some(q => q.id === id)) {
+      quarters.push(i === 0 ? current : { id, secret: true, images: [] });
+    }
+    id = id && followingShipId(id);
+  }
+
   quarters.sort((a, b) => shipDate(a.id) - shipDate(b.id));
 
   renderQuarter(current);
