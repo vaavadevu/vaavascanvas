@@ -2,7 +2,6 @@
 // and the theme follow the current quarter without the homepage being edited.
 
 const SHIP_MONTHS_FALLBACK = [1, 4, 7, 10];
-const CHARGE_DAY = 25;
 
 const section = document.getElementById("post-club-promo");
 const media = document.getElementById("post-club-promo-media");
@@ -17,9 +16,11 @@ function localised(value) {
   return value[lang()] || value.sv || "";
 }
 
-function chargeDate(id) {
+// Sign-ups close when the ship month begins; the 25th is only the recurring
+// charge day. js/post-club.js has the same pair.
+function cutoff(id) {
   const [year, month] = id.split("-").map(Number);
-  return new Date(year, month - 2, CHARGE_DAY);
+  return new Date(year, month - 1, 1);
 }
 
 function shipDate(id) {
@@ -27,13 +28,13 @@ function shipDate(id) {
   return new Date(year, month - 1, 1);
 }
 
-// Same rule as the post club page: the next letter whose charge day has not passed.
+// Same rule as the post club page: the next letter whose ship month has not started.
 function currentId(data, now = new Date()) {
   const months = [...(data.shipMonths || SHIP_MONTHS_FALLBACK)].sort((a, b) => a - b);
   for (let year = now.getFullYear(); year <= now.getFullYear() + 2; year++) {
     for (const month of months) {
       const id = `${year}-${String(month).padStart(2, "0")}`;
-      if (chargeDate(id) > now) return id;
+      if (cutoff(id) > now) return id;
     }
   }
   return null;

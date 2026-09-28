@@ -619,12 +619,16 @@ async function runTests() {
     // går med       får brevet   första dragningen efter anmälan
     ['2026-09-19', '2026-10', '2026-12-25'],
     ['2026-09-25', '2026-10', '2026-12-25'],
-    ['2026-09-26', '2027-01', '2027-03-25'],
+    ['2026-09-26', '2026-10', '2026-12-25'],
+    ['2026-09-30', '2026-10', '2026-12-25'],
+    ['2026-10-01', '2027-01', '2027-03-25'],
     ['2026-12-20', '2027-01', '2027-03-25'],
-    ['2026-12-26', '2027-04', '2027-06-25'],
+    ['2026-12-26', '2027-01', '2027-03-25'],
+    ['2026-12-31', '2027-01', '2027-03-25'],
+    ['2027-01-01', '2027-04', '2027-06-25'],
   ];
 
-  await test('Post club shipment follows the 25th cutoff', () => {
+  await test('Post club sign-ups stay open until the ship month begins', () => {
     const wrong = schedule
       .map(([joined, shipment]) => {
         const actual = postClub.nextShipmentId(new Date(joined + 'T10:00:00Z'));

@@ -36,9 +36,10 @@ function localised(value) {
 }
 
 /* ── Schedule ──────────────────────────────────────────────────
-   A letter posted in month M is paid for on the 25th of M-1. Joining
-   charges you right away for the next letter whose charge day has not
-   already passed, so a sign-up on the 26th lands in the following quarter. */
+   A letter posted in month M is paid for on the 25th of M-1, and that stays
+   the recurring charge day. Joining is open until M begins, though: you are
+   charged right away for the next letter whose ship month has not started,
+   so a sign-up on the last of the month still makes that quarter. */
 
 function shipDate(id) {
   const [year, month] = id.split("-").map(Number);
@@ -50,11 +51,12 @@ function chargeDate(id) {
   return new Date(year, month - 2, CHARGE_DAY);
 }
 
-// The whole charge day still counts as in time; the 26th is when you are late.
+// Sign-ups close when the ship month begins, not on the charge day — which is
+// why this rule never has to know how long a month is.
 // functions/api/create-post-club-checkout.js draws the same line.
 function cutoff(id) {
   const [year, month] = id.split("-").map(Number);
-  return new Date(year, month - 2, CHARGE_DAY + 1);
+  return new Date(year, month - 1, 1);
 }
 
 function addMonths(date, months) {

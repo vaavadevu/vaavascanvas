@@ -132,8 +132,13 @@ LÄGGA TILL ETT NYTT KVARTAL I POSTKLUBBEN
 
 Postklubbens sida läser data\post-club.json. Sidan räknar själv ut vilket
 kvartal som är aktuellt: brev skickas första veckan i januari, april, juli
-och oktober, och betalningen dras den 25:e månaden innan. Går man med efter
-den 25:e hamnar man i nästa kvartal.
+och oktober, och den löpande dragningen sker den 25:e månaden innan.
+
+Anmälan är däremot öppen ända till månadsskiftet: går man med senast den
+sista i månaden före (30 sep, 31 dec, 31 mar, 30 jun) får man det kvartalets
+brev. Först den 1:a i leveransmånaden hamnar man i nästa kvartal. Sena
+anmälningar ska alltså med i samma packning - räkna med några efterslängar
+efter den 25:e.
 
 1. Lägg fotona i images\post-club\<år>-<månad>\original\, till exempel
    images\post-club\2027-01\original\. Filnamnen bestämmer du själv och de
@@ -224,7 +229,8 @@ Testa innan du går live:
 
       - att 109 kr faktiskt drogs vid anmälan
       - att det finns en prenumeration med status "trialing"
-      - att nästa faktureringsdatum är den 25:e i rätt månad
+      - att nästa faktureringsdatum är den 25:e i rätt månad, även för den
+        som gick med efter den 25:e
 
    För att se att den andra dragningen fungerar utan att vänta i tre
    månader: skapa medlemmen under en testklocka (Stripe -> Test clocks) och

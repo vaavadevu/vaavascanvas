@@ -2,8 +2,9 @@ import Stripe from 'stripe';
 
 const POST_CLUB_PRICE = 14900;
 
-// Breven går ut första veckan i januari, april, juli och oktober, och
-// betalningen för ett brev dras den 25:e månaden innan.
+// Breven går ut första veckan i januari, april, juli och oktober, och den
+// löpande dragningen för ett brev sker den 25:e månaden innan. Anmälan är
+// däremot öppen ända till månadsskiftet — se cutoff().
 //
 // Samma regler står i js/post-club.js, som räknar fram datumen sidan visar.
 // tests/checkout.js jämför de två så att de inte glider isär — det är pengar
@@ -16,14 +17,16 @@ function chargeDate(id) {
   return new Date(Date.UTC(year, month - 2, CHARGE_DAY));
 }
 
-// Hela dragningsdagen räknas som i tid — det är den 26:e man är för sen.
+// Anmälan stänger när leveransmånaden börjar, inte på dragningsdagen: går man
+// med den sista i månaden hinner man med. Därför behöver regeln aldrig veta hur
+// många dagar en månad har.
 function cutoff(id) {
   const [year, month] = id.split('-').map(Number);
-  return new Date(Date.UTC(year, month - 2, CHARGE_DAY + 1));
+  return new Date(Date.UTC(year, month - 1, 1));
 }
 
-// Brevet en ny medlem får: det första vars dragningsdag inte redan passerat.
-// Går man med den 26:e hamnar man alltså i nästa kvartal.
+// Brevet en ny medlem får: det första vars leveransmånad inte redan börjat.
+// Anmäler man sig den 1:a hamnar man alltså i nästa kvartal.
 export function nextShipmentId(now = new Date()) {
   for (let year = now.getUTCFullYear(); year <= now.getUTCFullYear() + 2; year++) {
     for (const month of SHIP_MONTHS) {
