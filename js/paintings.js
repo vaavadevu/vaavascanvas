@@ -431,7 +431,7 @@ const paintings = [
     id: "busungen",
     title: "Busungen",
     descKey: "desc_busungen",
-    status: STATUS.FOR_SALE,
+    status: STATUS.SOLD,
     medium: MEDIUM.ACRYLIC_CANVAS,
     width: 18,
     height: 24,

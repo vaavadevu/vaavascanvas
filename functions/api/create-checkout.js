@@ -14,7 +14,7 @@ const PAINTINGS = [
   { id: 'lodjur', originalPrice: 600, status: 'sold' },
   { id: 'kattuggla', originalPrice: 600, status: 'for_sale' },
   { id: 'tropisktBad', originalPrice: 600, status: 'sold' },
-  { id: 'busungen', originalPrice: 600, status: 'for_sale' },
+  { id: 'busungen', originalPrice: 600, status: 'sold' },
   { id: 'breadwinner', originalPrice: 600, status: 'for_sale' },
   { id: 'minMamma', originalPrice: 1500, framedPrice: 1800, frameAvailable: true, status: 'for_sale' },
   { id: 'solvarmeISkogen', originalPrice: 1500, status: 'sold' },
